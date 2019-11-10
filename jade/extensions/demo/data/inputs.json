@@ -1,0 +1,50 @@
+[
+  {
+    "country": "Australia",
+    "data": "xgdp/countries/australia.csv"
+  },
+  {
+    "country": "Brazil",
+    "data": "gdp/countries/brazil.csv"
+  },
+  {
+    "country": "Canada",
+    "data": "xgdp/countries/canada.csv"
+  },
+  {
+    "country": "China",
+    "data": "gdp/countries/china.csv"
+  },
+  {
+    "country": "France",
+    "data": "gdp/countries/france.csv"
+  },
+  {
+    "country": "Germany",
+    "data": "gdp/countries/germany.csv"
+  },
+  {
+    "country": "India",
+    "data": "gdp/countries/india.csv"
+  },
+  {
+    "country": "Italy",
+    "data": "gdp/countries/italy.csv"
+  },
+  {
+    "country": "Japan",
+    "data": "gdp/countries/japan.csv"
+  },
+  {
+    "country": "Russia",
+    "data": "gdp/countries/russia.csv"
+  },
+  {
+    "country": "United Kingdom",
+    "data": "gdp/countries/united_kingdom.csv"
+  },
+  {
+    "country": "United States",
+    "data": "gdp/countries/united_states.csv"
+  }
+]

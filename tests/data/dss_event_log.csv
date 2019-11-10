@@ -1,0 +1,29 @@
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**OPENED**
+Hour=0, Sec=0, ControlIter=1, Element=Regulator.trans_133242_reg, Action= CHANGED -4 TAPS TO 0.975.
+Hour=0, Sec=0, ControlIter=2, Element=Regulator.trans_133242_reg, Action= CHANGED 1 TAPS TO 0.98125.
+Hour=0, Sec=0, ControlIter=3, Element=Regulator.trans_133242_reg, Action= CHANGED 1 TAPS TO 0.9875.
+Hour=24, Sec=900, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=24, Sec=900, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=24, Sec=900, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=24, Sec=900, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**OPENED**
+Hour=24, Sec=900, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**OPENED**
+Hour=24, Sec=900, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**OPENED**
+Hour=24, Sec=900, ControlIter=1, Element=Regulator.trans_133242_reg, Action= CHANGED -1 TAPS TO 0.98125.
+Hour=24, Sec=900, ControlIter=2, Element=Regulator.trans_133242_reg, Action= CHANGED -1 TAPS TO 0.975.
+Hour=33, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=33, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=33, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=33, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**CLOSED**
+Hour=33, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**CLOSED**
+Hour=33, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**CLOSED**
+Hour=41, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=41, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=41, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**ARMED**, DELAY= 15 SEC
+Hour=41, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2701_0, Action=**OPENED**
+Hour=41, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2703_0, Action=**OPENED**
+Hour=41, Sec=0, ControlIter=1, Element=Capacitor.1809_0_2864_0, Action=**OPENED**

@@ -1,0 +1,30 @@
+name: jade
+channels:
+  - defaults
+dependencies:
+  - python=3.7
+  - pip>=19.1
+  - pip:
+    - click
+    - feather-format
+    - flake8
+    - ipython
+    - jupyter
+    - matplotlib>=3.0.3
+    - mock>=3.0.0
+    - opendssdirect.py>=0.3.7
+    - pandas
+    - psutil>=5.6.2
+    - prettytable
+    - pycodestyle
+    - pylint
+    - pytest
+    - pytest-cov
+    - pypandoc
+    - pyyaml
+    - sphinx>=2.0
+    - sphinx-rtd-theme>=0.4.3
+    - sphinxcontrib-plantuml
+    - statsmodels
+    - toml>=0.10.0
+    - tox

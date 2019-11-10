@@ -1,0 +1,188 @@
+"""SLURM management functionality"""
+
+import logging
+import os
+import re
+
+from jade.enums import Status
+from jade.exceptions import ExecutionError, InvalidConfiguration
+from jade.hpc.common import HpcJobStatus, HpcJobInfo
+from jade.hpc.hpc_manager_interface import HpcManagerInterface
+from jade.utils.subprocess_manager import run_command
+from jade.utils import utils
+
+
+logger = logging.getLogger(__name__)
+
+
+class SlurmManager(HpcManagerInterface):
+    """Manages Slurm jobs."""
+
+    _OPTIONAL_CONFIG_PARAMS = {
+        "mem": 5,  # TODO
+    }
+    _REQUIRED_CONFIG_PARAMS = (
+        "allocation",
+        "walltime",
+    )
+    _STATUSES = {
+        "PENDING": HpcJobStatus.QUEUED,
+        "CONFIGURING": HpcJobStatus.QUEUED,
+        "RUNNING": HpcJobStatus.RUNNING,
+        "COMPLETING": HpcJobStatus.COMPLETE,
+    }
+    _REGEX_SBATCH_OUTPUT = re.compile(r"Submitted batch job (\d+)")
+
+    def __init__(self, config_file):
+        self._config = self.create_config(config_file)
+
+    def cancel_job(self, job_id):
+        return run_command(f"scancel {job_id}")
+
+    def check_status(self, name=None, job_id=None):
+        field_names = ("jobid", "name", "state")
+        cmd = f"squeue -u {self.USER} --Format \"{','.join(field_names)}\" -h"
+        if name is not None:
+            cmd += f" -n {name}"
+        elif job_id is not None:
+            cmd += f" -j {job_id}"
+        else:
+            # Mutual exclusivity should be handled in HpcManager.
+            assert False
+
+        output = {}
+        ret = run_command(cmd, output)
+        if ret != 0:
+            logger.error("Failed to run squeue command=[%s] ret=%s err=%s",
+                         cmd, ret, output["stderr"])
+            raise ExecutionError(f"squeue command failed: {ret}")
+
+        stdout = output["stdout"]
+        logger.debug("squeue output:  [%s]", stdout)
+        fields = stdout.split()
+        if not fields:
+            # No jobs are currently running.
+            return HpcJobInfo("", "", HpcJobStatus.NONE)
+
+        assert len(fields) == len(field_names)
+        job_info = HpcJobInfo(fields[0],
+                              fields[1],
+                              self._STATUSES.get(fields[2],
+                                                 HpcJobStatus.UNKNOWN))
+        return job_info
+
+    @staticmethod
+    def check_storage_configuration():
+        output = {}
+        cmd = "lfs getstripe ."
+        ret = run_command(cmd, output)
+        if ret != 0:
+            raise ExecutionError(f"{cmd} failed: {output}")
+
+        stripe_count = SlurmManager._get_stripe_count(output["stdout"])
+        logger.info("stripe_count is set to %s", stripe_count)
+        if stripe_count < 16:
+            raise InvalidConfiguration(
+                f"stripe_count for {os.getcwd()} is set to {stripe_count}. "
+                "The runtime directory should be set with a stripe_count of "
+                "16 for optimal performance. Create a new directory, run "
+                "`lfs setstripe -c 16 <dirname>`, and then move all contents "
+                "to that directory."
+            )
+
+    def get_config(self):
+        return self._config
+
+    @staticmethod
+    def _get_stripe_count(output):
+        regex = re.compile(r"stripe_count:\s+(\d+)")
+        match = regex.search(output)
+        assert match, output["stdout"]
+        return int(match.group(1))
+
+    def create_cluster(self):
+        logger.debug("config=%s", self._config)
+        cluster = SLURMCluster(
+            project=self._config["hpc"]["allocation"],
+            walltime=self._config["hpc"]["walltime"],
+            job_mem=str(self._config["hpc"]["mem"]),
+            memory=str(self._config["hpc"]["mem"]) + "MB",
+            #job_cpu=config["cpu"],
+            interface=self._config["dask"]["interface"],
+            local_directory=self._config["dask"]["local_directory"],
+            cores=self._config["dask"]["cores"],
+            #processes=config["processes"],
+        )
+
+        logger.debug("Created cluster. job script %s", cluster.job_script())
+        return cluster
+
+    def create_local_cluster(self):
+        cluster = LocalCluster()
+        logger.debug("Created local cluster.")
+        return cluster
+
+    def create_submission_script(self, name, script, filename, path):
+        text = self._create_submission_script_text(name, script, path)
+        utils.create_script(filename, "\n".join(text))
+
+    def _create_submission_script_text(self, name, script, path):
+        lines = [
+            "#!/bin/bash",
+            f"#SBATCH --account={self._config['hpc']['allocation']}",
+            f"#SBATCH --job-name={name}",
+            f"#SBATCH --time={self._config['hpc']['walltime']}",
+            f"#SBATCH --output={path}/job_output_%j.o",
+            f"#SBATCH --error={path}/job_output_%j.e",
+            f"#SBATCH --nodes=1",
+        ]
+
+        for param in ("memory", "partition", "ntasks", "ntasks_per_node",
+                      "qos"):
+            value = self._config["hpc"].get(param)
+            if value is not None:
+                lines.append(f"#SBATCH --{param}={value}")
+
+        lines.append("")
+        lines.append(f"srun {script}")
+        return lines
+
+    def get_local_scratch(self):
+        return os.environ["LOCAL_SCRATCH"]
+
+    @staticmethod
+    def get_num_cpus():
+        return int(os.environ["SLURM_CPUS_ON_NODE"])
+
+    def get_optional_config_params(self):
+        return self._OPTIONAL_CONFIG_PARAMS
+
+    def get_required_config_params(self):
+        return self._REQUIRED_CONFIG_PARAMS
+
+    def log_environment_variables(self):
+        data = {}
+        for name, value in os.environ.items():
+            if "SLURM" in name:
+                data[name] = value
+
+        logger.info("SLURM environment variables: %s", data)
+
+    def submit(self, filename):
+        job_id = None
+        output = {}
+        ret = run_command("sbatch {}".format(filename), output)
+        if ret == 0:
+            result = Status.GOOD
+            stdout = output["stdout"]
+            match = self._REGEX_SBATCH_OUTPUT.search(stdout)
+            if match:
+                job_id = match.group(1)
+                result = Status.GOOD
+            else:
+                logger.error("Failed to interpret sbatch output [%s]", stdout)
+                result = Status.ERROR
+        else:
+            result = Status.ERROR
+
+        return result, job_id, output["stderr"]

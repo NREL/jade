@@ -1,0 +1,8 @@
+[hpc]
+allocation = "distcosts3"
+mem = 5000
+nodes = 1
+partition = "short"
+walltime = "4:00:00"
+# Uncomment this to get faster node allocations at twice the cost.
+#qos = "high"

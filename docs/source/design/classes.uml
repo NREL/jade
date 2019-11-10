@@ -1,0 +1,141 @@
+
+@startuml
+
+class ConfigurationInputs {
+    {abstract} string base_directory()
+    {abstract} namedtuple create_key()
+    {abstract} dict get_available_parameters()
+}
+
+class DistributionInputs {
+    dict get_available_parameters()
+    dict get_job(namedtuple key)
+    list list_control_flags()
+    list list_dc_ac_ratios()
+    list list_deployments()
+    list list_feeders()
+    list list_keys()
+    list list_parameters()
+}
+
+ConfigurationInputs <|-- ConfigurationInputsInterface
+DistributionInputs <|-- ConfigurationInputsInterface
+UserScenarioPyDssInputs <|-- ConfigurationInputsInterface
+
+QstsInputs <|-- DistributionInputs
+SnapshotOpenDssInputs <|-- DistributionInputs
+PyDssInputs <|-- DistributionInputs
+
+class JobParametersInterface {
+    {abstract} serialize()
+    {abstract} deserialize(data)
+}
+
+DeploymentParameters <|-- JobParametersInterface
+UserScenarioDeploymentParameters <|-- JobParametersInterface
+
+class JobExecutionInterface {
+    {abstract} int run()
+    {abstract} list list_results_files()
+    {abstract} int post_process(**kwargs)
+}
+
+class OpenDssSimulation {
+    int run()
+    void dss_command(str)
+    string dss_command_with_output(string)
+    list outputs()
+    void save_output_data
+}
+
+class PyDssSimulationBase {
+    int run()
+}
+
+QstsSimulation <|-- JobExecutionInterface
+PyDssSimulationBase <|-- JobExecutionInterface
+UserScenarioPyDssSimulation <|-- PyDssSimulationBase
+PyDssSimulation <|-- PyDssSimulationBase
+SnapshotOpenDssSimulation <|-- JobExecutionInterface
+SnapshotOpenDssSimulation o-- OpenDssSimulation
+
+class JobConfiguration {
+    {static} JobConfiguration auto_config()
+    {static} JobConfiguration deserialize(string filename)
+    {abstract} void clear()
+    {abstract} namedtuple create_job_key(*args)
+    {abstract} void dump(string filename)
+    {abstract} void dumps()
+    {abstract} int get_num_jobs()
+    {abstract} iter iter_jobs()
+    {abstract} void reconfigure_jobs(list parameters)
+}
+
+JobConfiguration o-- ConfigurationInputsInterface
+JobConfiguration o-- JobExecutionInterface
+
+class DistributionConfiguration {
+    dict get_available_deployments(namedtuple key)
+    void add_penetration_levels(list levels)
+    list list_feeders()
+    list list_deployments()
+    void remove_deployment(deployment, key)
+}
+
+DistributionConfiguration <|-- JobConfiguration
+
+QstsConfiguration <|-- DistributionConfiguration
+SnapshotOpenDssConfiguration <|-- DistributionConfiguration
+PyDssConfigurationBase <|-- DistributionConfiguration
+UserScenarioPyDssConfiguration <|-- PyDssConfigurationBase
+
+class JobManagerBase {
+    int get_num_jobs()
+    list get_completed_results()
+}
+
+class JobSubmitter {
+    void cancel_jobs(list names)
+    int submit_jobs()
+    list get_failed_parameters(string output_directory)
+    void create_config_from_failed_jobs(string output_directory, string filename)
+}
+
+class JobRunner {
+    int run_jobs()
+}
+
+JobSubmitter <|-- JobManagerBase
+JobRunner <|-- JobManagerBase
+
+JobManagerBase o-- JobConfiguration
+
+class HpcManagerInterface {
+    {abstract} void cancel_job(string job_id)
+    {abstract} HpcJobInfo check_status(string job_id)
+    {abstract} void create_submission_script(string name, string script)
+    {abstract} Cluster create_cluster()
+    {abstract} Cluster create_local_cluster()
+    {abstract} dict get_optional_config_params()
+    {abstract} tuple get_required_config_params()
+    {abstract} int submit(string filename)
+}
+
+SlurmManager <|-- HpcManagerInterface
+PbsManager <|-- HpcManagerInterface
+LocalManager <|-- HpcManagerInterface
+
+class HpcManager {
+    void cancel_job(string job_id)
+    HpcJobInfo check_status(string job_id)
+    dict get_hpc_config()
+    HpcType hpc_type()
+    int run_jobs(**kwargs)
+    int submit(string name, string filename)
+}
+
+HpcManager *-- HpcManagerInterface
+
+JobSubmitter o-- HpcManager
+
+@enduml

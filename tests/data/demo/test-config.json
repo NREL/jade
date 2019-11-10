@@ -1,0 +1,19 @@
+{
+  "class": "AutoRegressionConfiguration",
+  "job_execution_class": "AutoRegressionExecution",
+  "jobs_directory": null,
+  "jobs": [
+    {
+      "country": "australia",
+      "data": "demo/gdp/countries/australia.csv"
+    },
+    {
+      "country": "brazil",
+      "data": "demo/gdp/countries/brazil.csv"
+    },
+    {
+      "country": "united_states",
+      "data": "demo/gdp/countries/united_states.csv"
+    }
+  ]
+}

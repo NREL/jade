@@ -1,0 +1,12 @@
+.pytest_cache/
+jade.egg-info/
+docs/
+htmlcov/
+model-inputs/
+output/
+results/
+.git/
+.idea/
+.vscode/
+.coverage
+config.json
