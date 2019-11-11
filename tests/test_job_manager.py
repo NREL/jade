@@ -1,11 +1,11 @@
 import copy
 import os
 
+from mock import MagicMock, patch
+
 from jade.jobs.job_runner import JobRunner
 from jade.jobs.job_submitter import JobSubmitter, DEFAULTS
-from jade.extensions.pydss_simulation.pydss_configuration import PyDssConfiguration
-from jade.extensions.pydss_simulation.pydss_inputs import PyDssInputs
-from jade.extensions.pydss_simulation.pydss_simulation import PyDssSimulation
+from jade.extensions.demo.autoregression_configuration import AutoRegressionConfiguration
 
 
 CONFIG_FILE = "test-config.json"
@@ -13,8 +13,8 @@ HPC_CONFIG_FILE = DEFAULTS["hpc_config_file"]
 
 
 def get_config():
-    inputs = PyDssInputs("model-inputs")
-    config = PyDssConfiguration.auto_config(inputs)
+    job_inputs = MagicMock()
+    config = AutoRegressionConfiguration(job_inputs=job_inputs)
     return config
 
 

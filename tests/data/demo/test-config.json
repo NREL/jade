@@ -1,6 +1,6 @@
 {
   "class": "AutoRegressionConfiguration",
-  "job_execution_class": "AutoRegressionExecution",
+  "extension": "demo",
   "jobs_directory": null,
   "jobs": [
     {
