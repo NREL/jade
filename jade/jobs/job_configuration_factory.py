@@ -2,10 +2,9 @@
 
 import os
 
-from jade.extensions.hosting_capacity_analysis.hosting_capacity_configuration import \
-    HostingCapacityConfiguration
 from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidParameter
+from jade.extensions.registry import Registry, ExtensionClassType
 from jade.utils.utils import load_data
 from jade.utils.timing_utils import timed_debug
 
@@ -37,10 +36,8 @@ def deserialize_config(data, **kwargs):
     JobConfiguration
 
     """
-    if data["class"] == "AutoRegressionConfiguration":
-        from jade.extensions.demo.autoregression_configuration import AutoRegressionConfiguration
-        config = AutoRegressionConfiguration.deserialize(data, **kwargs)
-    else:
-        raise InvalidParameter("unsupported class: {}".format(data["class"]))
-
-    return config
+    registry = Registry()
+    extension = data["extension"]
+    cls = registry.get_extension_class(
+        extension, ExtensionClassType.CONFIGURATION)
+    return cls.deserialize(data, **kwargs)

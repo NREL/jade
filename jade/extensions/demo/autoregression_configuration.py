@@ -12,7 +12,7 @@ class AutoRegressionConfiguration(JobConfiguration):
     A class used to configure auto-regression jobs
     """
 
-    def __init__(self, job_inputs, job_execution_class, **kwargs):
+    def __init__(self, job_inputs, **kwargs):
         """
         Init AutoRegression class
 
@@ -20,19 +20,14 @@ class AutoRegressionConfiguration(JobConfiguration):
         ----------
         job_inputs: :obj:`AutoRegressionInputs`
             The instance of :obj:`AutoRegressionInputs`
-        job_execution_class: :obj:`AutoRegressionExecution`
-            Class :class:`AutoRegressionExecution`
         kwargs, extra arguments
         """
-
-        if isinstance(job_execution_class, str) and "AutoRegressionExecution" in job_execution_class:
-            job_execution_class = AutoRegressionExecution
 
         super(AutoRegressionConfiguration, self).__init__(
             inputs=job_inputs,
             container=JobContainerByKey(),
             job_parameters_class=AutoRegressionParameters,
-            job_execution_class=job_execution_class,
+            extension_name="demo",
             **kwargs
         )
 

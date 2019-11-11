@@ -31,7 +31,7 @@ test_requires = ["pytest", ]
 setup(
     name="jade",
     version=version,
-    description="DISCO",
+    description="JADE",
     long_description=readme,
     author="Daniel Thom",
     author_email="daniel.thom@nrel.gov",
@@ -40,8 +40,6 @@ setup(
     package_dir={"jade": "jade"},
     entry_points={
         "console_scripts": [
-            "run_qsts_scenario=jade.cli.run_qsts_scenario:cli",
-            "run_snapshot_scenario=jade.cli.run_snapshot_scenario:cli",
             "jade=jade.cli.jade:cli",
             "jade-internal=jade.cli.jade_internal:cli",
         ],

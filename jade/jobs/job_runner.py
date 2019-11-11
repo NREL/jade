@@ -131,10 +131,11 @@ class JobRunner(JobManagerBase):
         return intf, intf_type
 
     def _generate_jobs(self, config_file, verbose):
+        job_exec_class = self._config.job_execution_class
         return [
             DispatchableJob(
                 job,
-                self._config.job_execution_class.generate_command(
+                job_exec_class.generate_command(
                     job, self._jobs_output, config_file, verbose=verbose),
                 self._output
             ) for job in self._config.iter_jobs()

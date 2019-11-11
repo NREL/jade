@@ -11,6 +11,7 @@ import toml
 
 from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidParameter
+from jade.extensions.registry import Registry, ExtensionClassType
 from jade.utils.utils import dump_data, load_data
 from jade.utils.timing_utils import timed_debug
 
@@ -31,7 +32,7 @@ class JobConfiguration(abc.ABC):
     FILENAME_DELIMITER = "_"
 
     def __init__(self, inputs, container, job_parameters_class,
-                 job_execution_class, **kwargs):
+                 extension_name, **kwargs):
         """
         Constructs JobConfiguration.
 
@@ -39,15 +40,15 @@ class JobConfiguration(abc.ABC):
         ----------
         inputs : JobInputsInterface
         container : JobContainerInterface
-        job_execution_class : JobExecutionInterface
 
         """
+        self._extension_name = extension_name
         self._inputs = inputs
         self._jobs = container
         self._job_parameters_class = job_parameters_class
-        self._job_execution_class = job_execution_class
         self._job_names = None
         self._jobs_directory = kwargs.get("jobs_directory")
+        self._registry = Registry()
 
         if kwargs.get("do_not_deserialize_jobs", False):
             assert "job_names" in kwargs, str(kwargs)
@@ -110,6 +111,11 @@ class JobConfiguration(abc.ABC):
         class
 
         """
+
+    @property
+    def extension_name(self):
+        """Return the extension name for the configuration."""
+        return self._extension_name
 
     @abc.abstractmethod
     def get_job_inputs(self):
@@ -196,15 +202,13 @@ class JobConfiguration(abc.ABC):
         else:
             data = filename_or_data
 
-        job_execution_class = data.pop("job_execution_class")
-
         # Don't create an inputs object. It can be very expensive and we don't
         # need it unless the user wants to change the config.
         # TODO: implement user-friendly error messages when they try to access
         # inputs.
         inputs = None
         data["do_not_deserialize_jobs"] = do_not_deserialize_jobs
-        return cls(inputs, job_execution_class=job_execution_class, **data)
+        return cls(inputs, **data)
 
     def get_job(self, name):
         """Return the job matching name.
@@ -302,7 +306,7 @@ class JobConfiguration(abc.ABC):
 
         """
         logger.debug("job=%s kwargs=%s", job, kwargs)
-        job_execution = self._job_execution_class.create(
+        job_execution = self.job_exection_class.create(
             self.get_job_inputs(), job, output=output)
         return job_execution.run(**kwargs)
 
@@ -310,7 +314,7 @@ class JobConfiguration(abc.ABC):
         """Create data for serialization."""
         data = {
             "class": self.__class__.__name__,
-            "job_execution_class": self._job_execution_class.__name__,
+            "extension": self.extension_name,
             "jobs_directory": self._jobs_directory,
         }
 
@@ -385,11 +389,12 @@ class JobConfiguration(abc.ABC):
 
     @property
     def job_execution_class(self):
-        """Return the class used for simulations.
+        """Return the class used for job execution.
 
         Returns
         -------
         class
 
         """
-        return self._job_execution_class
+        return self._registry.get_extension_class(self.extension_name,
+                                                  ExtensionClassType.EXECUTION)

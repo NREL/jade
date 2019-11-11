@@ -7,7 +7,7 @@ import click
 
 from jade.cli.auto_config import auto_config
 from jade.cli.show_events import show_events
-from jade.cli.show_extensions import show_extensions
+from jade.cli.extensions import extensions
 from jade.cli.show_results import show_results
 from jade.cli.submit_jobs import submit_jobs
 
@@ -20,8 +20,8 @@ def cli():
     """Entry point"""
 
 
+cli.add_command(extensions)
 cli.add_command(auto_config)
 cli.add_command(show_events)
-cli.add_command(show_extensions)
 cli.add_command(show_results)
 cli.add_command(submit_jobs)

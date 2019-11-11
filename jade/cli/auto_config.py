@@ -7,7 +7,7 @@ import click
 from jade.common import CONFIG_FILE
 from jade.loggers import setup_logging
 from jade.exceptions import InvalidExtension
-from jade.extensions.registry import is_registered
+from jade.extensions.registry import Registry, ExtensionClassType
 
 
 # TODO: need one group command for auto-config; this should be a subcommand.
@@ -35,9 +35,11 @@ def auto_config(extension, inputs, config_file, verbose):
     setup_logging("auto_config", None, console_level=level)
 
     # User extension
-    if not is_registered(extension):
+    registry = Registry()
+    if not registry.is_registered(extension):
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
-    cli = importlib.import_module(f"jade.extensions.{extension}.cli")
+
+    cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
     config = cli.auto_config(inputs)
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)

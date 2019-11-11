@@ -17,22 +17,17 @@ from jade.extensions.demo.autoregression_parameters import AutoRegressionParamet
 def test_init():
     """Should return expected attributes after initialization"""
     job_inputs = MagicMock()
-    job_execution_class = "AutoRegressionExecution"
-    arc = AutoRegressionConfiguration(
-        job_inputs=job_inputs,
-        job_execution_class=job_execution_class
-    )
+    arc = AutoRegressionConfiguration(job_inputs=job_inputs)
     assert arc.inputs == job_inputs
-    assert arc.job_execution_class == AutoRegressionExecution
+    assert arc.get_job_execution_class() == AutoRegressionExecution
 
 
 def test_create_from_result():
     """Should return None as not implemented"""
     job_inputs = MagicMock()
-    job_execution_class = "AutoRegressionExecution"
     arc = AutoRegressionConfiguration(
         job_inputs=job_inputs,
-        job_execution_class=job_execution_class
+        extension_name="demo",
     )
     assert arc.create_from_result(MagicMock(), "output") is None
 
@@ -42,7 +37,7 @@ def test_get_job_inputs():
     job_inputs = MagicMock()
     arc = AutoRegressionConfiguration(
         job_inputs=job_inputs,
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     assert arc.get_job_inputs() == job_inputs
 
@@ -51,7 +46,7 @@ def test_autogression_configuration__add_job():
     """Should add job to container"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = MagicMock()
     job1.name = "test"
@@ -66,7 +61,7 @@ def test_clear():
     """Should clear jobs container"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = MagicMock()
     job1.name = "test"
@@ -85,7 +80,7 @@ def test_dump():
     filename = os.path.join(tempfile.gettempdir(), "jade-unit-test-arc.json")
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     arc.dump(filename=filename)
     assert os.path.exists(filename)
@@ -96,7 +91,7 @@ def test_dumps():
     """Should call json to perform dumps"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     string = arc.dumps()
     assert "AutoRegressionExecution" in string
@@ -111,7 +106,6 @@ def test_deserialize():
             tempfile.gettempdir(),
             "my_jobs_base_dir",
         ),
-        "job_execution_class": "AutoRegressionExecution"
     }
     arc = AutoRegressionConfiguration.deserialize(data)
     assert isinstance(arc, AutoRegressionConfiguration)
@@ -126,7 +120,7 @@ def test_get_job():
     """Should return the job expected"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = MagicMock()
     job1.name = "Job1"
@@ -144,7 +138,7 @@ def test_get_parameters_class():
     """Should return the AutoRegressionParameters class"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     assert arc.get_parameters_class().__name__ == "AutoRegressionParameters"
 
@@ -153,7 +147,7 @@ def test_iter_jobs():
     """Should iterate jobs in container"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = MagicMock()
     job1.name = "Job1"
@@ -175,7 +169,7 @@ def test_list_jobs():
     """Should return a list of jobs"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = MagicMock()
     job1.name = "Job1"
@@ -195,7 +189,7 @@ def test_reconfigure_jobs():
     job1.name = "Job1"
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     arc.add_job(job1)
 
@@ -218,7 +212,7 @@ def test_remove_job():
     """Should remove job if job exists in container"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = MagicMock()
     job1.name = "Job1"
@@ -237,7 +231,7 @@ def test_run_job(mock_job_execution_class):
     """Should run job using run method defined in AutoRegression class"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = MagicMock()
     job1.name = "Job1"
@@ -245,7 +239,6 @@ def test_run_job(mock_job_execution_class):
 
     job_execution_instance = MagicMock()
     job_execution_instance.run.return_value = "results"
-    mock_job_execution_class.create.return_value = job_execution_instance
 
     arc.run_job(job1, os.path.join(
         tempfile.gettempdir(),
@@ -258,13 +251,13 @@ def test_serialize():
     """Should create data for serialization"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     data = arc.serialize()
 
     expected = {
         "class": "AutoRegressionConfiguration",
-        "job_execution_class": "AutoRegressionExecution",
+        "extension": "demo",
         "jobs_directory": None,
         "jobs": []
     }
@@ -275,7 +268,7 @@ def test_serialize_jobs():
     """Should serialize a series of jobs"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = AutoRegressionParameters(country="A", data="A.csv")
     arc.add_job(job1)
@@ -300,7 +293,7 @@ def test_serialize_for_execution():
     """Serialize config data for efficient execution"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = AutoRegressionParameters(country="AA", data="AA.csv")
     arc.add_job(job1)
@@ -326,7 +319,7 @@ def test_show_results(capsys):
     """Should print jobs to std.out"""
     arc = AutoRegressionConfiguration(
         job_inputs=MagicMock(),
-        job_execution_class="AutoRegressionExecution"
+        extension_name="demo",
     )
     job1 = AutoRegressionParameters(country="AAA", data="AA.csv")
     arc.add_job(job1)

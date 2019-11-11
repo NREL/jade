@@ -11,7 +11,7 @@ from jade.common import OUTPUT_DIR
 from jade.loggers import setup_logging
 from jade.utils.utils import get_cli_string
 from jade.exceptions import InvalidExtension, ExecutionError
-from jade.extensions.registry import is_registered
+from jade.extensions.registry import Registry, ExtensionClassType
 
 
 @click.argument("extension")
@@ -48,7 +48,8 @@ from jade.extensions.registry import is_registered
 @click.command()
 def run(extension, **kwargs):
     """Runs hosting capacity analysis on results for a feeder."""
-    if not is_registered(extension):
+    registry = Registry()
+    if not registry.is_registered(extension):
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
 
     # Parse Argument
@@ -74,7 +75,7 @@ def run(extension, **kwargs):
 
     # Create config for run
     try:
-        cli = importlib.import_module(f"jade.extensions.{extension}.cli")
+        cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
         ret = cli.run(config_file, name, output, output_format, verbose)
     except ExecutionError as err:
         msg = f"unexpected exception in run '{extension}' job={name} - {err}"
