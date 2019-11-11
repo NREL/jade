@@ -56,7 +56,7 @@ def test_create():
     job = MagicMock()
     job.name = "Job1"
     output = os.path.join(tempfile.gettempdir(), "jade-unit-test-output")
-    are = AutoRegressionExecution.create(job, output)
+    are = AutoRegressionExecution.create(None, job, output)
     assert isinstance(are, AutoRegressionExecution)
 
 

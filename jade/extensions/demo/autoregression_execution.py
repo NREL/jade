@@ -93,7 +93,7 @@ class AutoRegressionExecution(JobExecutionInterface):
         return self._output
 
     @classmethod
-    def create(cls, job, output, **kwargs):
+    def create(cls, _, job, output, **kwargs):
         """Create instance of :obj:`AutoRegressionExecution`"""
         return cls(job, output)
 
