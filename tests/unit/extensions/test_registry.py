@@ -1,8 +1,9 @@
 """Test registry."""
 
-import atexit
 import os
 import tempfile
+
+import pytest
 
 from jade.extensions.registry import Registry, ExtensionClassType, \
     DEFAULT_REGISTRY
@@ -14,17 +15,14 @@ import jade.extensions.demo.cli as cli
 
 
 # Don't change the user's registry.
-Registry._PATH = tempfile.gettempdir()
-Registry._REGISTRY_FILENAME = "jade_test_registry.json"
+TEST_FILENAME = os.path.join("tests", "jade_test_registry.json")
 
 
-def cleanup():
-    filename = os.path.join(Registry._PATH, Registry._REGISTRY_FILENAME)
-    if os.path.exists(filename):
-        os.remove(filename)
-
-
-atexit.register(cleanup)
+@pytest.fixture
+def registry_fixture():
+    yield
+    if os.path.exists(TEST_FILENAME):
+        os.remove(TEST_FILENAME)
 
 
 def clear_extensions(registry):
@@ -33,21 +31,21 @@ def clear_extensions(registry):
     assert len(registry.list_extensions()) == 0
 
 
-def test_registry__list_extensions():
-    registry = Registry()
+def test_registry__list_extensions(registry_fixture):
+    registry = Registry(registry_filename=TEST_FILENAME)
     registry.reset_defaults()
     assert len(registry.list_extensions()) == len(DEFAULT_REGISTRY)
 
 
-def test_registry__unregister_extensions():
-    registry = Registry()
+def test_registry__unregister_extensions(registry_fixture):
+    registry = Registry(registry_filename=TEST_FILENAME)
     registry.reset_defaults()
     assert len(registry.list_extensions()) == len(DEFAULT_REGISTRY)
     clear_extensions(registry)
 
 
-def test_registry__register_extensions():
-    registry = Registry()
+def test_registry__register_extensions(registry_fixture):
+    registry = Registry(registry_filename=TEST_FILENAME)
     clear_extensions(registry)
     extension = DEFAULT_REGISTRY[0]
     registry.register_extension(extension)
@@ -66,7 +64,7 @@ def test_registry__register_extensions():
     assert cli_mod == cli
 
     # Test that the the changes are reflected with a new instance.
-    registry2 = Registry()
+    registry2 = Registry(registry_filename=TEST_FILENAME)
     extensions1 = registry.list_extensions()
     extensions2 = registry2.list_extensions()
     for ext1, ext2 in zip(extensions1, extensions2):
@@ -74,22 +72,22 @@ def test_registry__register_extensions():
             assert ext1[field] == ext2[field]
 
 
-def test_registry__is_registered():
-    registry = Registry()
+def test_registry__is_registered(registry_fixture):
+    registry = Registry(registry_filename=TEST_FILENAME)
     registry.reset_defaults()
     assert registry.is_registered(DEFAULT_REGISTRY[0]["name"])
 
 
-def test_registry__reset_defaults():
-    registry = Registry()
+def test_registry__reset_defaults(registry_fixture):
+    registry = Registry(registry_filename=TEST_FILENAME)
     clear_extensions(registry)
     registry.reset_defaults()
     assert len(registry.list_extensions()) == len(DEFAULT_REGISTRY)
 
 
-def test_registry__show_extensions(capsys):
+def test_registry__show_extensions(capsys, registry_fixture):
     """Test functionality of show_extensions."""
-    registry = Registry()
+    registry = Registry(registry_filename=TEST_FILENAME)
     registry.reset_defaults()
     registry.show_extensions()
     captured = capsys.readouterr()

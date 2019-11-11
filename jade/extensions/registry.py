@@ -5,8 +5,8 @@ import enum
 import importlib
 import logging
 import os
+import pathlib
 
-import jade
 from jade.exceptions import InvalidParameter
 from jade.utils.utils import dump_data, load_data
 
@@ -36,28 +36,23 @@ logger = logging.getLogger(__name__)
 
 class Registry:
     """Manages extensions registered with JADE."""
-    _PATH = os.path.join(
-        os.path.dirname(getattr(jade, "__path__")[0]),
-        "jade",
-        "extensions",
-    )
-    _REGISTRY_FILENAME = "registry.json"
+    _REGISTRY_FILENAME = ".jade-registry.json"
 
-    def __init__(self):
+    def __init__(self, registry_filename=None):
+        if registry_filename is None:
+            self._registry_filename = os.path.join(
+                str(pathlib.Path.home()),
+                self._REGISTRY_FILENAME,
+            )
+        else:
+            self._registry_filename = registry_filename
+
         self._extensions = {}
-        filename = self._get_registry_filename()
-        if not os.path.exists(filename):
+        if not os.path.exists(self._registry_filename):
             self.reset_defaults()
         else:
-            for extension in load_data(filename):
+            for extension in load_data(self._registry_filename):
                 self._add_extension(extension)
-                self._extensions[extension["name"]] = extension
-
-    @staticmethod
-    def _get_registry_filename():
-        return os.path.join(
-            Registry._PATH, Registry._REGISTRY_FILENAME,
-        )
 
     def _add_extension(self, extension):
         for field in DEFAULT_REGISTRY[0]:
@@ -81,14 +76,11 @@ class Registry:
     def _serialize_extensions(self):
         data = []
         for _, extension in sorted(self._extensions.items()):
-            ext = {k: v for k, v in extension.items() if not isinstance(k, ExtensionClassType)}
-            #ext = copy.deepcopy(extension)
-            # No need to serialize these.
-            #for key in ExtensionClassType:
-                #ext.pop(key)
+            ext = {k: v for k, v in extension.items()
+                   if not isinstance(k, ExtensionClassType)}
             data.append(ext)
 
-        filename = self._get_registry_filename()
+        filename = self.registry_filename
         dump_data(data, filename, indent=4)
         logger.debug("Serialized data to %s", filename)
 
@@ -116,6 +108,16 @@ class Registry:
         """Check if the extension is registered"""
         return extension_name in self._extensions
 
+    def list_extensions(self):
+        """Return a list of registered extensions.
+
+        Returns
+        -------
+        list of dict
+
+        """
+        return list(self._extensions.values())
+
     def register_extension(self, extension):
         """Registers an extension in the registry.
 
@@ -134,6 +136,11 @@ class Registry:
         self._serialize_extensions()
         logger.debug("Registered extension %s", extension["name"])
 
+    @property
+    def registry_filename(self):
+        """Return the filename that stores the registry."""
+        return self._registry_filename
+
     def reset_defaults(self):
         """Reset the registry to its default values."""
         self._extensions.clear()
@@ -142,16 +149,6 @@ class Registry:
         self._serialize_extensions()
 
         logger.debug("Initialized registry to its defaults.")
-
-    def list_extensions(self):
-        """Return a list of registered extensions.
-
-        Returns
-        -------
-        list of dict
-
-        """
-        return list(self._extensions.values())
 
     def show_extensions(self):
         """Show the registered extensions."""

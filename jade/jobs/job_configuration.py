@@ -306,8 +306,8 @@ class JobConfiguration(abc.ABC):
 
         """
         logger.debug("job=%s kwargs=%s", job, kwargs)
-        job_execution = self.job_exection_class.create(
-            self.get_job_inputs(), job, output=output)
+        cls = self.job_execution_class()
+        job_execution = cls.create(self.get_job_inputs(), job, output)
         return job_execution.run(**kwargs)
 
     def serialize(self, include=ConfigSerializeOptions.JOBS):
@@ -387,7 +387,6 @@ class JobConfiguration(abc.ABC):
         for job in self.iter_jobs():
             print(job)
 
-    @property
     def job_execution_class(self):
         """Return the class used for job execution.
 

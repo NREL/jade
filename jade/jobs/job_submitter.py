@@ -203,7 +203,7 @@ results_summary={self.get_results_summmary_report()}"""
         data["results_summary"] = results["summary"]
         data["results"] = results["results"]
         data["job_outputs"] = \
-            self._config.job_execution_class.collect_results(
+            self._config.job_execution_class().collect_results(
                 os.path.join(self._output, JOBS_OUTPUT_DIR))
 
         output_file = os.path.join(self._output, filename)
