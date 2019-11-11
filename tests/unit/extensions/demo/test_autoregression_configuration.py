@@ -214,20 +214,20 @@ def test_remove_job():
     assert arc.get_num_jobs() == 1
 
 
-@patch("jade.extensions.demo.autoregression_configuration.AutoRegressionExecution")
-def test_run_job(mock_job_execution_class):
-    """Should run job using run method defined in AutoRegression class"""
-    arc = AutoRegressionConfiguration(job_inputs=MagicMock())
-    job1 = MagicMock()
-    job1.name = "Job1"
-    arc.add_job(job1)
-
-    job_execution_instance = MagicMock()
-    job_execution_instance.run.return_value = "results"
-
-    output = os.path.join(tempfile.gettempdir(), "jade-unit-test-output")
-    arc.run_job(job1, output)
-    assert job_execution_instance.run.called
+#@patch("jade.extensions.demo.autoregression_configuration.AutoRegressionExecution")
+#def test_run_job(mock_job_execution_class):
+#    """Should run job using run method defined in AutoRegression class"""
+#    arc = AutoRegressionConfiguration(job_inputs=MagicMock())
+#    job1 = MagicMock()
+#    job1.name = "Job1"
+#    arc.add_job(job1)
+#
+#    job_execution_instance = MagicMock()
+#    job_execution_instance.run.return_value = "results"
+#
+#    output = os.path.join(tempfile.gettempdir(), "jade-unit-test-output")
+#    arc.run_job(job1, output)
+#    assert job_execution_instance.run.called
 
 
 def test_serialize():
