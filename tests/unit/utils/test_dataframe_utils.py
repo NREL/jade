@@ -7,7 +7,7 @@ from pandas.testing import assert_frame_equal
 import pytest
 from pytest import mark
 
-from jade.utils.postprocess import *
+from jade.utils.dataframe_utils import *
 
 
 def get_timeseries(length, delta=datetime.timedelta(hours=1)):

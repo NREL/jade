@@ -1,4 +1,4 @@
-"""Contains utility functions for postprocessing and analysis."""
+"""Contains pandas dataframe utility functions."""
 
 import gzip
 import logging
