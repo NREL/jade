@@ -6,8 +6,8 @@
 JADE documentation
 *******************
 
-What's JADE?
-============
+What is JADE?
+=============
 JADE stands for **Job Automation and Deployment Engine**.
 
 JADE automates execution of simulations on any computer or HPC. The core
@@ -22,32 +22,9 @@ User Workflow
 #. Submit the jobs for execution.
 #. Post-process the results.
 
-JADE vs DISCO
-=============
-The JADE and DISCO software modules are currently both stored within the same
-source code repository. This may not always be the case.
-
-What does JADE do?
-
-- Configure jobs, parallelize execution locally or on HPC, report results.
-- Distribution simulation support
-
-  - Automates PyDSS configuration and execution.
-  - Contains general utility functions to help you process OpenDSS and PyDSS
-    output data.
-
-What does DISCO do?
-
-- Defines a specification for input model data so that power flow simulations
-  can be parallelized through JADE.
-- Customizes PyDSS configuration and controllers.
-- Post-processes simluation output data to answer analysis questions.
-
-.. _extending_jade_label:
-
 Extending JADE
 ===============
-JADE could be extended to support any type of job. Re-use or implement derived
+JADE can be extended to support any type of job. Re-use or implement derived
 classes from the following:
 
 - :class:`~jade.jobs.job_parameters_interface.JobParametersInterface`:
@@ -65,8 +42,6 @@ classes from the following:
    :caption: Contents:
 
    tutorial
-   simulation_implementations
-   pv_deployment_simulation_details
    extensions
    jade
    design

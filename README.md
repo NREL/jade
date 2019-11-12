@@ -1,5 +1,5 @@
-# DISCO
-DISCO source code repository
+# JADE
+JADE source code repository
 
 Documentation:  https://github.nrel.gov/pages/Hosting-Capacity-Analysis/jade
 

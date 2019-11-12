@@ -6,7 +6,7 @@ import os
 
 import click
 
-from jade.enums import ControlFlag, Mode, Scale, Placement
+from jade.enums import Mode
 from jade.exceptions import UserAbort
 
 
@@ -15,10 +15,7 @@ logger = logging.getLogger(__name__)
 
 _ENUM_MAPPING = {
     # class to type of value
-    "placement": (Placement, str),
-    "scale": (Scale, str),
     "mode": (Mode, str),
-    "control_flag": (ControlFlag, int),
 }
 
 

@@ -1,5 +1,5 @@
 jade
-#####
+####
 
 .. toctree::
    :maxdepth: 4
