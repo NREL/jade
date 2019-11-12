@@ -9,7 +9,7 @@ from jade.utils.utils import load_data
 
 @click.group()
 def extensions():
-    """Entry point"""
+    """Manage JADE extensions."""
     setup_logging("extensions", None) 
 
 

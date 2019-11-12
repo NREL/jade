@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 @click.group()
 def cli():
-    """Entry point"""
+    """JADE commands"""
 
 
 cli.add_command(extensions)
