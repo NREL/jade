@@ -59,5 +59,13 @@ class JobContainerByKey(JobContainerInterface):
 
         raise InvalidParameter(f"job {name} not found")
 
+    def get_jobs(self, sort_by_key=False):
+        if sort_by_key:
+            jobs = [val for _, val in sorted(self._jobs.items())]
+        else:
+            jobs = list(self._jobs.values())
+
+        return jobs
+
     def get_num_jobs(self):
         return len(self._jobs)

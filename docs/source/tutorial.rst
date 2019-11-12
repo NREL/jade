@@ -112,6 +112,9 @@ command below.
 
 JADE extensions are stored locally in ~/.jade-registry.json.
 
+If all you want to do is batch a bunch of CLI commands then refer to
+:ref:`generic_command_extension_label`.
+
 
 CLI Execution
 *************
