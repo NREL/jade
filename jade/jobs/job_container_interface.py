@@ -31,6 +31,21 @@ class JobContainerInterface:
         """
 
     @abc.abstractmethod
+    def get_jobs(self, sort_by_key=False):
+        """Return all jobs.
+
+        Parameters
+        ----------
+        sort_by_key : bool
+            If true, sort the list by key.
+
+        Returns
+        -------
+        list
+
+        """
+
+    @abc.abstractmethod
     def iter_jobs(self):
         """Yields a generator over all jobs.
 

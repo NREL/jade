@@ -69,6 +69,24 @@ For more details about ABCs, please refer to https://docs.python.org/3/library/a
 
 Tutorial - Creating a ``demo`` Extension
 ****************************************
+There are two ways to extend JADE.
+
+.. _generic_command_extension_label:
+
+Generic Command Execution
+=========================
+JADE implements an extension called ``generic_command``. You can simply pass
+a text file with a list of commands to execute and JADE will run them in
+parallel.
+
+Example::
+
+   jade auto_config generic_command commands.txt -c config.json
+   jade submit-jobs config.json
+
+
+Custom Extension
+================
 This section will show you how to create an extension of JADE through implementing abstract
 methods defined in JADE interfaces, and run a Python data analysis program in parallel.
 

@@ -20,6 +20,15 @@ DEFAULT_REGISTRY = [
         "job_configuration_module": "jade.extensions.demo.autoregression_configuration",
         "job_configuration_class": "AutoRegressionConfiguration",
         "cli_module": "jade.extensions.demo.cli",
+    },
+    {
+        "name": "generic_command",
+        "description": "Allows batching of a list of CLI commands.",
+        "job_execution_module": "jade.extensions.generic_command.generic_command_execution",
+        "job_execution_class": "GenericCommandExecution",
+        "job_configuration_module": "jade.extensions.generic_command.generic_command_configuration",
+        "job_configuration_class": "GenericCommandConfiguration",
+        "cli_module": "jade.extensions.generic_command.cli",
     }
 ]
 
