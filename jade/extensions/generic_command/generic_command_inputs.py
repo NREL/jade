@@ -22,7 +22,6 @@ class GenericCommandInputs(JobInputsInterface):
                 GenericCommandParameters(x.strip()) for x in f_in.readlines()
             ]
 
-    @property
     def base_directory(self):
         return os.path.dirname(self._filename)
 

@@ -4,8 +4,6 @@ from jade.jobs.job_container_by_key import JobContainerByKey
 from jade.jobs.job_configuration import JobConfiguration
 from jade.extensions.generic_command.generic_command_parameters import \
     GenericCommandParameters
-from jade.extensions.generic_command.generic_command_execution import \
-    GenericCommandExecution
 
 
 class GenericCommandConfiguration(JobConfiguration):
@@ -32,7 +30,6 @@ class GenericCommandConfiguration(JobConfiguration):
 
     def _serialize(self, data):
         """Fill in instance-specific information."""
-        pass
 
     def add_job(self, job):
         # Overrides JobConfiguration.add_job so that it can add a unique

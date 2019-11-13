@@ -32,5 +32,5 @@ class GenericCommandParameters(JobParametersInterface):
         }
 
     @classmethod
-    def deserialize(cls, param):
-        return cls(param["command"], job_id=param["job_id"])
+    def deserialize(cls, data):
+        return cls(data["command"], job_id=data["job_id"])

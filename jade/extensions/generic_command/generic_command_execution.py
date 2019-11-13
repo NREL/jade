@@ -1,12 +1,8 @@
 """The job execution class and methods for generic_command."""
 
 import logging
-import os
 
-from jade.events import StructuredJobEvent
 from jade.jobs.job_execution_interface import JobExecutionInterface
-from jade.loggers import log_job_event
-from jade.utils.utils import dump_data
 
 
 logger = logging.getLogger(__name__)
@@ -33,7 +29,7 @@ class GenericCommandExecution(JobExecutionInterface):
         return self._output
 
     @classmethod
-    def create(cls, _, job, output, **kwargs):
+    def create(cls, _, job, output):
         return cls(job, output)
 
     @staticmethod
@@ -43,6 +39,9 @@ class GenericCommandExecution(JobExecutionInterface):
 
     def list_results_files(self):
         return []
+
+    def post_process(self, **kwargs):
+        pass
 
     def run(self):
         assert False

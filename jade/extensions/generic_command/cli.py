@@ -2,15 +2,13 @@
 
 import os
 
-from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
 from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
-from jade.extensions.generic_command.generic_command_execution import GenericCommandExecution
 
 
 def auto_config(inputs):
     """Create a configuration file for generic_command.
-    
+
     Parameters
     ----------
     inputs : str
@@ -26,7 +24,6 @@ def auto_config(inputs):
         config.add_job(job_param)
 
     return config
-
 
 def run(config_file, name, output, output_format, verbose):
     """Run auto regression analysis through command line"""
