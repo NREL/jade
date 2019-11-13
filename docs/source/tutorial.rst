@@ -116,6 +116,19 @@ If all you want to do is batch a bunch of CLI commands then refer to
 :ref:`generic_command_extension_label`.
 
 
+HPC Configuration
+*****************
+This section only applies if you run your jobs on the HPC.
+
+JADE requires that you configure your run directory on the Lustre filesystem
+for optimal performance. Run this command on your directory before it contains
+any data.
+
+::
+
+    lfs setstripe -c 16 <run-directory>
+
+
 CLI Execution
 *************
 Jade provides a CLI utility to start jobs.
