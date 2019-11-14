@@ -81,7 +81,7 @@ parallel.
 
 Example::
 
-   jade auto_config generic_command commands.txt -c config.json
+   jade auto-config generic_command commands.txt -c config.json
    jade submit-jobs config.json
 
 
