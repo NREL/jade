@@ -10,6 +10,7 @@ import pytest
 from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
 from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
 from jade.extensions.generic_command.generic_command_execution import GenericCommandExecution
+from jade.extensions.generic_command.generic_command_parameters import GenericCommandParameters
 from jade.utils.subprocess_manager import run_command
 
 
@@ -49,3 +50,20 @@ def test_run_generic_commands(generic_command_fixture):
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1"
     ret = run_command(cmd)
     assert ret == 0
+
+
+def test_sorted_order(generic_command_fixture):
+    with open(TEST_FILENAME, "w") as f_out:
+        pass
+
+    inputs = GenericCommandInputs(TEST_FILENAME)
+    config = GenericCommandConfiguration(inputs)
+    num_jobs = 20
+    for i in range(num_jobs):
+        job = GenericCommandParameters("echo hello")
+        config.add_job(job)
+
+    assert config.get_num_jobs() == num_jobs
+
+    job_ids = [job.job_id for job in config.iter_jobs()]
+    assert job_ids == list(range(1, num_jobs + 1))

@@ -42,12 +42,6 @@ class GenericCommandConfiguration(JobConfiguration):
 
         self._jobs.add_job(job)
 
-    def iter_jobs(self):
-        # Overrides JobConfiguration.iter_jobs so that it delivers jobs in
-        # order of job_id.
-        for job in self._jobs.get_jobs(sort_by_key=True):
-            yield job
-
     def create_from_result(self, job, output_dir):
         return None
 
