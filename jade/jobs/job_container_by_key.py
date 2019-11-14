@@ -1,5 +1,6 @@
 """Implements a container for jobs represented by a key."""
 
+from collections import OrderedDict
 import logging
 
 from jade.exceptions import InvalidParameter
@@ -13,7 +14,8 @@ logger = logging.getLogger(__name__)
 class JobContainerByKey(JobContainerInterface):
     """Stores jobs by key."""
     def __init__(self):
-        self._jobs = {}  # functools.namedtuple: JobParametersInterface
+        # functools.namedtuple: JobParametersInterface
+        self._jobs = OrderedDict()
 
     @staticmethod
     def _get_key(job=None, key=None):
@@ -58,14 +60,6 @@ class JobContainerByKey(JobContainerInterface):
                 return job
 
         raise InvalidParameter(f"job {name} not found")
-
-    def get_jobs(self, sort_by_key=False):
-        if sort_by_key:
-            jobs = [val for _, val in sorted(self._jobs.items())]
-        else:
-            jobs = list(self._jobs.values())
-
-        return jobs
 
     def get_num_jobs(self):
         return len(self._jobs)
