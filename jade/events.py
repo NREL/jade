@@ -7,6 +7,7 @@ import sys
 from datetime import datetime
 from prettytable import PrettyTable
 from jade.common import JOBS_OUTPUT_DIR
+from jade.utils.utils import dump_data
 
 
 class StructuredJobEvent(object):
@@ -67,6 +68,10 @@ class StructuredJobEvent(object):
         """To format a event instance to string"""
         return json.dumps(self.__dict__, sort_keys=True)
 
+    def to_dict(self):
+        """Convert event object to dict"""
+        return self.__dict__
+
 
 class EventsSummary(object):
     """Provides summary of failed job events or errors."""
@@ -79,6 +84,7 @@ class EventsSummary(object):
         """
         self._output_dir = output_dir
         self._job_outputs_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
+        self._summary_file = os.path.join(output_dir, "events.json")
         self._events = self._consolidate_events()
 
     def _most_recent_event_files(self):
@@ -122,16 +128,21 @@ class EventsSummary(object):
                 for line in f.readlines():
                     record = json.loads(line)
                     event = StructuredJobEvent(
-                        job_name=record["job_name"],
-                        category=record["category"],
-                        code=record["code"],
-                        message=record["message"],
-                        timestamp=record["timestamp"],
-                        exception=record["exception"],
+                        job_name=record.get("job_name", ""),
+                        category=record.get("category", ""),
+                        code=record.get("code", ""),
+                        message=record.get("message", ""),
+                        timestamp=record.get("timestamp", ""),
+                        exception=record.get("exception", ""),
                         **record["data"]
                     )
                     events.append(event)
         return events
+
+    def _save_events_summary(self):
+        """Save all events data to a JSON file"""
+        dict_events = [event.to_dict() for event in self._events]
+        dump_data(dict_events, self._summary_file)
 
     def show_events(self):
         """Print tabular events in terminal"""
@@ -154,3 +165,6 @@ class EventsSummary(object):
         total = len(self._events)
         print(table)
         print(f"Total events: {total}\n")
+
+        self._save_events_summary()
+        print(f"Events summary file: {self._summary_file}")
