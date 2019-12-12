@@ -223,6 +223,12 @@ class JobConfiguration(abc.ABC):
             return self._get_job_by_name(name)
 
         return self._jobs.get_job(name)
+    
+    def get_job_by_name(self, name):
+        for job in self.iter_jobs():
+            if job.name == name:
+                return  job
+        return None
 
     def get_parameters_class(self):
         """Return the class used for job parameters."""

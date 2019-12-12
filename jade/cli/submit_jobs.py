@@ -82,11 +82,25 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Enable verbose log output."
 )
+@click.option(
+    "--restart-failed",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Restart only failed jobs."
+)
+@click.option(
+    "--restart-missing",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Restart only missing jobs."
+)
 @click.command()
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
-        verbose):
+        verbose, restart_failed, restart_missing):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
     if rotate_logs:
@@ -100,12 +114,21 @@ def submit_jobs(
     logger.info(get_cli_string())
 
     mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
+
+    if restart_failed:
+        failed_jobs = mgr.get_failed_parameters(output)
+        for job in failed_jobs:
+            print(job.name)
+        mgr.create_config_from_failed_jobs(failed_jobs, "failed_jobs_inputs.json")
+
     ret = mgr.submit_jobs(
         per_node_batch_size=per_node_batch_size,
         max_nodes=max_nodes,
         force_local=local,
         verbose=verbose,
-        poll_interval=poll_interval,
         num_processes=num_processes,
+        poll_interval=poll_interval
     )
     sys.exit(ret.value)
+
+# def build_missing_jobs

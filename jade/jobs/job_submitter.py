@@ -83,25 +83,24 @@ results_summary={self.get_results_summmary_report()}"""
         """Cancel running and pending jobs."""
         # TODO
 
-    def create_config_from_failed_jobs(self, output, new_filename):
+    def create_config_from_failed_jobs(self, failed_jobs, new_filename):
         """Creates a new configuration file with only parameters that failed
         from the previous run.
 
         Parameters
         ----------
-        output : str
-            Output directory for the failing run.
+        failed_jobs : Jobs
+            Jobs to fix.
         new_filename : str
             Name of configuration file to create.
 
         """
-        params = self.get_failed_parameters(output)
-        new_config = copy.deepcopy(self._config)
-        new_config.reconfigure_jobs(params)
-        new_config.dump(new_filename)
+        # new_config = copy.deepcopy(self._config)
+        self._config.reconfigure_jobs(failed_jobs)
+        self._config.dump(new_filename)
+        self._config_file = new_filename
 
-        logger.info("Created new config file %s with failed jobs from %s",
-                    new_filename, output)
+        logger.info("Created new config file %s with failed jobs from %s")
 
     def get_failed_parameters(self, output):
         """Get the parameters from jobs that failed in a previous run.
@@ -121,14 +120,13 @@ results_summary={self.get_results_summmary_report()}"""
         results_file = os.path.join(output, RESULTS_FILE)
         data = load_data(results_file)
         parameters = []
-        for result in data["results"]:
+        for index, result in enumerate(data["results"]):
             if result["return_code"] != 0:
-                assert False, "TODO broken"
-                params = self._config.get_parameters_from_job_name(
-                    result["job"])
+                # assert False, "TODO broken"
+                params = self._config.get_job_by_name(result['name'])
                 parameters.append(params)
 
-            return parameters
+        return parameters
 
     def submit_jobs(self,
                     name="job",
