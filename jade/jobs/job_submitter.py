@@ -121,10 +121,9 @@ results_summary={self.get_results_summmary_report()}"""
         results_file = os.path.join(output, RESULTS_FILE)
         data = load_data(results_file)
         parameters = []
-        for result in enumerate(data["results"]):
-            job_result = result[1]
-            if job_result["return_code"] != 0:
-                params = self._config.get_job_by_name(job_result['name'])
+        for result in data["results"]:
+            if result["return_code"] != 0:
+                params = self._config.get_job_by_name(result['name'])
                 parameters.append(params)
 
         return parameters
@@ -146,10 +145,9 @@ results_summary={self.get_results_summmary_report()}"""
         results_file = os.path.join(output, RESULTS_FILE)
         data = load_data(results_file)
         jobs = []
-        for result in enumerate(data["results"]):
-            job_result = result[1]
-            if job_result["return_code"] == 0:
-                jobs.append(job_result)
+        for result in data["results"]:
+            if result["return_code"] == 0:
+                jobs.append(result)
 
         return jobs
 
