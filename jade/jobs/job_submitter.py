@@ -214,8 +214,8 @@ results_summary={self.get_results_summmary_report()}"""
 
         if ( len(previous_results) > 0 ):
             self._results = deserialize_results(
-                np.concatenate([serialize_results(self._results), previous_results])
-            )
+                            np.concatenate([serialize_results(self._results),
+                                            previous_results]))
         self.write_results(RESULTS_FILE)
         results_summary.delete_files()
         assert not os.listdir(self._results_dir)
