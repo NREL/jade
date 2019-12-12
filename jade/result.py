@@ -2,6 +2,7 @@
 
 from collections import namedtuple
 import os
+import time
 
 from prettytable import PrettyTable
 
@@ -10,8 +11,11 @@ from jade.exceptions import InvalidParameter, ExecutionError
 from jade.utils.utils import load_data
 
 
-Result = namedtuple("Result", "name, return_code, status, exec_time_s")
-
+# Result = namedtuple("Result", "name, return_code, status, exec_time_s, complete_time")
+class Result(namedtuple("Result", "name, return_code, status, exec_time_s, complete_time")):
+    def __new__(cls, name, return_code, status, exec_time_s, complete_time=time.time()):
+        # add default values
+        return super(Result, cls).__new__(cls, name, return_code, status, exec_time_s, complete_time)
 
 def serialize_result(result):
     """Serialize a Result to a dict.
@@ -56,7 +60,11 @@ def deserialize_result(data):
     Result
 
     """
-    return Result(data["name"], data["return_code"], data["status"],
+    if "complete_time" in data.keys():
+        return Result(data["name"], data["return_code"], data["status"],
+                  data["exec_time_s"], data["complete_time"])
+    else:
+        return Result(data["name"], data["return_code"], data["status"],
                   data["exec_time_s"])
 
 
