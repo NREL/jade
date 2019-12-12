@@ -4,6 +4,7 @@ from collections import OrderedDict
 import copy
 import datetime
 import logging
+import numpy as np
 import os
 import shutil
 
@@ -120,13 +121,37 @@ results_summary={self.get_results_summmary_report()}"""
         results_file = os.path.join(output, RESULTS_FILE)
         data = load_data(results_file)
         parameters = []
-        for index, result in enumerate(data["results"]):
-            if result["return_code"] != 0:
-                # assert False, "TODO broken"
-                params = self._config.get_job_by_name(result['name'])
+        for result in enumerate(data["results"]):
+            job_result = result[1]
+            if job_result["return_code"] != 0:
+                params = self._config.get_job_by_name(job_result['name'])
                 parameters.append(params)
 
         return parameters
+
+    def get_successful_results(self, output):
+        """Get the parameters from jobs that succeeded in a previous run.
+        The result can be used to reconfigure a JobConfiguration.
+
+        Parameters
+        ----------
+        output : str
+            Output directory for the successful run.
+
+        Returns
+        -------
+        list of Result successful job results
+
+        """
+        results_file = os.path.join(output, RESULTS_FILE)
+        data = load_data(results_file)
+        jobs = []
+        for result in enumerate(data["results"]):
+            job_result = result[1]
+            if job_result["return_code"] == 0:
+                jobs.append(job_result)
+
+        return jobs
 
     def submit_jobs(self,
                     name="job",
@@ -135,7 +160,8 @@ results_summary={self.get_results_summmary_report()}"""
                     force_local=False,
                     verbose=False,
                     poll_interval=DEFAULTS["poll_interval"],
-                    num_processes=None):
+                    num_processes=None,
+                    previous_results=[]):
         """Submit simulations. Auto-detect whether the current system is an HPC
         and submit to its queue. Otherwise, run locally.
 
@@ -188,6 +214,10 @@ results_summary={self.get_results_summmary_report()}"""
                          len(self._results), self._config.get_num_jobs())
             result = Status.ERROR
 
+        if ( len(previous_results) > 0 ):
+            self._results = deserialize_results(
+                np.concatenate([serialize_results(self._results), previous_results])
+            )
         self.write_results(RESULTS_FILE)
         results_summary.delete_files()
         assert not os.listdir(self._results_dir)

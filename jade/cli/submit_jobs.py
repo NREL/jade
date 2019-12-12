@@ -103,11 +103,13 @@ def submit_jobs(
         verbose, restart_failed, restart_missing):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
-    
+
     mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
+    successful_results = []
 
     if restart_failed:
         failed_jobs = mgr.get_failed_parameters(output)
+        successful_results = mgr.get_successful_results(output)
         mgr.create_config_from_failed_jobs(failed_jobs, "failed_jobs_inputs.json")
 
     if rotate_logs:
@@ -126,7 +128,8 @@ def submit_jobs(
         force_local=local,
         verbose=verbose,
         num_processes=num_processes,
-        poll_interval=poll_interval
+        poll_interval=poll_interval,
+        previous_results=successful_results
     )
     sys.exit(ret.value)
 
