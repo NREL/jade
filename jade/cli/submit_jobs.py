@@ -103,6 +103,13 @@ def submit_jobs(
         verbose, restart_failed, restart_missing):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
+    
+    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
+
+    if restart_failed:
+        failed_jobs = mgr.get_failed_parameters(output)
+        mgr.create_config_from_failed_jobs(failed_jobs, "failed_jobs_inputs.json")
+
     if rotate_logs:
         rotate_filenames(output, ".log")
     if rotate_tomls:
@@ -112,14 +119,6 @@ def submit_jobs(
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level)
     logger.info(get_cli_string())
-
-    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
-
-    if restart_failed:
-        failed_jobs = mgr.get_failed_parameters(output)
-        for job in failed_jobs:
-            print(job.name)
-        mgr.create_config_from_failed_jobs(failed_jobs, "failed_jobs_inputs.json")
 
     ret = mgr.submit_jobs(
         per_node_batch_size=per_node_batch_size,
