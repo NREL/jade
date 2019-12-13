@@ -108,8 +108,6 @@ def submit_jobs(
         config_file = "failed_job_inputs.json"
         failed_job_config.dump(config_file)
 
-    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
-
     if rotate_logs:
         rotate_filenames(output, ".log")
     if rotate_tomls:
@@ -120,6 +118,7 @@ def submit_jobs(
     setup_logging(__name__, filename, file_level=level, console_level=level)
     logger.info(get_cli_string())
 
+    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
     ret = mgr.submit_jobs(
         per_node_batch_size=per_node_batch_size,
         max_nodes=max_nodes,
