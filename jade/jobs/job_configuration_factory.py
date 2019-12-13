@@ -36,6 +36,11 @@ def create_config_from_previous_run(config_file, output, result_type="successful
     -------
     JobConfiguration
 
+    Raises
+    ------
+    InvalidParameter
+            Raised if result_type is not successful or missing
+
     """
 
     config = deserialize_config(load_data(config_file))
