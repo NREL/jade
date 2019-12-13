@@ -13,7 +13,7 @@ from jade.utils.utils import load_data
 class Result(namedtuple("Result", "name, return_code, status, exec_time_s, completion_time")):
     """
     Result class containing data after jobs have finished. `completion_time`
-    intended to be populated when result created, then reused as needed.
+    will be populated when result created and passed in when deserializing
 
     Attributes
     ----------
@@ -76,9 +76,9 @@ def deserialize_result(data):
     if "completion_time" in data.keys():
         return Result(data["name"], data["return_code"], data["status"],
                   data["exec_time_s"], data["completion_time"])
-    else:
-        return Result(data["name"], data["return_code"], data["status"],
-                  data["exec_time_s"])
+
+    return Result(data["name"], data["return_code"], data["status"],
+                data["exec_time_s"])
 
 
 def deserialize_results(data):
