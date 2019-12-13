@@ -10,12 +10,25 @@ from jade.common import RESULTS_FILE
 from jade.exceptions import InvalidParameter, ExecutionError
 from jade.utils.utils import load_data
 
+class Result(namedtuple("Result", "name, return_code, status, exec_time_s, completion_time")):
+    """
+    Result class containing data after jobs have finished. `completion_time`
+    intended to be populated when result created, then reused as needed.
 
-# Result = namedtuple("Result", "name, return_code, status, exec_time_s, complete_time")
-class Result(namedtuple("Result", "name, return_code, status, exec_time_s, complete_time")):
-    def __new__(cls, name, return_code, status, exec_time_s, complete_time=time.time()):
+    Attributes
+    ----------
+    name : str
+    return_code : int
+    status : str
+    exec_time_s : int
+    completion_time : int (default current timestamp)
+
+    """
+    def __new__(cls, name, return_code, status, exec_time_s,
+                completion_time=time.time()):
         # add default values
-        return super(Result, cls).__new__(cls, name, return_code, status, exec_time_s, complete_time)
+        return super(Result, cls).__new__(cls, name, return_code, status,
+                                          exec_time_s, completion_time)
 
 def serialize_result(result):
     """Serialize a Result to a dict.
@@ -60,9 +73,9 @@ def deserialize_result(data):
     Result
 
     """
-    if "complete_time" in data.keys():
+    if "completion_time" in data.keys():
         return Result(data["name"], data["return_code"], data["status"],
-                  data["exec_time_s"], data["complete_time"])
+                  data["exec_time_s"], data["completion_time"])
     else:
         return Result(data["name"], data["return_code"], data["status"],
                   data["exec_time_s"])
@@ -179,7 +192,7 @@ class ResultsSummary:
         num_failed = 0
         table = PrettyTable()
         table.field_names = ["Job Name", "Return Code", "Status",
-                             "Execution Time (s)"]
+                             "Execution Time (s)", "Completion Time"]
         min_exec = 0
         max_exec = 0
         if self._results["results"]:
@@ -202,7 +215,7 @@ class ResultsSummary:
                 max_exec = result.exec_time_s
             exec_times.append(result.exec_time_s)
             table.add_row([result.name, result.return_code, result.status,
-                           result.exec_time_s])
+                           result.exec_time_s, result.completion_time])
 
         total = num_successful + num_failed
         assert total == len(self._results["results"])
