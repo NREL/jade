@@ -122,7 +122,7 @@ results_summary={self.get_results_summmary_report()}"""
         parameters = []
         for result in data["results"]:
             if result["return_code"] != 0:
-                params = self._config.get_job_by_name(result['name'])
+                params = self._config.get_job(result['name'])
                 parameters.append(params)
 
         return parameters
