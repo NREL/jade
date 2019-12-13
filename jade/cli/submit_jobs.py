@@ -7,7 +7,9 @@ import sys
 import click
 
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
+from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
+from jade.result import ResultsSummary
 from jade.utils.utils import makedirs, rotate_filenames, get_cli_string
 
 
@@ -97,13 +99,16 @@ def submit_jobs(
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
 
-    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
-    successful_results = []
+    previous_results = []
 
     if restart_failed:
-        failed_jobs = mgr.get_failed_parameters(output)
-        successful_results = mgr.get_successful_results(output)
-        mgr.create_config_from_failed_jobs(failed_jobs, "failed_jobs_inputs.json")
+        failed_job_config = create_config_from_previous_run(config_file, output,
+                                                            result_type='failed')
+        previous_results = ResultsSummary(output).get_successful_results()
+        config_file = "failed_job_inputs.json"
+        failed_job_config.dump(config_file)
+
+    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
 
     if rotate_logs:
         rotate_filenames(output, ".log")
@@ -122,6 +127,6 @@ def submit_jobs(
         verbose=verbose,
         num_processes=num_processes,
         poll_interval=poll_interval,
-        previous_results=successful_results
+        previous_results=previous_results
     )
     sys.exit(ret.value)

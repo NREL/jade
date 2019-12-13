@@ -83,25 +83,6 @@ results_summary={self.get_results_summmary_report()}"""
         """Cancel running and pending jobs."""
         # TODO
 
-    def create_config_from_failed_jobs(self, failed_jobs, new_filename):
-        """Creates a new configuration file with only parameters that failed
-        from the previous run.
-
-        Parameters
-        ----------
-        failed_jobs : Jobs
-            Jobs to fix.
-        new_filename : str
-            Name of configuration file to create.
-
-        """
-        # new_config = copy.deepcopy(self._config)
-        self._config.reconfigure_jobs(failed_jobs)
-        self._config.dump(new_filename)
-        self._config_file = new_filename
-
-        logger.info("Created new config file %s with failed jobs from %s")
-
     def get_failed_parameters(self, output):
         """Get the parameters from jobs that failed in a previous run.
         The result can be used to reconfigure a JobConfiguration.
@@ -126,29 +107,6 @@ results_summary={self.get_results_summmary_report()}"""
                 parameters.append(params)
 
         return parameters
-
-    def get_successful_results(self, output):
-        """Get the parameters from jobs that succeeded in a previous run.
-        The result can be used to reconfigure a JobConfiguration.
-
-        Parameters
-        ----------
-        output : str
-            Output directory for the successful run.
-
-        Returns
-        -------
-        list of Result successful job results
-
-        """
-        results_file = os.path.join(output, RESULTS_FILE)
-        data = load_data(results_file)
-        jobs = []
-        for result in data["results"]:
-            if result["return_code"] == 0:
-                jobs.append(result)
-
-        return jobs
 
     def submit_jobs(self,
                     name="job",
@@ -212,7 +170,7 @@ results_summary={self.get_results_summmary_report()}"""
             result = Status.ERROR
 
         if previous_results:
-            self._results += deserialize_results(previous_results)
+            self._results += previous_results
 
         self.write_results(RESULTS_FILE)
         results_summary.delete_files()
