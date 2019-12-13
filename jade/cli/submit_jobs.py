@@ -89,18 +89,11 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Restart only failed jobs."
 )
-@click.option(
-    "--restart-missing",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Restart only missing jobs."
-)
 @click.command()
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
-        verbose, restart_failed, restart_missing):
+        verbose, restart_failed):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
 
@@ -132,5 +125,3 @@ def submit_jobs(
         previous_results=successful_results
     )
     sys.exit(ret.value)
-
-# def build_missing_jobs
