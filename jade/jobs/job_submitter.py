@@ -83,31 +83,6 @@ results_summary={self.get_results_summmary_report()}"""
         """Cancel running and pending jobs."""
         # TODO
 
-    def get_failed_parameters(self, output):
-        """Get the parameters from jobs that failed in a previous run.
-        The result can be used to reconfigure a JobConfiguration.
-
-        Parameters
-        ----------
-        output : str
-            Output directory for the failing run.
-
-        Returns
-        -------
-        list of JobParametersInterface stored as namedtuple
-            list of namedtuples of parameters
-
-        """
-        results_file = os.path.join(output, RESULTS_FILE)
-        data = load_data(results_file)
-        parameters = []
-        for result in data["results"]:
-            if result["return_code"] != 0:
-                params = self._config.get_job(result['name'])
-                parameters.append(params)
-
-        return parameters
-
     def submit_jobs(self,
                     name="job",
                     per_node_batch_size=DEFAULTS["per_node_batch_size"],
