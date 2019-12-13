@@ -165,36 +165,20 @@ class ResultsSummary:
     def get_successful_results(self):
         """Return the successful results."""
         successful_results = []
-        for result in self.get_results_by_status_code(0):
-            if result.status == "finished":
+        for result in self._results["results"]:
+            if result.return_code == 0 and result.status == "finished":
                 successful_results.append(result)
 
         return successful_results
 
     def get_failed_results(self):
         """Return the failed results."""
-        return self.get_results_by_status_code(1)
-
-    def get_results_by_status_code(self, status_code):
-        """Return results by status_code
-
-        Parameters
-        ----------
-        status_code : int
-            status code of results to return
-
-        Returns
-        -------
-        list
-            array of results that match given status code
-
-        """
-        results_of_type = []
+        failed_results = []
         for result in self._results["results"]:
-            if result.return_code == status_code:
-                results_of_type.append(result)
+            if result.return_code != 0 or result.status != "finished":
+                failed_results.append(result)
 
-        return results_of_type
+        return failed_results
 
     def list_results(self):
         """Return the results.
