@@ -4,7 +4,6 @@ from collections import OrderedDict
 import copy
 import datetime
 import logging
-import numpy as np
 import os
 import shutil
 
@@ -159,7 +158,7 @@ results_summary={self.get_results_summmary_report()}"""
                     verbose=False,
                     poll_interval=DEFAULTS["poll_interval"],
                     num_processes=None,
-                    previous_results=[]):
+                    previous_results=None):
         """Submit simulations. Auto-detect whether the current system is an HPC
         and submit to its queue. Otherwise, run locally.
 
@@ -212,10 +211,9 @@ results_summary={self.get_results_summmary_report()}"""
                          len(self._results), self._config.get_num_jobs())
             result = Status.ERROR
 
-        if ( len(previous_results) > 0 ):
-            self._results = deserialize_results(
-                            np.concatenate([serialize_results(self._results),
-                                            previous_results]))
+        if previous_results:
+            self._results += deserialize_results(previous_results)
+
         self.write_results(RESULTS_FILE)
         results_summary.delete_files()
         assert not os.listdir(self._results_dir)
