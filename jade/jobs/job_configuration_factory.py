@@ -19,7 +19,7 @@ def create_config_from_file(filename, **kwargs):
     return deserialize_config(data, **kwargs)
 
 @timed_debug
-def create_config_from_previous_run(config_file, output, result_type='successful', **kwargs):
+def create_config_from_previous_run(config_file, output, result_type="successful", **kwargs):
     """Create instance of a JobConfiguration from a previous config file,
     returning only those of the type given
 
@@ -46,6 +46,8 @@ def create_config_from_previous_run(config_file, output, result_type='successful
         results_of_type = summary.get_successful_results()
     elif result_type == "failed":
         results_of_type = summary.get_failed_results()
+    else:
+        raise InvalidParameter(f"given result type invalid: {result_type}")
 
     parameters = []
     for result in results_of_type:
