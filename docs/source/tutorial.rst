@@ -139,6 +139,13 @@ Start execution of jobs defined in a configuration file.  If executed on an HPC
 this will submit the jobs to the HPC queue. Otherwise, it will run the jobs
 locally.
 
+.. note::
+
+   If running on the HPC then you should start jobs from a `tmux
+   <https://github.com/tmux/tmux/wiki>`_ or `screen
+   <https://www.gnu.org/software/screen>`_ session so that the job manager
+   stays alive if you disconnect from the network.
+
 It's important to understand how JADE submits HPC jobs in order to optimize
 your performance.  JADE divides the jobs created by the user into batches.  It
 makes one HPC node submission for each batch. Once running on a node it runs in
@@ -169,10 +176,10 @@ Examples::
 
     # Specify options.
     jade submit-jobs config.json \
-        --output=output
-        --max-nodes=20
-        --per-node-batch-size=500
-        --hpc-config=hpc_config_test.toml
+        --output=output \
+        --max-nodes=20 \
+        --per-node-batch-size=500 \
+        --hpc-config=hpc_config_test.toml \
         --verbose
 
 .. note::
