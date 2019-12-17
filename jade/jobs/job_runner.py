@@ -45,8 +45,15 @@ class JobRunner(JobManagerBase):
                      batch_id)
 
     @timed_info
-    def run_jobs(self, verbose=False):
+    def run_jobs(self, verbose=False, num_processes=None):
         """Run the jobs.
+
+        Parameters
+        ----------
+        verbose : bool
+            If True, enable debug logging.
+        num_processes : int
+            Number of processes to run in parallel; defaults to num CPUs
 
         Returns
         -------
@@ -62,7 +69,7 @@ class JobRunner(JobManagerBase):
                 scratch_dir, are_inputs_local)
 
             jobs = self._generate_jobs(config_file, verbose)
-            result = self._run_jobs(jobs)
+            result = self._run_jobs(jobs, num_processes=num_processes)
             self._consolidate_results()
 
             assert len(self._results) == self._config.get_num_jobs(), \
@@ -141,9 +148,12 @@ class JobRunner(JobManagerBase):
             ) for job in self._config.iter_jobs()
         ]
 
-    def _run_jobs(self, jobs):
+    def _run_jobs(self, jobs, num_processes=None):
         num_jobs = len(jobs)
-        max_num_workers = self._intf.get_num_cpus()
+        if num_processes is None:
+            max_num_workers = self._intf.get_num_cpus()
+        else:
+            max_num_workers = num_processes
         num_workers = min(num_jobs, max_num_workers)
         logger.info("Generated %s jobs to execute on %s workers max=%s.",
                     num_jobs, num_workers, max_num_workers)

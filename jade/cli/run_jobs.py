@@ -27,6 +27,13 @@ logger = logging.getLogger(__name__)
     help="Output directory."
 )
 @click.option(
+    "-q", "--num-processes",
+    default=None,
+    show_default=False,
+    type=int,
+    help="Number of processes to run in parallel; defaults to num CPUs."
+)
+@click.option(
     "--verbose",
     is_flag=True,
     default=False,
@@ -34,7 +41,7 @@ logger = logging.getLogger(__name__)
     help="Enable verbose log output."
 )
 @click.command()
-def run_jobs(config_file, output=OUTPUT_DIR, verbose=False):
+def run_jobs(config_file, output, num_processes, verbose):
     """Starts jobs on HPC."""
     match = re.search(r"batch_(\d+)\.json", config_file)
     assert match
@@ -46,5 +53,5 @@ def run_jobs(config_file, output=OUTPUT_DIR, verbose=False):
     logger.info(get_cli_string())
 
     mgr = JobRunner(config_file, output=output, batch_id=batch_id)
-    ret = mgr.run_jobs(verbose=verbose)
+    ret = mgr.run_jobs(verbose=verbose, num_processes=num_processes)
     sys.exit(ret.value)

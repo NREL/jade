@@ -27,6 +27,9 @@ class JobQueue:
         self._queue_depth = max_queue_depth
         self._poll_interval = poll_interval
 
+        logger.debug("queue_depth=%s poll_interval=%s", self._queue_depth,
+                     self._poll_interval)
+
     def run(self, jobs):
         """
         Run job queue.

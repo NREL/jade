@@ -47,9 +47,14 @@ def test_run_generic_commands(generic_command_fixture):
     config = GenericCommandConfiguration(inputs)
     config.dump(CONFIG_FILE)
 
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1"
-    ret = run_command(cmd)
-    assert ret == 0
+    cmds = (
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1",
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1 -q 16",
+    )
+
+    for cmd in cmds:
+        ret = run_command(cmd)
+        assert ret == 0
 
 
 def test_sorted_order(generic_command_fixture):
