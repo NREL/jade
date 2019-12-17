@@ -1,16 +1,15 @@
 """Defines a dispatchable job."""
 
 import logging
-import os
 import shlex
 import subprocess
 import sys
 import time
 
-from jade.common import RESULTS_DIR
+from jade.common import get_results_temp_filename
 from jade.jobs.dispatchable_job_interface import DispatchableJobInterface
-from jade.result import Result, serialize_result
-from jade.utils.utils import dump_data, makedirs
+from jade.jobs.results_aggregator import ResultsAggregator
+from jade.result import Result
 
 
 logger = logging.getLogger(__name__)
@@ -18,18 +17,14 @@ logger = logging.getLogger(__name__)
 
 class DispatchableJob(DispatchableJobInterface):
     """Defines a dispatchable job."""
-    def __init__(self, job, cmd, output):
+    def __init__(self, job, cmd, output, results_filename):
         self._job = job
         self._cli_cmd = cmd
         self._output = output
         self._pipe = None
-        self._results_dir = os.path.join(self._output, RESULTS_DIR)
-        self._suffix = ""
+        self._results_filename = results_filename
         self._is_pending = False
-
         self._start_time = None
-
-        makedirs(self._results_dir)
 
     def __del__(self):
         if self._is_pending:
@@ -46,15 +41,10 @@ class DispatchableJob(DispatchableJobInterface):
 
         status = "finished"
         result = Result(self._job.name, ret, status, exec_time_s)
+        ResultsAggregator.append(self._results_filename, result)
 
-        filename = os.path.join(
-            self._results_dir,
-            f"{job_filename}_{self._suffix}.toml",
-        )
-
-        dump_data(serialize_result(result), filename)
-        logger.info("Job %s completed return_code=%s exec_time_s=%s "
-                    "filename=%s", self._job.name, ret, exec_time_s, filename)
+        logger.info("Job %s completed return_code=%s exec_time_s=%s",
+                    self._job.name, ret, exec_time_s)
 
     def is_complete(self):
         if not self._is_pending:
@@ -85,6 +75,3 @@ class DispatchableJob(DispatchableJobInterface):
         self._pipe = subprocess.Popen(cmd)
         self._is_pending = True
         logger.debug("Submitted %s", self._cli_cmd)
-
-    def set_results_filename_suffix(self, suffix):
-        self._suffix = suffix

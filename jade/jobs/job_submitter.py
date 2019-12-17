@@ -8,7 +8,8 @@ import os
 import shutil
 
 import jade
-from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, RESULTS_FILE
+from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
+    RESULTS_FILE, RESULTS_DIR, get_results_temp_filename
 from jade.enums import Status
 from jade.exceptions import InvalidParameter
 from jade.hpc.common import HpcType
@@ -16,7 +17,8 @@ from jade.hpc.hpc_manager import HpcManager, AsyncHpcSubmitter
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.job_runner import JobRunner
-from jade.result import deserialize_results, serialize_results
+from jade.jobs.results_aggregator import ResultsAggregatorSummary
+from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
 from jade.utils.utils import dump_data, load_data, create_script, \
     create_chunks
@@ -179,7 +181,8 @@ results_summary={self.get_results_summmary_report()}"""
             self._submit_to_hpc(name, max_nodes, per_node_batch_size, verbose,
                                 poll_interval, num_processes)
 
-        self._results, filenames = self._collect_all_results()
+        results_summary = ResultsAggregatorSummary(self._results_dir)
+        self._results = results_summary.get_results()
         if len(self._results) != self._config.get_num_jobs():
             logger.error("Number of results doesn't match number of jobs: "
                          "results=%s jobs=%s. Check for process crashes "
@@ -188,9 +191,9 @@ results_summary={self.get_results_summmary_report()}"""
             result = Status.ERROR
 
         self.write_results(RESULTS_FILE)
-        for filename in filenames:
-            logger.debug("Removing temp results file %s", filename)
-            os.remove(filename)
+        results_summary.delete_files()
+        assert not os.listdir(self._results_dir)
+        os.rmdir(self._results_dir)
 
         return result
 
@@ -240,9 +243,6 @@ results_summary={self.get_results_summmary_report()}"""
                 "total": num_successful + num_failed,
             },
         }
-
-    def _collect_all_results(self):
-        return collect_all_results(self._results_dir)
 
     def _create_run_script(
             self, config_file, filename, num_processes, verbose):
@@ -320,28 +320,3 @@ results_summary={self.get_results_summmary_report()}"""
             poll_interval=poll_interval,
         )
         logger.info("All submitters have completed.")
-
-
-def collect_all_results(directory):
-    """Collect results for all batches in a directory. Should only be called
-    when all jobs are have finished. This is here to allow patching results
-    from failed/restarted jobs.
-
-    Returns
-    -------
-    tuple
-        list of Result, list of filenames (str)
-
-    """
-    logger.debug("Collect all results")
-    results = []
-    # TODO: add parameter to aggregate_data_from_files to allow deserialization
-    filenames = []
-    for filename in os.listdir(directory):
-        if filename.endswith(JobRunner.SUMMARY_FILE_SUFFIX):
-            path = os.path.join(directory, filename)
-            results += deserialize_results(load_data(path)["results"])
-            filenames.append(path)
-            logger.debug("Deserialized %s", path)
-
-    return results, filenames

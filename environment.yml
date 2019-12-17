@@ -8,6 +8,7 @@ dependencies:
   - pip:
     - click
     - feather-format
+    - filelock
     - ipython
     - jupyter
     - matplotlib>=3.0.3

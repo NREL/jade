@@ -49,7 +49,10 @@ def test_run_generic_commands(generic_command_fixture):
 
     cmds = (
         f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1",
-        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1 -q 16",
+        # Test with higher queue depth. This exercises the code paths but
+        # doesn't actually verify the functionality.
+        # The infrastructure to do that is currently lacking. TODO
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1 -q 32",
     )
 
     for cmd in cmds:

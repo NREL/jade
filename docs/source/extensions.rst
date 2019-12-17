@@ -484,7 +484,7 @@ This command line generate the global ``config.json`` file with all auto-regress
     2019-10-14 14:35:27,423 - INFO [jade.jobs.job_runner job_runner.py:95] : Wrote summary of job batch to output/results/results_20191014_143522_batch_0_summary.toml
     2019-10-14 14:35:27,424 - INFO [jade.jobs.job_runner job_runner.py:70] : Completed 12 jobs
     2019-10-14 14:35:27,426 - INFO [jade.utils.timing_utils timing_utils.py:34] : execution-time=5.198 s func=run_jobs
-    2019-10-14 14:35:27,480 - INFO [jade.jobs.job_submitter job_submitter.py:214] : Wrote results to output/results.toml.
+    2019-10-14 14:35:27,480 - INFO [jade.jobs.job_submitter job_submitter.py:214] : Wrote results to output/results.json.
     2019-10-14 14:35:27,481 - INFO [jade.jobs.job_submitter job_submitter.py:220] : Successful=12 Failed=0 Total=12
 
 All job results are saved into ``output`` directory. To check the results,
@@ -553,7 +553,7 @@ Submit auto-regression jobs, and wait for program to finish.
     2019-10-16 13:50:04,057 - INFO [jade.hpc.hpc_manager hpc_manager.py:242] : Submission job_batch_1 1536598 changed status from HpcJobStatus.NONE to HpcJobStatus.QUEUED
     2019-10-16 13:50:36,121 - INFO [jade.hpc.hpc_manager hpc_manager.py:242] : Submission job_batch_1 1536598 changed status from HpcJobStatus.QUEUED to HpcJobStatus.NONE
     2019-10-16 13:51:06,151 - INFO [jade.jobs.job_submitter job_submitter.py:314] : All submitters have completed.
-    2019-10-16 13:51:06,330 - INFO [jade.jobs.job_submitter job_submitter.py:214] : Wrote results to output/results.toml.
+    2019-10-16 13:51:06,330 - INFO [jade.jobs.job_submitter job_submitter.py:214] : Wrote results to output/results.json.
     2019-10-16 13:51:06,330 - INFO [jade.jobs.job_submitter job_submitter.py:220] : Successful=12 Failed=0 Total=12
 
 
@@ -784,7 +784,7 @@ The following console log shows ``demo`` extension with 2 job failures,
     2019-11-01 10:02:52,912 - INFO [jade.jobs.job_runner job_runner.py:95] : Wrote summary of job batch to output/results/results_20191101_100247_batch_0_summary.toml
     2019-11-01 10:02:52,913 - INFO [jade.jobs.job_runner job_runner.py:70] : Completed 12 jobs
     2019-11-01 10:02:52,915 - INFO [jade.utils.timing_utils timing_utils.py:34] : execution-time=5.099 s func=run_jobs
-    2019-11-01 10:02:52,961 - INFO [jade.jobs.job_submitter job_submitter.py:212] : Wrote results to output/results.toml.
+    2019-11-01 10:02:52,961 - INFO [jade.jobs.job_submitter job_submitter.py:212] : Wrote results to output/results.json.
     2019-11-01 10:02:52,961 - WARNING [jade.jobs.job_submitter job_submitter.py:218] : Successful=10 Failed=2 Total=12
 
 Show results using JADE CLI ``show-results``,
