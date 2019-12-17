@@ -4,6 +4,8 @@
 .vscode
 .mypy_cache
 .idea
+cscope.files
+tags
 
 # OS generated files #
 ######################
