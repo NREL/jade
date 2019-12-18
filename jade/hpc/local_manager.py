@@ -2,7 +2,6 @@
 
 import logging
 import multiprocessing
-import os
 import tempfile
 
 from jade.hpc.common import HpcJobStatus, HpcJobInfo

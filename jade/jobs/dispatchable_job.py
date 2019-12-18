@@ -6,7 +6,6 @@ import subprocess
 import sys
 import time
 
-from jade.common import get_results_temp_filename
 from jade.jobs.dispatchable_job_interface import DispatchableJobInterface
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.result import Result

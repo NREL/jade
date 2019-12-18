@@ -1,6 +1,5 @@
 """Manages execution of jobs on a node."""
 
-from datetime import datetime
 import logging
 import os
 import shutil

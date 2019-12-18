@@ -102,25 +102,27 @@ class SlurmManager(HpcManagerInterface):
 
     def create_cluster(self):
         logger.debug("config=%s", self._config)
-        cluster = SLURMCluster(
-            project=self._config["hpc"]["allocation"],
-            walltime=self._config["hpc"]["walltime"],
-            job_mem=str(self._config["hpc"]["mem"]),
-            memory=str(self._config["hpc"]["mem"]) + "MB",
-            #job_cpu=config["cpu"],
-            interface=self._config["dask"]["interface"],
-            local_directory=self._config["dask"]["local_directory"],
-            cores=self._config["dask"]["cores"],
-            #processes=config["processes"],
-        )
+        assert False, "not supported"
+        #cluster = SLURMCluster(
+        #    project=self._config["hpc"]["allocation"],
+        #    walltime=self._config["hpc"]["walltime"],
+        #    job_mem=str(self._config["hpc"]["mem"]),
+        #    memory=str(self._config["hpc"]["mem"]) + "MB",
+        #    #job_cpu=config["cpu"],
+        #    interface=self._config["dask"]["interface"],
+        #    local_directory=self._config["dask"]["local_directory"],
+        #    cores=self._config["dask"]["cores"],
+        #    #processes=config["processes"],
+        #)
 
-        logger.debug("Created cluster. job script %s", cluster.job_script())
-        return cluster
+        #logger.debug("Created cluster. job script %s", cluster.job_script())
+        #return cluster
 
     def create_local_cluster(self):
-        cluster = LocalCluster()
-        logger.debug("Created local cluster.")
-        return cluster
+        assert False, "not supported"
+        #cluster = LocalCluster()
+        #logger.debug("Created local cluster.")
+        #return cluster
 
     def create_submission_script(self, name, script, filename, path):
         text = self._create_submission_script_text(name, script, path)

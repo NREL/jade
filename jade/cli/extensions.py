@@ -10,16 +10,15 @@ from jade.utils.utils import load_data
 @click.group()
 def extensions():
     """Manage JADE extensions."""
-    setup_logging("extensions", None) 
+    setup_logging("extensions", None)
 
 
 @click.command()
 @click.argument("extension-file")
 def register(extension_file):
     """Register one or more extensions."""
-    extensions = load_data(extension_file)
     registry = Registry()
-    for extension in extensions:
+    for extension in load_data(extension_file):
         registry.register_extension(extension)
 
 

@@ -12,7 +12,6 @@ from jade.hpc.local_manager import LocalManager
 from jade.hpc.pbs_manager import PbsManager
 from jade.hpc.slurm_manager import SlurmManager
 from jade.jobs.async_job_interface import AsyncJobInterface
-from jade.utils.utils import load_data
 
 
 logger = logging.getLogger(__name__)

@@ -1,9 +1,5 @@
 """"Factory functions for simulation configurations"""
 
-import os
-
-from jade.common import CONFIG_FILE
-from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.utils.utils import load_data
 from jade.utils.timing_utils import timed_debug

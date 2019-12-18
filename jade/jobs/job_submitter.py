@@ -9,7 +9,7 @@ import shutil
 
 import jade
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
-    RESULTS_FILE, RESULTS_DIR, get_results_temp_filename
+    RESULTS_FILE
 from jade.enums import Status
 from jade.exceptions import InvalidParameter
 from jade.hpc.common import HpcType

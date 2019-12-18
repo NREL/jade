@@ -1,7 +1,6 @@
 """Manages PBS jobs."""
 
 import logging
-import os
 
 from jade.enums import Status
 from jade.hpc.common import HpcJobStatus

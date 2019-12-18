@@ -23,4 +23,3 @@ class UserAbort(Exception):
 
 class InvalidExtension(Exception):
     """Raise when extension does not exist in EXTENSIONS"""
-

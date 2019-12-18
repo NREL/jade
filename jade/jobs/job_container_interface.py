@@ -46,6 +46,16 @@ class JobContainerInterface:
         """
 
     @abc.abstractmethod
+    def get_num_jobs(self, sort_by_key=False):
+        """Return the number of jobs.
+
+        Returns
+        -------
+        int
+
+        """
+
+    @abc.abstractmethod
     def iter_jobs(self):
         """Yields a generator over all jobs.
 

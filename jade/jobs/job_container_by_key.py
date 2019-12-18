@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class JobContainerByKey(JobContainerInterface):
     """Stores jobs by key."""
     def __init__(self):
-        # functools.namedtuple: JobParametersInterface
+        # collections.namedtuple: JobParametersInterface
         self._jobs = OrderedDict()
 
     @staticmethod
