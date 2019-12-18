@@ -1,0 +1,11 @@
+flake8
+mock>=3.0.0
+pycodestyle
+pylint
+pypandoc
+pytest
+pytest-cov
+sphinx-rtd-theme>=0.4.3
+sphinx>=2.0
+sphinxcontrib-plantuml
+tox

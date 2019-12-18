@@ -71,30 +71,32 @@ For more about docker commands, please refer https://docs.docker.com/engine/refe
 
 Computer or HPC without docker
 ==============================
+1. Choose a virtual environment in which to install JADE.  This can be an
+   existing `conda <https://docs.conda.io/en/latest/miniconda.html>`_
+   environment or an environment from something like `pyenv
+   <https://github.com/pyenv/pyenv>`_.  A validated conda environment is
+   provided in the JADE repository. ::
 
-1. Install JADE. Choose the default environment for running jobs or the
-   development environment if you will be developing new code or documentation.
+    # If conda is not already in your environment (such as on HPC):
+    module load conda
+    conda env create -f environment.yml -n jade
+    conda activate jade
 
-.. note:: The dev environment requires that pandoc and plantuml be installed.
+2. Install JADE. ::
+
+    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
+    cd jade
+    pip install -e .
+
+    # If you will also be developing JADE code then include dev packages.
+    pip install -e . -r dev-requirements.txt
+
+.. note:: The dev packages that pandoc and plantuml be installed.
 
    - Refer to `pandoc <https://pandoc.org/installing.html>`_.
    - plantuml on Mac: ``brew install plantuml``
    - plantuml on Linux: ``sudo apt-get install plantuml``
    - plantuml on Windows: `plantuml <http://plantuml.com/starting>`_.
-
-::
-
-    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
-    cd jade
-    # If conda is not already in your environment (such as on HPC):
-    module load conda
-
-    conda env create -f environment.yml
-    # or
-    conda env create -f dev-environment.yml
-
-    conda activate jade
-    pip install -e .
 
 
 Register extensions

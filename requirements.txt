@@ -1,0 +1,11 @@
+click
+feather-format
+filelock
+matplotlib>=3.0.3
+opendssdirect.py>=0.3.7
+numpy
+pandas
+prettytable
+pyyaml
+statsmodels>=0.10.1
+toml>=0.10.0

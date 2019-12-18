@@ -11,6 +11,12 @@ import shlex
 
 logger = logging.getLogger(__name__)
 
+
+def read_lines(filename):
+    with open(filename) as f_in:
+        return f_in.readlines()
+
+
 try:
     from pypandoc import convert_text
 except ImportError:
@@ -33,8 +39,8 @@ setup(
     version=version,
     description="JADE",
     long_description=readme,
-    author="Daniel Thom",
-    author_email="daniel.thom@nrel.gov",
+    author="NREL",
+    maintainer_email="daniel.thom@nrel.gov",
     url="https://github.nrel.gov/Hosting-Capacity-Analysis/jade",
     packages=find_packages(),
     package_dir={"jade": "jade"},
@@ -56,9 +62,8 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     test_suite="tests",
-    install_requires=["click"],
+    install_requires=read_lines("requirements.txt"),
     extras_require={
         "test": test_requires,
-        "dev": test_requires + ["pypandoc", "flake8", "pre-commit", "pylint"],
     },
 )
