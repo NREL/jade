@@ -22,6 +22,7 @@ SUBMIT_JOBS = "jade submit-jobs"
 
 @pytest.fixture
 def generic_command_fixture():
+    yield
     for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT):
         if os.path.isdir(path):
             shutil.rmtree(path)

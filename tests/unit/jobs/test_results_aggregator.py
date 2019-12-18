@@ -21,6 +21,9 @@ def cleanup():
     pytest.aggregator2 = None
     if os.path.exists(OUTPUT):
         shutil.rmtree(OUTPUT)
+    yield
+    if os.path.exists(OUTPUT):
+        shutil.rmtree(OUTPUT)
 
 
 def create_result(index):

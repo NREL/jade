@@ -20,8 +20,10 @@ def dispatchable_job():
     cmd = "echo 'Hello World'"
     output = os.path.join(tempfile.gettempdir(), "jade-test-dispatchable-job")
     os.makedirs(output, exist_ok=True)
-    dispatchable_job = DispatchableJob(job, cmd, output, "results_batch_0.csv")
-    return dispatchable_job
+    results_file = os.path.join(output, "results_batch_0.csv")
+    dispatchable_job = DispatchableJob(job, cmd, output, results_file)
+    yield dispatchable_job
+    shutil.rmtree(output)
 
 
 def test_dispatchable_job__properties(dispatchable_job):
