@@ -19,6 +19,7 @@ def dispatchable_job():
     job.name = "Test-Job"
     cmd = "echo 'Hello World'"
     output = os.path.join(tempfile.gettempdir(), "jade-test-dispatchable-job")
+    os.makedirs(output, exist_ok=True)
     dispatchable_job = DispatchableJob(job, cmd, output, "results_batch_0.csv")
     return dispatchable_job
 
