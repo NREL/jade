@@ -1,4 +1,4 @@
-"rt loggin""Provides ability to run jobs locally or on HPC."""
+"""Provides ability to run jobs locally or on HPC."""
 
 from collections import OrderedDict
 import copy
@@ -8,7 +8,8 @@ import os
 import shutil
 
 import jade
-from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, RESULTS_FILE
+from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
+    RESULTS_FILE
 from jade.enums import Status
 from jade.exceptions import InvalidParameter
 from jade.hpc.common import HpcType
@@ -16,7 +17,8 @@ from jade.hpc.hpc_manager import HpcManager, AsyncHpcSubmitter
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.job_runner import JobRunner
-from jade.result import deserialize_results, serialize_results
+from jade.jobs.results_aggregator import ResultsAggregatorSummary
+from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
 from jade.utils.utils import dump_data, load_data, create_script, \
     create_chunks
@@ -134,7 +136,8 @@ results_summary={self.get_results_summmary_report()}"""
                     max_nodes=DEFAULTS["max_nodes"],
                     force_local=False,
                     verbose=False,
-                    poll_interval=DEFAULTS["poll_interval"]):
+                    poll_interval=DEFAULTS["poll_interval"],
+                    num_processes=None):
         """Submit simulations. Auto-detect whether the current system is an HPC
         and submit to its queue. Otherwise, run locally.
 
@@ -154,6 +157,8 @@ results_summary={self.get_results_summmary_report()}"""
             Enable debug logging.
         poll_interval : int
             Inteval in seconds on which to poll jobs.
+        num_processes : int
+            Number of processes to run in parallel; defaults to num CPUs
 
         Returns
         -------
@@ -170,12 +175,14 @@ results_summary={self.get_results_summmary_report()}"""
 
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)
-            result = runner.run_jobs(verbose=verbose)
+            result = runner.run_jobs(
+                verbose=verbose, num_processes=num_processes)
         else:
             self._submit_to_hpc(name, max_nodes, per_node_batch_size, verbose,
-                                poll_interval)
+                                poll_interval, num_processes)
 
-        self._results, filenames = self._collect_all_results()
+        results_summary = ResultsAggregatorSummary(self._results_dir)
+        self._results = results_summary.get_results()
         if len(self._results) != self._config.get_num_jobs():
             logger.error("Number of results doesn't match number of jobs: "
                          "results=%s jobs=%s. Check for process crashes "
@@ -184,9 +191,9 @@ results_summary={self.get_results_summmary_report()}"""
             result = Status.ERROR
 
         self.write_results(RESULTS_FILE)
-        for filename in filenames:
-            logger.debug("Removing temp results file %s", filename)
-            os.remove(filename)
+        results_summary.delete_files()
+        assert not os.listdir(self._results_dir)
+        os.rmdir(self._results_dir)
 
         return result
 
@@ -237,10 +244,8 @@ results_summary={self.get_results_summmary_report()}"""
             },
         }
 
-    def _collect_all_results(self):
-        return collect_all_results(self._results_dir)
-
-    def _create_run_script(self, config_file, filename, verbose):
+    def _create_run_script(
+            self, config_file, filename, num_processes, verbose):
         text = ["#!/bin/bash"]
         if shutil.which("module") is not None:
             # Required for HPC systems.
@@ -249,6 +254,8 @@ results_summary={self.get_results_summmary_report()}"""
 
         command = f"jade-internal run-jobs {config_file} " \
                   f"--output={self._output}"
+        if num_processes is not None:
+            command += f" --num-processes={num_processes}"
         if verbose:
             command += " --verbose"
 
@@ -266,7 +273,7 @@ results_summary={self.get_results_summmary_report()}"""
             pass
 
     @timed_debug
-    def _split_jobs(self, base_name, batch_size, verbose=False):
+    def _split_jobs(self, base_name, batch_size, num_processes, verbose=False):
         """Return a list of AsyncHpcSubmitter objects."""
         submitters = []
         base_config = self._config.serialize()
@@ -283,7 +290,9 @@ results_summary={self.get_results_summmary_report()}"""
                         new_config_file, len(new_config["jobs"]))
 
             run_script = os.path.join(self._output, f"run{suffix}.sh")
-            self._create_run_script(new_config_file, run_script, verbose)
+            self._create_run_script(
+                new_config_file, run_script, num_processes, verbose
+            )
 
             hpc_mgr = HpcManager(self._hpc_config_file, self._output)
 
@@ -295,10 +304,11 @@ results_summary={self.get_results_summmary_report()}"""
         return submitters
 
     def _submit_to_hpc(self, name, max_nodes, per_node_batch_size, verbose,
-                       poll_interval):
+                       poll_interval, num_processes):
         queue_depth = max_nodes
-        submitters = self._split_jobs(name, per_node_batch_size,
-                                      verbose=verbose)
+        submitters = self._split_jobs(
+            name, per_node_batch_size, num_processes, verbose=verbose
+        )
 
         # TODO: this will cause up to 16 slurm status commands every poll.
         # We could send one command, get all statuses, and share it among
@@ -310,28 +320,3 @@ results_summary={self.get_results_summmary_report()}"""
             poll_interval=poll_interval,
         )
         logger.info("All submitters have completed.")
-
-
-def collect_all_results(directory):
-    """Collect results for all batches in a directory. Should only be called
-    when all jobs are have finished. This is here to allow patching results
-    from failed/restarted jobs.
-
-    Returns
-    -------
-    tuple
-        list of Result, list of filenames (str)
-
-    """
-    logger.debug("Collect all results")
-    results = []
-    # TODO: add parameter to aggregate_data_from_files to allow deserialization
-    filenames = []
-    for filename in os.listdir(directory):
-        if filename.endswith(JobRunner.SUMMARY_FILE_SUFFIX):
-            path = os.path.join(directory, filename)
-            results += deserialize_results(load_data(path)["results"])
-            filenames.append(path)
-            logger.debug("Deserialized %s", path)
-
-    return results, filenames

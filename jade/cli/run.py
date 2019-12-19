@@ -1,6 +1,5 @@
 """CLI to run hosting capacity analysis on results for a feeder."""
 
-import importlib
 import logging
 import os
 import sys

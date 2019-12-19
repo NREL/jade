@@ -8,6 +8,7 @@ dependencies:
   - pip:
     - click
     - feather-format
+    - filelock
     - flake8
     - ipython
     - jupyter
@@ -15,7 +16,6 @@ dependencies:
     - mock>=3.0.0
     - opendssdirect.py>=0.3.7
     - pandas
-    - psutil>=5.6.2
     - prettytable
     - pycodestyle
     - pylint

@@ -22,6 +22,7 @@ SUBMIT_JOBS = "jade submit-jobs"
 
 @pytest.fixture
 def generic_command_fixture():
+    yield
     for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT):
         if os.path.isdir(path):
             shutil.rmtree(path)
@@ -47,9 +48,17 @@ def test_run_generic_commands(generic_command_fixture):
     config = GenericCommandConfiguration(inputs)
     config.dump(CONFIG_FILE)
 
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1"
-    ret = run_command(cmd)
-    assert ret == 0
+    cmds = (
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1",
+        # Test with higher queue depth. This exercises the code paths but
+        # doesn't actually verify the functionality.
+        # The infrastructure to do that is currently lacking. TODO
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 1 -q 32",
+    )
+
+    for cmd in cmds:
+        ret = run_command(cmd)
+        assert ret == 0
 
 
 def test_sorted_order(generic_command_fixture):

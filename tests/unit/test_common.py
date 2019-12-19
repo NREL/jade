@@ -9,6 +9,6 @@ def test_output_dir():
     assert common.JOBS_OUTPUT_DIR == "job-outputs"
     assert common.SCRIPTS_DIR == "scripts"
     assert common.CONFIG_FILE == "config.json"
-    assert common.RESULTS_DIR == "results"
-    assert common.RESULTS_FILE == "results.toml"
+    assert common.RESULTS_DIR == "temp-results"
+    assert common.RESULTS_FILE == "results.json"
     assert common.ANALYSIS_DIR == "analysis"

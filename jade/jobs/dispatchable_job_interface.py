@@ -17,8 +17,3 @@ class DispatchableJobInterface(AsyncJobInterface, abc.ABC):
         job : namedtuple
 
         """
-
-    @abc.abstractmethod
-    def set_results_filename_suffix(self, suffix):
-        """Set this suffix when the results get written."""
-        assert False

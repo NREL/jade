@@ -57,6 +57,13 @@ logger = logging.getLogger(__name__)
     help="Interval in seconds on which to poll jobs for status."
 )
 @click.option(
+    "-q", "--num-processes",
+    default=None,
+    show_default=False,
+    type=int,
+    help="Number of processes to run in parallel; defaults to num CPUs."
+)
+@click.option(
     "--rotate-logs/--no-rotate-logs",
     default=True,
     show_default=True,
@@ -76,9 +83,10 @@ logger = logging.getLogger(__name__)
     help="Enable verbose log output."
 )
 @click.command()
-def submit_jobs(config_file, per_node_batch_size, hpc_config, local,
-                max_nodes, output, poll_interval, rotate_logs, rotate_tomls,
-                verbose):
+def submit_jobs(
+        config_file, per_node_batch_size, hpc_config, local, max_nodes,
+        output, poll_interval, num_processes, rotate_logs, rotate_tomls,
+        verbose):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
     if rotate_logs:
@@ -98,5 +106,6 @@ def submit_jobs(config_file, per_node_batch_size, hpc_config, local,
         force_local=local,
         verbose=verbose,
         poll_interval=poll_interval,
+        num_processes=num_processes,
     )
     sys.exit(ret.value)

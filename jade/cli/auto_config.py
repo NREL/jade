@@ -1,6 +1,5 @@
 """CLI to automatically create a configuration."""
 
-import importlib
 import logging
 import click
 
