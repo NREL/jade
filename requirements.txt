@@ -2,7 +2,6 @@ click
 feather-format
 filelock
 matplotlib>=3.0.3
-opendssdirect.py>=0.3.7
 numpy
 pandas
 prettytable
