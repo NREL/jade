@@ -63,7 +63,4 @@ setup(
     ],
     test_suite="tests",
     install_requires=read_lines("requirements.txt"),
-    extras_require={
-        "test": test_requires,
-    },
 )
