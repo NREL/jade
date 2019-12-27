@@ -42,6 +42,9 @@ def create_config_from_previous_run(config_file, output, result_type="successful
             Raised if result_type is not successful or failed
 
     """
+    allowed_types = [ "successful", "failed" ]
+    if (result_type in allowed_types) == False:
+        raise InvalidParameter(f"given result type invalid: {result_type}")
 
     config = deserialize_config(load_data(config_file))
     summary = ResultsSummary(output)
@@ -51,8 +54,6 @@ def create_config_from_previous_run(config_file, output, result_type="successful
         results_of_type = summary.get_successful_results()
     elif result_type == "failed":
         results_of_type = summary.get_failed_results()
-    else:
-        raise InvalidParameter(f"given result type invalid: {result_type}")
 
     parameters = []
     for result in results_of_type:
