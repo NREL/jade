@@ -42,8 +42,8 @@ def create_config_from_previous_run(config_file, output, result_type="successful
             Raised if result_type is not successful or failed
 
     """
-    allowed_types = [ "successful", "failed" ]
-    if (result_type in allowed_types) == False:
+    allowed_types = ["successful", "failed"]
+    if result_type not in allowed_types:
         raise InvalidParameter(f"given result type invalid: {result_type}")
 
     config = deserialize_config(load_data(config_file))
