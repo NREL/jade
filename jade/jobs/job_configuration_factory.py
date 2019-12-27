@@ -1,5 +1,6 @@
 """"Factory functions for simulation configurations"""
 
+from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.result import ResultsSummary
 from jade.utils.utils import load_data
