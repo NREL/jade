@@ -122,6 +122,7 @@ class ResultsAggregator:
             for row in reader:
                 row["return_code"] = int(row["return_code"])
                 row["exec_time_s"] = float(row["exec_time_s"])
+                row["completion_time"] = float(row["completion_time"])
                 result = deserialize_result(row)
                 results.append(result)
 
