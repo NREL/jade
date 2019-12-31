@@ -1,0 +1,36 @@
+{
+    "jade_version": "0.1.0",
+    "timestamp": "12/31/2019 12:56:06",
+    "base_directory": "/home/jwjenkin/Projects/jade/jade/extensions/demo",
+    "repository_info": {
+        "current_branch": "feat/restart-failed",
+        "diff_patch_file": "output/diff.patch",
+        "last_commit": "62861bb015d673098aae23645b78a928e9b6110a",
+        "status": "# branch.oid 62861bb015d673098aae23645b78a928e9b6110a\n# branch.head feat/restart-failed\n1 .M N... 100644 100644 100644 882f4329de77fa80ec15115ea1e5dc85b8ca8a44 882f4329de77fa80ec15115ea1e5dc85b8ca8a44 tests/unit/jobs/test_job_configuration_factory.py"
+    },
+    "results_summary": {
+        "num_successful": 10,
+        "num_failed": 2,
+        "total": 12
+    },
+    "results": [{
+        "name": "australia",
+        "return_code": 1,
+        "status": "unfinished",
+        "exec_time_s": 2.0531511306762695,
+        "completion_time": "1577822161.5694602"
+    }, {
+        "name": "brazil",
+        "return_code": 0,
+        "status": "finished",
+        "exec_time_s": 2.04693865776062,
+        "completion_time": "1577822161.5694602"
+    }, {
+        "name": "united_states",
+        "return_code": 0,
+        "status": "finished",
+        "exec_time_s": 2.0112149715423584,
+        "completion_time": "1577822161.5694602"
+    }],
+    "job_outputs": []
+}

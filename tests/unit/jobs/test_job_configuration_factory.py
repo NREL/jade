@@ -12,19 +12,6 @@ from jade.jobs.job_configuration_factory import (
 )
 from jade.result import Result, ResultsSummary, serialize_results
 
-TEST_DATA_DIR = "tests/data/demo"
-CONFIG_FILE = os.path.join(TEST_DATA_DIR, "test-config.json")
-OUTPUT_DIRECTORY = os.path.join(TEST_DATA_DIR, "output")
-
-@pytest.fixture
-def jade_results():
-    """Fixture of jade results"""
-    return [
-        Result("australia", 1, "unfinished", 10, 15555555555),
-        Result("brazil", 0, "finished", 20, 15555555555),
-        Result("united_states", 0, "finished", 30, 15555555555),
-    ]
-
 @pytest.fixture
 def jade_data():
     """Fixture of serialized jade result"""
@@ -58,36 +45,49 @@ def jade_data():
     }
 
 @pytest.fixture
-def results_summary(jade_data, jade_results):
+def results_summary(jade_data):
     """Fixture of ResultsSummary instance"""
     ResultsSummary._parse = mock.MagicMock(return_value=jade_data)
 
-def test_create_config_from_file():
+@pytest.fixture
+def test_data_dir(test_data_dir):
+    """The path to the directory that contains the fixture data"""
+    return os.path.join(test_data_dir, "demo")
+
+@pytest.fixture
+def config_file(test_data_dir):
+    return os.path.join(test_data_dir, "test-config.json")
+
+@pytest.fixture
+def output_dir(test_data_dir):
+    return os.path.join(test_data_dir, "output")
+
+def test_create_config_from_file(config_file):
     """Create should successfully return config"""
-    config = create_config_from_file(CONFIG_FILE)
+    config = create_config_from_file(config_file)
     assert len(config.list_jobs()) == 3
 
-def test_create_config_from_file_missing_file():
+def test_create_config_from_file_missing_file(config_file):
     """Create should throw FileNotFoundError"""
     with pytest.raises(FileNotFoundError):
-        create_config_from_file("a" + CONFIG_FILE)
+        create_config_from_file("a" + config_file)
 
-def test_create_config_from_previous_run_successful_results(results_summary):
+def test_create_config_from_previous_run_successful_results(config_file, output_dir, results_summary):
     """Create should return config with 2 jobs"""
-    successful_config = create_config_from_previous_run(CONFIG_FILE, OUTPUT_DIRECTORY)
+    successful_config = create_config_from_previous_run(config_file, output_dir)
     assert len(successful_config.list_jobs()) == 2
     for job in successful_config.list_jobs():
         assert job.name in [ "brazil", "united_states" ]
 
-def test_create_config_from_previous_run_failed_results(results_summary):
+def test_create_config_from_previous_run_failed_results(config_file, output_dir, results_summary):
     """Create should return config with 1 job"""
-    failed_config = create_config_from_previous_run(CONFIG_FILE, OUTPUT_DIRECTORY, "failed")
+    failed_config = create_config_from_previous_run(config_file, output_dir, "failed")
     assert len(failed_config.list_jobs()) == 1
     for job in failed_config.list_jobs():
         assert job.name in [ "australia" ]
 
 @pytest.mark.noautofixt
-def test_create_config_from_previous_run_invalid_type_results(results_summary):
+def test_create_config_from_previous_run_invalid_type_results(config_file, output_dir, results_summary):
     """Create should throw InvalidParameter"""
     with pytest.raises(InvalidParameter):
-        create_config_from_previous_run(CONFIG_FILE, OUTPUT_DIRECTORY, "invalid_type")
+        create_config_from_previous_run(config_file, output_dir, "invalid_type")
