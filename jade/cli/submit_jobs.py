@@ -15,7 +15,6 @@ from jade.utils.utils import makedirs, rotate_filenames, get_cli_string
 
 logger = logging.getLogger(__name__)
 
-
 @click.argument(
     "config-file",
     type=str,
@@ -91,11 +90,18 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Restart only failed jobs."
 )
+@click.option(
+    "--restart-missing",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Restart only missing jobs."
+)
 @click.command()
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
-        verbose, restart_failed):
+        verbose, restart_failed, restart_missing):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
 
@@ -107,6 +113,13 @@ def submit_jobs(
         previous_results = ResultsSummary(output).get_successful_results()
         config_file = "failed_job_inputs.json"
         failed_job_config.dump(config_file)
+
+    if restart_missing:
+        missing_job_config = create_config_from_previous_run(config_file, output,
+                                                             result_type='missing')
+        config_file = "missing_job_inputs.json"
+        missing_job_config.dump(config_file)
+        previous_results = ResultsSummary(output).list_results()
 
     if rotate_logs:
         rotate_filenames(output, ".log")

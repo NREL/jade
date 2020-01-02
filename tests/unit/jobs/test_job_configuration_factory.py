@@ -50,6 +50,12 @@ def results_summary(jade_data):
     ResultsSummary._parse = mock.MagicMock(return_value=jade_data)
 
 @pytest.fixture
+def incomplete_results(jade_data):
+    """Fixture of ResultsSummary instance"""
+    jade_data["results"] = jade_data["results"][:2]
+    ResultsSummary._parse = mock.MagicMock(return_value=jade_data)
+
+@pytest.fixture
 def test_data_dir(test_data_dir):
     """The path to the directory that contains the fixture data"""
     return os.path.join(test_data_dir, "demo")
@@ -85,6 +91,13 @@ def test_create_config_from_previous_run_failed_results(config_file, output_dir,
     assert len(failed_config.list_jobs()) == 1
     for job in failed_config.list_jobs():
         assert job.name in [ "australia" ]
+
+def test_create_config_from_previous_run_missing_results(config_file, output_dir, incomplete_results):
+    """Create should return config with 1 job"""
+    missing_config = create_config_from_previous_run(config_file, output_dir, "missing")
+    assert len(missing_config.list_jobs()) == 1
+    for job in missing_config.list_jobs():
+        assert job.name in [ "united_states" ]
 
 @pytest.mark.noautofixt
 def test_create_config_from_previous_run_invalid_type_results(config_file, output_dir, results_summary):

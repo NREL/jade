@@ -79,7 +79,6 @@ def deserialize_result(data):
     return Result(data["name"], data["return_code"], data["status"],
                 data["exec_time_s"])
 
-
 def deserialize_results(data):
     """Deserialize a list of Result objects from raw data.
 
@@ -133,34 +132,45 @@ class ResultsSummary:
     def _parse(results_file):
         return load_data(results_file)
 
-    def get_successful_result(self, job_name):
-        """Return the job result from the results file.
-
+    def get_result(self, job_name):
+        """Return the job result from the results
         Parameters
         ----------
-        results_file : str
         job_name : str
-
         Returns
         -------
         dict
+        """
+        for result in self._results["results"]:
+            if job_name == result.name:
+                return result
 
+        return None
+
+
+    def get_successful_result(self, job_name):
+        """Return the successful job result from the results
+        Parameters
+        ----------
+        job_name : str
+        Returns
+        -------
+        dict
         Raises
         ------
         InvalidParameter
             Raised if job_name is not found.
         ExecutionError
             Raised if the result was not successful.
-
         """
-        for result in self._results["results"]:
-            if job_name == result.name:
-                if result.return_code != 0 or result.status != "finished":
-                    raise ExecutionError(f"result wasn't successful: {result}")
+        result = self.get_result(job_name)
+        if result is None:
+            raise InvalidParameter(f"result not found {job_name}")
 
-                return result
+        if result.return_code != 0 or result.status != "finished":
+            raise ExecutionError(f"result wasn't successful: {result}")
 
-        raise InvalidParameter(f"result not found {job_name}")
+        return result
 
     def get_successful_results(self):
         """Return the successful results."""
@@ -170,6 +180,26 @@ class ResultsSummary:
                 successful_results.append(result)
 
         return successful_results
+
+    def get_missing_results(self, expected_jobs):
+        """Return the missing results.
+
+        Parameters
+        ----------
+        expected_jobs : list
+        jobs that are expected to be in results
+
+        Returns
+        -------
+        list
+
+        """
+        missing_results =  []
+        for job in expected_jobs:
+            if self.get_result(job.name) is None:
+                missing_results.append(job)
+
+        return missing_results
 
     def get_failed_results(self):
         """Return the failed results."""
