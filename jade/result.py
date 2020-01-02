@@ -2,6 +2,7 @@
 
 from collections import namedtuple
 import os
+import time
 
 from prettytable import PrettyTable
 
@@ -9,9 +10,25 @@ from jade.common import RESULTS_FILE
 from jade.exceptions import InvalidParameter, ExecutionError
 from jade.utils.utils import load_data
 
+class Result(namedtuple("Result", "name, return_code, status, exec_time_s, completion_time")):
+    """
+    Result class containing data after jobs have finished. `completion_time`
+    will be populated when result created and passed in when deserializing
 
-Result = namedtuple("Result", "name, return_code, status, exec_time_s")
+    Attributes
+    ----------
+    name : str
+    return_code : int
+    status : str
+    exec_time_s : int
+    completion_time : int (default current timestamp)
 
+    """
+    def __new__(cls, name, return_code, status, exec_time_s,
+                completion_time=time.time()):
+        # add default values
+        return super(Result, cls).__new__(cls, name, return_code, status,
+                                          exec_time_s, completion_time)
 
 def serialize_result(result):
     """Serialize a Result to a dict.
@@ -27,7 +44,6 @@ def serialize_result(result):
     """
     data = result._asdict()
     return data
-
 
 def serialize_results(results):
     """Serialize a list of Result objects.
@@ -56,8 +72,12 @@ def deserialize_result(data):
     Result
 
     """
+    if "completion_time" in data.keys():
+        return Result(data["name"], data["return_code"], data["status"],
+                  data["exec_time_s"], data["completion_time"])
+
     return Result(data["name"], data["return_code"], data["status"],
-                  data["exec_time_s"])
+                data["exec_time_s"])
 
 
 def deserialize_results(data):
@@ -142,6 +162,24 @@ class ResultsSummary:
 
         raise InvalidParameter(f"result not found {job_name}")
 
+    def get_successful_results(self):
+        """Return the successful results."""
+        successful_results = []
+        for result in self._results["results"]:
+            if result.return_code == 0 and result.status == "finished":
+                successful_results.append(result)
+
+        return successful_results
+
+    def get_failed_results(self):
+        """Return the failed results."""
+        failed_results = []
+        for result in self._results["results"]:
+            if result.return_code != 0 or result.status != "finished":
+                failed_results.append(result)
+
+        return failed_results
+
     def list_results(self):
         """Return the results.
 
@@ -171,7 +209,7 @@ class ResultsSummary:
         num_failed = 0
         table = PrettyTable()
         table.field_names = ["Job Name", "Return Code", "Status",
-                             "Execution Time (s)"]
+                             "Execution Time (s)", "Completion Time"]
         min_exec = 0
         max_exec = 0
         if self._results["results"]:
@@ -194,7 +232,7 @@ class ResultsSummary:
                 max_exec = result.exec_time_s
             exec_times.append(result.exec_time_s)
             table.add_row([result.name, result.return_code, result.status,
-                           result.exec_time_s])
+                           result.exec_time_s, result.completion_time])
 
         total = num_successful + num_failed
         assert total == len(self._results["results"])

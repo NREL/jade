@@ -7,7 +7,9 @@ import sys
 import click
 
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
+from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
+from jade.result import ResultsSummary
 from jade.utils.utils import makedirs, rotate_filenames, get_cli_string
 
 
@@ -82,13 +84,30 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Enable verbose log output."
 )
+@click.option(
+    "--restart-failed",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Restart only failed jobs."
+)
 @click.command()
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
-        verbose):
+        verbose, restart_failed):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
+
+    previous_results = []
+
+    if restart_failed:
+        failed_job_config = create_config_from_previous_run(config_file, output,
+                                                            result_type='failed')
+        previous_results = ResultsSummary(output).get_successful_results()
+        config_file = "failed_job_inputs.json"
+        failed_job_config.dump(config_file)
+
     if rotate_logs:
         rotate_filenames(output, ".log")
     if rotate_tomls:
@@ -105,7 +124,8 @@ def submit_jobs(
         max_nodes=max_nodes,
         force_local=local,
         verbose=verbose,
-        poll_interval=poll_interval,
         num_processes=num_processes,
+        poll_interval=poll_interval,
+        previous_results=previous_results
     )
     sys.exit(ret.value)

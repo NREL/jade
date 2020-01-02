@@ -2,14 +2,13 @@ import mock
 import pytest
 from jade.result import *
 
-
 @pytest.fixture
 def jade_results():
     """Fixture of jade results"""
     return [
-        Result("deployment__result__1", 0, "finished", 10),
-        Result("deployment__result__2", 1, "unfinished", 20),
-        Result("deployment__result__3", 0, "finished", 30),
+        Result("deployment__result__1", 0, "finished", 10, 15555555555),
+        Result("deployment__result__2", 1, "unfinished", 20, 15555555555),
+        Result("deployment__result__3", 0, "finished", 30, 15555555555),
     ]
 
 
@@ -23,25 +22,27 @@ def jade_data():
                 "name": "deployment__result__1",
                 "return_code": 0,
                 "status": "finished",
-                "exec_time_s": 10
+                "exec_time_s": 10,
+                "completion_time": 15555555555
             },
             {
                 "name": "deployment__result__2",
                 "return_code": 1,
                 "status": "unfinished",
-                "exec_time_s": 20
+                "exec_time_s": 20,
+                "completion_time": 15555555555
             },
             {
                 "name": "deployment__result__3",
                 "return_code": 0,
                 "status": "finished",
-                "exec_time_s": 30
+                "exec_time_s": 30,
+                "completion_time": 15555555555
             },
         ],
         "jade_version": 0.1,
         "timestamp": "2019-09-02 15:00:00"
     }
-
 
 def test_serialize_result(jade_results, jade_data):
     """Should return dict result as expected"""
@@ -133,6 +134,17 @@ def test_results_summary__get_successful_result__invalid(results_summary):
 
     assert "result not found {}".format(test_job_name) in str(exc.value)
 
+def test_results_summary__get_successful_results(results_summary):
+    """Get expected length 2 list with successful results"""
+    successful_results = results_summary.get_successful_results()
+    assert isinstance(successful_results, list)
+    assert len(successful_results) == 2
+
+def test_results_summary__get_failed_results(results_summary):
+    """Get expected length 1 list with failed results"""
+    failed_results = results_summary.get_failed_results()
+    assert isinstance(failed_results, list)
+    assert len(failed_results) == 1
 
 def test_results_summary__list_results(results_summary):
     """Should return a list of instanes of Result"""
