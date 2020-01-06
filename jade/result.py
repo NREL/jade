@@ -2,7 +2,7 @@
 
 from collections import namedtuple
 import os
-import time
+from time import time
 from datetime import datetime
 
 from prettytable import PrettyTable
@@ -26,8 +26,10 @@ class Result(namedtuple("Result", "name, return_code, status, exec_time_s, compl
 
     """
     def __new__(cls, name, return_code, status, exec_time_s,
-                completion_time=time.time()):
+                completion_time=None):
         # add default values
+        if ( completion_time is None ):
+            completion_time = time()
         return super(Result, cls).__new__(cls, name, return_code, status,
                                           exec_time_s, completion_time)
 
