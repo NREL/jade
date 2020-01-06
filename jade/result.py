@@ -3,6 +3,7 @@
 from collections import namedtuple
 import os
 import time
+from datetime import datetime
 
 from prettytable import PrettyTable
 
@@ -262,7 +263,7 @@ class ResultsSummary:
                 max_exec = result.exec_time_s
             exec_times.append(result.exec_time_s)
             table.add_row([result.name, result.return_code, result.status,
-                           result.exec_time_s, result.completion_time])
+                           result.exec_time_s, datetime.fromtimestamp(result.completion_time)])
 
         total = num_successful + num_failed
         assert total == len(self._results["results"])
