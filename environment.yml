@@ -3,6 +3,8 @@ channels:
   - defaults
 dependencies:
   - git>=2.19
+  - ipython
+  - jupyter
   - python=3.7
   - pip>=19.1
   - pip:
