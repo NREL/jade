@@ -73,22 +73,34 @@ class SlurmManager(HpcManagerInterface):
 
     @staticmethod
     def check_storage_configuration():
-        output = {}
-        cmd = "lfs getstripe ."
-        ret = run_command(cmd, output)
-        if ret != 0:
-            raise ExecutionError(f"{cmd} failed: {output}")
+        pass
+        # Disabling this code because the Lustre documentation only recommends
+        # higher stripe counts when files are large or if many clients will be
+        # accessing the files concurrently.
+        # JADE shouldn't enforce a single rule for everyone.
+        # Leaving the code here in case we want to customize this in the
+        # future.
+        #
+        # References:
+        # - http://wiki.lustre.org/Configuring_Lustre_File_Striping
+        # - https://www.nics.tennessee.edu/computing-resources/file-systems/lustre-striping-guide
 
-        stripe_count = SlurmManager._get_stripe_count(output["stdout"])
-        logger.info("stripe_count is set to %s", stripe_count)
-        if stripe_count < 16:
-            raise InvalidConfiguration(
-                f"stripe_count for {os.getcwd()} is set to {stripe_count}. "
-                "The runtime directory should be set with a stripe_count of "
-                "16 for optimal performance. Create a new directory, run "
-                "`lfs setstripe -c 16 <dirname>`, and then move all contents "
-                "to that directory."
-            )
+        #output = {}
+        #cmd = "lfs getstripe ."
+        #ret = run_command(cmd, output)
+        #if ret != 0:
+        #    raise ExecutionError(f"{cmd} failed: {output}")
+
+        #stripe_count = SlurmManager._get_stripe_count(output["stdout"])
+        #logger.info("stripe_count is set to %s", stripe_count)
+        #if stripe_count < 16:
+        #    raise InvalidConfiguration(
+        #        f"stripe_count for {os.getcwd()} is set to {stripe_count}. "
+        #        "The runtime directory should be set with a stripe_count of "
+        #        "16 for optimal performance. Create a new directory, run "
+        #        "`lfs setstripe -c 16 <dirname>`, and then move all contents "
+        #        "to that directory."
+        #    )
 
     def get_config(self):
         return self._config

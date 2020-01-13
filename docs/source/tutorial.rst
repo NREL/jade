@@ -122,9 +122,19 @@ HPC Configuration
 *****************
 This section only applies if you run your jobs on the HPC.
 
-JADE requires that you configure your run directory on the Lustre filesystem
-for optimal performance. Run this command on your directory before it contains
-any data.
+Consider whether you should configure the Lustre stripe count. This can be
+beneficial if the the files you create will be large or if many clients will
+be accessing them concurrently.
+
+References:
+
+- http://wiki.lustre.org/Configuring_Lustre_File_Striping
+- https://www.nics.tennessee.edu/computing-resources/file-systems/lustre-striping-guide
+
+.. note::
+
+   This example Lustre filesystem command will only work if the directory is
+   empty.
 
 ::
 
