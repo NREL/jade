@@ -140,6 +140,12 @@ References:
 
     lfs setstripe -c 16 <run-directory>
 
+Prerequistes
+============
+If you are not using the JADE conda environment then you should take note of
+the packages it installs (environment.yml). One common pitfall is that JADE
+requires a newer version of git than is installed by default on Eagle.
+
 
 CLI Execution
 *************
