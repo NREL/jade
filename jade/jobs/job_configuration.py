@@ -32,7 +32,7 @@ class JobConfiguration(abc.ABC):
     FILENAME_DELIMITER = "_"
 
     def __init__(self, inputs, container, job_parameters_class,
-                 extension_name, post_process=None, **kwargs):
+                 extension_name, post_process_config=None, **kwargs):
         """
         Constructs JobConfiguration.
 
@@ -49,7 +49,7 @@ class JobConfiguration(abc.ABC):
         self._job_names = None
         self._jobs_directory = kwargs.get("jobs_directory")
         self._registry = Registry()
-        self._post_process = post_process
+        self._post_process_config = post_process_config
 
         if kwargs.get("do_not_deserialize_jobs", False):
             assert "job_names" in kwargs, str(kwargs)
@@ -239,8 +239,8 @@ class JobConfiguration(abc.ABC):
         """
         return self._jobs.get_num_jobs()
 
-    def get_post_process(self):
-        return self._post_process
+    def get_post_process_config(self):
+        return self._post_process_config
 
     @property
     def inputs(self):
@@ -322,8 +322,8 @@ class JobConfiguration(abc.ABC):
             "jobs_directory": self._jobs_directory,
         }
 
-        if ( self._post_process is not None ):
-            data["post_process"] = self._post_process
+        if ( self._post_process_config is not None ):
+            data["post_process_config"] = self._post_process_config
 
         if include == ConfigSerializeOptions.JOBS:
             data["jobs"] = [x.serialize() for x in self.iter_jobs()]

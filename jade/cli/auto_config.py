@@ -30,7 +30,7 @@ from jade.utils.utils import load_data
 @click.option(
     "-p", "--post-process-config-file",
     is_eager=True,
-    help="TOML file containing overrides specific to analysis type"
+    help="TOML file post-process config"
 )
 @click.argument("inputs")
 @click.argument("extension")
@@ -59,7 +59,7 @@ def auto_config(extension, inputs, config_file, post_process_config_file,
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
 
     cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
-    config = cli.auto_config(inputs, post_process_config)
+    config = cli.auto_config(inputs, post_process_config=post_process_config)
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
     print(f"Dumped configuration to {config_file}.")

@@ -6,7 +6,7 @@ from jade.extensions.generic_command.generic_command_configuration import Generi
 from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
 
 
-def auto_config(inputs):
+def auto_config(inputs, **kwargs):
     """Create a configuration file for generic_command.
 
     Parameters
@@ -19,7 +19,7 @@ def auto_config(inputs):
         raise OSError(f"Inputs path '{inputs}' does not exist.")
 
     job_inputs = GenericCommandInputs(inputs)
-    config = GenericCommandConfiguration(job_inputs=job_inputs)
+    config = GenericCommandConfiguration(job_inputs=job_inputs, **kwargs)
     for job_param in config.inputs.iter_jobs():
         config.add_job(job_param)
 

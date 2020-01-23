@@ -8,7 +8,7 @@ from jade.extensions.demo.autoregression_inputs import AutoRegressionInputs
 from jade.extensions.demo.autoregression_execution import AutoRegressionExecution
 
 
-def auto_config(inputs):
+def auto_config(inputs, **kwargs):
     """
     Create a configuration file for demo
 
@@ -20,7 +20,7 @@ def auto_config(inputs):
         raise OSError(f"Inputs path '{inputs}' does not exist.")
 
     job_inputs = AutoRegressionInputs(inputs)
-    config = AutoRegressionConfiguration(job_inputs=job_inputs)
+    config = AutoRegressionConfiguration(job_inputs=job_inputs, **kwargs)
     for job_param in config.inputs.iter_jobs():
         config.add_job(job_param)
 
