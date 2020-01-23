@@ -13,6 +13,7 @@ from jade.hpc.pbs_manager import PbsManager
 from jade.hpc.slurm_manager import SlurmManager
 from jade.jobs.dispatchable_job import DispatchableJob
 from jade.jobs.job_manager_base import JobManagerBase
+from jade.jobs.job_post_process import JobPostProcess
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.utils.timing_utils import timed_info
@@ -63,6 +64,8 @@ class JobRunner(JobManagerBase):
 
             jobs = self._generate_jobs(config_file, verbose)
             result = self._run_jobs(jobs, num_processes=num_processes)
+            # run post process
+            self._run_post_process(verbose)
             logger.info("Completed %s jobs", len(jobs))
         finally:
             shutil.rmtree(scratch_dir)
@@ -135,3 +138,13 @@ class JobRunner(JobManagerBase):
 
         logger.info("Jobs are complete. count=%s", num_jobs)
         return Status.GOOD  # TODO
+
+    def _run_post_process(self, verbose):
+        """Runs post process function, if given"""
+        post_process_config = self._config.get_post_process()
+        if post_process_config is None:
+            return
+
+        logger.info("Running post-process %s", post_process_config['class_name'])
+        post_process = JobPostProcess(*post_process_config.values())
+        post_process.run(self._config_file)
