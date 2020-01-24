@@ -390,3 +390,29 @@ def check_filename(name):
         raise InvalidParameter(
             f"length of {name} is greater than the limit of {MAX_PATH_LENGTH}."
         )
+
+def output_to_file(data, filename=None, stream=sys.stdout, indent=2):
+    if filename is None and stream is None:
+        raise InvalidParameter("must set either filename or stream")
+
+    if filename is not None:
+        ext = os.path.splitext(filename)[1]
+        if ext not in (".json", ".toml"):
+            raise InvalidParameter("Only .json and .toml are supported")
+
+        with open(filename, "w") as f_out:
+            _write_file(data, f_out, fmt=ext)
+    else:
+        _write_file(data)
+
+    logger.info("Dumped configuration to %s", filename)
+
+def _write_file(data, stream=sys.stdout, fmt=".json", indent=2):
+    # Note: the default is JSON here because parsing 100 MB .toml files
+    # is an order of magnitude slower.
+    if fmt == ".json":
+        json.dump(data, stream, indent=indent)
+    elif fmt == ".toml":
+        toml.dump(data, stream)
+    else:
+        assert False, fmt
