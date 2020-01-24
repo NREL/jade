@@ -1,6 +1,10 @@
 """Contains class for running any post process scripts available"""
 
+import os
+import sys
 import logging
+import json
+import toml
 
 from jade.utils.utils import load_data
 
@@ -9,7 +13,7 @@ logger = logging.getLogger(__name__)
 class JobPostProcess:
     """Class used to dynamically run post process scripts"""
 
-    def __init__(self, module_name, class_name, data):
+    def __init__(self, module_name, class_name, data=None):
         """Constructs JobPostProcess
 
         Parameters
@@ -67,3 +71,42 @@ class JobPostProcess:
     def run(self, *kwargs):
         """Runs post-process class' run function"""
         self._post_process.run(*kwargs)
+
+    def serialize(self):
+        """Create data for serialization."""
+        serialized_data = {
+            "class": self._post_process.__class__.__name__,
+            "module": self._post_process.__module__
+        }
+
+        if self._data is not None:
+            serialized_data['data'] = self._data
+
+        return serialized_data
+
+    def dump(self, filename="post-process-config.toml"):
+        if filename is None and stream is None:
+            raise InvalidParameter("must set either filename or stream")
+
+        if filename is not None:
+            ext = os.path.splitext(filename)[1]
+            if ext not in (".json", ".toml"):
+                raise InvalidParameter("Only .json and .toml are supported")
+
+            with open(filename, "w") as f_out:
+                self._dump(f_out, fmt=ext)
+        else:
+            self._dump(stream)
+
+        logger.info("Dumped configuration to %s", filename)
+
+    def _dump(self, stream=sys.stdout, fmt=".json", indent=2):
+        # Note: the default is JSON here because parsing 100 MB .toml files
+        # is an order of magnitude slower.
+        data = self.serialize()
+        if fmt == ".json":
+            json.dump(data, stream, indent=indent)
+        elif fmt == ".toml":
+            toml.dump(data, stream)
+        else:
+            assert False, fmt
