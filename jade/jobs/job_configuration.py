@@ -240,6 +240,7 @@ class JobConfiguration(abc.ABC):
         return self._jobs.get_num_jobs()
 
     def get_post_process_config(self):
+        """Return post process config for jobs"""
         return self._post_process_config
 
     @property
