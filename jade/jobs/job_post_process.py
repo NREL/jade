@@ -6,7 +6,7 @@ import logging
 import json
 import toml
 
-from jade.utils.utils import load_data
+from jade.utils.utils import load_data, output_to_file
 
 logger = logging.getLogger(__name__)
 
@@ -85,28 +85,4 @@ class JobPostProcess:
         return serialized_data
 
     def dump(self, filename="post-process-config.toml"):
-        if filename is None and stream is None:
-            raise InvalidParameter("must set either filename or stream")
-
-        if filename is not None:
-            ext = os.path.splitext(filename)[1]
-            if ext not in (".json", ".toml"):
-                raise InvalidParameter("Only .json and .toml are supported")
-
-            with open(filename, "w") as f_out:
-                self._dump(f_out, fmt=ext)
-        else:
-            self._dump(stream)
-
-        logger.info("Dumped configuration to %s", filename)
-
-    def _dump(self, stream=sys.stdout, fmt=".json", indent=2):
-        # Note: the default is JSON here because parsing 100 MB .toml files
-        # is an order of magnitude slower.
-        data = self.serialize()
-        if fmt == ".json":
-            json.dump(data, stream, indent=indent)
-        elif fmt == ".toml":
-            toml.dump(data, stream)
-        else:
-            assert False, fmt
+        output_to_file(self.serialize(), filename)
