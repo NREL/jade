@@ -84,5 +84,7 @@ class JobPostProcess:
 
         return serialized_data
 
-    def dump(self, filename="post-process-config.toml"):
+    def dump(self, filename=None):
+        if filename is None:
+            filename = "post-process-config.toml"
         output_to_file(self.serialize(), filename)
