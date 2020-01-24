@@ -19,29 +19,25 @@ class JobPostProcess:
         data : dict
 
         """
-        self._module_name = module_name
-        self._class_name = class_name
         self._data = data
 
         try:
             # dynamically get class from analysis module
-            process_module = __import__(self._module_name, fromlist=[self._class_name])
-            process_class = getattr(process_module, self._class_name)
+            process_module = __import__(module_name, fromlist=[class_name])
+            process_class = getattr(process_module, class_name)
             self._post_process = process_class(self._data)
         except ModuleNotFoundError as module_error:
-            logger.error(module_error)
-            exit(1)
+            logger.exception(module_error)
         except ValueError as value_error:
-            logger.error(value_error)
-            exit(1)
+            logger.exception(value_error)
 
     @classmethod
-    def load_config_from_file(cls, toml_file):
+    def load_config_from_file(cls, config_file):
         """Loads config from given toml file
 
         Parameters
         ----------
-        toml_file : str
+        config_file : str
 
         Returns
         -------
@@ -51,7 +47,7 @@ class JobPostProcess:
 
         """
 
-        config = load_data(toml_file)
+        config = load_data(config_file)
         module_name = None
         class_name = None
         data = {}

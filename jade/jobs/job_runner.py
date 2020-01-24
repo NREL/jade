@@ -141,7 +141,7 @@ class JobRunner(JobManagerBase):
 
     def _run_post_process(self, verbose):
         """Runs post process function, if given"""
-        post_process_config = self._config.get_post_process_config()
+        post_process_config = self._config.post_process_config
         if post_process_config is None:
             return
 

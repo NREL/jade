@@ -239,7 +239,8 @@ class JobConfiguration(abc.ABC):
         """
         return self._jobs.get_num_jobs()
 
-    def get_post_process_config(self):
+    @property
+    def post_process_config(self):
         """Return post process config for jobs"""
         return self._post_process_config
 
@@ -323,7 +324,7 @@ class JobConfiguration(abc.ABC):
             "jobs_directory": self._jobs_directory,
         }
 
-        if ( self._post_process_config is not None ):
+        if self._post_process_config is not None:
             data["post_process_config"] = self._post_process_config
 
         if include == ConfigSerializeOptions.JOBS:
