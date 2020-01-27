@@ -64,8 +64,6 @@ class JobRunner(JobManagerBase):
 
             jobs = self._generate_jobs(config_file, verbose)
             result = self._run_jobs(jobs, num_processes=num_processes)
-            # run post process
-            self._run_post_process(verbose)
             logger.info("Completed %s jobs", len(jobs))
         finally:
             shutil.rmtree(scratch_dir)
@@ -138,13 +136,3 @@ class JobRunner(JobManagerBase):
 
         logger.info("Jobs are complete. count=%s", num_jobs)
         return Status.GOOD  # TODO
-
-    def _run_post_process(self, verbose):
-        """Runs post process function, if given"""
-        post_process_config = self._config.post_process_config
-        if post_process_config is None:
-            return
-
-        logger.info("Running post-process %s", post_process_config['class_name'])
-        post_process = JobPostProcess(*post_process_config.values())
-        post_process.run(self._config_file)

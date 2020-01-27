@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class JobPostProcess:
     """Class used to dynamically run post process scripts"""
 
-    def __init__(self, module_name, class_name, data=None):
+    def __init__(self, module_name, class_name, data=None, **kwargs):
         """Constructs JobPostProcess
 
         Parameters
@@ -29,7 +29,7 @@ class JobPostProcess:
             # dynamically get class from analysis module
             process_module = __import__(module_name, fromlist=[class_name])
             process_class = getattr(process_module, class_name)
-            self._post_process = process_class(self._data)
+            self._post_process = process_class(self._data, **kwargs)
         except ModuleNotFoundError as module_error:
             logger.exception(module_error)
         except ValueError as value_error:
