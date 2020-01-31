@@ -1,10 +1,7 @@
 """Contains class for running any post process scripts available"""
 
 import os
-import sys
 import logging
-import json
-import toml
 
 from prettytable import PrettyTable
 
@@ -92,7 +89,7 @@ class JobPostProcess:
         return serialized_data
 
     @classmethod
-    def show_results(self, job_name=None):
+    def show_results(cls, job_name=None):
         """Show the post process results for jobs in a table.
 
         Parameters
@@ -101,10 +98,10 @@ class JobPostProcess:
             optional individual job to display
         """
 
-        print(f"Post-process results from directory: {self._output_dir}")
+        print(f"Post-process results from directory: {cls._output_dir}")
 
         job_names = None
-        for _, dirs, _ in os.walk(self._output_dir):
+        for _, dirs, _ in os.walk(cls._output_dir):
             job_names = dirs
             break
 
@@ -115,7 +112,7 @@ class JobPostProcess:
             if job_name is not None and job_name != job:
                 continue
 
-            results = load_data(f"{self._output_dir}/{job}/{self._results_file}")
+            results = load_data(f"{cls._output_dir}/{job}/{cls._results_file}")
 
             if not table.field_names:
                 table.field_names = [ 'job' ] + list(results[0].keys())
@@ -133,5 +130,6 @@ class JobPostProcess:
         results = self._post_process.get_results()
         output_to_file(results, f"{self._output_dir}/{self._job_name}/{self._results_file}")
 
-    def dump(self, filename=None):
+    def dump(self):
+        """Outputs post process data to results file"""
         output_to_file(self.serialize(), self._results_file)
