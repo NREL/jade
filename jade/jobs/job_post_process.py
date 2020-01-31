@@ -89,14 +89,19 @@ class JobPostProcess:
         return serialized_data
 
     @classmethod
-    def show_results(cls, job_name=None):
+    def show_results(cls, job_name=None, input_file=None):
         """Show the post process results for jobs in a table.
 
         Parameters
         ----------
         job_name : str
             optional individual job to display
+        input_file : str
+            optional input file name
         """
+
+        if input_file is None:
+            input_file = cls._results_file
 
         print(f"Post-process results from directory: {cls._output_dir}")
 
@@ -112,7 +117,7 @@ class JobPostProcess:
             if job_name is not None and job_name != job:
                 continue
 
-            results = load_data(f"{cls._output_dir}/{job}/{cls._results_file}")
+            results = load_data(f"{cls._output_dir}/{job}/{input_file}")
 
             if not table.field_names:
                 table.field_names = [ 'job' ] + list(results[0].keys())
@@ -130,6 +135,13 @@ class JobPostProcess:
         results = self._post_process.get_results()
         output_to_file(results, f"{self._output_dir}/{self._job_name}/{self._results_file}")
 
-    def dump(self):
-        """Outputs post process data to results file"""
-        output_to_file(self.serialize(), self._results_file)
+    def dump(self, output_file=None):
+        """Outputs post process data to results file
+
+        Parameters
+        ----------
+        output_file : str
+        """
+        if output_file is None:
+            output_file = self._results_file
+        output_to_file(self.serialize(), output_file)
