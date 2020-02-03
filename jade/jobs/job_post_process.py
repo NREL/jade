@@ -58,14 +58,17 @@ class JobPostProcess:
 
         return serialized_data
 
-    def dump(self):
+    def dump_config(self, output_file):
         """Outputs post process data to results file
 
         Parameters
         ----------
         output_file : str
         """
-        output_to_file(self.serialize(), self._get_job_results_dir)
+        if output_file is None:
+            output_file = 'post-process-config.toml'
+
+        output_to_file(self.serialize(), output_file)
 
     def _get_job_results_dir(self):
         return os.path.join(self._output, JOBS_OUTPUT_DIR)
