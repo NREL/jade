@@ -115,6 +115,8 @@ class JobPostProcess:
     @classmethod
     def show_results(cls, output_dir, job_name=None, input_file=None):
         """Show the post process results for jobs in a table.
+           Expects that JOBS_OUTPUT_DIR contains folders named after
+           jobs containing results.
 
         Parameters
         ----------
