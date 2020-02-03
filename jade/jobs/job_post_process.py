@@ -5,14 +5,13 @@ import logging
 
 from prettytable import PrettyTable
 
-from jade.common import JOBS_OUTPUT_DIR
+from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR
 from jade.utils.utils import load_data, output_to_file
 
 logger = logging.getLogger(__name__)
 
 class JobPostProcess:
     """Class used to dynamically run post process scripts"""
-    _output_dir = f"output/{JOBS_OUTPUT_DIR}"
     _results_file = "post-process-results.json"
 
     def __init__(self, module_name, class_name, data=None, job_name=None, **kwargs):
@@ -89,7 +88,7 @@ class JobPostProcess:
         return serialized_data
 
     @classmethod
-    def show_results(cls, job_name=None, input_file=None):
+    def show_results(cls, output_dir, job_name=None, input_file=None):
         """Show the post process results for jobs in a table.
 
         Parameters
@@ -103,27 +102,28 @@ class JobPostProcess:
         if input_file is None:
             input_file = cls._results_file
 
-        print(f"Post-process results from directory: {cls._output_dir}")
-
+        job_results_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
+        print(f"Post-process results from directory: {job_results_dir}")
         job_names = None
-        for _, dirs, _ in os.walk(cls._output_dir):
+
+        for _, dirs, _ in os.walk(job_results_dir):
             job_names = dirs
+            assert job_names
             break
 
         table = PrettyTable()
 
         for job in job_names:
-            # skip job if not given job name
             if job_name is not None and job_name != job:
                 continue
 
-            results = load_data(f"{cls._output_dir}/{job}/{input_file}")
+            results = load_data(os.path.join(job_results_dir, job, input_file))
 
             if not table.field_names:
-                table.field_names = [ 'job' ] + list(results[0].keys())
+                table.field_names = ['job'] + list(results[0].keys())
 
             for result in results:
-                row = [ job ]
+                row = [job]
                 for column in result:
                     row.append(result[column])
 
@@ -131,9 +131,12 @@ class JobPostProcess:
 
         print(table)
 
-    def _dump_results(self):
+    def _dump_results(self, output_dir=None):
+        if output_dir is None:
+            output_dir = os.path.join(OUTPUT_DIR, JOBS_OUTPUT_DIR)
+
         results = self._post_process.get_results()
-        output_to_file(results, f"{self._output_dir}/{self._job_name}/{self._results_file}")
+        output_to_file(results, os.path.join(output_dir, self._job_name, self._results_file))
 
     def dump(self, output_file=None):
         """Outputs post process data to results file

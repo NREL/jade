@@ -4,7 +4,6 @@ import logging
 import sys
 import click
 
-
 from jade.common import OUTPUT_DIR
 from jade.jobs.job_post_process import JobPostProcess
 from jade.loggers import setup_logging
@@ -41,6 +40,7 @@ from jade.utils.custom_click_options import CustomOptions
 )
 @click.option(
     "-j", "--job-name",
+    default=None,
     help="Specific job to show post-process results."
 )
 @click.option(
@@ -58,7 +58,7 @@ def show_results(failed, output, successful, post_process,
     setup_logging("show_results", None, console_level=level)
 
     if post_process:
-        JobPostProcess.show_results(job_name)
+        JobPostProcess.show_results(output, job_name)
         sys.exit(0)
 
     results = ResultsSummary(output)
