@@ -14,7 +14,8 @@ class JobPostProcess:
     """Class used to dynamically run post process scripts"""
     _results_file = "post-process-results.json"
 
-    def __init__(self, module_name, class_name, data=None, job_name=None, **kwargs):
+    def __init__(self, module_name, class_name, data=None,
+                 output=None, job_name=None, **kwargs):
         """Constructs JobPostProcess
 
         Parameters
@@ -26,6 +27,9 @@ class JobPostProcess:
         """
         self._data = data
         self._job_name = job_name
+        self._output = output
+        if output is None:
+            self._output = OUTPUT_DIR
 
         try:
             # dynamically get class from analysis module
@@ -36,6 +40,41 @@ class JobPostProcess:
             logger.exception(module_error)
         except ValueError as value_error:
             logger.exception(value_error)
+
+    def run(self, *kwargs):
+        """Runs post-process class' run function"""
+        self._post_process.run(*kwargs)
+        self._dump_results()
+
+    def serialize(self):
+        """Create data for serialization."""
+        serialized_data = {
+            "class": self._post_process.__class__.__name__,
+            "module": self._post_process.__module__
+        }
+
+        if self._data is not None:
+            serialized_data['data'] = self._data
+
+        return serialized_data
+
+    def dump(self):
+        """Outputs post process data to results file
+
+        Parameters
+        ----------
+        output_file : str
+        """
+        output_to_file(self.serialize(), self._get_job_results_dir)
+
+    def _get_job_results_dir(self):
+        return os.path.join(self._output, JOBS_OUTPUT_DIR)
+
+    def _dump_results(self):
+        results = self._post_process.get_results()
+        output_path = os.path.join(self._get_job_results_dir(),
+                                   self._results_file)
+        output_to_file(results, output_path)
 
     @classmethod
     def load_config_from_file(cls, config_file):
@@ -69,23 +108,6 @@ class JobPostProcess:
                 data[data_index] = config['data'][data_index]
 
         return module_name, class_name, data
-
-    def run(self, *kwargs):
-        """Runs post-process class' run function"""
-        self._post_process.run(*kwargs)
-        self._dump_results()
-
-    def serialize(self):
-        """Create data for serialization."""
-        serialized_data = {
-            "class": self._post_process.__class__.__name__,
-            "module": self._post_process.__module__
-        }
-
-        if self._data is not None:
-            serialized_data['data'] = self._data
-
-        return serialized_data
 
     @classmethod
     def show_results(cls, output_dir, job_name=None, input_file=None):
@@ -130,21 +152,3 @@ class JobPostProcess:
                 table.add_row(row)
 
         print(table)
-
-    def _dump_results(self, output_dir=None):
-        if output_dir is None:
-            output_dir = os.path.join(OUTPUT_DIR, JOBS_OUTPUT_DIR)
-
-        results = self._post_process.get_results()
-        output_to_file(results, os.path.join(output_dir, self._job_name, self._results_file))
-
-    def dump(self, output_file=None):
-        """Outputs post process data to results file
-
-        Parameters
-        ----------
-        output_file : str
-        """
-        if output_file is None:
-            output_file = self._results_file
-        output_to_file(self.serialize(), output_file)
