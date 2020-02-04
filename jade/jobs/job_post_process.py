@@ -15,7 +15,7 @@ class JobPostProcess:
     _results_file = "post-process-results.json"
 
     def __init__(self, module_name, class_name, data=None,
-                 output=None, job_name=None, **kwargs):
+                 output=OUTPUT_DIR, job_name=None, **kwargs):
         """Constructs JobPostProcess
 
         Parameters
@@ -28,8 +28,6 @@ class JobPostProcess:
         self._data = data
         self._job_name = job_name
         self._output = output
-        if output is None:
-            self._output = OUTPUT_DIR
 
         try:
             # dynamically get class from analysis module
@@ -58,25 +56,23 @@ class JobPostProcess:
 
         return serialized_data
 
-    def dump_config(self, output_file):
+    def dump_config(self, output_file='post-process-config.toml'):
         """Outputs post process data to results file
 
         Parameters
         ----------
         output_file : str
         """
-        if output_file is None:
-            output_file = 'post-process-config.toml'
-
         output_to_file(self.serialize(), output_file)
 
     def _get_job_results_dir(self):
-        return os.path.join(self._output, JOBS_OUTPUT_DIR)
+        return os.path.join(self._output, JOBS_OUTPUT_DIR, self._job_name)
 
     def _dump_results(self):
         results = self._post_process.get_results()
         output_path = os.path.join(self._get_job_results_dir(),
                                    self._results_file)
+        logger.info("Dumping post-process results to %s", output_path)
         output_to_file(results, output_path)
 
     @classmethod
