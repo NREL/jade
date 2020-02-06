@@ -44,7 +44,7 @@ class JobPostProcess:
 
     def run(self, *kwargs):
         """Runs post-process class' run function"""
-        self._post_process.run(*kwargs)
+        self._post_process.run(output=self._output, *kwargs)
         self._dump_results()
 
     def serialize(self):
@@ -75,8 +75,13 @@ class JobPostProcess:
         results = self._post_process.get_results()
         output_path = os.path.join(self._get_job_results_dir(),
                                    self._results_file)
+        data = {
+            'job': self._job_name,
+            'post-process': type(self._post_process).__name__,
+            'results': results
+        }
         logger.info("Dumping post-process results to %s", output_path)
-        output_to_file(results, output_path)
+        output_to_file(data, output_path)
 
     @classmethod
     def load_config_from_file(cls, config_file):
