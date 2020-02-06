@@ -21,8 +21,11 @@ class JobPostProcess:
         Parameters
         ----------
         module_name : str
+            module which contains class that needs to run
         class_name : str
+            class implementing post process to run
         data : dict
+            optional dictionary of additional data to send to post process
 
         """
         self._data = data
@@ -86,8 +89,11 @@ class JobPostProcess:
         Returns
         -------
         module_name : str
+            module which contains class that needs to run
         class_name : str
-        data : str
+            class implementing post process to run
+        data : dict
+            optional dictionary of additional data to send to post process
 
         """
 
