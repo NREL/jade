@@ -63,7 +63,6 @@ def run(extension, **kwargs):
     # Create directory for current job
     job_dir = os.path.join(output, name)
     os.makedirs(job_dir, exist_ok=True)
-
     # General logging setup
     log_file = os.path.join(job_dir, "run.log")
     general_logger = setup_logging(extension, log_file, console_level=level, file_level=level)
@@ -86,7 +85,7 @@ def run(extension, **kwargs):
         config = load_data(config_file)
         if "post_process_config" in config.keys():
             post_process = JobPostProcess(*config['post_process_config'].values(),
-                                          job_name=name)
+                                          job_name=name, output=output)
             post_process.run(config_file)
 
     sys.exit(ret)
