@@ -54,8 +54,9 @@ class JobPostProcess:
             "module": self._post_process.__module__
         }
 
-        if self._data is not None:
-            serialized_data['data'] = self._data
+        data = self._post_process.serialized_data
+        if data is not None:
+            serialized_data['data'] = data
 
         return serialized_data
 
@@ -69,7 +70,7 @@ class JobPostProcess:
         output_to_file(self.serialize(), output_file)
 
     def _get_job_results_dir(self):
-        return os.path.join(self._output, JOBS_OUTPUT_DIR, self._job_name)
+        return os.path.join(self._output, self._job_name)
 
     def _dump_results(self):
         results = self._post_process.get_results()
@@ -151,9 +152,9 @@ class JobPostProcess:
             if job_name is not None and job_name != job:
                 continue
 
-            results = load_data(os.path.join(job_results_dir, job, input_file))
-
-            if not table.field_names:
+            post_process_results = load_data(os.path.join(job_results_dir, job, input_file))
+            results = post_process_results['results']['outputs']
+            if not table.field_names and results:
                 table.field_names = ['job'] + list(results[0].keys())
 
             for result in results:
