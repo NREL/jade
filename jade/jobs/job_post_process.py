@@ -39,10 +39,10 @@ class JobPostProcess:
             self._post_process = process_class(self._data, self._job_name, *args)
         except ModuleNotFoundError as module_error:
             logger.exception(module_error)
-            raise ModuleNotFoundError(module_error)
+            raise
         except ValueError as value_error:
             logger.exception(value_error)
-            raise ValueError(value_error)
+            raise
 
     def run(self, *kwargs):
         """Runs post-process class' run function"""
