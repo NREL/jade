@@ -15,7 +15,7 @@ class JobPostProcess:
     _results_file = "post-process-results.json"
 
     def __init__(self, module_name, class_name, data=None,
-                 output=OUTPUT_DIR, job_name=None, **kwargs):
+                 output=OUTPUT_DIR, job_name=None, *args, **kwargs):
         """Constructs JobPostProcess
 
         Parameters
@@ -39,8 +39,10 @@ class JobPostProcess:
             self._post_process = process_class(self._data, self._job_name, *args)
         except ModuleNotFoundError as module_error:
             logger.exception(module_error)
+            raise ModuleNotFoundError(module_error)
         except ValueError as value_error:
             logger.exception(value_error)
+            raise ValueError(value_error)
 
     def run(self, *kwargs):
         """Runs post-process class' run function"""
