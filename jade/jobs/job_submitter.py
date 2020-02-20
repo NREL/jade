@@ -20,8 +20,7 @@ from jade.jobs.job_runner import JobRunner
 from jade.jobs.results_aggregator import ResultsAggregatorSummary
 from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
-from jade.utils.utils import dump_data, load_data, create_script, \
-    create_chunks
+from jade.utils.utils import dump_data, create_script, create_chunks
 import jade.version
 from jade.utils.timing_utils import timed_debug
 

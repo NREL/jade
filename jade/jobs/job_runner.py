@@ -13,6 +13,7 @@ from jade.hpc.pbs_manager import PbsManager
 from jade.hpc.slurm_manager import SlurmManager
 from jade.jobs.dispatchable_job import DispatchableJob
 from jade.jobs.job_manager_base import JobManagerBase
+from jade.jobs.job_post_process import JobPostProcess
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.utils.timing_utils import timed_info
