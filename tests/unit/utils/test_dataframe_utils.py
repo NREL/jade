@@ -65,6 +65,18 @@ def test_read_dataframe__feather():
         assert_frame_equal(df1, df2)
 
 
+def test_read_dataframe__h5():
+    """Should create identical dataframe on reading HDF5 file
+
+    HDF5 does not support serializing a non-default index for the index
+    """
+    df1 = create_dataframe()
+    with tempfile.NamedTemporaryFile(suffix=".h5") as temp:
+        df1.reset_index().to_hdf(temp.name, "data")
+        df2 = read_dataframe(temp.name, parse_dates=True, index_col="timestamp")
+        assert_frame_equal(df1, df2)
+
+
 def test_read_dataframe__file_not_found():
     """Should raise exception if file not found"""
     filename = "/dataframe/file/does/not/exist"
@@ -140,6 +152,18 @@ def test_write_dataframe__feather(compress):
         expected_name = temp.name if not compress else temp.name + ".gz"
         write_dataframe(df_no_index, temp.name, compress=compress, keep_original=True)
         df2 = read_dataframe(expected_name, index_col="timestamp", parse_dates=True)
+        assert_frame_equal(df1, df2)
+
+
+@mark.parametrize("compress", [False, True])
+def test_write_dataframe__h5(compress):
+    """Should write dataframe into a file with matching extension"""
+    df1 = create_dataframe()
+    df_no_index = df1.reset_index()
+
+    with tempfile.NamedTemporaryFile(suffix=".h5") as temp:
+        write_dataframe(df_no_index, temp.name, compress=compress)
+        df2 = read_dataframe(temp.name, index_col="timestamp", parse_dates=True)
         assert_frame_equal(df1, df2)
 
 
