@@ -13,7 +13,7 @@ from jade.jobs.job_execution_interface import JobExecutionInterface
 from jade.loggers import log_job_event
 from jade.utils.utils import dump_data
 
-matplotlib.use("Agg")
+# matplotlib.use("Agg")
 
 DEMO_EVENT_CATEGORY = "AutoRegression"
 DEMO_EVENT_CODE = "400"
