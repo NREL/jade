@@ -44,9 +44,9 @@ class JobPostProcess:
             logger.exception(value_error)
             raise
 
-    def run(self, *kwargs):
+    def run(self, *args, **kwargs):
         """Runs post-process class' run function"""
-        self._post_process.run(output=self._output, *kwargs)
+        self._post_process.run(*args, **kwargs)
         self._dump_results()
 
     def serialize(self):

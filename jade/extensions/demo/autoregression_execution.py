@@ -7,13 +7,11 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.ar_model import AR
 import matplotlib
-import matplotlib.pyplot as plt
 from jade.events import StructuredJobEvent
 from jade.jobs.job_execution_interface import JobExecutionInterface
 from jade.loggers import log_job_event
 from jade.utils.utils import dump_data
 
-matplotlib.use("Agg")
 
 DEMO_EVENT_CATEGORY = "AutoRegression"
 DEMO_EVENT_CODE = "400"
@@ -55,6 +53,8 @@ def autoregression_analysis(country, data, output):
     df.to_csv(result_file)
 
     # Save plot
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
     df.plot()
     plt.grid(axis="y", linestyle="--")
     plt.title(country + "(current $)")
