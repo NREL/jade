@@ -22,7 +22,6 @@ class BatchPostProcessConfiguration(JobConfiguration):
         )
 
     def _serialize(self, data):
-        """Add batch post process config"""
         pass
 
     def create_from_result(self, job, output_dir):
@@ -32,22 +31,27 @@ class BatchPostProcessConfiguration(JobConfiguration):
         return self.inputs
 
     @classmethod
-    def create_config_from_file(cls, config_file):
+    def create_config_from_file(cls, base_directory, config_file, **kwargs):
         """
         Create BatchPostProcessConfiguration instance from master config file.
+
         Parameters
         ----------
+        base_directory: str
+            The output directory of task.
         config_file: str
             The path of master config file
 
         Returns
         -------
-
+        :obj:`BatchPostProcessConfiguration`
+            The BatchPostProcessConfiguration instance.
         """
         data = load_data(config_file)
         batch_post_process_config = data.get("batch_post_process_config", None)
 
-        inputs = BatchPostProcessInputs(batch_post_process_config)
+        inputs = BatchPostProcessInputs(base_directory, batch_post_process_config)
+        inputs.get_available_parameters(num_workers=kwargs.get("num_workers", 2))
         config = cls(inputs=inputs, batch_post_process_config=batch_post_process_config)
 
         for job in inputs.iter_jobs():

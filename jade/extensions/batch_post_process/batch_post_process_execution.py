@@ -15,12 +15,12 @@ class BatchPostProcessExecution(JobExecutionInterface):
     """
     def __init__(self, job, output):
         """
-        Init auto-regression execution class
+        Init batch post-process execution class
 
         Parameters
         ----------
         job: :obj:`BatchPostProcessParameters`
-            The instance of :obj:`AutoRegressionParameters`
+            The instance of :obj:`BatchPostProcessParameters`
         output: str,
             The path to the output directory.
         """
@@ -34,13 +34,13 @@ class BatchPostProcessExecution(JobExecutionInterface):
 
     @classmethod
     def create(cls, _, job, output, **kwargs):
-        """Create instance of :obj:`AutoRegressionExecution`"""
+        """Create instance of :obj:`BatchPostProcessExecution`"""
         return cls(job, output)
 
     @staticmethod
     def generate_command(job, output, config_file, verbose=False):
         """
-        Generate command consumed by bash for running auto-regression analysis.
+        Generate command consumed by shell for running batch post-processing.
 
         Parameters
         ----------
@@ -74,7 +74,6 @@ class BatchPostProcessExecution(JobExecutionInterface):
         pass
 
     def list_results_files(self):
-        """Return a list of result filenames created by the simulation."""
         return [
             os.path.join(self._output, x)
             for x in os.listdir(self._output)
@@ -90,11 +89,11 @@ class BatchPostProcessExecution(JobExecutionInterface):
             process_module = __import__(module_name, fromlist=[class_name])
             process_class = getattr(process_module, class_name)
             batch_post_process = process_class()
-        except ModuleNotFoundError as e:
-            logger.exception(e)
+        except ModuleNotFoundError:
+            logger.exception("Could not import module with batch post-process class.")
             raise
-        except ValueError as e:
-            logger.exception(e)
+        except ValueError:
+            logger.exception("Module %s does not have %s class.", module_name, class_name)
             raise
 
         output = os.path.dirname(self._output)

@@ -1,8 +1,7 @@
 import os
 from concurrent.futures import ProcessPoolExecutor
 
-from jade.common import OUTPUT_DIR, JOBS_OUTPUT_DIR
-from jade.exceptions import ExecutionError
+from jade.common import JOBS_OUTPUT_DIR
 from jade.jobs.job_inputs_interface import JobInputsInterface
 from jade.utils.utils import load_data
 
@@ -16,11 +15,20 @@ class BatchPostProcessInputs(JobInputsInterface):
     """
     POST_PROCESS_RESULTS = "post-process-results.json"
 
-    def __init__(self, batch_post_process_config, base_directory=OUTPUT_DIR):
+    def __init__(self, base_directory, batch_post_process_config):
+        """
+        Init class
+
+        Parameters
+        ----------
+        base_directory: str
+            the output directory of task.
+        batch_post_process_config: dict
+            the batch post-process config.
+        """
         self._batch_post_process_config = batch_post_process_config
         self._base_directory = base_directory
         self._parameters = {}
-        self.get_available_parameters()
 
     @property
     def base_directory(self):
@@ -41,20 +49,19 @@ class BatchPostProcessInputs(JobInputsInterface):
         data = load_data(results_file)
         return {job_name: data["results"]["outputs"]}
 
-    def get_available_parameters(self):
+    def get_available_parameters(self, **kwargs):
         """Return a dictionary containing all available parameters."""
-        # Aggregate post-process results of all jobs
         jobs_output_dir = os.path.join(self.base_directory, JOBS_OUTPUT_DIR)
         job_names = os.listdir(jobs_output_dir)
 
+        num_workers = kwargs.get("num_workers", 2)
         jobs_post_process_results = {}
-        with ProcessPoolExecutor() as executor:
+        with ProcessPoolExecutor(max_workers=num_workers) as executor:
             results = executor.map(self._get_post_process_results, job_names)
 
         for result in list(results):
             jobs_post_process_results.update(result)
 
-        # Create job parameters
         module_name = self._batch_post_process_config.get("module", None)
         class_name = self._batch_post_process_config.get("class_name", None)
         job_param = BatchPostProcessParameters(

@@ -14,18 +14,11 @@ logger = logging.getLogger(__name__)
 
 
 def auto_config(inputs, **kwargs):
-    """
-    Create a configuration file for demo
-
-    :param inputs: str, the path to directory containing post-process results data.
-
-    :return: None
-    """
     pass
 
 
 def run(config_file, name, output, output_format, verbose):
-    """Run auto regression analysis through command line"""
+    """Run batch post-processing through command line"""
     os.makedirs(output, exist_ok=True)
 
     config = create_config_from_file(config_file)
