@@ -6,15 +6,20 @@ import sys
 
 import click
 
+from jade.common import POST_PROCESSING_CONFIG_FILE
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
-from jade.utils.utils import makedirs, rotate_filenames, get_cli_string
+from jade.utils.utils import makedirs, rotate_filenames, get_cli_string, load_data
+from jade.extensions.batch_post_process.batch_post_process_configuration import \
+    BatchPostProcessConfiguration
 
 
 logger = logging.getLogger(__name__)
 
+
+@click.command()
 @click.argument(
     "config-file",
     type=str,
@@ -97,11 +102,16 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Restart only missing jobs."
 )
-@click.command()
+@click.option(
+    "--num-workers",
+    default=2,
+    show_default=True,
+    help="Number of workers to aggregate job results in parallel."
+)
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
-        verbose, restart_failed, restart_missing):
+        verbose, restart_failed, restart_missing, num_workers):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
 
@@ -141,4 +151,24 @@ def submit_jobs(
         poll_interval=poll_interval,
         previous_results=previous_results
     )
+
+    data = load_data(config_file)
+    if ret.value == 0 and "batch_post_process_config" in data:
+        logger.info("Start batch post-process on job results...")
+        post_config = BatchPostProcessConfiguration.create_config_from_file(
+            base_directory=output, config_file=config_file, num_workers=num_workers
+        )
+        post_processing_config_file = os.path.join(output, POST_PROCESSING_CONFIG_FILE)
+        post_config.dump(post_processing_config_file)
+
+        mgr = JobSubmitter(post_processing_config_file, hpc_config=hpc_config, output=output)
+        ret = mgr.submit_jobs(
+            per_node_batch_size=per_node_batch_size,
+            max_nodes=1,
+            force_local=local,
+            verbose=verbose,
+            num_processes=num_processes,
+            poll_interval=poll_interval
+        )
+
     sys.exit(ret.value)
