@@ -5,7 +5,7 @@ import logging.config
 
 
 def setup_logging(name, filename, console_level=logging.INFO,
-                  file_level=logging.INFO):
+                  file_level=logging.INFO, packages=None):
     """Configures logging to file and console.
 
     Parameters
@@ -18,6 +18,8 @@ def setup_logging(name, filename, console_level=logging.INFO,
         console log level
     file_level : int, optional
         file log level
+    packages : list, optional
+        enable logging for these package names
 
     """
     log_config = {
@@ -80,15 +82,27 @@ def setup_logging(name, filename, console_level=logging.INFO,
         #},
     }
 
+    logging_packages = ["jade"]
+    if packages is not None:
+        for package in packages:
+            log_config["loggers"][package] = {
+                "handlers": ["console", "file"],
+                "level": "DEBUG",
+                "propagate": False,
+            }
+            logging_packages.append(package)
+
     if filename is None:
         log_config["handlers"].pop("file")
         log_config["loggers"][name]["handlers"].remove("file")
-        log_config["loggers"]["jade"]["handlers"].remove("file")
+        for package in logging_packages:
+            log_config["loggers"][package]["handlers"].remove("file")
 
     # For event logging
     if name == "event":
         log_config["handlers"].pop("file")
-        log_config["loggers"].pop("jade")
+        for package in logging_packages:
+            log_config["loggers"].pop(package)
     else:
         log_config["handlers"].pop("structured_file")
         log_config["loggers"]["event"]["handlers"].remove("structured_file")
