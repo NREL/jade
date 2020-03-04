@@ -10,6 +10,7 @@ CONFIG_FILE = "config.json"
 RESULTS_DIR = "temp-results"
 RESULTS_FILE = "results.json"
 ANALYSIS_DIR = "analysis"
+POST_CONFIG_FILE = "post-config.json"
 
 
 def get_results_temp_filename(output_dir, batch_id):

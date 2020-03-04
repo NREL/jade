@@ -13,13 +13,18 @@ from jade.utils.utils import load_data
 
 # TODO: need one group command for auto-config; this should be a subcommand.
 
-
+@click.command()
+@click.argument("extension")
+@click.argument("inputs")
 @click.option(
-    "-v", "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "-p", "--post-process-config-file",
+    is_eager=True,
+    help="TOML file post-process config"
+)
+@click.option(
+    "-b", "--batch-post-process-config-file",
+    type=click.Path(exists=True),
+    help="Config file for batch post-process."
 )
 @click.option(
     "-c", "--config-file",
@@ -28,15 +33,14 @@ from jade.utils.utils import load_data
     help="config file to generate."
 )
 @click.option(
-    "-p", "--post-process-config-file",
-    is_eager=True,
-    help="TOML file post-process config"
+    "-v", "--verbose",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Enable verbose log output."
 )
-@click.argument("inputs")
-@click.argument("extension")
-@click.command()
-def auto_config(extension, inputs, config_file, post_process_config_file,
-                verbose):
+def auto_config(extension, inputs, post_process_config_file,
+                batch_post_process_config_file, config_file, verbose):
     """Automatically create a configuration."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("auto_config", None, console_level=level)
@@ -53,13 +57,23 @@ def auto_config(extension, inputs, config_file, post_process_config_file,
             "data": data
         }
 
+    if batch_post_process_config_file:
+        batch_post_process_config = load_data(batch_post_process_config_file)
+    else:
+        batch_post_process_config = None
+
     # User extension
     registry = Registry()
     if not registry.is_registered(extension):
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
 
     cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
-    config = cli.auto_config(inputs, post_process_config=post_process_config)
+    config = cli.auto_config(
+        inputs,
+        post_process_config=post_process_config,
+        batch_post_process_config=batch_post_process_config
+    )
+
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
     print(f"Dumped configuration to {config_file}.")

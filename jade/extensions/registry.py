@@ -29,6 +29,15 @@ DEFAULT_REGISTRY = [
         "job_configuration_module": "jade.extensions.generic_command.generic_command_configuration",
         "job_configuration_class": "GenericCommandConfiguration",
         "cli_module": "jade.extensions.generic_command.cli",
+    },
+    {
+        "name": "batch_post_process",
+        "description": "Batch process results from all jobs with post-process.",
+        "job_execution_module": "jade.extensions.batch_post_process.batch_post_process_execution",
+        "job_execution_class": "BatchPostProcessExecution",
+        "job_configuration_module": "jade.extensions.batch_post_process.batch_post_process_configuration",
+        "job_configuration_class": "BatchPostProcessConfiguration",
+        "cli_module": "jade.extensions.batch_post_process.cli",
     }
 ]
 

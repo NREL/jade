@@ -9,7 +9,7 @@ import shutil
 
 import jade
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
-    RESULTS_FILE
+    RESULTS_FILE, POST_CONFIG_FILE
 from jade.enums import Status
 from jade.exceptions import InvalidParameter
 from jade.hpc.common import HpcType
@@ -20,9 +20,11 @@ from jade.jobs.job_runner import JobRunner
 from jade.jobs.results_aggregator import ResultsAggregatorSummary
 from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
-from jade.utils.utils import dump_data, create_script, create_chunks
+from jade.utils.utils import dump_data, load_data, create_script, create_chunks
 import jade.version
 from jade.utils.timing_utils import timed_debug
+from jade.extensions.batch_post_process.batch_post_process_configuration import \
+    BatchPostProcessConfiguration
 
 
 logger = logging.getLogger(__name__)
@@ -75,8 +77,8 @@ class JobSubmitter(JobManagerBase):
 
     def __repr__(self):
         return f"""hpc_config_file={self._hpc_config_file}
-num_jobs={self.get_num_jobs()}
-results_summary={self.get_results_summmary_report()}"""
+                num_jobs={self.get_num_jobs()}
+                results_summary={self.get_results_summmary_report()}"""
 
     def cancel_jobs(self):
         """Cancel running and pending jobs."""
@@ -150,6 +152,24 @@ results_summary={self.get_results_summmary_report()}"""
         results_summary.delete_files()
         assert not os.listdir(self._results_dir)
         os.rmdir(self._results_dir)
+
+        # Run batch post process if configured
+        data = load_data(self._config_file)
+        if "batch_post_process_config" in data:
+            logger.info("Start batch post-process on job results...")
+            post_config = BatchPostProcessConfiguration.create_config_from_file(self._config_file)
+
+            post_config_file = os.path.join(self._output, POST_CONFIG_FILE)
+            post_config.dump(post_config_file)
+
+            logger.info("Config file post-config.json created!")
+
+            if self._hpc.hpc_type == HpcType.LOCAL or force_local:
+                runner = JobRunner(post_config_file, output=self._output)
+                result = runner.run_jobs(verbose=verbose, num_processes=num_processes)
+            else:
+                self._submit_to_hpc(name, max_nodes, per_node_batch_size, verbose,
+                                    poll_interval, num_processes)
 
         return result
 
