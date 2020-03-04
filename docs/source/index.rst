@@ -43,6 +43,7 @@ classes from the following:
 
    tutorial
    extensions
+   post_process
    jade
    design
    build_docs
