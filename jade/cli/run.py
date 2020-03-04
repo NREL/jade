@@ -84,8 +84,8 @@ def run(extension, **kwargs):
     if ret == 0:
         try:
             config = load_data(config_file)
-            if "post_process_config" in config.keys():
-                post_process = JobPostProcess(*config['post_process_config'].values(),
+            if "job_post_process_config" in config.keys():
+                post_process = JobPostProcess(*config['job_post_process_config'].values(),
                                             job_name=name, output=output)
                 post_process.run(config_file=config_file, output=output)
         except ExecutionError as err:
