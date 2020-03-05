@@ -59,7 +59,7 @@ class BatchPostProcessInputs(JobInputsInterface):
         with ProcessPoolExecutor(max_workers=num_workers) as executor:
             results = executor.map(self._get_post_process_results, job_names)
 
-        for result in list(results):
+        for result in results:
             jobs_post_process_results.update(result)
 
         module_name = self._batch_post_process_config.get("module", None)
