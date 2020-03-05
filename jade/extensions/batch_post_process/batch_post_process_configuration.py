@@ -31,7 +31,7 @@ class BatchPostProcessConfiguration(JobConfiguration):
         return self.inputs
 
     @classmethod
-    def create_config_from_file(cls, base_directory, config_file, **kwargs):
+    def create_config_from_dict(cls, base_directory, config_dict, **kwargs):
         """
         Create BatchPostProcessConfiguration instance from master config file.
 
@@ -39,20 +39,17 @@ class BatchPostProcessConfiguration(JobConfiguration):
         ----------
         base_directory: str
             The output directory of task.
-        config_file: str
-            The path of master config file
+        config_dict: str
+            The dict data of batch post-process.
 
         Returns
         -------
         :obj:`BatchPostProcessConfiguration`
             The BatchPostProcessConfiguration instance.
         """
-        data = load_data(config_file)
-        batch_post_process_config = data.get("batch_post_process_config", None)
-
-        inputs = BatchPostProcessInputs(base_directory, batch_post_process_config)
+        inputs = BatchPostProcessInputs(base_directory, config_dict)
         inputs.get_available_parameters(num_workers=kwargs.get("num_workers", 2))
-        config = cls(inputs=inputs, batch_post_process_config=batch_post_process_config)
+        config = cls(inputs=inputs, batch_post_process_config=config_dict)
 
         for job in inputs.iter_jobs():
             config.add_job(job)
