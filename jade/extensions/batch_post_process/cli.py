@@ -28,7 +28,7 @@ def run(config_file, name, output, output_format, verbose):
         execution = BatchPostProcessExecution(job=job, output=output)
         ret = execution.run()
     except ExecutionError as e:
-        logger.exception(e)
+        logger.exception("Failed to run batch post-process")
         raise
 
     return ret
