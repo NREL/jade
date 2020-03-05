@@ -90,7 +90,7 @@ class BatchPostProcessExecution(JobExecutionInterface):
             process_class = getattr(process_module, class_name)
             batch_post_process = process_class()
         except ModuleNotFoundError:
-            logger.exception("Could not import module with batch post-process class.")
+            logger.exception("Could not import module %s", module_name)
             raise
         except ValueError:
             logger.exception("Module %s does not have %s class.", module_name, class_name)
