@@ -152,8 +152,8 @@ def submit_jobs(
         previous_results=previous_results
     )
 
-    data = load_data(config_file)
-    if ret.value == 0 and "batch_post_process_config" in data:
+    batch_post_process_config = mgr.get_batch_post_process_config()
+    if ret.value == 0 and batch_post_process_config:
         logger.info("Start batch post-process on job results...")
         post_config = BatchPostProcessConfiguration.create_config_from_file(
             base_directory=output, config_file=config_file, num_workers=num_workers
