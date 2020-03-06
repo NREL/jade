@@ -3,6 +3,8 @@
 import logging
 import logging.config
 
+from jade.extensions.registry import Registry
+
 
 def setup_logging(name, filename, console_level=logging.INFO,
                   file_level=logging.INFO, packages=None):
@@ -65,11 +67,6 @@ def setup_logging(name, filename, console_level=logging.INFO,
                 "level": "DEBUG",
                 "propagate": False
             },
-            "jade": {
-                "handlers": ["console", "file"],
-                "level": "DEBUG",
-                "propagate": False,
-            },
             "event": {
                 "handlers": ["console", "structured_file"],
                 "level": "DEBUG",
@@ -82,15 +79,17 @@ def setup_logging(name, filename, console_level=logging.INFO,
         #},
     }
 
-    logging_packages = ["jade"]
+    logging_packages = set(Registry().list_loggers())
     if packages is not None:
         for package in packages:
-            log_config["loggers"][package] = {
-                "handlers": ["console", "file"],
-                "level": "DEBUG",
-                "propagate": False,
-            }
-            logging_packages.append(package)
+            logging_packages.add(package)
+
+    for package in logging_packages:
+        log_config["loggers"][package] = {
+            "handlers": ["console", "file"],
+            "level": "DEBUG",
+            "propagate": False,
+        }
 
     if filename is None:
         log_config["handlers"].pop("file")
