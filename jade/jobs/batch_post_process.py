@@ -42,4 +42,6 @@ class BatchPostProcess:
             "name": self.name,
             "extension": self.extension
         }
+        return data
+
     
