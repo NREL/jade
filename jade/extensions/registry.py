@@ -11,26 +11,31 @@ from jade.exceptions import InvalidParameter
 from jade.utils.utils import dump_data, load_data
 
 
-DEFAULT_REGISTRY = [
-    {
-        "name": "demo",
-        "description": "Country based GDP auto-regression analysis",
-        "job_execution_module": "jade.extensions.demo.autoregression_execution",
-        "job_execution_class": "AutoRegressionExecution",
-        "job_configuration_module": "jade.extensions.demo.autoregression_configuration",
-        "job_configuration_class": "AutoRegressionConfiguration",
-        "cli_module": "jade.extensions.demo.cli",
-    },
-    {
-        "name": "generic_command",
-        "description": "Allows batching of a list of CLI commands.",
-        "job_execution_module": "jade.extensions.generic_command.generic_command_execution",
-        "job_execution_class": "GenericCommandExecution",
-        "job_configuration_module": "jade.extensions.generic_command.generic_command_configuration",
-        "job_configuration_class": "GenericCommandConfiguration",
-        "cli_module": "jade.extensions.generic_command.cli",
-    }
-]
+DEFAULT_REGISTRY = {
+    "extensions": [
+        {
+            "name": "demo",
+            "description": "Country based GDP auto-regression analysis",
+            "job_execution_module": "jade.extensions.demo.autoregression_execution",
+            "job_execution_class": "AutoRegressionExecution",
+            "job_configuration_module": "jade.extensions.demo.autoregression_configuration",
+            "job_configuration_class": "AutoRegressionConfiguration",
+            "cli_module": "jade.extensions.demo.cli",
+        },
+        {
+            "name": "generic_command",
+            "description": "Allows batching of a list of CLI commands.",
+            "job_execution_module": "jade.extensions.generic_command.generic_command_execution",
+            "job_execution_class": "GenericCommandExecution",
+            "job_configuration_module": "jade.extensions.generic_command.generic_command_configuration",
+            "job_configuration_class": "GenericCommandConfiguration",
+            "cli_module": "jade.extensions.generic_command.cli",
+        },
+    ],
+    "logging": [
+        "jade",
+    ],
+}
 
 
 class ExtensionClassType(enum.Enum):
@@ -57,14 +62,18 @@ class Registry:
             self._registry_filename = registry_filename
 
         self._extensions = {}
+        self._loggers = set()
         if not os.path.exists(self._registry_filename):
             self.reset_defaults()
         else:
-            for extension in load_data(self._registry_filename):
+            data = self._check_registry_config(self._registry_filename)
+            for extension in data["extensions"]:
                 self._add_extension(extension)
+            for package_name in data["logging"]:
+                self._loggers.add(package_name)
 
     def _add_extension(self, extension):
-        for field in DEFAULT_REGISTRY[0]:
+        for field in DEFAULT_REGISTRY["extensions"][0]:
             if field not in extension:
                 raise InvalidParameter(f"required field {field} not present")
 
@@ -82,16 +91,70 @@ class Registry:
         cfg_module = importlib.import_module(ext["job_execution_module"])
         self._extensions[extension["name"]] = ext
 
-    def _serialize_extensions(self):
-        data = []
+    def _check_registry_config(self, filename):
+        data = load_data(filename)
+        if isinstance(data, list):
+            # Workaround to support the old registry format. 03/06/2020
+            # It can be removed eventually.
+            new_data = {
+                "extensions": data,
+                "logging": DEFAULT_REGISTRY["logging"],
+            }
+            dump_data(new_data, self.registry_filename, indent=4)
+            print(
+                "\nReformatted registry. Refer to `jade extensions --help` "
+                "for instructions on adding logging for external packages.\n"
+            )
+            data = new_data
+
+        return data
+
+    def _serialize_registry(self):
+        data = {"extensions": [], "logging": list(self._loggers)}
         for _, extension in sorted(self._extensions.items()):
             ext = {k: v for k, v in extension.items()
                    if not isinstance(k, ExtensionClassType)}
-            data.append(ext)
+            data["extensions"].append(ext)
 
         filename = self.registry_filename
         dump_data(data, filename, indent=4)
         logger.debug("Serialized data to %s", filename)
+
+    def add_logger(self, package_name):
+        """Add a package name to the logging registry.
+
+        Parameters
+        ----------
+        package_name : str
+
+        """
+        self._loggers.add(package_name)
+        self._serialize_registry()
+
+    def remove_logger(self, package_name):
+        """Remove a package name from the logging registry.
+
+        Parameters
+        ----------
+        package_name : str
+
+        """
+        self._loggers.remove(package_name)
+        self._serialize_registry()
+
+    def list_loggers(self):
+        """List the package names registered to be logged.
+
+        Returns
+        -------
+        list
+
+        """
+        return sorted(list(self._loggers))
+
+    def show_loggers(self):
+        """Print the package names registered to be logged."""
+        print(", ".join(self.list_loggers()))
 
     def get_extension_class(self, extension_name, class_type):
         """Get the class associated with the extension.
@@ -142,7 +205,7 @@ class Registry:
         """
 
         self._add_extension(extension)
-        self._serialize_extensions()
+        self._serialize_registry()
         logger.debug("Registered extension %s", extension["name"])
 
     @property
@@ -153,9 +216,12 @@ class Registry:
     def reset_defaults(self):
         """Reset the registry to its default values."""
         self._extensions.clear()
-        for extension in DEFAULT_REGISTRY:
+        self._loggers.clear()
+        for extension in DEFAULT_REGISTRY["extensions"]:
             self.register_extension(extension)
-        self._serialize_extensions()
+        for package_name in DEFAULT_REGISTRY["logging"]:
+            self.add_logger(package_name)
+        self._serialize_registry()
 
         logger.debug("Initialized registry to its defaults.")
 
@@ -179,4 +245,4 @@ class Registry:
             )
 
         self._extensions.pop(extension_name)
-        self._serialize_extensions()
+        self._serialize_registry()
