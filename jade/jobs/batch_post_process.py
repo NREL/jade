@@ -4,9 +4,16 @@ from jade.extensions.registry import Registry, ExtensionClassType
 
 
 class BatchPostProcess:
+    """A class for configuring batch-post process extension.
+    """
 
     def __init__(self, extension):
         self._extension = extension
+    
+    @property
+    def name(self):
+        """The name of batch post-process"""
+        return "batch-post-proces"
     
     @property
     def extension(self):
@@ -30,9 +37,9 @@ class BatchPostProcess:
         return config
     
     def serialize(self):
-        """Serialize """
+        """Serialize batch post-process object"""
         data = {
-            "name": "batch-post-process",
+            "name": self.name,
             "extension": self.extension
         }
     

@@ -7,6 +7,7 @@ from jade.common import CONFIG_FILE
 from jade.loggers import setup_logging
 from jade.exceptions import InvalidExtension
 from jade.extensions.registry import Registry, ExtensionClassType
+from jade.jobs.batch_post_process import BatchPostProcess
 from jade.jobs.job_post_process import JobPostProcess
 from jade.utils.utils import load_data
 
@@ -66,9 +67,8 @@ def auto_config(
         job_post_process_config = None
 
     if batch_post_process_extension is not None:
-        batch_post_process_config = {
-            "extension": batch_post_process_extension
-        }
+        bpp = BatchPostProcess(extension=batch_post_process_extension)
+        batch_post_process_config = bpp.serialize()
     else:
         batch_post_process_config = None
 
