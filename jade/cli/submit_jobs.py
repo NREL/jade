@@ -7,13 +7,12 @@ import sys
 import click
 
 from jade.common import POST_PROCESSING_CONFIG_FILE
+from jade.jobs.batch_post_process import BatchPostProcess
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
 from jade.utils.utils import makedirs, rotate_filenames, get_cli_string, load_data
-from jade.extensions.batch_post_process.batch_post_process_configuration import \
-    BatchPostProcessConfiguration
 
 
 logger = logging.getLogger(__name__)
@@ -103,28 +102,22 @@ logger = logging.getLogger(__name__)
     help="Restart only missing jobs."
 )
 @click.option(
-    "--max-nodes-for-batch-post-process",
-    default=DEFAULTS["max_nodes_for_batch_post_process"],
+    "--bpp-max-nodes",
+    default=DEFAULTS["bpp_max_nodes"],
     show_default=True,
-    help="Max number of node submission requests to make in parallel."
+    help="Max number of node submission requests to make in parallel for batch post-processing."
 )
 @click.option(
-    "--per-node-batch-size-for-batch-post-process",
-    default=DEFAULTS["per_node_batch_size_for_batch_post_process"],
+    "--bpp-per-node-batch-size",
+    default=DEFAULTS["bpp_per_node_batch_size"],
     show_default=True,
-    help="Number of jobs to run on one node in one batch."
-)
-@click.option(
-    "--num-workers",
-    default=2,
-    show_default=True,
-    help="Number of workers to aggregate job results in parallel."
+    help="Number of jobs to run on one node for batch post-processing"
 )
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
-        verbose, restart_failed, restart_missing, max_nodes_for_batch_post_process,
-        per_node_batch_size_for_batch_post_process, num_workers):
+        verbose, restart_failed, restart_missing, bpp_max_nodes,
+        bpp_per_node_batch_size):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
 
@@ -168,18 +161,19 @@ def submit_jobs(
     batch_post_process_config = mgr.get_batch_post_process_config()
     if ret.value == 0 and batch_post_process_config:
         logger.info("Start batch post-process on job results...")
-        post_config = BatchPostProcessConfiguration.create_config_from_dict(
-            base_directory=output, 
-            config_dict=batch_post_process_config,
-            num_workers=num_workers
-        )
-        post_processing_config_file = os.path.join(output, POST_PROCESSING_CONFIG_FILE)
-        post_config.dump(post_processing_config_file)
+        extension_name = batch_post_process_config.get("extension")
+        bpp = BatchPostProcess(extension=extension_name)
+        bpp_config = bpp.auto_config(inputs=output)
+        
+        bpp_config_file = os.path.join(output, POST_PROCESSING_CONFIG_FILE)
+        bpp_config.dump(bpp_config_file)
 
-        mgr = JobSubmitter(post_processing_config_file, hpc_config=hpc_config, output=output)
+        bpp_output = os.path.join(output, "batch-post-process")
+        os.makedirs(bpp_output, exist_ok=True)
+        mgr = JobSubmitter(bpp_config_file, hpc_config=hpc_config, output=bpp_output)
         ret = mgr.submit_jobs(
-            per_node_batch_size=per_node_batch_size_for_batch_post_process,
-            max_nodes=max_nodes_for_batch_post_process,
+            per_node_batch_size=bpp_per_node_batch_size,
+            max_nodes=bpp_max_nodes,
             force_local=local,
             verbose=verbose,
             num_processes=num_processes,

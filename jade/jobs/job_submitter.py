@@ -30,11 +30,11 @@ logger = logging.getLogger(__name__)
 DEFAULTS = {
     "hpc_config_file": "hpc_config.toml",
     "max_nodes": 16,
-    "max_nodes_for_batch_post_process": 1,
     "output": OUTPUT_DIR,
     "per_node_batch_size": 500,
-    "per_node_batch_size_for_batch_post_process": 500,
     "poll_interval": 30,
+    "bpp_max_nodes": 1,
+    "bpp_per_node_batch_size": 500,
 }
 
 
