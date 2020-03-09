@@ -33,15 +33,14 @@ class JobPostProcess:
         self._output = output
 
         try:
-            # dynamically get class from analysis module
             process_module = __import__(module_name, fromlist=[class_name])
             process_class = getattr(process_module, class_name)
             self._post_process = process_class(self._data, self._job_name, *args)
-        except ModuleNotFoundError as module_error:
-            logger.exception(module_error)
+        except ModuleNotFoundError:
+            logger.exception("Could not import module %s", module_name)
             raise
-        except ValueError as value_error:
-            logger.exception(value_error)
+        except ValueError:
+            logger.exception("Module %s does not have class %s", module_name, class_name)
             raise
 
     def run(self, *args, **kwargs):

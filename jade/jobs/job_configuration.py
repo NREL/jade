@@ -31,8 +31,8 @@ class JobConfiguration(abc.ABC):
 
     FILENAME_DELIMITER = "_"
 
-    def __init__(self, inputs, container, job_parameters_class,
-                 extension_name, post_process_config=None, **kwargs):
+    def __init__(self, inputs, container, job_parameters_class, extension_name,
+                 job_post_process_config=None, batch_post_process_config=None, **kwargs):
         """
         Constructs JobConfiguration.
 
@@ -49,7 +49,8 @@ class JobConfiguration(abc.ABC):
         self._job_names = None
         self._jobs_directory = kwargs.get("jobs_directory")
         self._registry = Registry()
-        self._post_process_config = post_process_config
+        self._job_post_process_config = job_post_process_config
+        self._batch_post_process_config = batch_post_process_config
 
         if kwargs.get("do_not_deserialize_jobs", False):
             assert "job_names" in kwargs, str(kwargs)
@@ -240,9 +241,18 @@ class JobConfiguration(abc.ABC):
         return self._jobs.get_num_jobs()
 
     @property
-    def post_process_config(self):
+    def job_post_process_config(self):
         """Return post process config for jobs"""
-        return self._post_process_config
+        return self._job_post_process_config
+
+    @property
+    def batch_post_process_config(self):
+        """Return batch post process config for task"""
+        return self._batch_post_process_config
+
+    @batch_post_process_config.setter
+    def batch_post_process_config(self, data):
+        self._batch_post_process_config = data
 
     @property
     def inputs(self):
@@ -324,8 +334,11 @@ class JobConfiguration(abc.ABC):
             "jobs_directory": self._jobs_directory,
         }
 
-        if self._post_process_config is not None:
-            data["post_process_config"] = self._post_process_config
+        if self._job_post_process_config:
+            data["job_post_process_config"] = self._job_post_process_config
+
+        if self._batch_post_process_config:
+            data["batch_post_process_config"] = self._batch_post_process_config
 
         if include == ConfigSerializeOptions.JOBS:
             data["jobs"] = [x.serialize() for x in self.iter_jobs()]

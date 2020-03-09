@@ -82,3 +82,7 @@ class JobManagerBase(abc.ABC):
         """
         data = self.get_results_summmary()
         return json.dumps(data, indent=4)
+
+    def get_batch_post_process_config(self):
+        """Get the batch post-process config data"""
+        return self._config.batch_post_process_config

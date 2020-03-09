@@ -6,15 +6,19 @@ import sys
 
 import click
 
+from jade.common import POST_PROCESSING_CONFIG_FILE
+from jade.jobs.batch_post_process import BatchPostProcess
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
-from jade.utils.utils import makedirs, rotate_filenames, get_cli_string
+from jade.utils.utils import makedirs, rotate_filenames, get_cli_string, load_data
 
 
 logger = logging.getLogger(__name__)
 
+
+@click.command()
 @click.argument(
     "config-file",
     type=str,
@@ -97,11 +101,23 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Restart only missing jobs."
 )
-@click.command()
+@click.option(
+    "--bpp-max-nodes",
+    default=DEFAULTS["bpp_max_nodes"],
+    show_default=True,
+    help="Max number of node submission requests to make in parallel for batch post-processing."
+)
+@click.option(
+    "--bpp-per-node-batch-size",
+    default=DEFAULTS["bpp_per_node_batch_size"],
+    show_default=True,
+    help="Number of jobs to run on one node for batch post-processing"
+)
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
-        verbose, restart_failed, restart_missing):
+        verbose, restart_failed, restart_missing, bpp_max_nodes,
+        bpp_per_node_batch_size):
     """Submits jobs for execution, locally or on HPC."""
     makedirs(output)
 
@@ -141,4 +157,27 @@ def submit_jobs(
         poll_interval=poll_interval,
         previous_results=previous_results
     )
+
+    batch_post_process_config = mgr.get_batch_post_process_config()
+    if ret.value == 0 and batch_post_process_config:
+        logger.info("Start batch post-process on job results...")
+        extension_name = batch_post_process_config.get("extension")
+        bpp = BatchPostProcess(extension=extension_name)
+        bpp_config = bpp.auto_config(inputs=output)
+        
+        bpp_config_file = os.path.join(output, POST_PROCESSING_CONFIG_FILE)
+        bpp_config.dump(bpp_config_file)
+
+        bpp_output = os.path.join(output, "batch-post-process")
+        os.makedirs(bpp_output, exist_ok=True)
+        mgr = JobSubmitter(bpp_config_file, hpc_config=hpc_config, output=bpp_output)
+        ret = mgr.submit_jobs(
+            per_node_batch_size=bpp_per_node_batch_size,
+            max_nodes=bpp_max_nodes,
+            force_local=local,
+            verbose=verbose,
+            num_processes=num_processes,
+            poll_interval=poll_interval
+        )
+
     sys.exit(ret.value)

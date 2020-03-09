@@ -7,6 +7,7 @@ from jade.common import CONFIG_FILE
 from jade.loggers import setup_logging
 from jade.exceptions import InvalidExtension
 from jade.extensions.registry import Registry, ExtensionClassType
+from jade.jobs.batch_post_process import BatchPostProcess
 from jade.jobs.job_post_process import JobPostProcess
 from jade.utils.utils import load_data
 
@@ -14,44 +15,62 @@ from jade.utils.utils import load_data
 # TODO: need one group command for auto-config; this should be a subcommand.
 
 
+@click.command()
+@click.argument("extension")
+@click.argument("inputs")
 @click.option(
-    "-v", "--verbose",
+    "-p",
+    "--job-post-process-config-file",
+    type=click.Path(exists=True),
+    is_eager=True,
+    help="The path of job-based post-process config file.",
+)
+@click.option(
+    "-b",
+    "--batch-post-process-extension",
+    type=click.STRING,
+    help="The extension used for batch-based post-processing.",
+)
+@click.option(
+    "-c",
+    "--config-file",
+    default=CONFIG_FILE,
+    show_default=True,
+    help="config file to generate.",
+)
+@click.option(
+    "-v",
+    "--verbose",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Enable verbose log output."
+    help="Enable verbose log output.",
 )
-@click.option(
-    "-c", "--config-file",
-    default=CONFIG_FILE,
-    show_default=True,
-    help="config file to generate."
-)
-@click.option(
-    "-p", "--post-process-config-file",
-    is_eager=True,
-    help="TOML file post-process config"
-)
-@click.argument("inputs")
-@click.argument("extension")
-@click.command()
-def auto_config(extension, inputs, config_file, post_process_config_file,
-                verbose):
+def auto_config(
+        extension,
+        inputs,
+        job_post_process_config_file,
+        batch_post_process_extension,
+        config_file,
+        verbose):
     """Automatically create a configuration."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("auto_config", None, console_level=level)
 
-    post_process_config = None
-    if post_process_config_file is not None:
-        module, class_name, data = JobPostProcess.load_config_from_file(post_process_config_file)
-        # ensure everything ok
-        JobPostProcess(module, class_name, data)
+    if job_post_process_config_file is not None:
+        module, class_name, data = JobPostProcess.load_config_from_file(
+            job_post_process_config_file
+        )
+        JobPostProcess(module, class_name, data)  # ensure everything ok
+        job_post_process_config = {"module": module, "class_name": class_name, "data": data}
+    else:
+        job_post_process_config = None
 
-        post_process_config = {
-            "module": module,
-            "class_name": class_name,
-            "data": data
-        }
+    if batch_post_process_extension is not None:
+        bpp = BatchPostProcess(extension=batch_post_process_extension)
+        batch_post_process_config = bpp.serialize()
+    else:
+        batch_post_process_config = None
 
     # User extension
     registry = Registry()
@@ -59,7 +78,12 @@ def auto_config(extension, inputs, config_file, post_process_config_file,
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
 
     cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
-    config = cli.auto_config(inputs, post_process_config=post_process_config)
+    config = cli.auto_config(
+        inputs,
+        job_post_process_config=job_post_process_config,
+        batch_post_process_config=batch_post_process_config,
+    )
+
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
-    print(f"Dumped configuration to {config_file}.")
+    print(f"Dumped configuration to {config_file}.\n")
