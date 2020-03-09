@@ -1,7 +1,5 @@
 """CLI to show extensions."""
 
-import sys
-
 import click
 
 from jade.extensions.registry import Registry
@@ -59,7 +57,7 @@ def show():
     """Show the available extensions (job types)."""
     print("Extensions:")
     Registry().show_extensions()
-    sys.stdout.write("Logging enabled for packages:  ")
+    print("Logging enabled for packages:  ", end="")
     Registry().show_loggers()
 
 
