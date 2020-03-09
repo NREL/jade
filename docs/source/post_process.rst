@@ -11,17 +11,19 @@ TODO:
 Batch Post-process
 ==================
 
-.. code-block:: python
+In JADE, we use extensions for batch post-processing. When ``auto-config`` your model inputs, 
+please also specify the option ``--batch-post-process-extension`` for your batch post-processing purpose.
+For example,
 
-    from jade.jobs.batch_post_process import AbstractBatchPostProcess
+.. code-block:: bash
 
-    class AggregationPostProcess(AbstractBatchPostProcess):
+    jade auto-config \
+    --job-post-process-config-file YOUR-JOB-CONFIG.TOML \
+    --batch-post-process-extension YOUR-BATCH-EXTENSION \
+    demo model-inputs
 
-        def run(self, data, output):
-            print(data)
-            print(output)
+Behind the scene, please notice that
 
-Please keep the positional arguments ``data`` and ``output``, where ``data`` includes all results
-information from job-based post-process, you should parse the ``data`` information and do further
-processing based on your needs. And, ``output`` is the directory where the aggregated result
-should go.
+* ``BatchPostProcess`` would run the ``auto_config()`` method from extension's configuration class.
+* The configuration class of your extension takes ``output`` from previous ``submit-jobs`` step as ``inputs``.
+* The output of batch post-processing is under ``batch-post-process`` directory in your ``output``.
