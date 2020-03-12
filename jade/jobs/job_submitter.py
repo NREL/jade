@@ -1,7 +1,6 @@
 """Provides ability to run jobs locally or on HPC."""
 
 from collections import OrderedDict
-import copy
 import datetime
 import logging
 import os
@@ -13,16 +12,15 @@ from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
 from jade.enums import Status
 from jade.exceptions import InvalidParameter
 from jade.hpc.common import HpcType
-from jade.hpc.hpc_manager import HpcManager, AsyncHpcSubmitter
+from jade.hpc.hpc_manager import HpcManager
+from jade.hpc.hpc_submitter import HpcSubmitter
 from jade.jobs.job_manager_base import JobManagerBase
-from jade.jobs.job_queue import JobQueue
 from jade.jobs.job_runner import JobRunner
 from jade.jobs.results_aggregator import ResultsAggregatorSummary
 from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
-from jade.utils.utils import dump_data, create_script, create_chunks
+from jade.utils.utils import dump_data
 import jade.version
-from jade.utils.timing_utils import timed_debug
 
 
 logger = logging.getLogger(__name__)
@@ -150,8 +148,7 @@ results_summary={self.get_results_summmary_report()}"""
 
         self.write_results(RESULTS_FILE)
         results_summary.delete_files()
-        assert not os.listdir(self._results_dir)
-        os.rmdir(self._results_dir)
+        shutil.rmtree(self._results_dir)
 
         return result
 
@@ -202,24 +199,6 @@ results_summary={self.get_results_summmary_report()}"""
             },
         }
 
-    def _create_run_script(
-            self, config_file, filename, num_processes, verbose):
-        text = ["#!/bin/bash"]
-        if shutil.which("module") is not None:
-            # Required for HPC systems.
-            text.append("module load conda")
-            text.append("conda activate jade")
-
-        command = f"jade-internal run-jobs {config_file} " \
-                  f"--output={self._output}"
-        if num_processes is not None:
-            command += f" --num-processes={num_processes}"
-        if verbose:
-            command += " --verbose"
-
-        text.append(command)
-        create_script(filename, "\n".join(text))
-
     def _save_repository_info(self):
         try:
             self._repo_info = RepositoryInfo(jade)
@@ -230,51 +209,24 @@ results_summary={self.get_results_summmary_report()}"""
         except InvalidParameter:
             pass
 
-    @timed_debug
-    def _split_jobs(self, base_name, batch_size, num_processes, verbose=False):
-        """Return a list of AsyncHpcSubmitter objects."""
-        submitters = []
-        base_config = self._config.serialize()
-        jobs = base_config["jobs"]
-        for batch in create_chunks(jobs, batch_size):
-            new_config = copy.copy(base_config)
-            new_config["jobs"] = batch
-            index = len(submitters) + 1
-            suffix = f"_batch_{index}"
-            new_config_file = self._config_file.replace(".json",
-                                                        f"{suffix}.json")
-            dump_data(new_config, new_config_file)
-            logger.info("Created split config file %s with %s jobs",
-                        new_config_file, len(new_config["jobs"]))
-
-            run_script = os.path.join(self._output, f"run{suffix}.sh")
-            self._create_run_script(
-                new_config_file, run_script, num_processes, verbose
-            )
-
-            hpc_mgr = HpcManager(self._hpc_config_file, self._output)
-
-            name = base_name + suffix
-            hpc_submitter = AsyncHpcSubmitter(hpc_mgr, run_script, name,
-                                              self._output)
-            submitters.append(hpc_submitter)
-
-        return submitters
-
     def _submit_to_hpc(self, name, max_nodes, per_node_batch_size, verbose,
                        poll_interval, num_processes):
         queue_depth = max_nodes
-        submitters = self._split_jobs(
-            name, per_node_batch_size, num_processes, verbose=verbose
+        hpc_submitter = HpcSubmitter(
+            name,
+            self._config,
+            self._config_file,
+            self._hpc_config_file,
+            self._results_dir,
         )
 
-        # TODO: this will cause up to 16 slurm status commands every poll.
-        # We could send one command, get all statuses, and share it among
-        # the submitters.
-
-        JobQueue.run_jobs(
-            submitters,
-            max_queue_depth=queue_depth,
+        hpc_submitter.run(
+            self._output,
+            queue_depth,
+            per_node_batch_size,
+            num_processes,
             poll_interval=poll_interval,
+            verbose=verbose,
         )
+
         logger.info("All submitters have completed.")

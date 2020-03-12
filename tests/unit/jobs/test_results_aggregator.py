@@ -75,4 +75,4 @@ def test_results_aggregator(cleanup):
     assert final_results == results
 
     summary.delete_files()
-    assert not os.listdir(results_dir)
+    assert not [x for x in os.listdir(results_dir) if x.endswith(".csv")]

@@ -1,9 +1,75 @@
 """
 Unit tests for JobQueue class
 """
+
+import logging
 import mock
 import time
+
+import pytest
+
+from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.job_queue import JobQueue
+
+
+class FakeJob(AsyncJobInterface):
+    def __init__(self, name, duration, blocking_jobs=None):
+        self._name = name
+        self._duration = duration
+        self._blocking_jobs = [] if blocking_jobs is None else blocking_jobs
+        self.start_time = None
+        self.end_time = None
+
+    def is_complete(self):
+        return time.time() > self.end_time
+
+    @property
+    def name(self):
+        return self._name
+
+    def run(self):
+        self.start_time = time.time()
+        self.end_time = self.start_time + self._duration
+
+    def get_blocking_jobs(self):
+        return self._blocking_jobs
+
+    def remove_blocked_job(self, name):
+        self._blocking_jobs.remove(name)
+
+
+def test_job_queue__run_jobs_no_ordering():
+    duration = 0.1
+    jobs = [FakeJob(str(i), duration) for i in range(10)]
+    JobQueue.run_jobs(jobs, 5, poll_interval=0.1)
+    for job in jobs:
+        assert job.is_complete()
+
+
+def test_job_queue__run_jobs_ordering():
+    duration = 0.1
+    jobs = {}
+    for i in range(1, 11):
+        name = str(i)
+        if i == 1:
+            job = FakeJob(name, duration, blocking_jobs=["10"])
+        elif i == 2:
+            job = FakeJob(name, duration, blocking_jobs=["1"])
+        elif i == 3:
+            job = FakeJob(name, duration, blocking_jobs=["4", "5"])
+        else:
+            job = FakeJob(name, duration)
+        jobs[name] = job
+    JobQueue.run_jobs(jobs.values(), 5, poll_interval=0.1)
+
+    for job in jobs.values():
+        assert job.is_complete()
+        assert not job.get_blocking_jobs()
+
+    assert jobs["1"].start_time > jobs["10"].end_time
+    assert jobs["2"].start_time > jobs["1"].end_time
+    assert jobs["3"].start_time > jobs["4"].end_time
+    assert jobs["3"].start_time > jobs["5"].end_time
 
 
 def job_run():
