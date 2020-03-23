@@ -70,6 +70,7 @@ def test_deserialize_results(jade_data, jade_results):
     assert results == jade_results
 
 
+# Disabled per DISCO-205
 #@pytest.fixture
 #def results_summary(jade_data):
 #    """Fixture of ResultsSummary instance"""
