@@ -64,7 +64,7 @@ class JobQueue:
                 if name in _job.get_blocking_jobs():
                     logger.debug("Remove %s from job=%s blocked list",
                                  name, _job.name)
-                    _job.remove_blocked_job(name)
+                    _job.remove_blocking_job(name)
 
     def _run_job(self, job):
         logger.debug("Run job %s", job.name)

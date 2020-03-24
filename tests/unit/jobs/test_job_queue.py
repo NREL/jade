@@ -34,7 +34,7 @@ class FakeJob(AsyncJobInterface):
     def get_blocking_jobs(self):
         return self._blocking_jobs
 
-    def remove_blocked_job(self, name):
+    def remove_blocking_job(self, name):
         self._blocking_jobs.remove(name)
 
 

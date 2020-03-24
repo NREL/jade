@@ -47,5 +47,5 @@ class GenericCommandParameters(JobParametersInterface):
     def get_blocking_jobs(self):
         return [str(x) for x in self.blocked_by]
 
-    def remove_blocked_job(self, name):
+    def remove_blocking_job(self, name):
         self.blocked_by.remove(name)

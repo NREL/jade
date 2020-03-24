@@ -44,8 +44,8 @@ class AsyncJobInterface(abc.ABC):
         """
 
     @abc.abstractmethod
-    def remove_blocked_job(self, name):
-        """Remove the name from the job's blocked list.
+    def remove_blocking_job(self, name):
+        """Remove the name from the job's blocking list.
 
         Parameters
         ----------

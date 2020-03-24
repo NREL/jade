@@ -121,7 +121,7 @@ class HpcSubmitter:
                 x for x in job.get_blocking_jobs() if self._is_job_complete(x)
             ]
             for name in done_jobs:
-                job.remove_blocked_job(name)
+                job.remove_blocking_job(name)
 
 
 class AsyncHpcSubmitter(AsyncJobInterface):
@@ -180,5 +180,5 @@ class AsyncHpcSubmitter(AsyncJobInterface):
     def get_blocking_jobs(self):
         return []
 
-    def remove_blocked_job(self, name):
+    def remove_blocking_job(self, name):
         assert False
