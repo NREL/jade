@@ -84,6 +84,19 @@ Example::
    jade auto-config generic_command commands.txt -c config.json
    jade submit-jobs config.json
 
+Job Ordering
+------------
+Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
+6 doesn't run until job ID 5 completes then add that ID to the field.
+
+.. code:: python
+
+    {
+      "command": "job_cli_command",
+      "job_id": 6,
+      "blocked_by": [5]
+    },
+
 
 Custom Extension
 ================

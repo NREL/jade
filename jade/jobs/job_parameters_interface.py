@@ -44,3 +44,28 @@ class JobParametersInterface:
         JobParametersInterface
 
         """
+
+    # Derived classes must override the next two methods if jobs have ordering
+    # requirements.
+    # Default behavior is provided for jobs that have no dependencies.
+    def get_blocking_jobs(self):
+        """Return the job names blocking this job.
+
+        Returns
+        -------
+        list
+            Empty list means that the job is not blocked.
+
+        """
+        return []
+
+    def remove_blocked_job(self, name):
+        """Remove the name from the job's blocked list.
+
+        Parameters
+        ----------
+        name : str
+            name of job that is now finished
+
+        """
+        assert False, f"method not implemented for {self.__class__.__name__}"

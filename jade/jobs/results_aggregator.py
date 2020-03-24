@@ -95,6 +95,15 @@ class ResultsAggregator:
 
         """
         self._do_action_under_lock(self._append_result, result)
+        self._add_completion(result)
+
+    def _add_completion(self, result):
+        completion_filename = os.path.join(
+            os.path.dirname(self._filename),
+            result.name,
+        )
+        with open(completion_filename, "w") as _:
+            pass
 
     def _append_result(self, result):
         text = self._delimiter.join(
@@ -134,6 +143,18 @@ class ResultsAggregatorSummary:
     def __init__(self, path):
         self._path = path
         self._aggregators = []
+        self._completed_jobs = set()
+
+    @property
+    def completed_jobs(self):
+        """Return the completed jobs.
+
+        Returns
+        -------
+        set
+
+        """
+        return self._completed_jobs
 
     def delete_files(self):
         """Delete results files from all ResultsAggregator instances."""
@@ -157,3 +178,11 @@ class ResultsAggregatorSummary:
                 self._aggregators.append(aggregator)
 
         return results
+
+    def update_completed_jobs(self):
+        """Check for completed jobs."""
+        for filename in os.listdir(self._path):
+            if not filename.endswith(".csv"):
+                logger.debug("Detected completion of job=%s", filename)
+                self._completed_jobs.add(filename)
+                os.remove(os.path.join(self._path, filename))

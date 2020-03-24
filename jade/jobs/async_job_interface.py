@@ -18,7 +18,7 @@ class AsyncJobInterface(abc.ABC):
 
         """
 
-    @abc.abstractmethod
+    @abc.abstractproperty
     def name(self):
         """Return the job name.
 
@@ -31,3 +31,25 @@ class AsyncJobInterface(abc.ABC):
     @abc.abstractmethod
     def run(self):
         """Run the job."""
+
+    @abc.abstractmethod
+    def get_blocking_jobs(self):
+        """Return the job names blocking this job.
+
+        Returns
+        -------
+        list
+            Empty list means that the job is not blocked.
+
+        """
+
+    @abc.abstractmethod
+    def remove_blocked_job(self, name):
+        """Remove the name from the job's blocked list.
+
+        Parameters
+        ----------
+        name : str
+            name of job that is now finished
+
+        """

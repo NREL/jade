@@ -5,13 +5,12 @@ import os
 import time
 
 from jade.enums import Status
-from jade.exceptions import InvalidParameter, ExecutionError
+from jade.exceptions import InvalidParameter
 from jade.hpc.common import HpcType, HpcJobStatus
 from jade.hpc.fake_manager import FakeManager
 from jade.hpc.local_manager import LocalManager
 from jade.hpc.pbs_manager import PbsManager
 from jade.hpc.slurm_manager import SlurmManager
-from jade.jobs.async_job_interface import AsyncJobInterface
 
 
 logger = logging.getLogger(__name__)
@@ -185,57 +184,3 @@ class HpcManager:
                 status = job_info.status
 
         logger.info("Job ID %s is complete", job_id)
-
-
-class AsyncHpcSubmitter(AsyncJobInterface):
-    """Used to submit batches of jobs to multiple nodes, one at a time."""
-    def __init__(self, hpc_manager, run_script, name, output):
-        self._mgr = hpc_manager
-        self._run_script = run_script
-        self._job_id = None
-        self._output = output
-        self._name = name
-        self._last_status = HpcJobStatus.NONE
-        self._is_pending = False
-
-    def __del__(self):
-        if self._is_pending:
-            logger.warning("job %s destructed while pending", self._name)
-
-    @property
-    def hpc_manager(self):
-        """Return the HpcManager object.
-
-        Returns
-        -------
-        HpcManager
-
-        """
-        return self._mgr
-
-    def is_complete(self):
-        status = self._mgr.check_status(job_id=self._job_id)
-
-        if status != self._last_status:
-            logger.info("Submission %s %s changed status from %s to %s",
-                        self._name, self._job_id, self._last_status, status)
-            self._last_status = status
-
-        if status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE):
-            self._is_pending = False
-
-        return not self._is_pending
-
-    def name(self):
-        return self._name
-
-    def run(self):
-        job_id, result = self._mgr.submit(self._output,
-                                          self._name,
-                                          self._run_script)
-        self._is_pending = True
-        if result != Status.GOOD:
-            raise ExecutionError("Failed to submit name={self._name}")
-
-        self._job_id = job_id
-        logger.info("Assigned job_ID=%s name=%s", self._job_id, self._name)

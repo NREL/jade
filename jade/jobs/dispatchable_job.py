@@ -61,8 +61,15 @@ class DispatchableJob(DispatchableJobInterface):
     def job(self):
         return self._job
 
+    @property
     def name(self):
         return self._job.name
+
+    def get_blocking_jobs(self):
+        return self._job.get_blocking_jobs()
+
+    def remove_blocked_job(self, name):
+        self._job.remove_blocked_job(name)
 
     def run(self):
         """Run the job. Writes results to file when complete."""

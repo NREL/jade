@@ -58,6 +58,7 @@ logger = logging.getLogger(__name__)
 @click.option(
     "-p", "--poll-interval",
     default=DEFAULTS["poll_interval"],
+    type=float,
     show_default=True,
     help="Interval in seconds on which to poll jobs for status."
 )

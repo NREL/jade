@@ -57,4 +57,9 @@ Run test on a specific Python function
 pytest --cov=jade tests/unit/utils/test_utils.py::test_create_chunks -v
 ```
 
+Run test with debug logging activated
+```bash
+pytest tests/unit/jobs/test_job_queue.py --log-cli-level=debug
+```
+
 For more details and examples, please refer to the official pytest documentation.

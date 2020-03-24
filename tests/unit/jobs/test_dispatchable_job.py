@@ -28,7 +28,7 @@ def dispatchable_job():
 
 def test_dispatchable_job__properties(dispatchable_job):
     """Test DispatchableJob properties"""
-    assert dispatchable_job.name() == "Test-Job"
+    assert dispatchable_job.name == "Test-Job"
     assert dispatchable_job._cli_cmd == "echo 'Hello World'"
     assert os.path.exists(dispatchable_job._output)
     assert dispatchable_job._pipe is None
