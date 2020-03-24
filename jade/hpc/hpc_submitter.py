@@ -100,6 +100,9 @@ class HpcSubmitter:
             else:
                 logger.debug("No jobs are ready for submission")
 
+            logger.debug("num_submitted=%s num_blocked=%s",
+                         len(batch_jobs), num_blocked)
+
             # TODO: this will cause up to <queue_depth> slurm status commands
             # every poll.  We could send one command, get all statuses, and
             # share it among the submitters.

@@ -12,7 +12,19 @@ DEFAULT_POLL_INTERVAL = 1
 
 
 class JobQueue:
-    """Submits jobs for execution in parallel."""
+    """Submits jobs for execution in parallel.
+
+    There are two ways to use this class:
+    1. Build a list of jobs and pass that list to `JobQueue.run_jobs`.
+       It will run to completion.
+    2. Call `JobQueue.submit` as jobs become ready to run. JobQueue will either
+       run it immediately or queue it if too many commands are oustanding.
+       In this mode it is up to the caller to call `JobQueue.process_queue`
+       periodically. That will look for job completions pull new jobs off the
+       queue. JobQueue does not start a background thread to do this
+       automatically.
+
+    """
 
     def __init__(self, max_queue_depth, poll_interval=DEFAULT_POLL_INTERVAL):
         """
@@ -60,7 +72,7 @@ class JobQueue:
         self._outstanding_jobs[job.name] = job
 
     def process_queue(self):
-        """Process the queue, submitting jobs as availability allows."""
+        """Process completions and submit new jobs if the queue is not full."""
         self._check_completions()
         if not self._queued_jobs:
             logger.debug("queue is empty; nothing to do")
@@ -103,7 +115,10 @@ class JobQueue:
         self.wait()
 
     def submit(self, job):
-        """Submit a job to be executed asynchronously. Returns immediately.
+        """Submit a job to be executed. If the queue is not full then it will
+        run the job. Otherwise, it will queue the job. Returns immediately.
+        The caller should call `JobQueue.process_queue` periodically to check
+        for completions and start new jobs.
 
         Parameters
         ----------
