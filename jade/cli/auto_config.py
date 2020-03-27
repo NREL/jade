@@ -27,9 +27,9 @@ from jade.utils.utils import load_data
 )
 @click.option(
     "-b",
-    "--batch-post-process-extension",
-    type=click.STRING,
-    help="The extension used for batch-based post-processing.",
+    "--batch-post-process-config-file",
+    type=click.Path(exists=True),
+    help="The config file which contains batch post-processing commands.",
 )
 @click.option(
     "-c",
@@ -50,7 +50,7 @@ def auto_config(
         extension,
         inputs,
         job_post_process_config_file,
-        batch_post_process_extension,
+        batch_post_process_config_file,
         config_file,
         verbose):
     """Automatically create a configuration."""
@@ -66,8 +66,8 @@ def auto_config(
     else:
         job_post_process_config = None
 
-    if batch_post_process_extension is not None:
-        bpp = BatchPostProcess(extension=batch_post_process_extension)
+    if batch_post_process_config_file is not None:
+        bpp = BatchPostProcess(config_file=batch_post_process_config_file)
         batch_post_process_config = bpp.serialize()
     else:
         batch_post_process_config = None

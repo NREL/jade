@@ -162,9 +162,9 @@ def submit_jobs(
     batch_post_process_config = mgr.get_batch_post_process_config()
     if ret.value == 0 and batch_post_process_config:
         logger.info("Start batch post-process on job results...")
-        extension_name = batch_post_process_config.get("extension")
-        bpp = BatchPostProcess(extension=extension_name)
-        bpp_config = bpp.auto_config(inputs=output)
+        bpp_config_file = batch_post_process_config.get("file")
+        bpp = BatchPostProcess(config_file=bpp_config_file)
+        bpp_config = bpp.auto_config()
         
         bpp_config_file = os.path.join(output, POST_PROCESSING_CONFIG_FILE)
         bpp_config.dump(bpp_config_file)

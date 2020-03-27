@@ -1,47 +1,35 @@
-import abc
+"""Generic batch post processor"""
 
-from jade.extensions.registry import Registry, ExtensionClassType
+import tempfile
+
+from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
+from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
 
 
 class BatchPostProcess:
-    """A class for configuring batch-post process extension.
+    """A class for configuring batch-post process commands.
     """
 
-    def __init__(self, extension):
-        self._extension = extension
+    def __init__(self, config_file):
+        self._config_file = config_file
     
     @property
     def name(self):
         """The name of batch post-process"""
-        return "batch-post-proces"
+        return "batch-post-process"
     
-    @property
-    def extension(self):
-        return self._extension
-    
-    def auto_config(self, inputs, **kwargs):
-        """A wrapper function for creating config object 
-        with given configuration class used for batch post-process.
-        
-        Parameters
-        ----------
-        inputs : str
-            The inputs directory.
-        """
-        registry = Registry()
-        config_class = registry.get_extension_class(
-            extension_name=self.extension,
-            class_type=ExtensionClassType.CONFIGURATION
-        )
-        config = config_class.auto_config(inputs, **kwargs)
+    def auto_config(self):
+        """Auto config by using generic_command extension."""
+        inputs = GenericCommandInputs(self._config_file)
+        config = GenericCommandConfiguration(job_inputs=inputs)
+        for job_param in inputs.iter_jobs():
+            config.add_job(job_param)
         return config
     
     def serialize(self):
         """Serialize batch post-process object"""
         data = {
-            "name": self.name,
-            "extension": self.extension
+            "type": "Commands",
+            "file": self._config_file
         }
         return data
-
-    
