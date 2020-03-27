@@ -11,11 +11,6 @@ TODO:
 Batch Post-process
 ==================
 
-.. warning::
-
-    The example below runs on Unix/Linux systems which use ``/`` as separator, but Windows use ``\``.
-    If you are on Windows, please replace ``/`` by using ``\`` in the following tutorial.
-
 In JADE, we use generic commands for batch post-processing. When ``auto-config`` your model inputs in ``jade``, 
 please specify the option ``--batch-post-process-config-file`` for batch post-processing.
 
@@ -25,6 +20,8 @@ and generate a new CSV file ``result.csv`` containing ``pred_gdp`` values.
 
 .. code-block:: bash
 
+    $ jade auto-config demo tests/data/demo -c config.json
+    $ jade submit-jobs config.json
     $ tree output
     output
     ├── config.json
@@ -76,7 +73,7 @@ How to run the jobs with a bach post-process? Please follow steps below:
 
 **1. Develop Batch Post-process Script**
 
-Here, we use this script ``jade/extensions/demo/merge_pre_gdp.py`` for batch post-processing,
+Here, we use this script ``jade/extensions/demo/merge_pred_gdp.py`` for batch post-processing,
 please refer to this file for details.
 
 **2. Test the Script in Command**
@@ -85,11 +82,11 @@ We run the this command for batch post-processing,
 
 .. code-block:: bash
 
-    python ~/jade/extensions/demo/merge_pre_gdp.py run output
+    python jade/extensions/demo/merge_pred_gdp.py run output
 
 **3. Put the Commands in a File**
 
-Create a text file, let's say ``/tmp/demo/batch-post-process.txt``, which contains the command above.
+Create a text file, let's say ``batch-post-process.txt``, which contains the command above.
 
 **4. Config Batch Post-process via JADE**
 
@@ -97,7 +94,7 @@ Generate ``config.json`` with option ``--batch-post-process-config-file``, like 
 
 .. code-block:: bash
 
-    jade auto-config --batch-post-process-config-file /tmp/demo/batch-post-process.text demo model-inputs
+    jade auto-config --batch-post-process-config-file batch-post-process.text demo test/data/demo
 
 In the generated ``config.json`` file, there's a attribute ``batch_post_process_config`` as below:
 
@@ -109,7 +106,7 @@ In the generated ``config.json`` file, there's a attribute ``batch_post_process_
         "jobs_directory": null,
         "batch_post_process_config": {
             "type": "Commands",
-            "file": "/tmp/demo/batch-post-process.txt"
+            "file": "batch-post-process.txt"
         },
         "jobs": [
             {
