@@ -25,12 +25,6 @@ from jade.utils.utils import load_data
     help="The path of job-based post-process config file.",
 )
 @click.option(
-    "-b",
-    "--batch-post-process-config-file",
-    type=click.Path(exists=True),
-    help="The config file which contains batch post-processing commands.",
-)
-@click.option(
     "-c",
     "--config-file",
     default=CONFIG_FILE,
@@ -49,7 +43,6 @@ def auto_config(
         extension,
         inputs,
         job_post_process_config_file,
-        batch_post_process_config_file,
         config_file,
         verbose):
     """Automatically create a configuration."""
@@ -74,7 +67,6 @@ def auto_config(
     config = cli.auto_config(
         inputs,
         job_post_process_config=job_post_process_config,
-        batch_post_process_config=batch_post_process_config,
     )
 
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
