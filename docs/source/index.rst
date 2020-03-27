@@ -36,7 +36,8 @@ Refer to :ref:`generic_command_extension_label` for more information.
 
 2. User-specific extension
 
-You want develop your own customized JADE extension. Refer to the next section.
+You want develop your own customized JADE extension. Refer to Extending JADE
+below.
 
 Batch Pipeline
 ==============
