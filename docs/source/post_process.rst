@@ -76,25 +76,23 @@ How to run the jobs with a bach post-process? Please follow steps below:
 Here, we use this script ``jade/extensions/demo/merge_pred_gdp.py`` for batch post-processing,
 please refer to this file for details.
 
-**2. Test the Script in Command**
+**2. Put the Commands in a File**
 
-We run the this command for batch post-processing,
+As we run the this command for batch post-processing,
 
 .. code-block:: bash
 
     python jade/extensions/demo/merge_pred_gdp.py run output
 
-**3. Put the Commands in a File**
+Create a text file, let's say ``batch-commands.txt``, which contains the command above.
 
-Create a text file, let's say ``batch-post-process.txt``, which contains the command above.
-
-**4. Config Batch Post-process via JADE**
+**3. Config Batch Post-process via JADE**
 
 Generate ``config.json`` with option ``--batch-post-process-config-file``, like this:
 
 .. code-block:: bash
 
-    jade auto-config --batch-post-process-config-file batch-post-process.text demo test/data/demo
+    jade auto-config --batch-post-process-config-file batch-commands.txt demo test/data/demo
 
 In the generated ``config.json`` file, there's a attribute ``batch_post_process_config`` as below:
 
@@ -124,7 +122,7 @@ In the generated ``config.json`` file, there's a attribute ``batch_post_process_
         ]
     }
 
-**5. Submit Jobs with Batch Post-process Config**
+**4. Submit Jobs with Batch Post-process Config**
 
 Finally, we submit jobs via ``jade``, use the command below:
 
