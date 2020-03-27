@@ -38,6 +38,13 @@ Refer to :ref:`generic_command_extension_label` for more information.
 
 You want develop your own customized JADE extension. Refer to the next section.
 
+Batch Pipeline
+==============
+JADE supports execution of a pipeline of job batches. The output of the first
+batch of jobs can be piped to the next batch, and so on.
+
+Refer to :ref:`batch_pipeline_label` for more information.
+
 Extending JADE
 ==============
 JADE can be extended to support any type of job. Re-use or implement derived
@@ -60,6 +67,7 @@ Refer to :ref:`extensions_label` for more information.
 
    tutorial
    extensions
+   pipeline
    post_process
    jade
    design
