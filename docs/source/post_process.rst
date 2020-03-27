@@ -111,15 +111,15 @@ In the generated ``config.json`` file, there's a attribute ``batch_post_process_
         "jobs": [
             {
             "country": "australia",
-            "data": "~/jade/tests/data/demo/gdp/countries/australia.csv"
+            "data": "jade/tests/data/demo/gdp/countries/australia.csv"
             },
             {
             "country": "brazil",
-            "data": "~/jade/tests/data/demo/gdp/countries/brazil.csv"
+            "data": "jade/tests/data/demo/gdp/countries/brazil.csv"
             },
             {
             "country": "united_states",
-            "data": "~/jade/tests/data/demo/gdp/countries/united_states.csv"
+            "data": "jade/tests/data/demo/gdp/countries/united_states.csv"
             }
         ]
     }
