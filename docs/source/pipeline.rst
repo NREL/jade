@@ -7,7 +7,7 @@ process the results. You can use the ``jade pipeline`` command for this
 purpose.
 
 JADE will run ``submit-jobs`` on a series of config files sequentially. It will
-pipe the output directory of each stage to the next stage.
+make the output directory of each stage available to later stages.
 
 To create the pipeline the user must provide a list of scripts that will be
 used to create the JADE config file for each stage.
