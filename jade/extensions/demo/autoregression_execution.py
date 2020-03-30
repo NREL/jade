@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.ar_model import AR
 import matplotlib
-from jade.events import StructuredJobEvent
+from jade.events import StructuredEvent
 from jade.jobs.job_execution_interface import JobExecutionInterface
 from jade.loggers import log_job_event
 from jade.utils.utils import dump_data
@@ -162,8 +162,8 @@ class AutoRegressionExecution(JobExecutionInterface):
         # Log event into file
         except Exception:
             # Create event instance
-            event = StructuredJobEvent(
-                job_name=self._job.name,
+            event = StructuredEvent(
+                name=self._job.name,
                 category=DEMO_EVENT_CATEGORY,
                 code=DEMO_EVENT_CODE,
                 message="Analysis failed!",

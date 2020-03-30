@@ -7,7 +7,9 @@ import shutil
 import time
 
 from jade.enums import Status
-from jade.events import StructuredJobEvent
+from jade.events import StructuredEvent, EVENT_CATEGORY_HPC, \
+    EVENT_CODE_HPC_SUBMIT, EVENT_CODE_HPC_JOB_ASSIGNED, \
+    EVENT_CODE_HPC_JOB_STATE_CHANGE
 from jade.exceptions import ExecutionError
 from jade.hpc.common import HpcJobStatus
 from jade.hpc.hpc_manager import HpcManager
@@ -19,11 +21,6 @@ from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script
 
 logger = logging.getLogger(__name__)
-
-EVENT_CATEGORY_HPC = "HPC"
-EVENT_CODE_HPC_SUBMIT = "100"
-EVENT_CODE_HPC_JOB_ASSIGNED = "101"
-EVENT_CODE_HPC_JOB_STATE_CHANGE = "102"
 
 
 class HpcSubmitter:
@@ -108,8 +105,8 @@ class HpcSubmitter:
                 # of rounds if there are blocked jobs and the batch isn't full.
                 # We can look at these events on our runs to see how this
                 # logic is working with our jobs.
-                event = StructuredJobEvent(
-                    job_name=self._name,
+                event = StructuredEvent(
+                    name=self._name,
                     category=EVENT_CATEGORY_HPC,
                     code=EVENT_CODE_HPC_SUBMIT,
                     message="Submitted HPC batch",
@@ -179,8 +176,8 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         if status != self._last_status:
             logger.info("Submission %s %s changed status from %s to %s",
                         self._name, self._job_id, self._last_status, status)
-            event = StructuredJobEvent(
-                job_name=self._name,
+            event = StructuredEvent(
+                name=self._name,
                 category=EVENT_CATEGORY_HPC,
                 code=EVENT_CODE_HPC_JOB_STATE_CHANGE,
                 message="HPC job state change",
@@ -208,8 +205,8 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             raise ExecutionError("Failed to submit name={self._name}")
 
         self._job_id = job_id
-        event = StructuredJobEvent(
-            job_name=self._name,
+        event = StructuredEvent(
+            name=self._name,
             category=EVENT_CATEGORY_HPC,
             code=EVENT_CODE_HPC_JOB_ASSIGNED,
             message="HPC job assigned",

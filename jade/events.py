@@ -7,20 +7,27 @@ import sys
 from datetime import datetime
 from prettytable import PrettyTable
 from jade.common import JOBS_OUTPUT_DIR
-from jade.utils.utils import dump_data, get_filenames
+from jade.utils.utils import dump_data, get_filenames_in_path
 
 
-class StructuredJobEvent(object):
+EVENT_CATEGORY_HPC = "HPC"
+
+EVENT_CODE_HPC_SUBMIT = "100"
+EVENT_CODE_HPC_JOB_ASSIGNED = "101"
+EVENT_CODE_HPC_JOB_STATE_CHANGE = "102"
+
+
+class StructuredEvent(object):
     """
     A class for recording structured job event resulted in job failure.
     """
-    def __init__(self, job_name, category, code, message, **kwargs):
+    def __init__(self, name, category, code, message, **kwargs):
         """
         Initialize the class
 
         Parameters
         ----------
-        job_name: str,
+        name: str,
             the key of a job.
         category: str,
             An event category given by the user.
@@ -32,7 +39,7 @@ class StructuredJobEvent(object):
         kwargs:
             Other information that the user needs to record into event.
         """
-        self.job_name = job_name
+        self.name = name
         self.category = category
         self.code = code
         self.message = message
@@ -107,7 +114,7 @@ class EventsSummary(object):
         -------
         list, a list of event log files.
         """
-        return get_filenames(self._output_dir, "events.log")
+        return get_filenames_in_path(self._output_dir, "events.log")
 
     def _consolidate_events(self):
         """Find most recent event log files, and merge event data together."""
@@ -116,8 +123,8 @@ class EventsSummary(object):
             with open(event_file, "r") as f:
                 for line in f.readlines():
                     record = json.loads(line)
-                    event = StructuredJobEvent(
-                        job_name=record.get("job_name", ""),
+                    event = StructuredEvent(
+                        name=record.get("name", ""),
                         category=record.get("category", ""),
                         code=record.get("code", ""),
                         message=record.get("message", ""),
@@ -144,7 +151,7 @@ class EventsSummary(object):
         ]
         for event in self._events:
             table.add_row([
-                event.job_name,
+                event.name,
                 event.timestamp,
                 event.category,
                 event.code,

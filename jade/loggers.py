@@ -118,8 +118,8 @@ def log_job_event(event):
 
     Parameters
     ----------
-    event: :obj:`StructuredJobEvent`
-        An instance of :obj:`StructuredJobEvent`
+    event: :obj:`StructuredEvent`
+        An instance of :obj:`StructuredEvent`
 
     """
     logger = logging.getLogger("event")
