@@ -6,14 +6,25 @@ After all jobs in a batch complete you may want to run additional code to
 process the results. You can use the ``jade pipeline`` command for this
 purpose.
 
-JADE will run ``submit-jobs`` on a series of config files sequentially. It will
-pipe the output directory of each stage to the next stage.
+JADE will run ``submit-jobs`` on a series of config files sequentially. Each
+stage has the option of reading the outputs of previous stages.
 
 To create the pipeline the user must provide a list of scripts that will be
 used to create the JADE config file for each stage.
 
 Create the pipeline
 -------------------
+The user must provide a script that will create the JADE configuration for each
+stage in the pipeline.
+
+Before invoking each script JADE sets the following environment variables in
+order to provide information about completed stages and their outputs:
+
+- JADE_PIPELINE_OUTPUT_DIR:  main output directory containing all stage outputs
+- JADE_PIPELINE_STATUS_FILE:  path to file containing stage-specific,
+  information including output directories
+- JADE_PIPELINE_STAGE_ID:  current stage ID
+
 ::
 
     jade pipeline create batch1-auto-config.sh batch2-auto-config.sh -c pipeline.toml
@@ -93,7 +104,7 @@ The content of ``result.csv`` looks similar this,
 
 Our post-processing task is to collect ``result.csv`` files from all jobs, extract ``pred_gdp`` column from 
 each ``result.csv`` file, and aggregate them in one CSV file. The script
-``jade/extensions/demo/merge_pre_gdp.py`` writes this result to ``pred_gdp.csv``.
+``jade/extensions/demo/merge_pred_gdp.py`` writes this result to ``pred_gdp.csv``.
 
 
 Now let's automate this workflow in a JADE pipeline using two stages.
@@ -111,43 +122,35 @@ The second stage will use the ``generic_command`` extension. We will create a
 config that runs one "generic_command" - the script above to post-process the
 results.
 
-Note that this script receives a CLI argument that needs to be the output
-directory of the first stage.
+The script to create the stage 2 configuration is
+:mod:`jade.extensions.demo.create_merge_pred_gdp`.
 
-.. code-block:: bash
-
-    cat ./jade/extensions/demo/create_merge_pred_gdp.sh                                            
-    #!/bin/bash
-    if [ -z $1 ]; then
-        echo "Usage: create_merge_pred_gdp.sh AUTO_REGRESSION_OUTPUT"
-        exit 1
-    fi
-    echo "python jade/extensions/demo/merge_pred_gdp.py run $1" > pred_gdp_commands.txt
-    jade auto-config generic_command pred_gdp_commands.txt -c config-stage2.json
+Note that this script reads the environment variable JADE_PIPELINE_STATUS_FILE
+to find out the output directory name of the first stage as well as its own
+output directory.
 
 Let's create the pipeline and submit it for execution.
 
 .. code-block:: bash
 
-    $ jade pipeline create ./jade/extensions/demo/create_demo_config.sh ./jade/extensions/demo/create_merge_pred_gdp.sh  
+    $ jade pipeline create ./jade/extensions/demo/create_demo_config.sh ./jade/extensions/demo/create_merge_pred_gdp.py
     Created pipeline config file pipeline.toml
 
     $ jade pipeline submit pipeline.toml
 
-Let's take a look at the ``output`` directory. You'll notice that ``batch-post-process`` results were generated.
-Note that this script wrote the summary results into the stage1 results. It could have recorded them in
-stage2.
+Let's take a look at the ``output`` directory. You'll notice that per-country
+results are in ``output-stage1`` and the summary file ``pred_gdb.csv`` is in
+``output-stage2``.
 
 .. code-block:: bash
 
-    tree output              
+    tree output
     output
     ├── config-stage1.json
     ├── config-stage2.json
     ├── output-stage1
-    │   ├── batch-post-process
-    │   │   └── pred_gdp.csv
     │   ├── config.json
+    │   ├── diff.patch
     │   ├── job-outputs
     │   │   ├── australia
     │   │   │   ├── events.log
@@ -171,10 +174,14 @@ stage2.
     │   └── submit_jobs.log
     ├── output-stage2
     │   ├── config.json
+    │   ├── diff.patch
     │   ├── job-outputs
+    │   ├── pred_gdp.csv
     │   ├── results.json
     │   └── submit_jobs.log
-    └── pipeline_submit.log
+    ├── pipeline_status.toml
+    ├── pipeline_submit.log
+    └── pipeline.toml
 
 In ``pred_gdp.csv``, you'll see the content:
 
