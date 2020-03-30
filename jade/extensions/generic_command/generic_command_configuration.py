@@ -2,6 +2,8 @@
 
 from jade.jobs.job_container_by_key import JobContainerByKey
 from jade.jobs.job_configuration import JobConfiguration
+from jade.extensions.generic_command.generic_command_inputs import \
+    GenericCommandInputs
 from jade.extensions.generic_command.generic_command_parameters import \
     GenericCommandParameters
 
@@ -27,6 +29,20 @@ class GenericCommandConfiguration(JobConfiguration):
             extension_name="generic_command",
             **kwargs
         )
+
+    @classmethod
+    def auto_config(cls, inputs, **kwargs):
+        """Create a configuration from all available inputs."""
+        if isinstance(inputs, str):
+            job_inputs = GenericCommandInputs(inputs)
+        else:
+            job_inputs = inputs
+
+        config = GenericCommandConfiguration(job_inputs, **kwargs)
+        for job_param in config.inputs.iter_jobs():
+            config.add_job(job_param)
+
+        return config
 
     def _serialize(self, data):
         """Fill in instance-specific information."""
