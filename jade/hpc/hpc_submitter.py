@@ -7,16 +7,23 @@ import shutil
 import time
 
 from jade.enums import Status
+from jade.events import StructuredJobEvent
 from jade.exceptions import ExecutionError
 from jade.hpc.common import HpcJobStatus
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.results_aggregator import ResultsAggregatorSummary
+from jade.loggers import log_job_event
 from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script
 
 logger = logging.getLogger(__name__)
+
+EVENT_CATEGORY_HPC = "HPC"
+EVENT_CODE_HPC_SUBMIT = "100"
+EVENT_CODE_HPC_JOB_ASSIGNED = "101"
+EVENT_CODE_HPC_JOB_STATE_CHANGE = "102"
 
 
 class HpcSubmitter:
@@ -94,7 +101,23 @@ class HpcSubmitter:
                     output,
                     verbose,
                 )
+
                 queue.submit(async_submitter)
+
+                # It might be better to delay submission for a limited number
+                # of rounds if there are blocked jobs and the batch isn't full.
+                # We can look at these events on our runs to see how this
+                # logic is working with our jobs.
+                event = StructuredJobEvent(
+                    job_name=self._name,
+                    category=EVENT_CATEGORY_HPC,
+                    code=EVENT_CODE_HPC_SUBMIT,
+                    message="Submitted HPC batch",
+                    batch_size=len(batch_jobs),
+                    num_blocked=num_blocked,
+                    per_node_batch_size=per_node_batch_size,
+                )
+                log_job_event(event)
                 for i in reversed(jobs_to_pop):
                     jobs.pop(i)
             else:
@@ -156,6 +179,16 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         if status != self._last_status:
             logger.info("Submission %s %s changed status from %s to %s",
                         self._name, self._job_id, self._last_status, status)
+            event = StructuredJobEvent(
+                job_name=self._name,
+                category=EVENT_CATEGORY_HPC,
+                code=EVENT_CODE_HPC_JOB_STATE_CHANGE,
+                message="HPC job state change",
+                job_id=self._job_id,
+                old_state=self._last_status.value,
+                new_state=status.value,
+            )
+            log_job_event(event)
             self._last_status = status
 
         if status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE):
@@ -175,6 +208,14 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             raise ExecutionError("Failed to submit name={self._name}")
 
         self._job_id = job_id
+        event = StructuredJobEvent(
+            job_name=self._name,
+            category=EVENT_CATEGORY_HPC,
+            code=EVENT_CODE_HPC_JOB_ASSIGNED,
+            message="HPC job assigned",
+            job_id=self._job_id,
+        )
+        log_job_event(event)
         logger.info("Assigned job_ID=%s name=%s", self._job_id, self._name)
 
     def get_blocking_jobs(self):

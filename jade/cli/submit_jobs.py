@@ -11,7 +11,7 @@ from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
-from jade.utils.utils import makedirs, rotate_filenames, get_cli_string, load_data
+from jade.utils.utils import rotate_filenames, get_cli_string, load_data
 
 
 logger = logging.getLogger(__name__)
@@ -106,7 +106,7 @@ def submit_jobs(
         output, poll_interval, num_processes, rotate_logs, rotate_tomls,
         verbose, restart_failed, restart_missing):
     """Submits jobs for execution, locally or on HPC."""
-    makedirs(output)
+    os.makedirs(output, exist_ok=True)
 
     previous_results = []
 
@@ -133,6 +133,11 @@ def submit_jobs(
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level)
     logger.info(get_cli_string())
+
+    event_file = os.path.join(output, "events.log")
+    # This effectively means no console logging.
+    setup_logging("event", event_file, console_level=logging.ERROR,
+                  file_level=logging.INFO)
 
     mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
     ret = mgr.submit_jobs(

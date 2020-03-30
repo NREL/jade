@@ -7,7 +7,7 @@ import sys
 from datetime import datetime
 from prettytable import PrettyTable
 from jade.common import JOBS_OUTPUT_DIR
-from jade.utils.utils import dump_data
+from jade.utils.utils import dump_data, get_filenames
 
 
 class StructuredJobEvent(object):
@@ -107,18 +107,7 @@ class EventsSummary(object):
         -------
         list, a list of event log files.
         """
-        event_files, job_outputs = [], [
-            os.path.join(root, _file)
-            for root, dirs, files in os.walk(self._job_outputs_dir)
-            for _file in files
-        ]
-        for output in job_outputs:
-            if not output.endswith("events.log"):
-                continue
-
-            event_files.append(output)
-
-        return event_files
+        return get_filenames(self._output_dir, "events.log")
 
     def _consolidate_events(self):
         """Find most recent event log files, and merge event data together."""
@@ -137,6 +126,7 @@ class EventsSummary(object):
                         **record["data"]
                     )
                     events.append(event)
+        events.sort(key=lambda x: x.timestamp)
         return events
 
     def _save_events_summary(self):
