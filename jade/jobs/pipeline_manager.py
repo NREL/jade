@@ -74,7 +74,15 @@ class PipelineManager:
         # arguments.
         os.environ["JADE_PIPELINE_OUTPUT_DIR"] = self._output
         os.environ["JADE_PIPELINE_STATUS_FILE"] = self._status_file
+        try:
+            self._submit(verbose)
+        finally:
+            os.environ.pop("JADE_PIPELINE_OUTPUT_DIR")
+            os.environ.pop("JADE_PIPELINE_STATUS_FILE")
+            if "JADE_PIPELINE_STAGE_ID" in os.environ:
+                os.environ.pop("JADE_PIPELINE_STAGE_ID")
 
+    def _submit(self, verbose):
         for stage in self._stages:
             os.environ["JADE_PIPELINE_STAGE_ID"] = str(self._cur_stage_id)
             stage_info = {
