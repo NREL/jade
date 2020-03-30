@@ -7,7 +7,6 @@ import os
 
 from jade.common import JOBS_OUTPUT_DIR, RESULTS_DIR
 from jade.jobs.job_configuration_factory import create_config_from_file
-from jade.utils.utils import makedirs
 
 
 logger = logging.getLogger(__name__)
@@ -23,9 +22,9 @@ class JobManagerBase(abc.ABC):
         self._results = []  # contains Result objects
         self._results_dir = os.path.join(self._output, RESULTS_DIR)
 
-        makedirs(self._output)
-        makedirs(self._jobs_output)
-        makedirs(self._results_dir)
+        os.makedirs(self._output, exist_ok=True)
+        os.makedirs(self._jobs_output, exist_ok=True)
+        os.makedirs(self._results_dir, exist_ok=True)
 
     def get_num_jobs(self):
         """Get the number of jobs to execute.

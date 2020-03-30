@@ -35,7 +35,7 @@ def _handle_simulation_scripts(ctx, _, value):
     if not os.path.exists(value):
         logger.info("Creating %s...", value)
         try:
-            os.makedirs(value)
+            os.makedirs(value, exist_ok=True)
         except Exception as err:
             logger.error("Could not create %s: %s", value, err)
             raise
