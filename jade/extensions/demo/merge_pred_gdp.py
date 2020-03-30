@@ -4,6 +4,7 @@ Merge predicted GDP of all countries into one CSV file.
 """
 import logging
 import os
+import sys
 
 import click
 import pandas as pd
@@ -18,13 +19,14 @@ def cli():
 
 
 @cli.command()
+@click.argument("previous_stage_output")
 @click.argument("output")
-def run(output):
+def run(previous_stage_output, output):
     """Merge the pred_gdp in CSV result into one CSV file."""
     logger.info("Start batch post-processing...")
     
     # Get the job-outputs directory
-    job_outputs = os.path.join(output, "job-outputs")
+    job_outputs = os.path.join(previous_stage_output, "job-outputs")
     
     # Merge pred_gdp columns
     results = pd.DataFrame()
@@ -38,9 +40,7 @@ def run(output):
         results[job_name] = df["pred_gdp"]
     
     # Export merged results to CSV file
-    batch_post_process_dir = os.path.join(output, "batch-post-process")
-    os.makedirs(batch_post_process_dir, exist_ok=True)
-    csv_file = os.path.join(batch_post_process_dir, "pred_gdp.csv")
+    csv_file = os.path.join(output, "pred_gdp.csv")
     results.to_csv(csv_file, index=False)
     
     logger.info("Batch post-processing finished!")

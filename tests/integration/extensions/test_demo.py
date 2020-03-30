@@ -22,7 +22,7 @@ def test_demo_extension(test_data_dir):
     
     base = os.path.join(JADE_PATH, "extensions", "demo")
     create_demo_config = os.path.join(base, "create_demo_config.sh")
-    create_merge_config = os.path.join(base, "create_merge_pred_gdp.sh")
+    create_merge_config = os.path.join(base, "create_merge_pred_gdp.py")
     script = os.path.join(base, "merge_pred_gdp.py")
     config_file = os.path.join(test_data_dir, "pipeline.toml")
     output = os.path.join(test_data_dir, "output")
@@ -59,7 +59,7 @@ def test_demo_extension(test_data_dir):
             assert "result.png" in results
             assert "summary.toml" in results
 
-        pred_gdp_file = os.path.join(output_stage1, "batch-post-process", "pred_gdp.csv")
+        pred_gdp_file = os.path.join(output_stage2, "pred_gdp.csv")
         assert os.path.exists(pred_gdp_file)
         df = pd.read_csv(pred_gdp_file)
         assert "year" in df.columns
