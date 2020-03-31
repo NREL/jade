@@ -10,7 +10,7 @@ import click
 from jade.common import OUTPUT_DIR
 from jade.jobs.job_runner import JobRunner
 from jade.loggers import setup_logging
-from jade.utils.utils import makedirs, get_cli_string
+from jade.utils.utils import get_cli_string
 
 
 logger = logging.getLogger(__name__)
@@ -46,7 +46,7 @@ def run_jobs(config_file, output, num_processes, verbose):
     match = re.search(r"batch_(\d+)\.json", config_file)
     assert match
     batch_id = match.group(1)
-    makedirs(output)
+    os.makedirs(output, exist_ok=True)
     filename = os.path.join(output, f"run_jobs_batch_{batch_id}.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level)

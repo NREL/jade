@@ -17,7 +17,6 @@ from jade.jobs.job_post_process import JobPostProcess
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.utils.timing_utils import timed_info
-from jade.utils.utils import makedirs
 
 
 logger = logging.getLogger(__name__)
@@ -74,7 +73,7 @@ class JobRunner(JobManagerBase):
         local_scratch = self._intf.get_local_scratch()
         dirname = "jade-" + str(uuid.uuid4())
         scratch_dir = os.path.join(local_scratch, dirname)
-        makedirs(scratch_dir)
+        os.makedirs(scratch_dir, exist_ok=True)
         logger.info("Created jade scratch_dir=%s", scratch_dir)
         return scratch_dir
 

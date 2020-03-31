@@ -2,13 +2,13 @@
 Unit tests for job event object and methods
 """
 import os
-from jade.events import StructuredJobEvent, EventsSummary
+from jade.events import StructuredEvent, EventsSummary
 
 
-def test_structured_job_event__create():
+def test_structured_event__create():
     """Test class initialization and methods"""
-    event = StructuredJobEvent(
-        job_name="job_1",
+    event = StructuredEvent(
+        name="job_1",
         category="ParameterError",
         code="400",
         message="Something happens",

@@ -3,7 +3,6 @@
 import os
 
 from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
-from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
 
 
 def auto_config(inputs, **kwargs):
@@ -18,12 +17,8 @@ def auto_config(inputs, **kwargs):
     if not os.path.exists(inputs):
         raise OSError(f"Inputs path '{inputs}' does not exist.")
 
-    job_inputs = GenericCommandInputs(inputs)
-    config = GenericCommandConfiguration(job_inputs=job_inputs, **kwargs)
-    for job_param in config.inputs.iter_jobs():
-        config.add_job(job_param)
+    return GenericCommandConfiguration.auto_config(inputs, **kwargs)
 
-    return config
 
 def run(config_file, name, output, output_format, verbose):
     """Run auto regression analysis through command line"""

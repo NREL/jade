@@ -146,23 +146,11 @@ def test_aggregate_data_from_files():
         shutil.rmtree(tmpdir)
 
 
-def test_makedirs():
-    """Should make dirs properly"""
-    # TODO: Should os.makedirs(dirname, exist_ok=True)
-
-    tmpdir = os.path.join(tempfile.gettempdir(), "jade-test-tmp87alkj8ew")
-    makedirs(tmpdir)
-
-    assert os.path.exists(tmpdir)
-    if os.path.exists(tmpdir):
-        shutil.rmtree(tmpdir)
-
-
 def test_rmtree():
     """Should remove dir properly"""
 
     tmpdir = os.path.join(tempfile.gettempdir(), "jade-test-tmp87alkj8ew")
-    makedirs(tmpdir)
+    os.makedirs(tmpdir, exist_ok=True)
 
     assert os.path.exists(tmpdir)
     rmtree(tmpdir)
@@ -232,6 +220,28 @@ def test_decompress_file():
 
     if os.path.exists(new_file):
         os.remove(new_file)
+
+
+def test_get_filenames_in_path():
+    """Should filter filename properly"""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir2 = os.path.join(tmpdir, "tmp")
+        os.makedirs(tmpdir2, exist_ok=True)
+
+        data = {"A": 1, "B": 2}
+        json_file1 = os.path.join(tmpdir, "a.json")
+        json_file2 = os.path.join(tmpdir2, "a.json")
+        dump_data(data, json_file1)
+        dump_data(data, json_file2)
+
+        # These should not get included.
+        toml_file1 = os.path.join(tmpdir, "b.toml")
+        toml_file2 = os.path.join(tmpdir2, "b.toml")
+        dump_data(data, toml_file1)
+        dump_data(data, toml_file2)
+
+        filenames = list(get_filenames_in_path(tmpdir, "a.json"))
+        assert filenames == [json_file1, json_file2]
 
 
 def test_get_filenames_by_ext():

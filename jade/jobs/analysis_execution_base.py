@@ -4,7 +4,6 @@ import os
 
 from jade.common import ANALYSIS_DIR
 from jade.jobs.job_execution_interface import JobExecutionInterface
-from jade.utils.utils import makedirs
 
 
 class AnalysisExecutionBase(JobExecutionInterface):
@@ -13,7 +12,7 @@ class AnalysisExecutionBase(JobExecutionInterface):
     def __init__(self, output_dir, simulations_dir):
         self._analysis_dir = self.get_analysis_dir(output_dir)
         self._simulations_dir = simulations_dir
-        makedirs(self._analysis_dir)
+        os.makedirs(self._analysis_dir, exist_ok=True)
 
     @staticmethod
     def get_analysis_dir(output_dir):

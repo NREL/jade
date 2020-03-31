@@ -6,7 +6,7 @@ import tempfile
 import pandas as pd
 
 import jade
-from jade.utils.utils import load_data
+from jade.utils.utils import dump_data, load_data
 from jade.utils.subprocess_manager import run_command
 
 JADE_PATH = jade.__path__[0]
@@ -36,6 +36,9 @@ def test_demo_extension(test_data_dir):
         # check result
         data = load_data(config_file)
         assert len(data["stages"]) == 2
+        for stage in data["stages"]:
+            stage["submit-params"]["--poll-interval"] = 0.1
+        dump_data(data, config_file)
 
         if os.path.exists(output):
             shutil.rmtree(output)

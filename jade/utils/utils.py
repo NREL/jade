@@ -174,23 +174,6 @@ def aggregate_data_from_files(directory, end_substring, **kwargs):
     return data
 
 
-def makedirs(path):
-    """Creates a directory tree if it doesn't exist.
-
-    Parameters
-    ----------
-    path : str
-
-    """
-    if not os.path.exists(path):
-        logger.debug("Create directory %s", path)
-        try:
-            os.makedirs(path)
-        except FileExistsError:
-            # There may be a race between processes.
-            pass
-
-
 def rmtree(path):
     """Deletes the directory tree if it exists.
 
@@ -278,6 +261,26 @@ def decompress_file(filename):
     os.remove(filename)
     logger.debug("Decompressed %s", new_filename)
     return new_filename
+
+
+def get_filenames_in_path(directory, filename):
+    """Return all files in directory matching filename, searching recursively.
+
+    Parameters
+    ----------
+    directory : str
+    ext : str
+        file extension, ex: .log
+
+    Returns
+    -------
+    generator
+
+    """
+    for dirpath, _, filenames in os.walk(directory):
+        for _filename in filenames:
+            if _filename == filename:
+                yield os.path.join(dirpath, filename)
 
 
 def get_filenames_by_ext(directory, ext):
