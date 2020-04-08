@@ -11,6 +11,7 @@ from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
     RESULTS_FILE
 from jade.enums import Status
 from jade.exceptions import InvalidParameter
+from jade.extensions.registry import Registry, ExtensionClassType
 from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.hpc.hpc_submitter import HpcSubmitter
@@ -121,7 +122,10 @@ results_summary={self.get_results_summmary_report()}"""
         logger.info("Submit %s jobs for execution.",
                     self._config.get_num_jobs())
         logger.info("JADE version %s", jade.version.__version__)
-        self._save_repository_info()
+        registry = Registry()
+        loggers = registry.list_loggers()
+        logger.info("Registered modules for logging: %s", ", ".join(loggers))
+        self._save_repository_info(registry)
 
         self._hpc = HpcManager(self._hpc_config_file, self._output)
         result = Status.GOOD
@@ -199,15 +203,23 @@ results_summary={self.get_results_summmary_report()}"""
             },
         }
 
-    def _save_repository_info(self):
-        try:
-            self._repo_info = RepositoryInfo(jade)
-            patch = os.path.join(self._output, "diff.patch")
-            self._repo_info.write_diff_patch(patch)
-            logger.info("Repository information: %s",
-                        self._repo_info.summary())
-        except InvalidParameter:
-            pass
+    def _save_repository_info(self, registry):
+        extensions = registry.list_extensions()
+        extension_packages = set(["jade"])
+        for ext in extensions:
+            exec_module = ext[ExtensionClassType.EXECUTION].__module__
+            package = exec_module.split(".")[0]
+            extension_packages.add(package)
+
+        for package in extension_packages:
+            try:
+                self._repo_info = RepositoryInfo(jade)
+                patch = os.path.join(self._output, f"{package}-diff.patch")
+                self._repo_info.write_diff_patch(patch)
+                logger.info("%s repository information: %s",
+                            package, self._repo_info.summary())
+            except InvalidParameter:
+                pass
 
     def _submit_to_hpc(self, name, max_nodes, per_node_batch_size, verbose,
                        poll_interval, num_processes):
