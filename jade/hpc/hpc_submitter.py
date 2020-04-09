@@ -123,6 +123,10 @@ class HpcSubmitter:
             logger.debug("num_submitted=%s num_blocked=%s",
                          len(batch_jobs), num_blocked)
 
+            if not queue.is_full():
+                # Keep submitting.
+                continue
+
             # TODO: this will cause up to <queue_depth> slurm status commands
             # every poll.  We could send one command, get all statuses, and
             # share it among the submitters.
