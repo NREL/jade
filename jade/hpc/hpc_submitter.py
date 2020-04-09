@@ -123,7 +123,7 @@ class HpcSubmitter:
             logger.debug("num_submitted=%s num_blocked=%s",
                          len(batch_jobs), num_blocked)
 
-            if not queue.is_full():
+            if batch_jobs and not queue.is_full():
                 # Keep submitting.
                 continue
 
