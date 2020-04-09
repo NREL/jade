@@ -5,8 +5,40 @@ jobs locally or on an HPC.
 
 Installation
 ************
-JADE can be installed on computer or HPC. If trying to install it on your machine,
-you can choose to install with/without docker.
+JADE can be installed on your computer or HPC. If trying to install it on your
+computer, you can choose to install it in a conda environment or Docker
+container.
+
+Computer or HPC in conda environment
+====================================
+1. Choose a virtual environment in which to install JADE.  This can be an
+   existing `conda <https://docs.conda.io/en/latest/miniconda.html>`_
+   environment or an environment from something like `pyenv
+   <https://github.com/pyenv/pyenv>`_.  A validated conda environment is
+   provided in the JADE repository. ::
+
+    # If conda is not already in your environment (such as on HPC):
+    module load conda
+    conda env create -f environment.yml -n jade
+    conda activate jade
+
+2. Install JADE. ::
+
+    cd <your-root-repo-directory>
+    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
+    cd jade
+    pip install -e .
+
+    # If you will also be developing JADE code then include dev packages.
+    pip install -e . -r dev-requirements.txt
+
+.. note:: The dev packages that pandoc and plantuml be installed.
+
+   - Refer to `pandoc <https://pandoc.org/installing.html>`_.
+   - plantuml on Mac: ``brew install plantuml``
+   - plantuml on Linux: ``sudo apt-get install plantuml``
+   - plantuml on Windows: `plantuml <http://plantuml.com/starting>`_.
+
 
 Computer with docker
 =====================
@@ -69,36 +101,6 @@ on top of ``debian``, so you can use Linux commands for operation.
 
 For more about docker commands, please refer https://docs.docker.com/engine/reference/commandline/docker/.
 
-Computer or HPC without docker
-==============================
-1. Choose a virtual environment in which to install JADE.  This can be an
-   existing `conda <https://docs.conda.io/en/latest/miniconda.html>`_
-   environment or an environment from something like `pyenv
-   <https://github.com/pyenv/pyenv>`_.  A validated conda environment is
-   provided in the JADE repository. ::
-
-    # If conda is not already in your environment (such as on HPC):
-    module load conda
-    conda env create -f environment.yml -n jade
-    conda activate jade
-
-2. Install JADE. ::
-
-    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
-    cd jade
-    pip install -e .
-
-    # If you will also be developing JADE code then include dev packages.
-    pip install -e . -r dev-requirements.txt
-
-.. note:: The dev packages that pandoc and plantuml be installed.
-
-   - Refer to `pandoc <https://pandoc.org/installing.html>`_.
-   - plantuml on Mac: ``brew install plantuml``
-   - plantuml on Linux: ``sudo apt-get install plantuml``
-   - plantuml on Windows: `plantuml <http://plantuml.com/starting>`_.
-
-
 Register extensions
 *******************
 An extension is a type of job that can be executed by JADE. Refer to
@@ -109,8 +111,13 @@ command below.
 
 ::
 
-   jade extensions register <EXTENSION_FILENAME>
-   jade extensions show
+    jade extensions register <EXTENSION_FILENAME>
+    jade extensions show
+
+If you're using a Python package other than JADE then you will likely also want
+to register it as a package that JADE logs.  Here's how to do that::
+
+    jade extensions add-logger <package-name>
 
 JADE extensions are stored locally in ~/.jade-registry.json.
 
@@ -122,9 +129,16 @@ HPC Configuration
 *****************
 This section only applies if you run your jobs on the HPC.
 
-Consider whether you should configure the Lustre stripe count. This can be
-beneficial if the the files you create will be large or if many clients will
-be accessing them concurrently.
+HPC Parameters
+==============
+JADE will submit jobs to the HPC with parameters defined in
+``hpc_config.toml``.  Create a copy and customize according to your needs.
+
+Lustre Filesystem
+=================
+If you are running on a Lustre filesystem then you should consider whether to
+configure the Lustre stripe count. This can be beneficial if the the files you
+create will be large or if many clients will be accessing them concurrently.
 
 References:
 
@@ -146,6 +160,20 @@ If you are not using the JADE conda environment then you should take note of
 the packages it installs (environment.yml). One common pitfall is that JADE
 requires a newer version of git than is installed by default on Eagle.
 
+Configuring Jobs
+****************
+A JADE configuration contains a list of jobs to run. Each configuration is
+specific to the extension you are using. Extensions are recommended to provide
+an ``auto-confg`` method that will automatically create a configuration with
+all possible jobs.  If that is in place then this command will create the
+configuration::
+
+    jade auto-config <extension-name> -c config.json
+
+``config.json`` contains each job definition.
+
+Configurations can also be created manually or programmatically. Extensions
+may provide methods to create configurations with a subset of possible jobs.
 
 CLI Execution
 *************
@@ -174,10 +202,11 @@ Parameters to keep in mind:
 
 - **Number of jobs**: Number of jobs created by the user.
 - **Max nodes**: Max number of job submissions (batches) to run in parallel.
-- **Per-node_batch size**: Number of jobs to run on one node in one batch.
+- **Per-node batch size**: Number of jobs to run on one node in one batch.
 - **Allocation time**: How long it takes to acquire a node. Dependent on the
   HPC queue chosen and the priority given.
 - **Average job runtime**: How long it takes a job to complete.
+- **HPC config file**: Customized HPC parameters like walltime and partition
 
 If the jobs are very quick to execute and it takes a long time to acquire a
 node then you may be better off making per_node_batch_size higher and max_nodes
@@ -203,7 +232,7 @@ Examples::
 .. note::
 
    By default HPC nodes are requested at normal priority. Set qos=high in
-   hpc_config.json to get faster allocations at twice the cost.
+   hpc_config.toml to get faster allocations at twice the cost.
 
 
 Results
@@ -247,7 +276,7 @@ Useful grep commands::
 
 Events
 ======
-If your extensions implement structured JADE events then you may want to view
+If your extension implements JADE structured events then you may want to view
 what events were logged.
 
 ::
