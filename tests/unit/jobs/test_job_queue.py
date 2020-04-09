@@ -38,6 +38,16 @@ class FakeJob(AsyncJobInterface):
         self._blocking_jobs.remove(name)
 
 
+def test_job_queue__is_full():
+    duration = 10
+    jobs = [FakeJob(str(i), duration) for i in range(4)]
+    queue = JobQueue(2, poll_interval=1)
+    assert not queue.is_full()
+    for job in jobs:
+        queue.submit(job)
+    assert queue.is_full()
+
+
 def test_job_queue__run_jobs_no_ordering():
     duration = 0.1
     jobs = [FakeJob(str(i), duration) for i in range(10)]

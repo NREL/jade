@@ -72,6 +72,16 @@ class JobQueue:
         self._num_jobs += 1
         self._outstanding_jobs[job.name] = job
 
+    def is_full(self):
+        """Return True if the max number of jobs is outstanding.
+
+        Returns
+        -------
+        bool
+
+        """
+        return len(self._outstanding_jobs) >= self._queue_depth
+
     def process_queue(self):
         """Process completions and submit new jobs if the queue is not full."""
         self._check_completions()
@@ -126,7 +136,7 @@ class JobQueue:
         job : AsyncJobInterface
 
         """
-        if len(self._outstanding_jobs) >= self._queue_depth:
+        if self.is_full():
             logger.debug("queue depth exceeded, queue job %s", job.name)
             self._queued_jobs.append(job)
         elif job.get_blocking_jobs():
