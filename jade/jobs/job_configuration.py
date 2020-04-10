@@ -10,7 +10,7 @@ import sys
 import toml
 
 from jade.common import CONFIG_FILE
-from jade.exceptions import InvalidParameter
+from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.utils.utils import dump_data, load_data
 from jade.utils.timing_utils import timed_debug
@@ -98,6 +98,35 @@ class JobConfiguration(abc.ABC):
     @abc.abstractmethod
     def _serialize(self, data):
         """Create implementation-specific data for serialization."""
+
+    def check_job_dependencies(self):
+        """Check for impossible conditions with job dependencies.
+
+        Raises
+        ------
+        InvalidConfiguration
+            Raised if job dependencies have an impossible condition.
+
+        """
+        # This currently only checks that all jobs defined as blocking exist.
+        # It does not look for deadlocks.
+
+        job_names = set()
+        blocking_jobs = set()
+        for job in self.iter_jobs():
+            job_names.add(job.name)
+            for blocking_job in job.get_blocking_jobs():
+                blocking_jobs.add(blocking_job)
+
+        invalid = False
+        for blocking_job in blocking_jobs:
+            if blocking_job not in job_names:
+                invalid = True
+                logger.error("%s is blocking a job but does not exist",
+                              blocking_job)
+
+        if invalid:
+            raise InvalidConfiguration("job ordering definitions are invalid")
 
     @abc.abstractmethod
     def create_from_result(self, job, output_dir):
@@ -376,7 +405,7 @@ class JobConfiguration(abc.ABC):
         are_inputs_local : bool
             Whether the existing input data is local to this system. For many
             configurations accessing the input data across the network by many
-            concurrent workers can cause a bottleneck and so implmementations
+            concurrent workers can cause a bottleneck and so implementations
             may wish to copy the data locally before execution starts. If the
             storage access time is very fast the question is irrelevant.
 
