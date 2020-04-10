@@ -127,6 +127,8 @@ results_summary={self.get_results_summmary_report()}"""
         logger.info("Registered modules for logging: %s", ", ".join(loggers))
         self._save_repository_info(registry)
 
+        self._config.check_job_dependencies()
+
         self._hpc = HpcManager(self._hpc_config_file, self._output)
         result = Status.GOOD
 
