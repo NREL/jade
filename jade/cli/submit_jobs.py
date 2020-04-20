@@ -134,7 +134,7 @@ def submit_jobs(
     setup_logging(__name__, filename, file_level=level, console_level=level)
     logger.info(get_cli_string())
 
-    event_file = os.path.join(output, "events.log")
+    event_file = os.path.join(output, "submit_jobs_events.log")
     # This effectively means no console logging.
     setup_logging("event", event_file, console_level=logging.ERROR,
                   file_level=logging.INFO)

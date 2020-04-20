@@ -1,25 +1,33 @@
 """
-This model constains event object and event summary object.
+This module contains StructuredEvent and EventSummary classes.
 """
+
 import json
 import os
+import re
 import sys
 from datetime import datetime
+
 from prettytable import PrettyTable
+
 from jade.common import JOBS_OUTPUT_DIR
-from jade.utils.utils import dump_data, get_filenames_in_path
+from jade.utils.utils import dump_data, get_filenames_in_path, load_data
 
 
 EVENT_CATEGORY_HPC = "HPC"
+EVENT_CATEGORY_RESOURCE_UTIL = "ResourceUtilization"
 
 EVENT_CODE_HPC_SUBMIT = "100"
 EVENT_CODE_HPC_JOB_ASSIGNED = "101"
 EVENT_CODE_HPC_JOB_STATE_CHANGE = "102"
+EVENT_CODE_CPU_STATS = "103"
+EVENT_CODE_DISK_STATS = "104"
+EVENT_CODE_MEMORY_STATS = "105"
 
 
 class StructuredEvent(object):
     """
-    A class for recording structured job event resulted in job failure.
+    A class for recording structured log events.
     """
     def __init__(self, name, category, code, message, **kwargs):
         """
@@ -54,6 +62,29 @@ class StructuredEvent(object):
 
         self.data = kwargs
 
+    @classmethod
+    def deserialize(cls, record):
+        """Deserialize event from JSON.
+
+        Parameters
+        ----------
+        record : dict
+
+        Returns
+        -------
+        StructuredEvent
+
+        """
+        return cls(
+            name=record.get("name", ""),
+            category=record.get("category", ""),
+            code=record.get("code", ""),
+            message=record.get("message", ""),
+            timestamp=record.get("timestamp", ""),
+            exception=record.get("exception", ""),
+            **record["data"]
+        )
+
     def parse_traceback(self):
         """
         Parse the system exception information - exception, filename, and lineno.
@@ -87,12 +118,22 @@ class EventsSummary(object):
         """
         Initialize EventsSummary class
 
-        :param output_dir: str, the path of jade output directory.
+        Parameters
+        ----------
+        output_dir: str
+            Path of jade output directory.
+
         """
         self._output_dir = output_dir
         self._job_outputs_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
         self._summary_file = os.path.join(output_dir, "events.json")
-        self._events = self._consolidate_events()
+        if os.path.exists(self._summary_file):
+            self._events = [
+                StructuredEvent.deserialize(x) for x in load_data(self._summary_file)
+            ]
+        else:
+            self._events = self._consolidate_events()
+            self._save_events_summary()
 
     def _most_recent_event_files(self):
         """
@@ -114,7 +155,8 @@ class EventsSummary(object):
         -------
         list, a list of event log files.
         """
-        return get_filenames_in_path(self._output_dir, "events.log")
+        regex = re.compile(r"\w*events.log")
+        return get_filenames_in_path(self._output_dir, regex, is_regex=True)
 
     def _consolidate_events(self):
         """Find most recent event log files, and merge event data together."""
@@ -123,15 +165,7 @@ class EventsSummary(object):
             with open(event_file, "r") as f:
                 for line in f.readlines():
                     record = json.loads(line)
-                    event = StructuredEvent(
-                        name=record.get("name", ""),
-                        category=record.get("category", ""),
-                        code=record.get("code", ""),
-                        message=record.get("message", ""),
-                        timestamp=record.get("timestamp", ""),
-                        exception=record.get("exception", ""),
-                        **record["data"]
-                    )
+                    event = StructuredEvent.deserialize(record)
                     events.append(event)
         events.sort(key=lambda x: x.timestamp)
         return events
@@ -140,6 +174,18 @@ class EventsSummary(object):
         """Save all events data to a JSON file"""
         dict_events = [event.to_dict() for event in self._events]
         dump_data(dict_events, self._summary_file)
+
+    @property
+    def events(self):
+        """Return the events.
+
+        Returns
+        -------
+        list
+            list of StructuredEvent
+
+        """
+        return self._events
 
     def show_events(self):
         """Print tabular events in terminal"""
@@ -162,6 +208,3 @@ class EventsSummary(object):
         total = len(self._events)
         print(table)
         print(f"Total events: {total}\n")
-
-        self._save_events_summary()
-        print(f"Events summary file: {self._summary_file}")

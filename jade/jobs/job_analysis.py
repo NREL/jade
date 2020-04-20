@@ -64,6 +64,10 @@ class JobAnalysis:
         """Return a list of Result objects."""
         return self._results.list_results()
 
+    @property
+    def output_dir(self):
+        return self._output_dir
+
     def show_results(self, only_failed=False, only_successful=False):
         """Show the results in terminal."""
         return self._results.show_results(only_failed=only_failed,

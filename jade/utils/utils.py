@@ -263,7 +263,7 @@ def decompress_file(filename):
     return new_filename
 
 
-def get_filenames_in_path(directory, filename):
+def get_filenames_in_path(directory, filename, is_regex=False):
     """Return all files in directory matching filename, searching recursively.
 
     Parameters
@@ -271,6 +271,8 @@ def get_filenames_in_path(directory, filename):
     directory : str
     ext : str
         file extension, ex: .log
+    is_regex : bool
+        Treat filename as regular expression.
 
     Returns
     -------
@@ -279,8 +281,13 @@ def get_filenames_in_path(directory, filename):
     """
     for dirpath, _, filenames in os.walk(directory):
         for _filename in filenames:
-            if _filename == filename:
-                yield os.path.join(dirpath, filename)
+            matched = False
+            if is_regex:
+                matched = filename.search(_filename)
+            else:
+                matched = _filename == filename
+            if matched:
+                yield os.path.join(dirpath, _filename)
 
 
 def get_filenames_by_ext(directory, ext):
