@@ -39,6 +39,9 @@ class DispatchableJob(DispatchableJobInterface):
             job_filename = job_filename.replace(char, "-")
 
         status = "finished"
+        # TODO: the only reliable way to get storage space consumed on Lustre
+        # may be to sum the size of each created file here and generate an
+        # event.
         result = Result(self._job.name, ret, status, exec_time_s)
         ResultsAggregator.append(self._results_filename, result)
 

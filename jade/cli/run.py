@@ -65,7 +65,9 @@ def run(extension, **kwargs):
     os.makedirs(job_dir, exist_ok=True)
     # General logging setup
     log_file = os.path.join(job_dir, "run.log")
-    general_logger = setup_logging(extension, log_file, console_level=level, file_level=level)
+    general_logger = setup_logging(
+        extension, log_file, console_level=logging.ERROR, file_level=level,
+    )
     general_logger.info(get_cli_string())
 
     # Structural logging setup

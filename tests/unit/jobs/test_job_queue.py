@@ -82,6 +82,17 @@ def test_job_queue__run_jobs_ordering():
     assert jobs["3"].start_time > jobs["5"].end_time
 
 
+def test_job_queue__monitor_func():
+    has_run = []
+    def monitor():
+        has_run.append(1)
+
+    duration = 0.1
+    jobs = [FakeJob(str(i), duration) for i in range(1)]
+    JobQueue.run_jobs(jobs, 5, poll_interval=0.1, monitor_func=monitor)
+    assert has_run
+
+
 def job_run():
     """Job run"""
     time.sleep(0.5)

@@ -5,7 +5,7 @@ import os
 import shutil
 import uuid
 
-from jade.common import OUTPUT_DIR, get_results_temp_filename
+from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_results_temp_filename
 from jade.enums import Status
 from jade.hpc.common import HpcType
 from jade.hpc.local_manager import LocalManager
@@ -15,6 +15,8 @@ from jade.jobs.dispatchable_job import DispatchableJob
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_post_process import JobPostProcess
 from jade.jobs.job_queue import JobQueue
+from jade.loggers import setup_logging
+from jade.resource_monitor import ResourceMonitor
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.utils.timing_utils import timed_info
 
@@ -33,6 +35,14 @@ class JobRunner(JobManagerBase):
 
         self._intf, self._intf_type = self._create_node_interface()
         self._batch_id = batch_id
+        self._event_file = os.path.join(
+            output,
+            f"run_jobs_batch_{batch_id}_events.log",
+        )
+        self._event_logger = setup_logging(
+            "event", self._event_file, console_level=logging.ERROR,
+            file_level=logging.INFO
+        )
 
         logger.debug("Constructed JobRunner output=%s batch=%s", output,
                      batch_id)
@@ -130,8 +140,33 @@ class JobRunner(JobManagerBase):
                     num_jobs, num_workers, max_num_workers)
         self._intf.log_environment_variables()
 
+        name = f"resource_monitor_batch_{self._batch_id}"
+        resource_monitor = ResourceMonitor(name)
         # TODO: make this non-blocking so that we can report status.
-        JobQueue.run_jobs(jobs, max_queue_depth=num_workers)
+        JobQueue.run_jobs(
+            jobs,
+            max_queue_depth=num_workers,
+            monitor_func=resource_monitor.log_resource_stats,
+        )
 
         logger.info("Jobs are complete. count=%s", num_jobs)
+        self._aggregate_events()
         return Status.GOOD  # TODO
+
+    @timed_info
+    def _aggregate_events(self):
+        # Aggregate all job events.log files into this node's log file so
+        # that the master can more quickly make events.json later.
+        for handler in self._event_logger.handlers:
+            handler.close()
+        with open(self._event_file, "a") as f_out:
+            for job in self._config.iter_jobs():
+                job_file = os.path.join(
+                    self._output, JOBS_OUTPUT_DIR, job.name, "events.log"
+                )
+                with open(job_file) as f_in:
+                    for line in f_in:
+                        f_out.write(line)
+                os.remove(job_file)
+                logger.debug("Moved contents of %s to %s", job_file,
+                             self._event_file)

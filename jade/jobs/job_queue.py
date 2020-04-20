@@ -9,6 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_POLL_INTERVAL = 1
+DEFAULT_MONITOR_INTERVAL = 60
 
 
 class JobQueue:
@@ -27,7 +28,8 @@ class JobQueue:
 
     """
 
-    def __init__(self, max_queue_depth, poll_interval=DEFAULT_POLL_INTERVAL):
+    def __init__(self, max_queue_depth, poll_interval=DEFAULT_POLL_INTERVAL,
+                 monitor_func=None, monitor_interval=DEFAULT_MONITOR_INTERVAL):
         """
         Parameters
         ----------
@@ -43,6 +45,9 @@ class JobQueue:
         self._queued_jobs = []
         self._num_jobs = 0
         self._num_completed = 0
+        self._monitor_func = monitor_func
+        self._monitor_interval = monitor_interval
+        self._last_monitor_time = None
 
         logger.debug("queue_depth=%s poll_interval=%s", self._queue_depth,
                      self._poll_interval)
@@ -82,8 +87,27 @@ class JobQueue:
         """
         return len(self._outstanding_jobs) >= self._queue_depth
 
+    def _handle_monitor_func(self, force=False):
+        if self._monitor_func is None:
+            return
+
+        needs_monitor = False
+        cur_time = time.time()
+        if force:
+            needs_monitor = True
+        elif self._last_monitor_time is None:
+            needs_monitor = True
+        elif cur_time - self._last_monitor_time > self._monitor_interval:
+            needs_monitor = True
+
+        if needs_monitor:
+            logger.debug("Run monitor function")
+            self._monitor_func()
+            self._last_monitor_time = cur_time
+
     def process_queue(self):
         """Process completions and submit new jobs if the queue is not full."""
+        self._handle_monitor_func()
         self._check_completions()
         if not self._queued_jobs:
             logger.debug("queue is empty; nothing to do")
@@ -155,9 +179,12 @@ class JobQueue:
         assert self._num_completed == self._num_jobs, \
             f"{self._num_completed} {self._num_jobs}"
 
+        self._handle_monitor_func(force=True)
+
     @classmethod
     def run_jobs(cls, jobs, max_queue_depth,
-                 poll_interval=DEFAULT_POLL_INTERVAL):
+                 poll_interval=DEFAULT_POLL_INTERVAL,
+                 monitor_func=None, monitor_interval=DEFAULT_MONITOR_INTERVAL):
         """
         Run job queue synchronously. Blocks until all jobs are complete.
 
@@ -169,7 +196,16 @@ class JobQueue:
             Maximum number of parallel jobs to maintain
         poll_interval : int
             Seconds to sleep in between completion checks.
+        monitor_func : callable
+            Optionally a function to call each poll_interval, such as for
+            resource monitoring.
+        monitor_interval : int
+            Interval in seconds on which to run monitor_func.
 
         """
-        queue = cls(max_queue_depth, poll_interval=poll_interval)
+        queue = cls(
+            max_queue_depth,
+            poll_interval=poll_interval,
+            monitor_func=monitor_func,
+        )
         queue.run(jobs)
