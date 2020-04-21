@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 
 DEFAULT_POLL_INTERVAL = 1
-DEFAULT_MONITOR_INTERVAL = 60
+DEFAULT_MONITOR_INTERVAL = 30
 
 
 class JobQueue:
