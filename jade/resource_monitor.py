@@ -222,6 +222,7 @@ class DiskStatsViewer(StatsViewerBase):
         return val
         
     def show_stats(self):
+        print("\nDisk statistics for each batch\n")
         if not self._events_by_batch:
             print("No events are stored")
             return
