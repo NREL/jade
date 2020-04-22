@@ -10,7 +10,8 @@ import psutil
 from psutil._common import bytes2human
 
 from jade.events import EVENT_CATEGORY_RESOURCE_UTIL, EVENT_CODE_CPU_STATS, \
-    EVENT_CODE_DISK_STATS, EVENT_CODE_MEMORY_STATS, StructuredEvent
+    EVENT_CODE_DISK_STATS, EVENT_CODE_MEMORY_STATS, EVENT_CODE_NETWORK_STATS, \
+    StructuredEvent
 from jade.loggers import log_job_event
 
 
@@ -28,22 +29,40 @@ class ResourceMonitor:
         "read_time",
         "write_time",
     )
+    NET_STATS = (
+        "bytes_recv",
+        "bytes_sent",
+        "dropin",
+        "dropout",
+        "errin",
+        "errout",
+        "packets_recv",
+        "packets_sent"
+    )
 
     def __init__(self, name):
         self._name = name
         self._last_disk_check_time = None
+        self._last_net_check_time = None
         self._update_disk_stats(psutil.disk_io_counters())
+        self._update_net_stats(psutil.net_io_counters())
 
     def log_resource_stats(self):
         """Logs resource stats information as structured job events."""
         self.log_cpu_stats()
         self.log_disk_stats()
         self.log_memory_stats()
+        self.log_network_stats()
 
     def _update_disk_stats(self, data):
         for stat in self.DISK_STATS:
             setattr(self, stat, getattr(data, stat))
         self._last_disk_check_time = time.time()
+
+    def _update_net_stats(self, data):
+        for stat in self.NET_STATS:
+            setattr(self, stat, getattr(data, stat))
+        self._last_net_check_time = time.time()
 
     def log_cpu_stats(self):
         """Logs CPU resource stats information."""
@@ -90,6 +109,26 @@ class ResourceMonitor:
                 code=EVENT_CODE_MEMORY_STATS,
                 message="Node memory stats update",
                 **mem_stats,
+            )
+        )
+
+    def log_network_stats(self):
+        """Logs memory resource stats information."""
+        data = psutil.net_io_counters()
+        net_stats = {}
+        for stat in self.NET_STATS:
+            net_stats[stat] = getattr(data, stat) - getattr(self, stat)
+        net_stats["elapsed_seconds"] = time.time() - self._last_net_check_time
+
+        self._update_net_stats(data)
+        
+        log_job_event(
+            StructuredEvent(
+                name=self._name,
+                category=EVENT_CATEGORY_RESOURCE_UTIL,
+                code=EVENT_CODE_NETWORK_STATS,
+                message="Node net stats update",
+                **net_stats,
             )
         )
 
@@ -266,3 +305,40 @@ class MemoryStatsViewer(StatsViewerBase):
     def show_stats(self):
         print("\nMemory statistics for each batch\n")
         self._show_stats()
+
+
+class NetworkStatsViewer(StatsViewerBase):
+    """Shows Network statistics"""
+    def __init__(self, events):
+        super(NetworkStatsViewer, self).__init__(events, EVENT_CODE_NETWORK_STATS)
+
+    @staticmethod
+    def _get_printable_value(field, val):
+        if field in ("bytes_recv", "bytes_sent"):
+            val = bytes2human(val)
+        return val
+        
+    def show_stats(self):
+        print("\nNetwork statistics for each batch\n")
+        if not self._events_by_batch:
+            print("No events are stored")
+            return
+
+        table = PrettyTable()
+        fields = ["Batch"] + list(ResourceMonitor.NET_STATS)
+
+        table.field_names = fields
+        for batch, stats in self._stat_sums_by_batch.items():
+            row = [batch]
+            for stat in ResourceMonitor.NET_STATS:
+                val = self._get_printable_value(stat, stats[stat])
+                row.append(val)
+            table.add_row(row)
+
+        total_row = ["Total"]
+        for stat in ResourceMonitor.NET_STATS:
+            val = self._get_printable_value(stat, self._stat_totals[stat])
+            total_row.append(val)
+
+        table.add_row(total_row)
+        print(table)

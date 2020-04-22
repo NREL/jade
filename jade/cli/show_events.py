@@ -10,7 +10,7 @@ from jade.common import OUTPUT_DIR
 from jade.loggers import setup_logging
 from jade.events import EventsSummary
 from jade.resource_monitor import CpuStatsViewer, DiskStatsViewer, \
-    MemoryStatsViewer
+    MemoryStatsViewer, NetworkStatsViewer
 
 
 @click.option(
@@ -48,6 +48,13 @@ from jade.resource_monitor import CpuStatsViewer, DiskStatsViewer, \
     help="Print memory stats"
 )
 @click.option(
+    "--net",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Print network stats"
+)
+@click.option(
     "--verbose",
     is_flag=True,
     default=False,
@@ -55,12 +62,13 @@ from jade.resource_monitor import CpuStatsViewer, DiskStatsViewer, \
     help="Enable verbose event outputs."
 )
 @click.command()
-def show_events(output, json=False, cpu=False, disk=False, mem=False, verbose=False):
+def show_events(output, json=False, cpu=False, disk=False, mem=False,
+                net=False, verbose=False):
     """Shows the events after jobs run."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("show_results", None, console_level=level)
     results = EventsSummary(output)
-    if cpu or disk or mem:
+    if cpu or disk or mem or net:
         if cpu:
             viewer = CpuStatsViewer(results.events)
             viewer.show_stats()
@@ -69,6 +77,9 @@ def show_events(output, json=False, cpu=False, disk=False, mem=False, verbose=Fa
             viewer.show_stats()
         if mem:
             viewer = MemoryStatsViewer(results.events)
+            viewer.show_stats()
+        if net:
+            viewer = NetworkStatsViewer(results.events)
             viewer.show_stats()
     else:
         results.show_events()
