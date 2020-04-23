@@ -270,7 +270,7 @@ class DiskStatsViewer(StatsViewerBase):
         fields = ["Batch"] + list(ResourceMonitor.DISK_STATS)
         for i, field in enumerate(fields):
             if field in ("read_time", "write_time"):
-                fields[i] = field + (" (s)")
+                fields[i] = field + (" (ms)")
 
         table.field_names = fields
         for batch, stats in self._stat_sums_by_batch.items():
