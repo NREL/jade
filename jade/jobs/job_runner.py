@@ -164,6 +164,9 @@ class JobRunner(JobManagerBase):
                 job_file = os.path.join(
                     self._output, JOBS_OUTPUT_DIR, job.name, "events.log"
                 )
+                if not os.path.exists(job_file):
+                    # Extensions aren't required to create these.
+                    continue
                 with open(job_file) as f_in:
                     for line in f_in:
                         f_out.write(line)
