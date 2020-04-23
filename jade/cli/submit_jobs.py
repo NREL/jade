@@ -75,12 +75,6 @@ logger = logging.getLogger(__name__)
     help="Rotate log files so that they aren't overwritten."
 )
 @click.option(
-    "--rotate-tomls/--no-rotate-tomls",
-    default=True,
-    show_default=True,
-    help="Rotate config and results files so that they aren't overwritten."
-)
-@click.option(
     "--verbose",
     is_flag=True,
     default=False,
@@ -103,7 +97,7 @@ logger = logging.getLogger(__name__)
 )
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
-        output, poll_interval, num_processes, rotate_logs, rotate_tomls,
+        output, poll_interval, num_processes, rotate_logs,
         verbose, restart_failed, restart_missing):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
@@ -126,8 +120,6 @@ def submit_jobs(
 
     if rotate_logs:
         rotate_filenames(output, ".log")
-    if rotate_tomls:
-        rotate_filenames(output, ".toml")
 
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
