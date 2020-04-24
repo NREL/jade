@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 import datetime
+import importlib
 import logging
 import os
 import shutil
@@ -59,8 +60,6 @@ class JobSubmitter(JobManagerBase):
         """
         super(JobSubmitter, self).__init__(config_file, output)
         self._hpc = None
-        self._repo_info = None
-
         master_file = os.path.join(output, CONFIG_FILE)
         shutil.copyfile(config_file, master_file)
         self._config_file = master_file
@@ -165,8 +164,6 @@ results_summary={self.get_results_summmary_report()}"""
         now = datetime.datetime.now()
         data["timestamp"] = now.strftime("%m/%d/%Y %H:%M:%S")
         data["base_directory"] = os.getcwd()
-        if self._repo_info is not None:
-            data["repository_info"] = self._repo_info.summary()
         results = self._build_results()
         data["results_summary"] = results["summary"]
         data["results"] = results["results"]
@@ -210,16 +207,17 @@ results_summary={self.get_results_summmary_report()}"""
         extension_packages = set(["jade"])
         for ext in extensions:
             exec_module = ext[ExtensionClassType.EXECUTION].__module__
-            package = exec_module.split(".")[0]
-            extension_packages.add(package)
+            name = exec_module.split(".")[0]
+            extension_packages.add(name)
 
-        for package in extension_packages:
+        for name in extension_packages:
             try:
-                self._repo_info = RepositoryInfo(jade)
-                patch = os.path.join(self._output, f"{package}-diff.patch")
-                self._repo_info.write_diff_patch(patch)
+                package = importlib.import_module(name)
+                repo_info = RepositoryInfo(package)
+                patch = os.path.join(self._output, f"{name}-diff.patch")
+                repo_info.write_diff_patch(patch)
                 logger.info("%s repository information: %s",
-                            package, self._repo_info.summary())
+                            name, repo_info.summary())
             except InvalidParameter:
                 pass
 
