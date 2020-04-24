@@ -27,6 +27,14 @@ from jade.utils.utils import load_data
     help="The path of job-based post-process config file.",
 )
 @click.option(
+    "-d",
+    "--previous-stage-outputs",
+    type=click.Path(exists=True),
+    multiple=True,
+    default=[],
+    help="One or more previous stage output direcotries."
+)
+@click.option(
     "-c",
     "--config-file",
     default=CONFIG_FILE,
@@ -45,6 +53,7 @@ def auto_config(
         extension,
         inputs,
         job_post_process_config_file,
+        previous_stage_outputs,
         config_file,
         verbose):
     """Automatically create a configuration."""
