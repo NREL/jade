@@ -78,7 +78,7 @@ def run(extension, **kwargs):
     try:
         cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
         ret = cli.run(config_file, name, output, output_format, verbose)
-    except ExecutionError as err:
+    except Exception as err:
         msg = f"unexpected exception in run '{extension}' job={name} - {err}"
         general_logger.exception(msg)
         ret = 1
@@ -90,7 +90,7 @@ def run(extension, **kwargs):
                 post_process = JobPostProcess(*config['job_post_process_config'].values(),
                                             job_name=name, output=output)
                 post_process.run(config_file=config_file, output=output)
-        except ExecutionError as err:
+        except Exception as err:
             msg = f"unexpected exception in post-process '{extension}' job={name} - {err}"
             general_logger.exception(msg)
             ret = 1
