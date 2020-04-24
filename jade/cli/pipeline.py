@@ -22,6 +22,15 @@ def pipeline():
 
 
 @click.command()
+@click.argument(
+    "auto-config-cmds",
+    nargs=-1,
+)
+@click.option(
+    "-p", "--submit-params",
+    type=click.STRING,
+    help="optional params in jade submit-jobs."
+)
 @click.option(
     "-c", "--config-file",
     type=click.Path(),
@@ -29,13 +38,9 @@ def pipeline():
     show_default=True,
     help="pipeline config file."
 )
-@click.argument(
-    "auto-config-cmds",
-    nargs=-1,
-)
-def create(auto_config_cmds, config_file):
+def create(auto_config_cmds, submit_params, config_file):
     """Create a pipeline with multiple Jade configurations."""
-    PipelineManager.create(auto_config_cmds, config_file)
+    PipelineManager.create(auto_config_cmds, submit_params, config_file)
 
 
 @click.command()
