@@ -45,7 +45,6 @@ def auto_config(
         extension,
         inputs,
         job_post_process_config_file,
-        previous_stage_outputs,
         config_file,
         verbose):
     """Automatically create a configuration."""
