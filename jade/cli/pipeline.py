@@ -38,9 +38,9 @@ def pipeline():
     show_default=True,
     help="pipeline config file."
 )
-def create(auto_config_cmds, submit_params, config_file):
+def create(auto_config_cmds, config_file, submit_params):
     """Create a pipeline with multiple Jade configurations."""
-    PipelineManager.create(auto_config_cmds, submit_params, config_file)
+    PipelineManager.create(auto_config_cmds, config_file, submit_params)
 
 
 @click.command()
