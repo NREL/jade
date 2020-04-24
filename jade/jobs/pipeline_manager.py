@@ -159,10 +159,7 @@ class PipelineManager:
         stage_output = self.get_stage_output_path(self._output, self._cur_stage_id)
         cmd = f"jade submit-jobs {stage['config_file']} -o {stage_output}"
         for key, val in stage["submit-params"].items():
-            if key in [
-                "--local", "--rotate-logs", "--no-rotate-logs", "--verbose", 
-                "--restart-failed", "--restart-missing"
-                ]:
+            if val == "":
                 cmd += f" {key}"
             else:
                 cmd += f" {key}={val}"
