@@ -27,14 +27,6 @@ from jade.utils.utils import load_data
     help="The path of job-based post-process config file.",
 )
 @click.option(
-    "-d",
-    "--previous-stage-outputs",
-    type=click.Path(exists=True),
-    multiple=True,
-    default=[],
-    help="One or more previous stage output direcotries."
-)
-@click.option(
     "-c",
     "--config-file",
     default=CONFIG_FILE,
@@ -80,11 +72,11 @@ def auto_config(
             *inputs,
             job_post_process_config=job_post_process_config
         )
-    except TypeError as err:
+    except TypeError:
         docstring = cli.auto_config.__doc__
         print(
-            f"\nERROR:  Auto-config parameter mismatch for extension {extension}." + \
-            f"Its docstring is below.\n\n{docstring}\n\nPlease try again with the current parameters"
+            f"\nERROR:  Auto-config parameter mismatch for extension {extension}. " + \
+            f"Its docstring is below.\n\n{docstring}\n\nPlease try again with the correct parameters"
         )
         sys.exit(1)
 
