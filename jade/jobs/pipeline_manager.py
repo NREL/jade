@@ -39,7 +39,7 @@ class PipelineManager:
         }
 
     @staticmethod
-    def create(auto_config_cmds, submit_params, config_file):
+    def create(auto_config_cmds, config_file, submit_params=None):
         """Create a pipeline with multiple Jade configurations."""
         data = {"stages": []}
 
