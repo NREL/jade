@@ -1,6 +1,8 @@
 """CLI to automatically create a configuration."""
 
 import logging
+import sys
+
 import click
 
 from jade.common import CONFIG_FILE
@@ -16,7 +18,7 @@ from jade.utils.utils import load_data
 
 @click.command()
 @click.argument("extension")
-@click.argument("inputs")
+@click.argument("inputs", nargs=-1)
 @click.option(
     "-p",
     "--job-post-process-config-file",
@@ -43,6 +45,7 @@ def auto_config(
         extension,
         inputs,
         job_post_process_config_file,
+        previous_stage_outputs,
         config_file,
         verbose):
     """Automatically create a configuration."""
@@ -64,10 +67,18 @@ def auto_config(
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
 
     cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
-    config = cli.auto_config(
-        inputs,
-        job_post_process_config=job_post_process_config,
-    )
+    try:
+        config = cli.auto_config(
+            *inputs,
+            job_post_process_config=job_post_process_config
+        )
+    except TypeError:
+        docstring = cli.auto_config.__doc__
+        print(
+            f"\nERROR:  Auto-config parameter mismatch for extension {extension}. " + \
+            f"Its docstring is below.\n\n{docstring}\n\nPlease try again with the correct parameters"
+        )
+        sys.exit(1)
 
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)

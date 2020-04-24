@@ -39,9 +39,29 @@ class PipelineManager:
         }
 
     @staticmethod
-    def create(auto_config_cmds, config_file):
+    def create(auto_config_cmds, config_file, submit_params=None):
         """Create a pipeline with multiple Jade configurations."""
         data = {"stages": []}
+
+        user_submit_params = {}
+        if submit_params:
+            for option in submit_params.split(" "):
+                if "=" in option:
+                    param, value = option.split("=")
+                else:
+                    param, value = option, ""
+
+                if param in ["-b", "--per-node-batch-size"]:
+                    user_submit_params[param] = int(value)
+                elif param in ["-n", "--max-nodes"]:
+                    user_submit_params[param] = int(value)
+                elif param in ["-q", "--num-processes"]:
+                    user_submit_params[param] = int(value)
+                elif param in ["-p", "--poll-interval"]:
+                    user_submit_params[param] = float(value)
+                else:
+                    user_submit_params[param] = value
+
         for i, cmd in enumerate(auto_config_cmds):
             stage_num = i + 1
             data["stages"].append(
@@ -55,6 +75,7 @@ class PipelineManager:
                     }
                 }
             )
+            data["stages"][-1]["submit-params"].update(user_submit_params)
 
         dump_data(data, config_file)
         logger.info("Created pipeline config file %s", config_file)
@@ -138,7 +159,10 @@ class PipelineManager:
         stage_output = self.get_stage_output_path(self._output, self._cur_stage_id)
         cmd = f"jade submit-jobs {stage['config_file']} -o {stage_output}"
         for key, val in stage["submit-params"].items():
-            cmd += f" {key}={val}"
+            if val == "":
+                cmd += f" {key}"
+            else:
+                cmd += f" {key}={val}"
         if verbose:
             cmd += " --verbose"
 
