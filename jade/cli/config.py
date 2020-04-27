@@ -1,7 +1,9 @@
 """CLI to display and manage config files."""
 
+import os
 import re
 import sys
+import tempfile
 
 import click
 from prettytable import PrettyTable
@@ -60,8 +62,11 @@ def _show(config_file, fields):
 
 @click.command("filter")
 @click.argument("config_file", type=click.Path(exists=True))
-@click.argument("new_config_file")
 @click.argument("indices", nargs=-1)
+@click.option(
+        "-o", "--output-file",
+        help="Create new config file with filtered jobs.",
+)
 @click.option(
     "-f", "--fields",
     type=str,
@@ -74,27 +79,28 @@ def _show(config_file, fields):
     is_flag=True,
     show_default=True,
     default=False,
-    help="Show the new config.",
+    help="Show the new config (only applicable if output-file is provided).",
 )
 # Named _filter to avoid collisions with the built-in function.
-def _filter(config_file, new_config_file, indices, fields, show_config=False):
-    """Creates NEW_CONFIG_FILE by filtering jobs in CONFIG_FILE.
+def _filter(config_file, output_file, indices, fields, show_config=False):
+    """Filters jobs in CONFIG_FILE. Prints the new jobs to the console or
+    optionally creates a new file.
 
     Note: This does not detect duplicate ranges.
 
     \b
     Examples:
-    1. Select the first job.
-       jade config filter c1.json c2.json 0
-    2. Select indices 0-4, 10-14, 20, 25
-       jade config filter c1.json c2.json :5 10:15 20 25
+    1. Select the first job. Output only.
+       jade config filter c1.json 0
+    2. Select indices 0-4, 10-14, 20, 25, create new file.
+       jade config filter c1.json :5 10:15 20 25 -o c2.json
     3. Select the last 5 jobs. Note the use of '--' to prevent '-5' from being
        treated as an option.
-       jade config filter c1.json c2.json -- -5:
+       jade config filter c1.json -o c2.json -- -5:
     4. Select indices 5 through the end.
-       jade config filter c1.json c2.json 5:
+       jade config filter c1.json -o c2.json 5:
     5. Select jobs with parameters param1=green and param2=3.
-       jade config filter c1.json c2.json -f param1 green -f param2 3
+       jade config filter c1.json -o c2.json -f param1 green -f param2 3
 
     """
     cfg = load_data(config_file)
@@ -103,61 +109,73 @@ def _filter(config_file, new_config_file, indices, fields, show_config=False):
         print("The configuration has no jobs")
         sys.exit(1)
 
-    if not new_config_file.endswith(".json"):
-        print("new_config_file must have extension .json")
-        sys.exit(1)
+    if output_file is None:
+        handle, new_config_file = tempfile.mkstemp(suffix=".json")
+        os.close(handle)
+        show_config = True
+    else:
+        new_config_file = output_file
 
-    orig_len = len(jobs)
-    new_jobs = []
-    regex_int = re.compile(r"^(?P<index>\d+)$")
-    regex_range = re.compile(r"^(?P<start>[\d-]*):(?P<end>[\d-]*)$")
-    for index in indices:
-        match = regex_int.search(index)
-        if match:
-            i = int(match.groupdict()["index"])
-            new_jobs.append(jobs[i])
-            continue
-        match = regex_range.search(index)
-        if match:
-            start = match.groupdict()["start"]
-            if start == "":
-                start = None
-            else:
-                start = int(start)
-            end = match.groupdict()["end"]
-            if end == "":
-                end = None
-            else:
-                end = int(end)
-            new_jobs += jobs[start:end]
+    try:
+        if not new_config_file.endswith(".json"):
+            print("new_config_file must have extension .json")
+            sys.exit(1)
 
-    # Note: when looking at just the JSON, there is no way to get the job name,
-    # and so we can't check for duplicates.
+        orig_len = len(jobs)
+        new_jobs = []
+        regex_int = re.compile(r"^(?P<index>\d+)$")
+        regex_range = re.compile(r"^(?P<start>[\d-]*):(?P<end>[\d-]*)$")
+        for index in indices:
+            match = regex_int.search(index)
+            if match:
+                i = int(match.groupdict()["index"])
+                new_jobs.append(jobs[i])
+                continue
+            match = regex_range.search(index)
+            if match:
+                start = match.groupdict()["start"]
+                if start == "":
+                    start = None
+                else:
+                    start = int(start)
+                end = match.groupdict()["end"]
+                if end == "":
+                    end = None
+                else:
+                    end = int(end)
+                new_jobs += jobs[start:end]
 
-    if not new_jobs:
-        new_jobs = jobs
+        # Note: when looking at just the JSON, there is no way to get the job name,
+        # and so we can't check for duplicates.
 
-    if fields:
-        final_jobs = []
-        for job in new_jobs:
-            matched = True
-            for field in fields:
-                if str(job[field[0]]) != field[1]:
-                    matched = False
-                    break
-            if matched:
-                final_jobs.append(job)
+        if not new_jobs:
+            new_jobs = jobs
 
-        new_jobs = final_jobs
+        if fields:
+            final_jobs = []
+            for job in new_jobs:
+                matched = True
+                for field in fields:
+                    if str(job[field[0]]) != field[1]:
+                        matched = False
+                        break
+                if matched:
+                    final_jobs.append(job)
 
-    cfg["jobs"] = new_jobs
-    new_len = len(cfg["jobs"])
-    dump_data(cfg, new_config_file, indent=4)
-    print(f"Filtered {config_file} ({orig_len} jobs) into {new_config_file} "
-          f"({new_len} jobs)\n")
+            new_jobs = final_jobs
 
-    if show_config:
-        _show(new_config_file, [])
+        cfg["jobs"] = new_jobs
+        new_len = len(cfg["jobs"])
+        dump_data(cfg, new_config_file, indent=4)
+        print(f"Filtered {config_file} ({orig_len} jobs) into ({new_len} jobs)\n")
+        if output_file is not None:
+            print(f"Wrote new config to {output_file}")
+
+        if show_config:
+            _show(new_config_file, [])
+    finally:
+        if output_file is None:
+            os.remove(new_config_file)
 
 
 config.add_command(show)
