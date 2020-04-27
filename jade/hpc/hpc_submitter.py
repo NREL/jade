@@ -8,8 +8,8 @@ import time
 
 from jade.enums import Status
 from jade.events import StructuredEvent, EVENT_CATEGORY_HPC, \
-    EVENT_CODE_HPC_SUBMIT, EVENT_CODE_HPC_JOB_ASSIGNED, \
-    EVENT_CODE_HPC_JOB_STATE_CHANGE
+    EVENT_NAME_HPC_SUBMIT, EVENT_NAME_HPC_JOB_ASSIGNED, \
+    EVENT_NAME_HPC_JOB_STATE_CHANGE
 from jade.exceptions import ExecutionError
 from jade.hpc.common import HpcJobStatus
 from jade.hpc.hpc_manager import HpcManager
@@ -106,9 +106,9 @@ class HpcSubmitter:
                 # We can look at these events on our runs to see how this
                 # logic is working with our jobs.
                 event = StructuredEvent(
-                    name=self._name,
+                    source=self._name,
                     category=EVENT_CATEGORY_HPC,
-                    code=EVENT_CODE_HPC_SUBMIT,
+                    name=EVENT_NAME_HPC_SUBMIT,
                     message="Submitted HPC batch",
                     batch_size=len(batch_jobs),
                     num_blocked=num_blocked,
@@ -181,9 +181,9 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             logger.info("Submission %s %s changed status from %s to %s",
                         self._name, self._job_id, self._last_status, status)
             event = StructuredEvent(
-                name=self._name,
+                source=self._name,
                 category=EVENT_CATEGORY_HPC,
-                code=EVENT_CODE_HPC_JOB_STATE_CHANGE,
+                name=EVENT_NAME_HPC_JOB_STATE_CHANGE,
                 message="HPC job state change",
                 job_id=self._job_id,
                 old_state=self._last_status.value,
@@ -210,9 +210,9 @@ class AsyncHpcSubmitter(AsyncJobInterface):
 
         self._job_id = job_id
         event = StructuredEvent(
-            name=self._name,
+            source=self._name,
             category=EVENT_CATEGORY_HPC,
-            code=EVENT_CODE_HPC_JOB_ASSIGNED,
+            name=EVENT_NAME_HPC_JOB_ASSIGNED,
             message="HPC job assigned",
             job_id=self._job_id,
         )

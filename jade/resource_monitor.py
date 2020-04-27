@@ -9,35 +9,27 @@ from prettytable import PrettyTable
 import psutil
 from psutil._common import bytes2human
 
-from jade.events import EVENT_CATEGORY_RESOURCE_UTIL, EVENT_CODE_CPU_STATS, \
-    EVENT_CODE_DISK_STATS, EVENT_CODE_MEMORY_STATS, EVENT_CODE_NETWORK_STATS, \
+from jade.events import EVENT_CATEGORY_RESOURCE_UTIL, EVENT_NAME_CPU_STATS, \
+    EVENT_NAME_DISK_STATS, EVENT_NAME_MEMORY_STATS, EVENT_NAME_NETWORK_STATS, \
     StructuredEvent
 from jade.loggers import log_job_event
 
 
 logger = logging.getLogger(__name__)
 
+ONE_MB = 1024 * 1024
+
 
 class ResourceMonitor:
     """Monitors resource utilization statistics"""
 
     DISK_STATS = (
-        "read_count",
-        "write_count",
-        "read_bytes",
-        "write_bytes",
-        "read_time",
+        "read_count", "write_count", "read_bytes", "write_bytes", "read_time",
         "write_time",
     )
     NET_STATS = (
-        "bytes_recv",
-        "bytes_sent",
-        "dropin",
-        "dropout",
-        "errin",
-        "errout",
-        "packets_recv",
-        "packets_sent"
+        "bytes_recv", "bytes_sent", "dropin", "dropout", "errin", "errout",
+        "packets_recv", "packets_sent"
     )
 
     def __init__(self, name):
@@ -71,31 +63,39 @@ class ResourceMonitor:
 
         log_job_event(
             StructuredEvent(
-                name=self._name,
+                source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
-                code=EVENT_CODE_CPU_STATS,
+                name=EVENT_NAME_CPU_STATS,
                 message="Node CPU stats update",
                 **cpu_stats,
             )
         )
 
+    @staticmethod
+    def _mb_per_sec(num_bytes, elapsed_seconds):
+        return float(num_bytes) / ONE_MB / elapsed_seconds
+
     def log_disk_stats(self):
         """Logs disk stats."""
         data = psutil.disk_io_counters()
-        disk_stats = {}
+        stats = {
+            "elapsed_seconds": time.time() - self._last_disk_check_time,
+        }
         for stat in self.DISK_STATS:
-            disk_stats[stat] = getattr(data, stat) - getattr(self, stat)
-        disk_stats["elapsed_seconds"] = time.time() - self._last_disk_check_time
-
+            stats[stat] = getattr(data, stat) - getattr(self, stat)
+        stats["read MB/s"] = self._mb_per_sec(stats["read_bytes"], stats["elapsed_seconds"])
+        stats["write MB/s"] = self._mb_per_sec(stats["write_bytes"], stats["elapsed_seconds"])
+        stats["read IOPS"] = float(stats["read_count"]) / stats["elapsed_seconds"]
+        stats["write IOPS"] = float(stats["write_count"]) / stats["elapsed_seconds"]
         self._update_disk_stats(data)
         
         log_job_event(
             StructuredEvent(
-                name=self._name,
+                source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
-                code=EVENT_CODE_DISK_STATS,
+                name=EVENT_NAME_DISK_STATS,
                 message="Node disk stats update",
-                **disk_stats,
+                **stats,
             )
         )
 
@@ -104,9 +104,9 @@ class ResourceMonitor:
         mem_stats = psutil.virtual_memory()._asdict()
         log_job_event(
             StructuredEvent(
-                name=self._name,
+                source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
-                code=EVENT_CODE_MEMORY_STATS,
+                name=EVENT_NAME_MEMORY_STATS,
                 message="Node memory stats update",
                 **mem_stats,
             )
@@ -115,42 +115,44 @@ class ResourceMonitor:
     def log_network_stats(self):
         """Logs memory resource stats information."""
         data = psutil.net_io_counters()
-        net_stats = {}
+        stats = {
+            "elapsed_seconds": time.time() - self._last_net_check_time,
+        }
         for stat in self.NET_STATS:
-            net_stats[stat] = getattr(data, stat) - getattr(self, stat)
-        net_stats["elapsed_seconds"] = time.time() - self._last_net_check_time
-
+            stats[stat] = getattr(data, stat) - getattr(self, stat)
+        stats["recv MB/s"] = self._mb_per_sec(stats["bytes_recv"], stats["elapsed_seconds"])
+        stats["sent MB/s"] = self._mb_per_sec(stats["bytes_sent"], stats["elapsed_seconds"])
         self._update_net_stats(data)
         
         log_job_event(
             StructuredEvent(
-                name=self._name,
+                source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
-                code=EVENT_CODE_NETWORK_STATS,
+                name=EVENT_NAME_NETWORK_STATS,
                 message="Node net stats update",
-                **net_stats,
+                **stats,
             )
         )
 
 
 class StatsViewerBase(abc.ABC):
     """Base class for viewing statistics"""
-    def __init__(self, events, event_code):
-        self._event_code = event_code
+    def __init__(self, events, event_name):
+        self._event_name = event_name
         self._events_by_batch = {}
         self._stat_sums_by_batch = {}
         self._stat_totals = {}
         self._num_events = 0
 
         for event in events:
-            if event.code != event_code:
+            if event.name != event_name:
                 continue
             self._num_events += 1
             if not self._stat_totals:
                 self._stat_totals = {
                     x: 0 for x in event.data.keys()
                 }
-            batch = event.name
+            batch = event.source
             if batch not in self._events_by_batch:
                 self._events_by_batch[batch] = []
             self._events_by_batch[batch].append(event)
@@ -209,6 +211,7 @@ class StatsViewerBase(abc.ABC):
     def _show_stats(self):
         for batch, events in self._events_by_batch.items():
             print(batch)
+            print("-" * len(batch))
             if not events:
                 continue
             table = PrettyTable()
@@ -223,10 +226,10 @@ class StatsViewerBase(abc.ABC):
                 row.append(self._get_printable_value(field, val))
             table.add_row(row)
             print(table)
-            #print(self._calc_total_averages())
             print("\n", end="")
 
-        print("Averages across batches")
+        print("Averages per interval across batches")
+        print("------------------------------------")
         table = PrettyTable()
         averages = self._calc_total_averages()
         table.field_names = list(averages.keys())
@@ -235,64 +238,74 @@ class StatsViewerBase(abc.ABC):
         print(table)
         print("\n", end="")
 
+    def show_stat_totals(self, stats_to_total):
+        """Print a table that shows statistic totals by batch.
+
+        Parameters
+        ----------
+        stats_to_total : list
+
+        """
+        table = PrettyTable()
+        table.field_names = ["source"] + list(stats_to_total)
+        for batch, totals in self._stat_sums_by_batch.items():
+            row = [batch]
+            for stat in stats_to_total:
+                val = self._get_printable_value(stat, totals[stat])
+                row.append(val)
+            table.add_row(row)
+
+        total_row = ["total"]
+        for stat in stats_to_total:
+            val = self._get_printable_value(stat, self._stat_totals[stat])
+            total_row.append(val)
+        table.add_row(total_row)
+
+        print("Totals")
+        print("------")
+        print(table)
+
 
 class CpuStatsViewer(StatsViewerBase):
     """Shows CPU statistics"""
     def __init__(self, events):
-        super(CpuStatsViewer, self).__init__(events, EVENT_CODE_CPU_STATS)
+        super(CpuStatsViewer, self).__init__(events, EVENT_NAME_CPU_STATS)
 
     def show_stats(self):
-        print("\nCPU statistics for each batch\n")
+        print("\nCPU statistics for each batch")
+        print("=============================\n")
         self._show_stats()
 
 
 class DiskStatsViewer(StatsViewerBase):
     """Shows disk statistics"""
     def __init__(self, events):
-        super(DiskStatsViewer, self).__init__(events, EVENT_CODE_DISK_STATS)
+        super(DiskStatsViewer, self).__init__(events, EVENT_NAME_DISK_STATS)
 
     @staticmethod
     def _get_printable_value(field, val):
         if field in ("read_bytes", "write_bytes"):
             val = bytes2human(val)
-        elif field in ("read_time", "write_time"):
-            seconds = float(val) / 1000
-            val = "{:.3f}".format(seconds)
+        elif isinstance(val, float):
+            val = "{:.3f}".format(val)
         return val
         
     def show_stats(self):
-        print("\nDisk statistics for each batch\n")
-        if not self._events_by_batch:
-            print("No events are stored")
-            return
+        print("\nDisk statistics for each batch")
+        print("==============================\n")
+        self._show_stats()
 
-        table = PrettyTable()
-        fields = ["Batch"] + list(ResourceMonitor.DISK_STATS)
-        for i, field in enumerate(fields):
-            if field in ("read_time", "write_time"):
-                fields[i] = field + (" (ms)")
-
-        table.field_names = fields
-        for batch, stats in self._stat_sums_by_batch.items():
-            row = [batch]
-            for stat in ResourceMonitor.DISK_STATS:
-                val = self._get_printable_value(stat, stats[stat])
-                row.append(val)
-            table.add_row(row)
-
-        total_row = ["Total"]
-        for stat in ResourceMonitor.DISK_STATS:
-            val = self._get_printable_value(stat, self._stat_totals[stat])
-            total_row.append(val)
-
-        table.add_row(total_row)
-        print(table)
+        stats_to_total = (
+            "read_bytes", "read_count", "write_bytes", "write_count",
+            "read_time", "write_time"
+        )
+        self.show_stat_totals(stats_to_total)
 
 
 class MemoryStatsViewer(StatsViewerBase):
     """Shows Memory statistics"""
     def __init__(self, events):
-        super(MemoryStatsViewer, self).__init__(events, EVENT_CODE_MEMORY_STATS)
+        super(MemoryStatsViewer, self).__init__(events, EVENT_NAME_MEMORY_STATS)
 
     @staticmethod
     def _get_printable_value(field, val):
@@ -303,42 +316,34 @@ class MemoryStatsViewer(StatsViewerBase):
         return val
 
     def show_stats(self):
-        print("\nMemory statistics for each batch\n")
+        print("\nMemory statistics for each batch")
+        print("================================\n")
         self._show_stats()
 
 
 class NetworkStatsViewer(StatsViewerBase):
     """Shows Network statistics"""
     def __init__(self, events):
-        super(NetworkStatsViewer, self).__init__(events, EVENT_CODE_NETWORK_STATS)
+        super(NetworkStatsViewer, self).__init__(events, EVENT_NAME_NETWORK_STATS)
 
     @staticmethod
     def _get_printable_value(field, val):
         if field in ("bytes_recv", "bytes_sent"):
             val = bytes2human(val)
+        elif isinstance(val, float):
+            val = "{:.3f}".format(val)
         return val
         
     def show_stats(self):
-        print("\nNetwork statistics for each batch\n")
+        print("\nNetwork statistics for each batch")
+        print("=================================\n")
         if not self._events_by_batch:
             print("No events are stored")
             return
 
-        table = PrettyTable()
-        fields = ["Batch"] + list(ResourceMonitor.NET_STATS)
-
-        table.field_names = fields
-        for batch, stats in self._stat_sums_by_batch.items():
-            row = [batch]
-            for stat in ResourceMonitor.NET_STATS:
-                val = self._get_printable_value(stat, stats[stat])
-                row.append(val)
-            table.add_row(row)
-
-        total_row = ["Total"]
-        for stat in ResourceMonitor.NET_STATS:
-            val = self._get_printable_value(stat, self._stat_totals[stat])
-            total_row.append(val)
-
-        table.add_row(total_row)
-        print(table)
+        self._show_stats()
+        stats_to_total = (
+            "bytes_recv", "bytes_sent", "dropin", "dropout", "errin", "errout",
+            "packets_recv", "packets_sent"
+        )
+        self.show_stat_totals(stats_to_total)

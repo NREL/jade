@@ -7,14 +7,12 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.ar_model import AR
 import matplotlib
-from jade.events import StructuredEvent
+from jade.events import StructuredErrorEvent, EVENT_CATEGORY_ERROR, \
+    EVENT_NAME_UNHANDLED_ERROR
+
 from jade.jobs.job_execution_interface import JobExecutionInterface
 from jade.loggers import log_job_event
 from jade.utils.utils import dump_data
-
-
-DEMO_EVENT_CATEGORY = "AutoRegression"
-DEMO_EVENT_CODE = "400"
 
 
 def autoregression_analysis(country, data, output):
@@ -158,23 +156,18 @@ class AutoRegressionExecution(JobExecutionInterface):
             }
             summary_file = os.path.join(self._job_dir, "summary.toml")
             dump_data(summary_data, summary_file)
+            if self._job.country == "australia":
+                raise Exception("test")
 
         # Log event into file
         except Exception:
             # Create event instance
-            event = StructuredEvent(
-                name=self._job.name,
-                category=DEMO_EVENT_CATEGORY,
-                code=DEMO_EVENT_CODE,
+            event = StructuredErrorEvent(
+                source=self._job.name,
+                category=EVENT_CATEGORY_ERROR,
+                name=EVENT_NAME_UNHANDLED_ERROR,
                 message="Analysis failed!",
-                # Any other information needs to record
-                country=self._job.country,
-                foo="foo info",
-                bar="bar info"
             )
-
-            # If need to extract exception info - source file, line number, and error message
-            event.parse_traceback()
 
             # Log event into file with structured message.
             log_job_event(event)

@@ -625,7 +625,7 @@ Check the job results, all desired results are generated.
     -rw-rw----. 1 user user  37K Oct 16 13:50 united_states.png
     -rw-rw----. 1 user user  173 Oct 16 13:50 united_states_summary.toml
 
-**9. Logging Structured Job Event**
+**9. Structured Log Events**
 
 In JADE, we treat error raising in job running as event, or any defined by the user.
 User may expect to log such error using a structured logging method, and target the cause quickly.
@@ -636,7 +636,7 @@ The following example shows how to use ``StructuredEvent``,
 
 .. code-block:: python
 
-    from jade.events import StructuredEvent
+    from jade.events import StructuredErrorEvent
 
 
     def run(self):
@@ -660,19 +660,12 @@ The following example shows how to use ``StructuredEvent``,
         # Log event into file
         except Exception:
             # Create event instance
-            event = StructuredEvent(
-                name=self._job.name,
-                category=DEMO_EVENT_CATEGORY,
-                code=DEMO_EVENT_CODE,
+            event = StructuredErrorEvent(
+                source=self._job.name,
+                category=EVENT_CATEGORY_ERROR,
+                name=EVENT_NAME_UNHANDLED_ERROR,
                 message="Analysis failed!",
-                # Any other information needs to record
-                country=self._job.country,
-                foo="foo info",
-                bar="bar info"
             )
-
-            # If need to extract exception info - source file, line number, and error message
-            event.parse_traceback()
 
             # Log event into file with structured message.
             log_job_event(event)
@@ -707,8 +700,8 @@ The following console log shows ``demo`` extension with 2 job failures,
     2019-11-01 10:02:49,882 - INFO [demo run.py:66] : jade-internal run demo --name=japan --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
     2019-11-01 10:02:49,888 - INFO [demo run.py:66] : jade-internal run demo --name=united_kingdom --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
     2019-11-01 10:02:49,921 - INFO [demo run.py:66] : jade-internal run demo --name=united_states --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:50,422 - INFO [event loggers.py:114] : {"category": "AutoRegression", "code": "400", "data": {"bar": "bar info", "country": "australia", "foo": "foo info"}, "exception": "File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/australia.csv' does not exist: b'datax/gdp/countries/australia.csv'", "name": "australia", "message": "Analysis failed!", "timestamp": "2019-11-01 10:02:50.421351"}
-    2019-11-01 10:02:50,422 - INFO [event loggers.py:114] : {"category": "AutoRegression", "code": "400", "data": {"bar": "bar info", "country": "canada", "foo": "foo info"}, "exception": "File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/canada.csv' does not exist: b'datax/gdp/countries/canada.csv'", "name": "canada", "message": "Analysis failed!", "timestamp": "2019-11-01 10:02:50.421351"}
+    2019-11-01 10:02:50,422 - INFO [event loggers.py:114] : {"category": "AutoRegression", "name": "400", "data": {"bar": "bar info", "country": "australia", "foo": "foo info"}, "exception": "File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/australia.csv' does not exist: b'datax/gdp/countries/australia.csv'", "name": "australia", "message": "Analysis failed!", "timestamp": "2019-11-01 10:02:50.421351"}
+    2019-11-01 10:02:50,422 - INFO [event loggers.py:114] : {"category": "AutoRegression", "name": "400", "data": {"bar": "bar info", "country": "canada", "foo": "foo info"}, "exception": "File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/canada.csv' does not exist: b'datax/gdp/countries/canada.csv'", "name": "canada", "message": "Analysis failed!", "timestamp": "2019-11-01 10:02:50.421351"}
     Traceback (most recent call last):
     Traceback (most recent call last):
       File "/miniconda3/envs/jade/bin/jade-internal", line 11, in <module>
