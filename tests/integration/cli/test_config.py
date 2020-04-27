@@ -36,12 +36,12 @@ def test_config__show(cleanup):
         assert country in output["stdout"]
 
 
-def test_config__filter_copy():
+def test_config__filter_copy(cleanup):
     ret = run_command(f"jade auto-config demo tests/data/demo -c {CONFIG1}")
     assert ret == 0
     assert os.path.exists(CONFIG1)
 
-    ret = run_command(f"jade config filter {CONFIG1} {CONFIG2}")
+    ret = run_command(f"jade config filter {CONFIG1} -o {CONFIG2}")
     assert ret == 0
     assert os.path.exists(CONFIG2)
 
@@ -50,8 +50,12 @@ def test_config__filter_copy():
     assert config1 == config2
 
 
-def test_config__filter_indices():
-    ret = run_command(f"jade config filter {CONFIG1} {CONFIG2} 0 2")
+def test_config__filter_indices(cleanup):
+    ret = run_command(f"jade auto-config demo tests/data/demo -c {CONFIG1}")
+    assert ret == 0
+    assert os.path.exists(CONFIG1)
+
+    ret = run_command(f"jade config filter {CONFIG1} -o {CONFIG2} 0 2")
     assert ret == 0
     assert os.path.exists(CONFIG2)
 
@@ -60,8 +64,12 @@ def test_config__filter_indices():
     assert config2["jobs"] == [config1["jobs"][0], config1["jobs"][2]]
 
 
-def test_config__filter_range():
-    ret = run_command(f"jade config filter {CONFIG1} {CONFIG2} :2")
+def test_config__filter_range(cleanup):
+    ret = run_command(f"jade auto-config demo tests/data/demo -c {CONFIG1}")
+    assert ret == 0
+    assert os.path.exists(CONFIG1)
+
+    ret = run_command(f"jade config filter {CONFIG1} -o {CONFIG2} :2")
     assert ret == 0
     assert os.path.exists(CONFIG2)
 
@@ -70,11 +78,28 @@ def test_config__filter_range():
     assert config2["jobs"] == [config1["jobs"][0], config1["jobs"][1]]
 
 
-def test_config__filter_field():
-    ret = run_command(f"jade config filter {CONFIG1} {CONFIG2} -f country brazil")
+def test_config__filter_field(cleanup):
+    ret = run_command(f"jade auto-config demo tests/data/demo -c {CONFIG1}")
+    assert ret == 0
+    assert os.path.exists(CONFIG1)
+
+    ret = run_command(f"jade config filter {CONFIG1} -o {CONFIG2} -f country brazil")
     assert ret == 0
     assert os.path.exists(CONFIG2)
 
     config1 = load_data(CONFIG1)
     config2 = load_data(CONFIG2)
     assert config2["jobs"] == [config1["jobs"][1]]
+
+
+def test_config__filter_show_only(cleanup):
+    ret = run_command(f"jade auto-config demo tests/data/demo -c {CONFIG1}")
+    assert ret == 0
+    assert os.path.exists(CONFIG1)
+
+    output = {}
+    ret = run_command(f"jade config filter {CONFIG1} -f country brazil", output=output)
+    assert ret == 0
+    assert not os.path.exists(CONFIG2)
+
+    assert "brazil" in output["stdout"]
