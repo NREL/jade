@@ -28,6 +28,7 @@ def show(config_file, fields):
     _show(config_file, fields)
 
 
+# This is a standalone function so that it can be called from _filter.
 def _show(config_file, fields):
     cfg = load_data(config_file)
     jobs = cfg["jobs"]
@@ -75,6 +76,7 @@ def _show(config_file, fields):
     default=False,
     help="Show the new config.",
 )
+# Named _filter to avoid collisions with the built-in function.
 def _filter(config_file, new_config_file, indices, fields, show_config=False):
     """Creates NEW_CONFIG_FILE by filtering jobs in CONFIG_FILE.
 
