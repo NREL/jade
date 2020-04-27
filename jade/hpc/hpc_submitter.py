@@ -7,7 +7,7 @@ import shutil
 import time
 
 from jade.enums import Status
-from jade.events import StructuredEvent, EVENT_CATEGORY_HPC, \
+from jade.events import StructuredLogEvent, EVENT_CATEGORY_HPC, \
     EVENT_NAME_HPC_SUBMIT, EVENT_NAME_HPC_JOB_ASSIGNED, \
     EVENT_NAME_HPC_JOB_STATE_CHANGE
 from jade.exceptions import ExecutionError
@@ -105,7 +105,7 @@ class HpcSubmitter:
                 # of rounds if there are blocked jobs and the batch isn't full.
                 # We can look at these events on our runs to see how this
                 # logic is working with our jobs.
-                event = StructuredEvent(
+                event = StructuredLogEvent(
                     source=self._name,
                     category=EVENT_CATEGORY_HPC,
                     name=EVENT_NAME_HPC_SUBMIT,
@@ -180,7 +180,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         if status != self._last_status:
             logger.info("Submission %s %s changed status from %s to %s",
                         self._name, self._job_id, self._last_status, status)
-            event = StructuredEvent(
+            event = StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_HPC,
                 name=EVENT_NAME_HPC_JOB_STATE_CHANGE,
@@ -209,7 +209,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             raise ExecutionError("Failed to submit name={self._name}")
 
         self._job_id = job_id
-        event = StructuredEvent(
+        event = StructuredLogEvent(
             source=self._name,
             category=EVENT_CATEGORY_HPC,
             name=EVENT_NAME_HPC_JOB_ASSIGNED,

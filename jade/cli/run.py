@@ -7,7 +7,7 @@ import sys
 import click
 
 from jade.common import OUTPUT_DIR
-from jade.events import StructuredErrorEvent, EVENT_CATEGORY_ERROR, \
+from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
     EVENT_NAME_UNHANDLED_ERROR
 from jade.loggers import log_job_event, setup_logging
 from jade.jobs.job_post_process import JobPostProcess
@@ -95,7 +95,7 @@ def run(extension, **kwargs):
         except Exception as err:
             msg = f"unexpected exception in post-process '{extension}' job={name} - {err}"
             general_logger.exception(msg)
-            event = StructuredErrorEvent(
+            event = StructuredErrorLogEvent(
                 name,
                 EVENT_CATEGORY_ERROR,
                 EVENT_NAME_UNHANDLED_ERROR,

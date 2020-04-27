@@ -1,5 +1,5 @@
 """
-This module contains StructuredEvent and EventSummary classes.
+This module contains StructuredLogEvent and EventSummary classes.
 """
 
 import json
@@ -30,7 +30,7 @@ EVENT_NAME_NETWORK_STATS = "net_stats"
 EVENT_NAME_UNHANDLED_ERROR = "error"
 
 
-class StructuredEvent(object):
+class StructuredLogEvent(object):
     """
     A class for recording structured log events.
     """
@@ -109,10 +109,10 @@ class StructuredEvent(object):
 
         Returns
         -------
-        StructuredEvent
+        StructuredLogEvent
 
         """
-        # TODO: this only creates StructuredEvent...not subtypes.
+        # TODO: this only creates StructuredLogEvent...not subtypes.
         return cls(
             source=record.get("source", ""),
             category=record.get("category", ""),
@@ -131,7 +131,7 @@ class StructuredEvent(object):
         return self.__dict__
 
 
-class StructuredErrorEvent(StructuredEvent):
+class StructuredErrorLogEvent(StructuredLogEvent):
     def __init__(self, **kwargs):
         """Must be called in an exception context."""
         super().__init__(**kwargs)
@@ -171,7 +171,7 @@ class EventsSummary(object):
         self._summary_file = os.path.join(output_dir, EVENTS_FILENAME)
         if os.path.exists(self._summary_file):
             self._events = [
-                StructuredEvent.deserialize(x) for x in load_data(self._summary_file)
+                StructuredLogEvent.deserialize(x) for x in load_data(self._summary_file)
             ]
         else:
             self._events = self._consolidate_events()
@@ -207,7 +207,7 @@ class EventsSummary(object):
             with open(event_file, "r") as f:
                 for line in f.readlines():
                     record = json.loads(line)
-                    event = StructuredEvent.deserialize(record)
+                    event = StructuredLogEvent.deserialize(record)
                     events.append(event)
         events.sort(key=lambda x: x.timestamp)
         return events
@@ -224,7 +224,7 @@ class EventsSummary(object):
         Returns
         -------
         list
-            list of StructuredEvent
+            list of StructuredLogEvent
 
         """
         return self._events
@@ -245,7 +245,7 @@ class EventsSummary(object):
         Returns
         -------
         list
-            list of StructuredEvent
+            list of StructuredLogEvent
 
         """
         return [x for x in self._events if x.name == name]

@@ -629,14 +629,14 @@ Check the job results, all desired results are generated.
 
 In JADE, we treat error raising in job running as event, or any defined by the user.
 User may expect to log such error using a structured logging method, and target the cause quickly.
-Here, JADE provides ``StructuredEvent`` class and CLI ``jade show-events`` to handle
+Here, JADE provides ``StructuredLogEvent`` class and CLI ``jade show-events`` to handle
 this if there were job failures in results.
 
-The following example shows how to use ``StructuredEvent``,
+The following example shows how to use ``StructuredLogEvent``,
 
 .. code-block:: python
 
-    from jade.events import StructuredErrorEvent
+    from jade.events import StructuredErrorLogEvent
 
 
     def run(self):
@@ -660,7 +660,7 @@ The following example shows how to use ``StructuredEvent``,
         # Log event into file
         except Exception:
             # Create event instance
-            event = StructuredErrorEvent(
+            event = StructuredErrorLogEvent(
                 source=self._job.name,
                 category=EVENT_CATEGORY_ERROR,
                 name=EVENT_NAME_UNHANDLED_ERROR,

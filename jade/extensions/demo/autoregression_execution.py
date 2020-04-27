@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.ar_model import AR
 import matplotlib
-from jade.events import StructuredErrorEvent, EVENT_CATEGORY_ERROR, \
+from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
     EVENT_NAME_UNHANDLED_ERROR
 
 from jade.jobs.job_execution_interface import JobExecutionInterface
@@ -162,7 +162,7 @@ class AutoRegressionExecution(JobExecutionInterface):
         # Log event into file
         except Exception:
             # Create event instance
-            event = StructuredErrorEvent(
+            event = StructuredErrorLogEvent(
                 source=self._job.name,
                 category=EVENT_CATEGORY_ERROR,
                 name=EVENT_NAME_UNHANDLED_ERROR,

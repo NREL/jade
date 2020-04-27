@@ -2,12 +2,12 @@
 Unit tests for job event object and methods
 """
 import os
-from jade.events import StructuredEvent, StructuredErrorEvent, EventsSummary, EVENT_NAME_UNHANDLED_ERROR
+from jade.events import StructuredLogEvent, StructuredErrorLogEvent, EventsSummary, EVENT_NAME_UNHANDLED_ERROR
 
 
 def test_structured_event__create():
     """Test class initialization and methods"""
-    event = StructuredEvent(
+    event = StructuredLogEvent(
         source="job_1",
         category="ParameterError",
         name="test-error",
@@ -27,7 +27,7 @@ def test_structured_error_event__create():
     try:
         raise Exception("test")
     except Exception:
-        event = StructuredErrorEvent(
+        event = StructuredErrorLogEvent(
             source="job_1",
             category="ParameterError",
             name="test-error",

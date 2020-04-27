@@ -11,7 +11,7 @@ from psutil._common import bytes2human
 
 from jade.events import EVENT_CATEGORY_RESOURCE_UTIL, EVENT_NAME_CPU_STATS, \
     EVENT_NAME_DISK_STATS, EVENT_NAME_MEMORY_STATS, EVENT_NAME_NETWORK_STATS, \
-    StructuredEvent
+    StructuredLogEvent
 from jade.loggers import log_job_event
 
 
@@ -62,7 +62,7 @@ class ResourceMonitor:
         cpu_stats["cpu_percent"] = psutil.cpu_percent()
 
         log_job_event(
-            StructuredEvent(
+            StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
                 name=EVENT_NAME_CPU_STATS,
@@ -90,7 +90,7 @@ class ResourceMonitor:
         self._update_disk_stats(data)
         
         log_job_event(
-            StructuredEvent(
+            StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
                 name=EVENT_NAME_DISK_STATS,
@@ -103,7 +103,7 @@ class ResourceMonitor:
         """Logs memory resource stats information."""
         mem_stats = psutil.virtual_memory()._asdict()
         log_job_event(
-            StructuredEvent(
+            StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
                 name=EVENT_NAME_MEMORY_STATS,
@@ -125,7 +125,7 @@ class ResourceMonitor:
         self._update_net_stats(data)
         
         log_job_event(
-            StructuredEvent(
+            StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
                 name=EVENT_NAME_NETWORK_STATS,
