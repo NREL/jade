@@ -3,13 +3,14 @@ The job execution class and methods for auto-regression
 """
 import logging
 import os
+
 import numpy as np
 import pandas as pd
 from statsmodels.tsa.ar_model import AR
 import matplotlib
+
 from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
     EVENT_NAME_UNHANDLED_ERROR
-
 from jade.jobs.job_execution_interface import JobExecutionInterface
 from jade.loggers import log_event
 from jade.utils.utils import dump_data
