@@ -95,8 +95,8 @@ class StructuredLogEvent(object):
         list
 
         """
-        values = [self.__getattribute__(x) for x in self.base_field_names()]
         # Account for events generated with different versions of code.
+        values = [getattr(self, x, "") for x in self.base_field_names()]
         values += [self.data.get(x, "") for x in self.data.keys()]
         return values
 
@@ -240,7 +240,7 @@ class EventsSummary(object):
         str
 
         """
-        return json.dumps([x.to_dict() for x in self._events], indent=4)
+        return json.dumps([x.to_dict() for x in self._events], indent=2)
 
     def list_events(self, name):
         """Return the events of type name.
