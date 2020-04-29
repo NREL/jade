@@ -96,7 +96,8 @@ class StructuredLogEvent(object):
 
         """
         values = [self.__getattribute__(x) for x in self.base_field_names()]
-        values += self.data.values()
+        # Account for events generated with different versions of code.
+        values += [self.data.get(x, "") for x in self.data.keys()]
         return values
 
     @classmethod
@@ -132,6 +133,8 @@ class StructuredLogEvent(object):
 
 
 class StructuredErrorLogEvent(StructuredLogEvent):
+    """Event specific to exceptions"""
+
     def __init__(self, **kwargs):
         """Must be called in an exception context."""
         super().__init__(**kwargs)
