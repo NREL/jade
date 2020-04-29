@@ -1,4 +1,5 @@
 
+from collections import defaultdict
 import abc
 import logging
 import os
@@ -139,7 +140,7 @@ class StatsViewerBase(abc.ABC):
     """Base class for viewing statistics"""
     def __init__(self, events, event_name):
         self._event_name = event_name
-        self._events_by_batch = {}
+        self._events_by_batch = defaultdict(list)
         self._stat_sums_by_batch = {}
         self._stat_totals = {}
         self._num_events = 0
@@ -153,8 +154,6 @@ class StatsViewerBase(abc.ABC):
                     x: 0 for x in event.data.keys()
                 }
             batch = event.source
-            if batch not in self._events_by_batch:
-                self._events_by_batch[batch] = []
             self._events_by_batch[batch].append(event)
 
             if batch not in self._stat_sums_by_batch:
