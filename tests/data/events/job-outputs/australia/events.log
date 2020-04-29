@@ -1,1 +1,1 @@
-{"category": "Error", "data": {"error": "test", "exception": "<class 'Exception'>", "filename": "autoregression_execution.py", "lineno": 160}, "message": "Analysis failed!", "name": "error", "source": "australia", "timestamp": "2020-04-27 14:18:29.636988"}
+{"category": "Error", "event_class": "StructuredErrorLogEvent", "data": {"error": "test", "exception": "<class 'Exception'>", "filename": "autoregression_execution.py", "lineno": 160}, "message": "Analysis failed!", "name": "unhandled_error", "source": "australia", "timestamp": "2020-04-27 14:18:29.636988"}
