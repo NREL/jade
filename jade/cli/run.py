@@ -84,10 +84,10 @@ def run(extension, **kwargs):
         msg = f"unexpected exception in run '{extension}' job={name} - {err}"
         general_logger.exception(msg)
         event = StructuredErrorLogEvent(
-            name,
-            EVENT_CATEGORY_ERROR,
-            EVENT_NAME_UNHANDLED_ERROR,
-            msg,
+            source=name,
+            category=EVENT_CATEGORY_ERROR,
+            name=EVENT_NAME_UNHANDLED_ERROR,
+            message=msg,
         )
         log_event(event)
         ret = 1
@@ -103,10 +103,10 @@ def run(extension, **kwargs):
             msg = f"unexpected exception in post-process '{extension}' job={name} - {err}"
             general_logger.exception(msg)
             event = StructuredErrorLogEvent(
-                name,
-                EVENT_CATEGORY_ERROR,
-                EVENT_NAME_UNHANDLED_ERROR,
-                msg,
+                source=name,
+                category=EVENT_CATEGORY_ERROR,
+                name=EVENT_NAME_UNHANDLED_ERROR,
+                message=msg,
             )
             log_event(event)
             ret = 1

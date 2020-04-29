@@ -27,7 +27,7 @@ EVENT_NAME_CPU_STATS = "cpu_stats"
 EVENT_NAME_DISK_STATS = "disk_stats"
 EVENT_NAME_MEMORY_STATS = "mem_stats"
 EVENT_NAME_NETWORK_STATS = "net_stats"
-EVENT_NAME_UNHANDLED_ERROR = "error"
+EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
 
 
 class StructuredLogEvent(object):
@@ -56,6 +56,7 @@ class StructuredLogEvent(object):
         self.category = category
         self.name = name
         self.message = message
+        self.event_class = self.__class__.__name__
 
         if "timestamp" in kwargs:
             self.timestamp = kwargs.pop("timestamp")
@@ -113,7 +114,6 @@ class StructuredLogEvent(object):
         StructuredLogEvent
 
         """
-        # TODO: this only creates StructuredLogEvent...not subtypes.
         return cls(
             source=record.get("source", ""),
             category=record.get("category", ""),
@@ -135,10 +135,11 @@ class StructuredLogEvent(object):
 class StructuredErrorLogEvent(StructuredLogEvent):
     """Event specific to exceptions"""
 
-    def __init__(self, **kwargs):
+    def __init__(self, source, category, name, message, **kwargs):
         """Must be called in an exception context."""
-        super().__init__(**kwargs)
-        self._parse_traceback()
+        super().__init__(source, category, name, message, **kwargs)
+        if "exception" not in kwargs:
+            self._parse_traceback()
 
     def base_field_names(self):
         return self._base_field_names() + ["message"]
@@ -154,6 +155,26 @@ class StructuredErrorLogEvent(StructuredLogEvent):
         self.data["error"] = str(exc_obj).strip()
         self.data["filename"] = os.path.basename(tb.tb_frame.f_code.co_filename)
         self.data["lineno"] = tb.tb_lineno
+
+
+def deserialize_event(data):
+    """Construct an event from raw  data.
+
+    Parameters
+    ----------
+    data : dict
+
+    Returns
+    -------
+    StructuredLogEvent
+
+    """
+    if data["event_class"] == "StructuredLogEvent":
+        return StructuredLogEvent.deserialize(data)
+    if data["event_class"] == "StructuredErrorLogEvent":
+        return StructuredErrorLogEvent.deserialize(data)
+
+    raise Exception(f"unknown event class {data['event_class']}")
 
 
 class EventsSummary(object):
@@ -174,7 +195,7 @@ class EventsSummary(object):
         self._summary_file = os.path.join(output_dir, EVENTS_FILENAME)
         if os.path.exists(self._summary_file):
             self._events = [
-                StructuredLogEvent.deserialize(x) for x in load_data(self._summary_file)
+                deserialize_event(x) for x in load_data(self._summary_file)
             ]
         else:
             self._events = self._consolidate_events()
@@ -210,7 +231,7 @@ class EventsSummary(object):
             with open(event_file, "r") as f:
                 for line in f.readlines():
                     record = json.loads(line)
-                    event = StructuredLogEvent.deserialize(record)
+                    event = deserialize_event(record)
                     events.append(event)
         events.sort(key=lambda x: x.timestamp)
         return events
