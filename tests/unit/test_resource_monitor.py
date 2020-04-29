@@ -57,6 +57,9 @@ def test_resource_stats():
                 for field, val in averages.items():
                     assert val == df[field].mean()
 
-        # Make sure this runs successfully.
-        ret = run_command(f"jade stats show -o {tmpdir} cpu disk mem net")
+        output = {}
+        cmd = f"jade stats show -o {tmpdir} cpu disk mem net"
+        ret = run_command(cmd, output=output)
         assert ret == 0
+        for term in ("IOPS", "read_bytes", "buffers", "bytes_recv", "idle"):
+            assert term in output["stdout"]

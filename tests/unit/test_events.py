@@ -2,7 +2,8 @@
 Unit tests for job event object and methods
 """
 import os
-from jade.events import StructuredLogEvent, StructuredErrorLogEvent, EventsSummary, EVENT_NAME_UNHANDLED_ERROR
+from jade.events import StructuredLogEvent, StructuredErrorLogEvent, \
+    EventsSummary, EVENT_NAME_UNHANDLED_ERROR
 
 
 def test_structured_event__create():

@@ -83,6 +83,13 @@ def run(extension, **kwargs):
     except Exception as err:
         msg = f"unexpected exception in run '{extension}' job={name} - {err}"
         general_logger.exception(msg)
+        event = StructuredErrorLogEvent(
+            name,
+            EVENT_CATEGORY_ERROR,
+            EVENT_NAME_UNHANDLED_ERROR,
+            msg,
+        )
+        log_job_event(event)
         ret = 1
 
     if ret == 0:
