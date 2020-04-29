@@ -11,7 +11,7 @@ from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
     EVENT_NAME_UNHANDLED_ERROR
 
 from jade.jobs.job_execution_interface import JobExecutionInterface
-from jade.loggers import log_job_event
+from jade.loggers import log_event
 from jade.utils.utils import dump_data
 
 
@@ -170,7 +170,7 @@ class AutoRegressionExecution(JobExecutionInterface):
             )
 
             # Log event into file with structured message.
-            log_job_event(event)
+            log_event(event)
 
             # Must raise the exception here, or job returncode is 0 even it fails.
             raise

@@ -668,7 +668,7 @@ The following example shows how to use ``StructuredLogEvent``,
             )
 
             # Log event into file with structured message.
-            log_job_event(event)
+            log_event(event)
 
             # Must raise the exception here, or job returncode is 0 even it fails.
             raise

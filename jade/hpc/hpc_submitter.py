@@ -16,7 +16,7 @@ from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.results_aggregator import ResultsAggregatorSummary
-from jade.loggers import log_job_event
+from jade.loggers import log_event
 from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script
 
@@ -114,7 +114,7 @@ class HpcSubmitter:
                     num_blocked=num_blocked,
                     per_node_batch_size=per_node_batch_size,
                 )
-                log_job_event(event)
+                log_event(event)
                 for i in reversed(jobs_to_pop):
                     jobs.pop(i)
             else:
@@ -189,7 +189,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
                 old_state=self._last_status.value,
                 new_state=status.value,
             )
-            log_job_event(event)
+            log_event(event)
             self._last_status = status
 
         if status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE):
@@ -216,7 +216,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             message="HPC job assigned",
             job_id=self._job_id,
         )
-        log_job_event(event)
+        log_event(event)
         logger.info("Assigned job_ID=%s name=%s", self._job_id, self._name)
 
     def get_blocking_jobs(self):

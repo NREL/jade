@@ -12,7 +12,7 @@ from psutil._common import bytes2human
 from jade.events import EVENT_CATEGORY_RESOURCE_UTIL, EVENT_NAME_CPU_STATS, \
     EVENT_NAME_DISK_STATS, EVENT_NAME_MEMORY_STATS, EVENT_NAME_NETWORK_STATS, \
     StructuredLogEvent
-from jade.loggers import log_job_event
+from jade.loggers import log_event
 
 
 logger = logging.getLogger(__name__)
@@ -61,7 +61,7 @@ class ResourceMonitor:
         cpu_stats = psutil.cpu_times_percent()._asdict()
         cpu_stats["cpu_percent"] = psutil.cpu_percent()
 
-        log_job_event(
+        log_event(
             StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
@@ -89,7 +89,7 @@ class ResourceMonitor:
         stats["write IOPS"] = float(stats["write_count"]) / stats["elapsed_seconds"]
         self._update_disk_stats(data)
         
-        log_job_event(
+        log_event(
             StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
@@ -102,7 +102,7 @@ class ResourceMonitor:
     def log_memory_stats(self):
         """Logs memory resource stats information."""
         mem_stats = psutil.virtual_memory()._asdict()
-        log_job_event(
+        log_event(
             StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
@@ -124,7 +124,7 @@ class ResourceMonitor:
         stats["sent MB/s"] = self._mb_per_sec(stats["bytes_sent"], stats["elapsed_seconds"])
         self._update_net_stats(data)
         
-        log_job_event(
+        log_event(
             StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_RESOURCE_UTIL,
