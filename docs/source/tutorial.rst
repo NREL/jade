@@ -276,9 +276,38 @@ Useful grep commands::
 
 Events
 ======
-If your extension implements JADE structured events then you may want to view
-what events were logged.
+If your extension implements JADE structured log events then you may want to
+view what events were logged.
+
+Any unhandled exceptions will also be logged here.
 
 ::
 
     jade show-events
+
+
+Resource Monitoring
+===================
+JADE automatically monitors CPU, disk, memory, and network utilization
+statistics in structured log events.  Use this CLI command to view them::
+
+    jade stats show
+    jade stats show cpu
+    jade stats show disk
+    jade stats show mem
+    jade stats show net
+
+.. note:: Reads and writes to the Lustre filesystem on the HPC are not tracked.
+
+The stats can also be provided as pandas.DataFrame objects. For example, here
+is how to view CPU stats for the node that ran the first batch:
+
+.. code-block:: python
+
+   from jade.events import EventsSummary, EVENT_NAME_CPU_STATS
+   from jade.resource_monitor import CpuStatsViewer
+
+   summary = EventsSummary("output")
+   viewer = CpuStatsViewer(summary.events)
+   cpu_df =  viewer.get_dataframe("resource_monitor_batch_0")
+   cpu_df.head()

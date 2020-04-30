@@ -3,16 +3,16 @@ CLI to show events of a scenario.
 """
 
 import logging
+import sys
 
 import click
 
 from jade.common import OUTPUT_DIR
 from jade.loggers import setup_logging
 from jade.events import EventsSummary
-from jade.resource_monitor import CpuStatsViewer, DiskStatsViewer, \
-    MemoryStatsViewer, NetworkStatsViewer
 
 
+@click.argument("names", nargs=-1)
 @click.option(
     "-o", "--output",
     default=OUTPUT_DIR,
@@ -20,39 +20,18 @@ from jade.resource_monitor import CpuStatsViewer, DiskStatsViewer, \
     help="Output directory."
 )
 @click.option(
-    "--json",
+    "-j", "--json-fmt",
     is_flag=True,
     default=False,
     show_default=True,
     help="Print event in JSON format, instead of table"
 )
 @click.option(
-    "--cpu",
+    "-n", "--names-only",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Print CPU stats"
-)
-@click.option(
-    "--disk",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Print disk stats"
-)
-@click.option(
-    "--mem",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Print memory stats"
-)
-@click.option(
-    "--net",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Print network stats"
+    help="Show event names in output."
 )
 @click.option(
     "--verbose",
@@ -62,24 +41,24 @@ from jade.resource_monitor import CpuStatsViewer, DiskStatsViewer, \
     help="Enable verbose event outputs."
 )
 @click.command()
-def show_events(output, json=False, cpu=False, disk=False, mem=False,
-                net=False, verbose=False):
-    """Shows the events after jobs run."""
+def show_events(output, names, json_fmt=False, names_only=False, verbose=False):
+    """Shows the events after jobs run.
+
+    \b
+    Examples:
+    jade show-events
+    jade show-events error
+    jade show-events --names-only
+    """
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("show_results", None, console_level=level)
     results = EventsSummary(output)
-    if cpu or disk or mem or net:
-        if cpu:
-            viewer = CpuStatsViewer(results.events)
-            viewer.show_stats()
-        if disk:
-            viewer = DiskStatsViewer(results.events)
-            viewer.show_stats()
-        if mem:
-            viewer = MemoryStatsViewer(results.events)
-            viewer.show_stats()
-        if net:
-            viewer = NetworkStatsViewer(results.events)
-            viewer.show_stats()
+    if names_only:
+        results.show_event_names()
+    elif json_fmt:
+        print(results.to_json())
     else:
-        results.show_events()
+        if not names:
+            names = results.list_unique_names()
+        for name in names:
+            results.show_events(name)

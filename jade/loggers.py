@@ -112,14 +112,14 @@ def setup_logging(name, filename, console_level=logging.INFO,
     return logger
 
 
-def log_job_event(event):
+def log_event(event):
     """
     Log a structured job event into log file
 
     Parameters
     ----------
-    event: :obj:`StructuredEvent`
-        An instance of :obj:`StructuredEvent`
+    event: :obj:`StructuredLogEvent`
+        An instance of :obj:`StructuredLogEvent`
 
     """
     logger = logging.getLogger("event")

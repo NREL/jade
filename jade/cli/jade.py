@@ -11,6 +11,7 @@ from jade.cli.show_events import show_events
 from jade.cli.extensions import extensions
 from jade.cli.pipeline import pipeline
 from jade.cli.show_results import show_results
+from jade.cli.stats import stats
 from jade.cli.submit_jobs import submit_jobs
 
 
@@ -28,4 +29,5 @@ cli.add_command(config)
 cli.add_command(pipeline)
 cli.add_command(show_events)
 cli.add_command(show_results)
+cli.add_command(stats)
 cli.add_command(submit_jobs)

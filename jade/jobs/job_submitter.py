@@ -11,6 +11,7 @@ import jade
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
     RESULTS_FILE
 from jade.enums import Status
+from jade.events import EVENTS_FILENAME
 from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.hpc.common import HpcType
@@ -130,6 +131,11 @@ results_summary={self.get_results_summmary_report()}"""
 
         self._hpc = HpcManager(self._hpc_config_file, self._output)
         result = Status.GOOD
+
+        # If an events summary file exists, it is invalid.
+        events_file = os.path.join(self._output, EVENTS_FILENAME)
+        if os.path.exists(events_file):
+            os.remove(events_file)
 
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)

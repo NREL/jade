@@ -7,7 +7,9 @@ import sys
 import click
 
 from jade.common import OUTPUT_DIR
-from jade.loggers import setup_logging
+from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
+    EVENT_NAME_UNHANDLED_ERROR
+from jade.loggers import log_event, setup_logging
 from jade.jobs.job_post_process import JobPostProcess
 from jade.utils.utils import get_cli_string, load_data
 from jade.exceptions import InvalidExtension, ExecutionError
@@ -81,6 +83,13 @@ def run(extension, **kwargs):
     except Exception as err:
         msg = f"unexpected exception in run '{extension}' job={name} - {err}"
         general_logger.exception(msg)
+        event = StructuredErrorLogEvent(
+            source=name,
+            category=EVENT_CATEGORY_ERROR,
+            name=EVENT_NAME_UNHANDLED_ERROR,
+            message=msg,
+        )
+        log_event(event)
         ret = 1
 
     if ret == 0:
@@ -93,6 +102,13 @@ def run(extension, **kwargs):
         except Exception as err:
             msg = f"unexpected exception in post-process '{extension}' job={name} - {err}"
             general_logger.exception(msg)
+            event = StructuredErrorLogEvent(
+                source=name,
+                category=EVENT_CATEGORY_ERROR,
+                name=EVENT_NAME_UNHANDLED_ERROR,
+                message=msg,
+            )
+            log_event(event)
             ret = 1
 
     sys.exit(ret)

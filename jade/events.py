@@ -1,5 +1,5 @@
 """
-This module contains StructuredEvent and EventSummary classes.
+This module contains StructuredLogEvent and EventSummary classes.
 """
 
 import json
@@ -14,54 +14,92 @@ from jade.common import JOBS_OUTPUT_DIR
 from jade.utils.utils import dump_data, get_filenames_in_path, load_data
 
 
+EVENTS_FILENAME = "events.json"
+
+EVENT_CATEGORY_ERROR = "Error"
 EVENT_CATEGORY_HPC = "HPC"
 EVENT_CATEGORY_RESOURCE_UTIL = "ResourceUtilization"
 
-EVENT_CODE_HPC_SUBMIT = "100"
-EVENT_CODE_HPC_JOB_ASSIGNED = "101"
-EVENT_CODE_HPC_JOB_STATE_CHANGE = "102"
-EVENT_CODE_CPU_STATS = "103"
-EVENT_CODE_DISK_STATS = "104"
-EVENT_CODE_MEMORY_STATS = "105"
-EVENT_CODE_NETWORK_STATS = "106"
+EVENT_NAME_HPC_SUBMIT = "hpc_submit"
+EVENT_NAME_HPC_JOB_ASSIGNED = "hpc_job_assigned"
+EVENT_NAME_HPC_JOB_STATE_CHANGE = "hpc_job_state_change"
+EVENT_NAME_CPU_STATS = "cpu_stats"
+EVENT_NAME_DISK_STATS = "disk_stats"
+EVENT_NAME_MEMORY_STATS = "mem_stats"
+EVENT_NAME_NETWORK_STATS = "net_stats"
+EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
 
 
-class StructuredEvent(object):
+class StructuredLogEvent(object):
     """
     A class for recording structured log events.
     """
-    def __init__(self, name, category, code, message, **kwargs):
+    def __init__(self, source, category, name, message, **kwargs):
         """
         Initialize the class
 
         Parameters
         ----------
-        name: str,
-            the key of a job.
+        source: str,
+            The source of the event.
         category: str,
             An event category given by the user.
-        code: str,
-            An event code given by the user.
+        name: str,
+            An event name given by the user.
         message:
             An event message given the user.
 
         kwargs:
             Other information that the user needs to record into event.
         """
-        self.name = name
+        self.source = source
         self.category = category
-        self.code = code
+        self.name = name
         self.message = message
+        self.event_class = self.__class__.__name__
 
         if "timestamp" in kwargs:
             self.timestamp = kwargs.pop("timestamp")
         else:
             self.timestamp = str(datetime.now())
 
-        if "exception" in kwargs:
-            self.exception = kwargs.pop("exception")
-
         self.data = kwargs
+
+    def base_field_names(self):
+        """Return the base field names for the event.
+
+        Returns
+        -------
+        list
+
+        """
+        return self._base_field_names()
+
+    def _base_field_names(self):
+        return ["timestamp", "source"]
+
+    def field_names(self):
+        """Return all field names for the event.
+
+        Returns
+        -------
+        list
+
+        """
+        return self.base_field_names() + list(self.data.keys())
+
+    def values(self):
+        """Return the values for all fields in the event.
+
+        Returns
+        -------
+        list
+
+        """
+        # Account for events generated with different versions of code.
+        values = [getattr(self, x, "") for x in self.base_field_names()]
+        values += [self.data.get(x, "") for x in self.data.keys()]
+        return values
 
     @classmethod
     def deserialize(cls, record):
@@ -73,35 +111,17 @@ class StructuredEvent(object):
 
         Returns
         -------
-        StructuredEvent
+        StructuredLogEvent
 
         """
         return cls(
-            name=record.get("name", ""),
+            source=record.get("source", ""),
             category=record.get("category", ""),
-            code=record.get("code", ""),
+            name=record.get("name", ""),
             message=record.get("message", ""),
             timestamp=record.get("timestamp", ""),
-            exception=record.get("exception", ""),
             **record["data"]
         )
-
-    def parse_traceback(self):
-        """
-        Parse the system exception information - exception, filename, and lineno.
-        """
-        exc_type, exc_obj, tb = sys.exc_info()
-
-        if tb is None:
-            self.exception = ""
-            return
-
-        error = str(exc_obj).strip()
-        filename = os.path.basename(tb.tb_frame.f_code.co_filename)
-        lineno = tb.tb_lineno
-
-        exception = "File: {}, Line: {}, Error: {}".format(filename, lineno, error)
-        self.exception = exception
 
     def __str__(self):
         """To format a event instance to string"""
@@ -112,8 +132,53 @@ class StructuredEvent(object):
         return self.__dict__
 
 
+class StructuredErrorLogEvent(StructuredLogEvent):
+    """Event specific to exceptions"""
+
+    def __init__(self, source, category, name, message, **kwargs):
+        """Must be called in an exception context."""
+        super().__init__(source, category, name, message, **kwargs)
+        if "exception" not in kwargs:
+            self._parse_traceback()
+
+    def base_field_names(self):
+        return self._base_field_names() + ["message"]
+
+    def _parse_traceback(self):
+        """
+        Parse the system exception information - exception, filename, and lineno.
+        """
+        exc_type, exc_obj, tb = sys.exc_info()
+        assert tb is not None, "must be called in an exception context"
+
+        self.data["exception"] = str(exc_type)
+        self.data["error"] = str(exc_obj).strip()
+        self.data["filename"] = os.path.basename(tb.tb_frame.f_code.co_filename)
+        self.data["lineno"] = tb.tb_lineno
+
+
+def deserialize_event(data):
+    """Construct an event from raw  data.
+
+    Parameters
+    ----------
+    data : dict
+
+    Returns
+    -------
+    StructuredLogEvent
+
+    """
+    if data["event_class"] == "StructuredLogEvent":
+        return StructuredLogEvent.deserialize(data)
+    if data["event_class"] == "StructuredErrorLogEvent":
+        return StructuredErrorLogEvent.deserialize(data)
+
+    raise Exception(f"unknown event class {data['event_class']}")
+
+
 class EventsSummary(object):
-    """Provides summary of failed job events or errors."""
+    """Provides summary of all events."""
 
     def __init__(self, output_dir):
         """
@@ -127,10 +192,10 @@ class EventsSummary(object):
         """
         self._output_dir = output_dir
         self._job_outputs_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
-        self._summary_file = os.path.join(output_dir, "events.json")
+        self._summary_file = os.path.join(output_dir, EVENTS_FILENAME)
         if os.path.exists(self._summary_file):
             self._events = [
-                StructuredEvent.deserialize(x) for x in load_data(self._summary_file)
+                deserialize_event(x) for x in load_data(self._summary_file)
             ]
         else:
             self._events = self._consolidate_events()
@@ -166,7 +231,7 @@ class EventsSummary(object):
             with open(event_file, "r") as f:
                 for line in f.readlines():
                     record = json.loads(line)
-                    event = StructuredEvent.deserialize(record)
+                    event = deserialize_event(record)
                     events.append(event)
         events.sort(key=lambda x: x.timestamp)
         return events
@@ -183,29 +248,74 @@ class EventsSummary(object):
         Returns
         -------
         list
-            list of StructuredEvent
+            list of StructuredLogEvent
 
         """
         return self._events
 
-    def show_events(self):
-        """Print tabular events in terminal"""
-        print(f"Events from directory: {self._output_dir}")
-        table = PrettyTable()
-        table.field_names = [
-            "Job Name", "Timestamp", "Category", "Code",
-            "Message", "Data", "Exception"
-        ]
+    def to_json(self):
+        """Return the events in JSON format.
+
+        Returns
+        -------
+        str
+
+        """
+        return json.dumps([x.to_dict() for x in self._events], indent=2)
+
+    def list_events(self, name):
+        """Return the events of type name.
+
+        Returns
+        -------
+        list
+            list of StructuredLogEvent
+
+        """
+        return [x for x in self._events if x.name == name]
+
+    def list_unique_names(self):
+        """Return the unique event names in the log.
+
+        Returns
+        -------
+        list
+
+        """
+        names = set()
         for event in self._events:
-            table.add_row([
-                event.name,
-                event.timestamp,
-                event.category,
-                event.code,
-                event.message,
-                event.data,
-                event.exception
-            ])
-        total = len(self._events)
+            names.add(event.name)
+
+        names = list(names)
+        names.sort()
+        return names
+
+    def _iter_events(self, name):
+        for event in self._events:
+            if event.name == name:
+                yield event
+
+    def show_events(self, name):
+        """Print tabular events in terminal"""
+        table = PrettyTable()
+
+        field_names = None
+        count = 0
+        for event in self._iter_events(name):
+            if field_names is None:
+                field_names = event.field_names()
+            table.add_row(event.values())
+            count += 1
+
+        if count == 0:
+            print(f"No events of type {name}")
+            return
+
+        table.field_names = field_names
+        print(f"Events of type {name} from directory: {self._output_dir}")
         print(table)
-        print(f"Total events: {total}\n")
+        print(f"Total events: {count}\n")
+
+    def show_event_names(self):
+        """Show the unique event names in the log."""
+        print("Names:  {}".format(" ".join(self.list_unique_names())))

@@ -625,18 +625,21 @@ Check the job results, all desired results are generated.
     -rw-rw----. 1 user user  37K Oct 16 13:50 united_states.png
     -rw-rw----. 1 user user  173 Oct 16 13:50 united_states_summary.toml
 
-**9. Logging Structured Job Event**
+**9. Structured Log Events**
 
-In JADE, we treat error raising in job running as event, or any defined by the user.
-User may expect to log such error using a structured logging method, and target the cause quickly.
-Here, JADE provides ``StructuredEvent`` class and CLI ``jade show-events`` to handle
-this if there were job failures in results.
+JADE provides structured log events so that specific conditions or errors can
+be machine-parsed and summarized after running jobs. Extensions can implement
+their own structured events by passing custom fields to the StructuredLogEvent
+or StructuredErrorLogEvent classes and then call ``log_event``.
 
-The following example shows how to use ``StructuredEvent``,
+The CLI command ``jade show-events`` can be used to view events after
+execution.
+
+The following example shows how to use ``StructuredLogEvent``,
 
 .. code-block:: python
 
-    from jade.events import StructuredEvent
+    from jade.events import StructuredErrorLogEvent
 
 
     def run(self):
@@ -660,22 +663,15 @@ The following example shows how to use ``StructuredEvent``,
         # Log event into file
         except Exception:
             # Create event instance
-            event = StructuredEvent(
-                name=self._job.name,
-                category=DEMO_EVENT_CATEGORY,
-                code=DEMO_EVENT_CODE,
+            event = StructuredErrorLogEvent(
+                source=self._job.name,
+                category=EVENT_CATEGORY_ERROR,
+                name=EVENT_NAME_UNHANDLED_ERROR,
                 message="Analysis failed!",
-                # Any other information needs to record
-                country=self._job.country,
-                foo="foo info",
-                bar="bar info"
             )
 
-            # If need to extract exception info - source file, line number, and error message
-            event.parse_traceback()
-
             # Log event into file with structured message.
-            log_job_event(event)
+            log_event(event)
 
             # Must raise the exception here, or job returncode is 0 even it fails.
             raise
@@ -683,170 +679,45 @@ The following example shows how to use ``StructuredEvent``,
         return 0
 
 
-The following console log shows ``demo`` extension with 2 job failures,
+The following console output shows ``demo`` extension with a job failure.
 
 .. code-block:: bash
 
-    (jade) disk:demo user$ jade submit-jobs config.json
-    2019-11-01 10:02:47,421 - INFO [jade.cli.submit_jobs submit_jobs.py:92] : jade submit-jobs config.json
-    2019-11-01 10:02:47,744 - INFO [jade.jobs.job_submitter job_submitter.py:164] : Submit 12 jobs for execution.
-    2019-11-01 10:02:47,744 - INFO [jade.jobs.job_submitter job_submitter.py:165] : JADE version 0.1.0
-    2019-11-01 10:02:47,765 - INFO [jade.utils.repository_info repository_info.py:95] : Wrote diff to output/diff.patch
-    2019-11-01 10:02:47,815 - INFO [jade.jobs.job_runner job_runner.py:56] : Run jobs.
-    2019-11-01 10:02:47,816 - INFO [jade.jobs.job_runner job_runner.py:106] : Created jade scratch_dir=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed
-    2019-11-01 10:02:47,820 - INFO [jade.jobs.job_runner job_runner.py:148] : Generated 12 jobs to execute on 12 workers max=12.
-    2019-11-01 10:02:49,803 - INFO [demo run.py:66] : jade-internal run demo --name=brazil --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,803 - INFO [demo run.py:66] : jade-internal run demo --name=australia --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,804 - INFO [demo run.py:66] : jade-internal run demo --name=france --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,821 - INFO [demo run.py:66] : jade-internal run demo --name=canada --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,827 - INFO [demo run.py:66] : jade-internal run demo --name=india --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,829 - INFO [demo run.py:66] : jade-internal run demo --name=china --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,853 - INFO [demo run.py:66] : jade-internal run demo --name=germany --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,859 - INFO [demo run.py:66] : jade-internal run demo --name=russia --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,874 - INFO [demo run.py:66] : jade-internal run demo --name=italy --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,882 - INFO [demo run.py:66] : jade-internal run demo --name=japan --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,888 - INFO [demo run.py:66] : jade-internal run demo --name=united_kingdom --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:49,921 - INFO [demo run.py:66] : jade-internal run demo --name=united_states --output=output/job-outputs --config-file=/var/folders/1l/60td82kj3cg59rw30sdnt5_h6cr39n/T/jade-471a2911-2e5e-4395-9468-0e6ed1e711ed/config.json
-    2019-11-01 10:02:50,422 - INFO [event loggers.py:114] : {"category": "AutoRegression", "code": "400", "data": {"bar": "bar info", "country": "australia", "foo": "foo info"}, "exception": "File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/australia.csv' does not exist: b'datax/gdp/countries/australia.csv'", "name": "australia", "message": "Analysis failed!", "timestamp": "2019-11-01 10:02:50.421351"}
-    2019-11-01 10:02:50,422 - INFO [event loggers.py:114] : {"category": "AutoRegression", "code": "400", "data": {"bar": "bar info", "country": "canada", "foo": "foo info"}, "exception": "File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/canada.csv' does not exist: b'datax/gdp/countries/canada.csv'", "name": "canada", "message": "Analysis failed!", "timestamp": "2019-11-01 10:02:50.421351"}
-    Traceback (most recent call last):
-    Traceback (most recent call last):
-      File "/miniconda3/envs/jade/bin/jade-internal", line 11, in <module>
-      File "/miniconda3/envs/jade/bin/jade-internal", line 11, in <module>
-        load_entry_point('jade', 'console_scripts', 'jade-internal')()
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 764, in __call__
-        load_entry_point('jade', 'console_scripts', 'jade-internal')()
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 764, in __call__
-        return self.main(*args, **kwargs)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 717, in main
-        return self.main(*args, **kwargs)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 717, in main
-        rv = self.invoke(ctx)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 1137, in invoke
-        rv = self.invoke(ctx)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 1137, in invoke
-        return _process_result(sub_ctx.command.invoke(sub_ctx))
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 956, in invoke
-        return _process_result(sub_ctx.command.invoke(sub_ctx))
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 956, in invoke
-        return ctx.invoke(self.callback, **ctx.params)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 555, in invoke
-        return ctx.invoke(self.callback, **ctx.params)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/click/core.py", line 555, in invoke
-        return callback(*args, **kwargs)
-      File "/Users/jgu2/Workspace/jade/jade/cli/run.py", line 71, in run
-        return callback(*args, **kwargs)
-        ret = cli.run(config_file, name, output, output_format, verbose)
-      File "/Users/jgu2/Workspace/jade/jade/cli/run.py", line 71, in run
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/cli.py", line 43, in run
-        ret = cli.run(config_file, name, output, output_format, verbose)
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/cli.py", line 43, in run
-        execution.run()
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/autoregression_execution.py", line 182, in run
-        execution.run()
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/autoregression_execution.py", line 182, in run
-        raise exc
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/autoregression_execution.py", line 146, in run
-        output=self._output
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/autoregression_execution.py", line 36, in autoregression_analysis
-        raise exc
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/autoregression_execution.py", line 146, in run
-        df = pd.read_csv(data, index_col="year")
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 685, in parser_f
-        output=self._output
-      File "/Users/jgu2/Workspace/jade/jade/extensions/demo/autoregression_execution.py", line 36, in autoregression_analysis
-        df = pd.read_csv(data, index_col="year")
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 685, in parser_f
-        return _read(filepath_or_buffer, kwds)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 457, in _read
-        parser = TextFileReader(fp_or_buf, **kwds)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 895, in __init__
-        return _read(filepath_or_buffer, kwds)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 457, in _read
-        self._make_engine(self.engine)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 1135, in _make_engine
-        parser = TextFileReader(fp_or_buf, **kwds)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 895, in __init__
-        self._engine = CParserWrapper(self.f, **self.options)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 1917, in __init__
-        self._make_engine(self.engine)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 1135, in _make_engine
-        self._engine = CParserWrapper(self.f, **self.options)
-      File "/miniconda3/envs/jade/lib/python3.7/site-packages/pandas/io/parsers.py", line 1917, in __init__
-        self._reader = parsers.TextReader(src, **kwds)
-      File "pandas/_libs/parsers.pyx", line 382, in pandas._libs.parsers.TextReader.__cinit__
-      File "pandas/_libs/parsers.pyx", line 689, in pandas._libs.parsers.TextReader._setup_parser_source
-    FileNotFoundError: [Errno 2] File b'datax/gdp/countries/canada.csv' does not exist: b'datax/gdp/countries/canada.csv'
-        self._reader = parsers.TextReader(src, **kwds)
-      File "pandas/_libs/parsers.pyx", line 382, in pandas._libs.parsers.TextReader.__cinit__
-      File "pandas/_libs/parsers.pyx", line 689, in pandas._libs.parsers.TextReader._setup_parser_source
-    FileNotFoundError: [Errno 2] File b'datax/gdp/countries/australia.csv' does not exist: b'datax/gdp/countries/australia.csv'
-    2019-11-01 10:02:50,885 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job australia completed return_code=1 exec_time_s=3.063157081604004 filename=output/results/australia_20191101_100247_batch_0.toml
-    2019-11-01 10:02:50,886 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job canada completed return_code=1 exec_time_s=3.057467222213745 filename=output/results/canada_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,892 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job brazil completed return_code=0 exec_time_s=4.066925764083862 filename=output/results/brazil_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,893 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job china completed return_code=0 exec_time_s=4.061027765274048 filename=output/results/china_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,894 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job france completed return_code=0 exec_time_s=4.058104753494263 filename=output/results/france_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,894 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job germany completed return_code=0 exec_time_s=4.05530309677124 filename=output/results/germany_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,895 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job india completed return_code=0 exec_time_s=4.051991939544678 filename=output/results/india_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,896 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job italy completed return_code=0 exec_time_s=4.048437118530273 filename=output/results/italy_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,896 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job japan completed return_code=0 exec_time_s=4.044002056121826 filename=output/results/japan_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,897 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job russia completed return_code=0 exec_time_s=4.039841890335083 filename=output/results/russia_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,897 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job united_kingdom completed return_code=0 exec_time_s=4.035030841827393 filename=output/results/united_kingdom_20191101_100247_batch_0.toml
-    2019-11-01 10:02:51,898 - INFO [jade.jobs.dispatchable_job dispatchable_job.py:57] : Job united_states completed return_code=0 exec_time_s=4.026648998260498 filename=output/results/united_states_20191101_100247_batch_0.toml
-    2019-11-01 10:02:52,898 - INFO [jade.jobs.job_runner job_runner.py:157] : Jobs are complete. count=12
-    2019-11-01 10:02:52,912 - INFO [jade.jobs.job_runner job_runner.py:95] : Wrote summary of job batch to output/results/results_20191101_100247_batch_0_summary.toml
-    2019-11-01 10:02:52,913 - INFO [jade.jobs.job_runner job_runner.py:70] : Completed 12 jobs
-    2019-11-01 10:02:52,915 - INFO [jade.utils.timing_utils timing_utils.py:34] : execution-time=5.099 s func=run_jobs
-    2019-11-01 10:02:52,961 - INFO [jade.jobs.job_submitter job_submitter.py:212] : Wrote results to output/results.json.
-    2019-11-01 10:02:52,961 - WARNING [jade.jobs.job_submitter job_submitter.py:218] : Successful=10 Failed=2 Total=12
+    jade show-results               
 
-Show results using JADE CLI ``show-results``,
-
-.. code-block:: bash
-
-    (jade) disk:demo user$ jade show-results
     Results from directory: output
     JADE Version: 0.1.0
-    11/01/2019 10:02:52
+    04/29/2020 17:18:23
 
-    +----------------+-------------+----------+--------------------+
-    |    Job Name    | Return Code |  Status  | Execution Time (s) |
-    +----------------+-------------+----------+--------------------+
-    |     china      |      0      | finished | 4.061027765274048  |
-    | united_states  |      0      | finished | 4.026648998260498  |
-    |     japan      |      0      | finished | 4.044002056121826  |
-    |     canada     |      1      | finished | 3.057467222213745  |
-    |     brazil     |      0      | finished | 4.066925764083862  |
-    |   australia    |      1      | finished | 3.063157081604004  |
-    | united_kingdom |      0      | finished | 4.035030841827393  |
-    |    germany     |      0      | finished |  4.05530309677124  |
-    |     france     |      0      | finished | 4.058104753494263  |
-    |     russia     |      0      | finished | 4.039841890335083  |
-    |     india      |      0      | finished | 4.051991939544678  |
-    |     italy      |      0      | finished | 4.048437118530273  |
-    +----------------+-------------+----------+--------------------+
+    +---------------+-------------+----------+--------------------+----------------------------+
+    |    Job Name   | Return Code |  Status  | Execution Time (s) |      Completion Time       |
+    +---------------+-------------+----------+--------------------+----------------------------+
+    |   australia   |      1      | finished | 3.0269670486450195 | 2020-04-29 17:18:22.772346 |
+    |     brazil    |      0      | finished | 3.019500732421875  | 2020-04-29 17:18:22.772818 |
+    | united_states |      0      | finished | 3.014056921005249  | 2020-04-29 17:18:22.773059 |
+    +---------------+-------------+----------+--------------------+----------------------------+
 
-    Num successful: 10
-    Num failed: 2
-    Total: 12
+    Num successful: 2
+    Num failed: 1
+    Total: 3
 
-    Avg execution time (s): 3.88
-    Min execution time (s): 3.06
-    Max execution time (s): 4.07
+    Avg execution time (s): 3.02
+    Min execution time (s): 3.01
+    Max execution time (s): 3.03
 
 Now, show events using JADE CLI ``show-events``,
 
 .. code-block:: bash
 
-    (jade) disk:demo user$ jade show-events
-    Events from directory: output
-    +-----------+----------------------------+----------------+------+------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    |  Job Name |         Timestamp          |    Category    | Code |     Message      |                              Data                              |                                                                           Exception                                                                           |
-    +-----------+----------------------------+----------------+------+------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    |   canada  | 2019-11-01 09:53:39.146164 | AutoRegression | 400  | Analysis failed! |  {'bar': 'bar info', 'country': 'canada', 'foo': 'foo info'}   |    File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/canada.csv' does not exist: b'datax/gdp/countries/canada.csv'    |
-    | australia | 2019-11-01 09:53:39.147156 | AutoRegression | 400  | Analysis failed! | {'bar': 'bar info', 'country': 'australia', 'foo': 'foo info'} | File: autoregression_execution.py, Line: 146, Error: [Errno 2] File b'datax/gdp/countries/australia.csv' does not exist: b'datax/gdp/countries/australia.csv' |
-    +-----------+----------------------------+----------------+------+------------------+----------------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------+
-    Total events: 2
+    jade show-events unhandled_error
+
+    Events of type unhandled_error from directory: output
+    +----------------------------+-----------+---------------------------------------------------------+-------+---------------------+-----------------------------+--------+
+    |         timestamp          |   source  |                         message                         | error |      exception      |           filename          | lineno |
+    +----------------------------+-----------+---------------------------------------------------------+-------+---------------------+-----------------------------+--------+
+    | 2020-04-29 17:18:21.708168 | australia |                     Analysis failed!                    |  test | <class 'Exception'> | autoregression_execution.py |  161   |
+    | 2020-04-29 17:18:21.709596 | australia | unexpected exception in run 'demo' job=australia - test |  test | <class 'Exception'> |            run.py           |   82   |
+    +----------------------------+-----------+---------------------------------------------------------+-------+---------------------+-----------------------------+--------+
 
 Based on the structured event logs, the user can track the job execution issue easily.
 
