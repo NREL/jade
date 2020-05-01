@@ -49,12 +49,12 @@ class ResourceMonitor:
 
     def _update_disk_stats(self, data):
         for stat in self.DISK_STATS:
-            setattr(self, stat, getattr(data, stat))
+            setattr(self, stat, getattr(data, stat, 0))
         self._last_disk_check_time = time.time()
 
     def _update_net_stats(self, data):
         for stat in self.NET_STATS:
-            setattr(self, stat, getattr(data, stat))
+            setattr(self, stat, getattr(data, stat, 0))
         self._last_net_check_time = time.time()
 
     def log_cpu_stats(self):
@@ -83,7 +83,7 @@ class ResourceMonitor:
             "elapsed_seconds": time.time() - self._last_disk_check_time,
         }
         for stat in self.DISK_STATS:
-            stats[stat] = getattr(data, stat) - getattr(self, stat)
+            stats[stat] = getattr(data, stat, 0) - getattr(self, stat, 0)
         stats["read MB/s"] = self._mb_per_sec(stats["read_bytes"], stats["elapsed_seconds"])
         stats["write MB/s"] = self._mb_per_sec(stats["write_bytes"], stats["elapsed_seconds"])
         stats["read IOPS"] = float(stats["read_count"]) / stats["elapsed_seconds"]
@@ -120,7 +120,7 @@ class ResourceMonitor:
             "elapsed_seconds": time.time() - self._last_net_check_time,
         }
         for stat in self.NET_STATS:
-            stats[stat] = getattr(data, stat) - getattr(self, stat)
+            stats[stat] = getattr(data, stat, 0) - getattr(self, stat, 0)
         stats["recv MB/s"] = self._mb_per_sec(stats["bytes_recv"], stats["elapsed_seconds"])
         stats["sent MB/s"] = self._mb_per_sec(stats["bytes_sent"], stats["elapsed_seconds"])
         self._update_net_stats(data)
@@ -254,15 +254,16 @@ class StatsViewerBase(abc.ABC):
                 row.append(val)
             table.add_row(row)
 
-        total_row = ["total"]
-        for stat in stats_to_total:
-            val = self._get_printable_value(stat, self._stat_totals[stat])
-            total_row.append(val)
-        table.add_row(total_row)
+        if self._stat_totals:
+            total_row = ["total"]
+            for stat in stats_to_total:
+                val = self._get_printable_value(stat, self._stat_totals[stat])
+                total_row.append(val)
+            table.add_row(total_row)
 
-        print("Totals")
-        print("------")
-        print(table)
+            print("Totals")
+            print("------")
+            print(table)
 
 
 class CpuStatsViewer(StatsViewerBase):
