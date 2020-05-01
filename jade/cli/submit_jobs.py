@@ -95,10 +95,17 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Restart only missing jobs."
 )
+@click.option(
+    "--reports/--no-reports",
+    is_flag=True,
+    default=True,
+    show_default=True,
+    help="Generate reports after execution."
+)
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs,
-        verbose, restart_failed, restart_missing):
+        verbose, restart_failed, restart_missing, reports):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
 
@@ -139,7 +146,8 @@ def submit_jobs(
         verbose=verbose,
         num_processes=num_processes,
         poll_interval=poll_interval,
-        previous_results=previous_results
+        previous_results=previous_results,
+        reports=reports,
     )
 
     sys.exit(ret.value)

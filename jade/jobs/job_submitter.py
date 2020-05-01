@@ -11,7 +11,8 @@ import jade
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
     RESULTS_FILE
 from jade.enums import Status
-from jade.events import EVENTS_FILENAME
+from jade.events import EVENTS_FILENAME, EVENT_NAME_ERROR_LOG, \
+    StructuredLogEvent, EVENT_CATEGORY_ERROR
 from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.hpc.common import HpcType
@@ -20,8 +21,10 @@ from jade.hpc.hpc_submitter import HpcSubmitter
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_runner import JobRunner
 from jade.jobs.results_aggregator import ResultsAggregatorSummary
+from jade.loggers import log_event
 from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
+from jade.utils.subprocess_manager import run_command
 from jade.utils.utils import dump_data
 import jade.version
 
@@ -91,7 +94,8 @@ results_summary={self.get_results_summmary_report()}"""
                     verbose=False,
                     poll_interval=DEFAULTS["poll_interval"],
                     num_processes=None,
-                    previous_results=None):
+                    previous_results=None,
+                    reports=True):
         """Submit simulations. Auto-detect whether the current system is an HPC
         and submit to its queue. Otherwise, run locally.
 
@@ -161,6 +165,10 @@ results_summary={self.get_results_summmary_report()}"""
         results_summary.delete_files()
         shutil.rmtree(self._results_dir)
 
+        self._log_error_log_messages(self._output)
+        if reports:
+            self.generate_reports(self._output)
+
         return result
 
     def write_results(self, filename):
@@ -226,6 +234,85 @@ results_summary={self.get_results_summmary_report()}"""
                             name, repo_info.summary())
             except InvalidParameter:
                 pass
+
+    @staticmethod
+    def _log_error_log_messages(directory):
+        for event in JobSubmitter.find_error_log_messages(directory):
+            log_event(event)
+
+    @staticmethod
+    def find_error_log_messages(directory):
+        """Parse output log files for error messages
+
+        Parameters
+        ----------
+        directory : str
+            output directory
+
+        """
+        errors = []
+        substrings = (
+            "DUE TO TIME LIMIT",  # includes slurmstepd, but check this first
+            "srun",
+            "slurmstepd",
+            "Traceback",
+        )
+
+        filenames = [
+            os.path.join(directory, x) for x in os.listdir(directory)
+            if x.endswith(".e")
+        ]
+        for filename in filenames:
+            with open(filename) as f_in:
+                for i, line in enumerate(f_in):
+                    for substring in substrings:
+                        if substring in line:
+                            event = StructuredLogEvent(
+                                source="submitter",
+                                category=EVENT_CATEGORY_ERROR,
+                                name=EVENT_NAME_ERROR_LOG,
+                                message="Detected error message in log.",
+                                error=substring,
+                                filename = filename,
+                                line_number = i + 1,
+                                text = line.strip(),
+                            )
+                            log_event(event)
+                            yield event
+                            # Only find one match in a single line.
+                            break
+
+    @staticmethod
+    def generate_reports(directory):
+        """Create reports summarizing the output results of a set of jobs.
+
+        Parameters
+        ----------
+        directory : str
+            output directory
+
+        """
+        commands = (
+            (f"jade show-results -o {directory}", "results.txt"),
+            (f"jade show-events -o {directory} --categories Error", "errors.txt"),
+            (f"jade stats show -o {directory}", "stats.txt"),
+        )
+
+        reports = []
+        for cmd in commands:
+            output = {}
+            ret = run_command(cmd[0], output=output)
+            if ret != 0:
+                return ret
+
+            filename = os.path.join(directory, cmd[1])
+            with open(filename, "w") as f_out:
+                f_out.write(cmd[0] + "\n\n")
+                f_out.write(output["stdout"])
+                reports.append(filename)
+
+        logger.info("Generated reports %s.", " ".join(reports))
+        return 0
 
     def _submit_to_hpc(self, name, max_nodes, per_node_batch_size, verbose,
                        poll_interval, num_processes):
