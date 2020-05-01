@@ -249,11 +249,15 @@ Or only the ones that failed::
 
 Debugging
 *********
-JADE generates multiple log files that can help debug failures.
+By default JADE generates report files that summarize what happened. Refer to
+``results.txt``, ``errors.txt``, and ``stats.txt``. The results file shows
+whether each job passed or failed.  The errors file shows unhandled errors
+that JADE detected as well as known errors that it parsed from log files.
+
+Here are the log files that JADE generates. Open these to dig deeper.
 
 - ``submit_jobs.log``: HPC-related information, such as the job ID and status
-- ``run_jobs.log``: information about JADE and Dask starting and stopping
-  jobs
+- ``run_jobs.log``: information about JADE starting and stopping jobs
 - ``job_output_<HPC job ID>.e``: The HPC logs stdout and stderr from all
   processes to this file. Look here to debug unexpected crashes or hangs.
 
@@ -279,11 +283,12 @@ Events
 If your extension implements JADE structured log events then you may want to
 view what events were logged.
 
-Any unhandled exceptions will also be logged here.
+JADE will also log any unhandled exceptions here.
 
 ::
 
     jade show-events
+    jade show-events -c Error
 
 
 Resource Monitoring
