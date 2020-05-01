@@ -66,19 +66,10 @@ def auto_config(
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
 
     cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
-    try:
-        config = cli.auto_config(
-            *inputs,
-            job_post_process_config=job_post_process_config
-        )
-    except TypeError:
-        docstring = cli.auto_config.__doc__
-        print(
-            f"\nERROR:  Auto-config parameter mismatch for extension {extension}. " + \
-            f"Its docstring is below.\n\n{docstring}\n\nPlease try again with the correct parameters"
-        )
-        sys.exit(1)
-
+    config = cli.auto_config(
+        *inputs,
+        job_post_process_config=job_post_process_config
+    )
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
     print(f"Dumped configuration to {config_file}.\n")
