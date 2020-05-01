@@ -20,6 +20,13 @@ from jade.events import EventsSummary
     help="Output directory."
 )
 @click.option(
+    "-c", "--categories",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Treat the arguments as categories instead of names."
+)
+@click.option(
     "-j", "--json-fmt",
     is_flag=True,
     default=False,
@@ -34,6 +41,13 @@ from jade.events import EventsSummary
     help="Show event names in output."
 )
 @click.option(
+    "-C", "--categories-only",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Show event categories in output."
+)
+@click.option(
     "--verbose",
     is_flag=True,
     default=False,
@@ -41,24 +55,34 @@ from jade.events import EventsSummary
     help="Enable verbose event outputs."
 )
 @click.command()
-def show_events(output, names, json_fmt=False, names_only=False, verbose=False):
+def show_events(
+        output, names, categories=False, json_fmt=False, names_only=False,
+        categories_only=False, verbose=False
+    ):
     """Shows the events after jobs run.
 
     \b
     Examples:
     jade show-events
-    jade show-events error
+    jade show-events unhandled_error
+    jade show-events error -c
     jade show-events --names-only
+    jade show-events --categories-only
     """
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("show_results", None, console_level=level)
     results = EventsSummary(output)
     if names_only:
         results.show_event_names()
+    elif categories_only:
+        results.show_event_categories()
     elif json_fmt:
         print(results.to_json())
     else:
         if not names:
             names = results.list_unique_names()
         for name in names:
-            results.show_events(name)
+            if categories:
+                results.show_events_in_category(name)
+            else:
+                results.show_events(name)

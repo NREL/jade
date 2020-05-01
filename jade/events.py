@@ -28,6 +28,7 @@ EVENT_NAME_DISK_STATS = "disk_stats"
 EVENT_NAME_MEMORY_STATS = "mem_stats"
 EVENT_NAME_NETWORK_STATS = "net_stats"
 EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
+EVENT_NAME_ERROR_LOG = "log_error"
 
 
 class StructuredLogEvent(object):
@@ -274,6 +275,22 @@ class EventsSummary(object):
         """
         return [x for x in self._events if x.name == name]
 
+    def list_unique_categories(self):
+        """Return the unique event categories in the log.
+
+        Returns
+        -------
+        list
+
+        """
+        categories = set()
+        for event in self._events:
+            categories.add(event.category)
+
+        categories = list(categories)
+        categories.sort()
+        return categories
+
     def list_unique_names(self):
         """Return the unique event names in the log.
 
@@ -315,6 +332,24 @@ class EventsSummary(object):
         print(f"Events of type {name} from directory: {self._output_dir}")
         print(table)
         print(f"Total events: {count}\n")
+
+    def show_events_in_category(self, category):
+        """Print tabular events matching category in terminal"""
+        event_names = set()
+        for event in self._events:
+            if event.category == category:
+                event_names.add(event.name)
+
+        if not event_names:
+            print(f"There are no events in category {category}")
+            return
+
+        for event_name in sorted(event_names):
+            self.show_events(event_name)
+
+    def show_event_categories(self):
+        """Show the unique event categories in the log."""
+        print("Catgories:  {}".format(" ".join(self.list_unique_categories())))
 
     def show_event_names(self):
         """Show the unique event names in the log."""
