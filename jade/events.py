@@ -283,11 +283,7 @@ class EventsSummary(object):
         list
 
         """
-        categories = set()
-        for event in self._events:
-            categories.add(event.category)
-
-        categories = list(categories)
+        categories = list({x.category for x in self._events})
         categories.sort()
         return categories
 
@@ -299,11 +295,7 @@ class EventsSummary(object):
         list
 
         """
-        names = set()
-        for event in self._events:
-            names.add(event.name)
-
-        names = list(names)
+        names = list({x.name for x in self._events})
         names.sort()
         return names
 
@@ -335,10 +327,7 @@ class EventsSummary(object):
 
     def show_events_in_category(self, category):
         """Print tabular events matching category in terminal"""
-        event_names = set()
-        for event in self._events:
-            if event.category == category:
-                event_names.add(event.name)
+        event_names = {x.name for x in self._events if x.category == category}
 
         if not event_names:
             print(f"There are no events in category {category}")
