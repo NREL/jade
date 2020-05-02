@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 import datetime
+import fileinput
 import importlib
 import logging
 import os
@@ -262,25 +263,23 @@ results_summary={self.get_results_summmary_report()}"""
             os.path.join(directory, x) for x in os.listdir(directory)
             if x.endswith(".e")
         ]
-        for filename in filenames:
-            with open(filename) as f_in:
-                for i, line in enumerate(f_in):
-                    for substring in substrings:
-                        if substring in line:
-                            event = StructuredLogEvent(
-                                source="submitter",
-                                category=EVENT_CATEGORY_ERROR,
-                                name=EVENT_NAME_ERROR_LOG,
-                                message="Detected error message in log.",
-                                error=substring,
-                                filename = filename,
-                                line_number = i + 1,
-                                text = line.strip(),
-                            )
-                            log_event(event)
-                            yield event
-                            # Only find one match in a single line.
-                            break
+        for line in fileinput.input(filenames):
+            for substring in substrings:
+                if substring in line:
+                    event = StructuredLogEvent(
+                        source="submitter",
+                        category=EVENT_CATEGORY_ERROR,
+                        name=EVENT_NAME_ERROR_LOG,
+                        message="Detected error message in log.",
+                        error=substring,
+                        filename = fileinput.filename(),
+                        line_number = fileinput.lineno(),
+                        text = line.strip(),
+                    )
+                    log_event(event)
+                    yield event
+                    # Only find one match in a single line.
+                    break
 
     @staticmethod
     def generate_reports(directory):
