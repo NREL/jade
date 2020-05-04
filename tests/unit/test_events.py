@@ -42,7 +42,7 @@ def test_structured_error_event__create():
 
 def test_event_summary__show_events(test_data_dir, capsys):
     """Should print tabular events in terminal"""
-    event_dir = os.path.join(test_data_dir, "events")
+    event_dir = os.path.join(test_data_dir, "events", "job-outputs", "australia")
     event_summary = EventsSummary(event_dir)
     event_summary.show_events(EVENT_NAME_UNHANDLED_ERROR)
     captured = capsys.readouterr()

@@ -11,7 +11,7 @@ from datetime import datetime
 from prettytable import PrettyTable
 
 from jade.common import JOBS_OUTPUT_DIR
-from jade.utils.utils import dump_data, get_filenames_in_path, load_data
+from jade.utils.utils import dump_data, load_data
 
 
 EVENTS_FILENAME = "events.json"
@@ -223,7 +223,10 @@ class EventsSummary(object):
         list, a list of event log files.
         """
         regex = re.compile(r"\w*events.log")
-        return get_filenames_in_path(self._output_dir, regex, is_regex=True)
+        return [
+            os.path.join(self._output_dir, x) for x in os.listdir(self._output_dir)
+            if regex.search(x)
+        ]
 
     def _consolidate_events(self):
         """Find most recent event log files, and merge event data together."""
