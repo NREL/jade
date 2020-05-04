@@ -263,6 +263,10 @@ results_summary={self.get_results_summmary_report()}"""
             os.path.join(directory, x) for x in os.listdir(directory)
             if x.endswith(".e")
         ]
+
+        if not filenames:
+            return
+
         for line in fileinput.input(filenames):
             for substring in substrings:
                 if substring in line:
@@ -276,7 +280,6 @@ results_summary={self.get_results_summmary_report()}"""
                         line_number = fileinput.lineno(),
                         text = line.strip(),
                     )
-                    log_event(event)
                     yield event
                     # Only find one match in a single line.
                     break
