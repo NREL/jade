@@ -77,7 +77,7 @@ class StructuredLogEvent(object):
         return self._base_field_names()
 
     def _base_field_names(self):
-        return ["timestamp", "source"]
+        return ["timestamp", "source", "message"]
 
     def field_names(self):
         """Return all field names for the event.
