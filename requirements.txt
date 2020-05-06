@@ -5,6 +5,7 @@ matplotlib==2.2.3
 numpy
 pandas
 prettytable
+psutil
 pyyaml
 statsmodels>=0.10.1
 toml>=0.10.0
