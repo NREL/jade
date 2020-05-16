@@ -27,6 +27,7 @@ EVENT_NAME_CPU_STATS = "cpu_stats"
 EVENT_NAME_DISK_STATS = "disk_stats"
 EVENT_NAME_MEMORY_STATS = "mem_stats"
 EVENT_NAME_NETWORK_STATS = "net_stats"
+EVENT_NAME_BYTES_CONSUMED = "bytes_consumed"
 EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
 EVENT_NAME_ERROR_LOG = "log_error"
 
@@ -256,6 +257,22 @@ class EventsSummary(object):
 
         """
         return self._events
+
+    def get_bytes_consumed(self):
+        """Return a sum of all bytes_consumed events.
+
+        Returns
+        -------
+        int
+            Size in bytes of files produced by all jobs
+
+        """
+        total = 0
+        for event in self._events:
+            if event.name == EVENT_NAME_BYTES_CONSUMED:
+                total += event.data["bytes_consumed"]
+
+        return total
 
     def to_json(self):
         """Return the events in JSON format.

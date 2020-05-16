@@ -1,14 +1,20 @@
 """Defines a dispatchable job."""
 
 import logging
+import os
 import shlex
 import subprocess
 import sys
 import time
 
+from jade.common import JOBS_OUTPUT_DIR
+from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, \
+    EVENT_CATEGORY_RESOURCE_UTIL
 from jade.jobs.dispatchable_job_interface import DispatchableJobInterface
 from jade.jobs.results_aggregator import ResultsAggregator
+from jade.loggers import log_event
 from jade.result import Result
+from jade.utils.utils import get_directory_size_bytes
 
 
 logger = logging.getLogger(__name__)
@@ -39,9 +45,16 @@ class DispatchableJob(DispatchableJobInterface):
             job_filename = job_filename.replace(char, "-")
 
         status = "finished"
-        # TODO: the only reliable way to get storage space consumed on Lustre
-        # may be to sum the size of each created file here and generate an
-        # event.
+        output_dir = os.path.join(self._output, JOBS_OUTPUT_DIR, self._job.name)
+        bytes_consumed = get_directory_size_bytes(output_dir)
+        event = StructuredLogEvent(
+            source=self._job.name,
+            category=EVENT_CATEGORY_RESOURCE_UTIL,
+            name=EVENT_NAME_BYTES_CONSUMED,
+            message="job output directory size",
+            bytes_consumed=bytes_consumed,
+        )
+        log_event(event)
         result = Result(self._job.name, ret, status, exec_time_s)
         ResultsAggregator.append(self._results_filename, result)
 

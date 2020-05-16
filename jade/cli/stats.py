@@ -6,6 +6,7 @@ import logging
 import sys
 
 import click
+from psutil._common import bytes2human
 
 from jade.common import OUTPUT_DIR
 from jade.loggers import setup_logging
@@ -31,7 +32,7 @@ def stats():
     help="Output directory."
 )
 @click.command()
-def show(stats, output): 
+def show(stats, output):
     """Shows stats from a run.
 
     \b
@@ -63,4 +64,28 @@ def show(stats, output):
         viewer.show_stats()
 
 
+@click.option(
+    "--human-readable/--no-human-readable",
+    is_flag=True,
+    default=True,
+    show_default=True,
+    help="Output directory."
+)
+@click.option(
+    "-o", "--output",
+    default=OUTPUT_DIR,
+    show_default=True,
+    help="Output directory."
+)
+@click.command()
+def bytes_consumed(output, human_readable): 
+    events = EventsSummary(output)
+    consumed = events.get_bytes_consumed()
+    if human_readable:
+        print(bytes2human(consumed))
+    else:
+        print(consumed)
+
+
+stats.add_command(bytes_consumed)
 stats.add_command(show)

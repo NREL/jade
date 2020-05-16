@@ -263,6 +263,30 @@ def decompress_file(filename):
     return new_filename
 
 
+def get_directory_size_bytes(directory, recursive=True):
+    """Return the total space consumed by all files in directory.
+
+    Parameters
+    ----------
+    directory : str
+    recursive : bool
+
+    Returns
+    -------
+    int
+        size in bytes
+
+    """
+    total = 0
+    for dirpath, _, filenames in os.walk(directory):
+        for filename in filenames:
+            total += os.stat(os.path.join(dirpath, filename)).st_size
+        if not recursive:
+            break
+
+    return total
+
+
 def get_filenames_in_path(directory, filename, is_regex=False):
     """Return all files in directory matching filename, searching recursively.
 
