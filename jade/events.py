@@ -11,6 +11,7 @@ from datetime import datetime
 from prettytable import PrettyTable
 
 from jade.common import JOBS_OUTPUT_DIR
+from jade.exceptions import InvalidConfiguration
 from jade.utils.utils import dump_data, load_data
 
 
@@ -30,6 +31,7 @@ EVENT_NAME_NETWORK_STATS = "net_stats"
 EVENT_NAME_BYTES_CONSUMED = "bytes_consumed"
 EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
 EVENT_NAME_ERROR_LOG = "log_error"
+EVENT_NAME_CONFIG_EXEC_SUMMARY = "config_exec_summary"
 
 
 class StructuredLogEvent(object):
@@ -273,6 +275,20 @@ class EventsSummary(object):
                 total += event.data["bytes_consumed"]
 
         return total
+
+    def get_config_exec_time(self):
+        """Return the total number of seconds to run all jobs in the config.
+
+        Returns
+        -------
+        int
+
+        """
+        for event in self._events:
+            if event.name == EVENT_NAME_CONFIG_EXEC_SUMMARY:
+                return event.data["config_execution_time"]
+
+        raise InvalidConfiguration("no batch summary events found")
 
     def to_json(self):
         """Return the events in JSON format.

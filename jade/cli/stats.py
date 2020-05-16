@@ -2,6 +2,7 @@
 CLI to show events of a scenario.
 """
 
+import datetime
 import logging
 import sys
 
@@ -87,5 +88,29 @@ def bytes_consumed(output, human_readable):
         print(consumed)
 
 
+@click.option(
+    "--human-readable/--no-human-readable",
+    is_flag=True,
+    default=True,
+    show_default=True,
+    help="Output directory."
+)
+@click.option(
+    "-o", "--output",
+    default=OUTPUT_DIR,
+    show_default=True,
+    help="Output directory."
+)
+@click.command()
+def exec_time(output, human_readable):
+    events = EventsSummary(output)
+    config_exec_time = events.get_config_exec_time()
+    if human_readable:
+        print(datetime.timedelta(seconds=config_exec_time))
+    else:
+        print(config_exec_time)
+
+
 stats.add_command(bytes_consumed)
+stats.add_command(exec_time)
 stats.add_command(show)
