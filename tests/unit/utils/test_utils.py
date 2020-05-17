@@ -222,6 +222,26 @@ def test_decompress_file():
         os.remove(new_file)
 
 
+def test_get_directory_size_bytes():
+    """Test calculation of sizes."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        tmpdir2 = os.path.join(tmpdir, "tmp")
+        os.makedirs(tmpdir2, exist_ok=True)
+        files = [
+            os.path.join(tmpdir, "file1.bin"),
+            os.path.join(tmpdir, "file2.bin"),
+            os.path.join(tmpdir, "tmp", "file3.bin"),
+            os.path.join(tmpdir, "tmp", "file4.bin"),
+        ]
+        data = "1234567890"
+        for filename in files:
+            with open(filename, "w") as f_out:
+                f_out.write(data)
+
+        assert get_directory_size_bytes(tmpdir, recursive=True) == 40
+        assert get_directory_size_bytes(tmpdir, recursive=False) == 20
+
+
 def test_get_filenames_in_path():
     """Should filter filename properly"""
     with tempfile.TemporaryDirectory() as tmpdir:
