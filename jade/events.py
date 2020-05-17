@@ -146,7 +146,7 @@ class StructuredErrorLogEvent(StructuredLogEvent):
             self._parse_traceback()
 
     def base_field_names(self):
-        return self._base_field_names() + ["message"]
+        return self._base_field_names()
 
     def _parse_traceback(self):
         """
