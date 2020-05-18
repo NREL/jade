@@ -1,1 +1,229 @@
-[{"source": "australia", "category": "Error", "name": "unhandled_error", "message": "Analysis failed!", "event_class": "StructuredErrorLogEvent", "timestamp": "2020-04-27 14:18:29.636988", "data": {"error": "test", "exception": "<class 'Exception'>", "filename": "autoregression_execution.py", "lineno": 160}}]
+[
+  {
+    "source": "australia",
+    "category": "Error",
+    "name": "unhandled_error",
+    "message": "Analysis failed!",
+    "event_class": "StructuredErrorLogEvent",
+    "timestamp": "2020-04-27 14:18:29.636988",
+    "data": {
+      "error": "test",
+      "exception": "<class 'Exception'>",
+      "filename": "autoregression_execution.py",
+      "lineno": 160
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "cpu_stats",
+    "message": "Node CPU stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:18.522191",
+    "data": {
+      "cpu_percent": 37.4,
+      "guest": 0,
+      "guest_nice": 0,
+      "idle": 62.6,
+      "iowait": 0,
+      "irq": 0,
+      "nice": 0,
+      "softirq": 0,
+      "steal": 0,
+      "system": 8.5,
+      "user": 28.8
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "disk_stats",
+    "message": "Node disk stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:18.522683",
+    "data": {
+      "elapsed_seconds": 0.02693462371826172,
+      "read IOPS": 74.25386821513295,
+      "read MB/s": 1.4502708635768156,
+      "read_bytes": 40960,
+      "read_count": 2,
+      "read_time": 1,
+      "write IOPS": 0,
+      "write MB/s": 0,
+      "write_bytes": 0,
+      "write_count": 0,
+      "write_time": 0
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "mem_stats",
+    "message": "Node memory stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:18.522917",
+    "data": {
+      "active": 777138176,
+      "available": 1218449408,
+      "buffers": 83759104,
+      "cached": 467804160,
+      "free": 990277632,
+      "inactive": 537251840,
+      "percent": 92.7,
+      "shared": 34172928,
+      "slab": 110977024,
+      "total": 16800874496,
+      "used": 15259033600
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "net_stats",
+    "message": "Node net stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:18.523096",
+    "data": {
+      "bytes_recv": 0,
+      "bytes_sent": 0,
+      "dropin": 0,
+      "dropout": 0,
+      "elapsed_seconds": 0.027249813079833984,
+      "errin": 0,
+      "errout": 0,
+      "packets_recv": 0,
+      "packets_sent": 0,
+      "recv MB/s": 0,
+      "sent MB/s": 0
+    }
+  },
+  {
+    "source": "1",
+    "category": "ResourceUtilization",
+    "name": "bytes_consumed",
+    "message": "job output directory size",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:18.523267",
+    "data": {
+      "bytes_consumed": 0
+    }
+  },
+  {
+    "source": "2",
+    "category": "ResourceUtilization",
+    "name": "bytes_consumed",
+    "message": "job output directory size",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:18.523712",
+    "data": {
+      "bytes_consumed": 0
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "cpu_stats",
+    "message": "Node CPU stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:23.640950",
+    "data": {
+      "cpu_percent": 4.3,
+      "guest": 0,
+      "guest_nice": 0,
+      "idle": 95.7,
+      "iowait": 0,
+      "irq": 0,
+      "nice": 0,
+      "softirq": 0,
+      "steal": 0,
+      "system": 0.6,
+      "user": 3.6
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "disk_stats",
+    "message": "Node disk stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:23.642140",
+    "data": {
+      "elapsed_seconds": 5.119387626647949,
+      "read IOPS": 0,
+      "read MB/s": 0,
+      "read_bytes": 0,
+      "read_count": 0,
+      "read_time": 0,
+      "write IOPS": 0.7813434519353055,
+      "write MB/s": 0.1816013101177761,
+      "write_bytes": 974848,
+      "write_count": 4,
+      "write_time": 17
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "mem_stats",
+    "message": "Node memory stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:23.642730",
+    "data": {
+      "active": 777203712,
+      "available": 1605582848,
+      "buffers": 83771392,
+      "cached": 467841024,
+      "free": 1377374208,
+      "inactive": 537264128,
+      "percent": 90.4,
+      "shared": 34172928,
+      "slab": 111042560,
+      "total": 16800874496,
+      "used": 14871887872
+    }
+  },
+  {
+    "source": "resource_monitor_batch_0",
+    "category": "ResourceUtilization",
+    "name": "net_stats",
+    "message": "Node net stats update",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:23.643289",
+    "data": {
+      "bytes_recv": 0,
+      "bytes_sent": 0,
+      "dropin": 0,
+      "dropout": 0,
+      "elapsed_seconds": 5.120143890380859,
+      "errin": 0,
+      "errout": 0,
+      "packets_recv": 0,
+      "packets_sent": 0,
+      "recv MB/s": 0,
+      "sent MB/s": 0
+    }
+  },
+  {
+    "source": "submitter",
+    "category": "ResourceUtilization",
+    "name": "bytes_consumed",
+    "message": "main output directory size",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:23.646807",
+    "data": {
+      "bytes_consumed": 23115
+    }
+  },
+  {
+    "source": "submitter",
+    "category": "ResourceUtilization",
+    "name": "config_exec_summary",
+    "message": "config execution summary",
+    "event_class": "StructuredLogEvent",
+    "timestamp": "2020-05-17 16:08:23.646899",
+    "data": {
+      "config_execution_time": 5.156754732131958,
+      "num_jobs": 17
+    }
+  }
+]

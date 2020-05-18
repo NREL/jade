@@ -7,13 +7,15 @@ import importlib
 import logging
 import os
 import shutil
+import time
 
 import jade
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
     RESULTS_FILE
 from jade.enums import Status
 from jade.events import EVENTS_FILENAME, EVENT_NAME_ERROR_LOG, \
-    StructuredLogEvent, EVENT_CATEGORY_ERROR
+    StructuredLogEvent, EVENT_CATEGORY_ERROR, EVENT_CATEGORY_RESOURCE_UTIL, \
+    EVENT_NAME_BYTES_CONSUMED, EVENT_NAME_CONFIG_EXEC_SUMMARY
 from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.hpc.common import HpcType
@@ -26,7 +28,7 @@ from jade.loggers import log_event
 from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
 from jade.utils.subprocess_manager import run_command
-from jade.utils.utils import dump_data
+from jade.utils.utils import dump_data, get_directory_size_bytes
 import jade.version
 
 
@@ -142,6 +144,7 @@ results_summary={self.get_results_summmary_report()}"""
         if os.path.exists(events_file):
             os.remove(events_file)
 
+        start_time = time.time()
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)
             result = runner.run_jobs(
@@ -167,6 +170,27 @@ results_summary={self.get_results_summmary_report()}"""
         shutil.rmtree(self._results_dir)
 
         self._log_error_log_messages(self._output)
+
+        bytes_consumed = get_directory_size_bytes(self._output, recursive=False)
+        event = StructuredLogEvent(
+            source="submitter",
+            category=EVENT_CATEGORY_RESOURCE_UTIL,
+            name=EVENT_NAME_BYTES_CONSUMED,
+            message="main output directory size",
+            bytes_consumed=bytes_consumed,
+        )
+        log_event(event)
+
+        event = StructuredLogEvent(
+            source="submitter",
+            category=EVENT_CATEGORY_RESOURCE_UTIL,
+            name=EVENT_NAME_CONFIG_EXEC_SUMMARY,
+            message="config execution summary",
+            config_execution_time=time.time() - start_time,
+            num_jobs=self.get_num_jobs(),
+        )
+        log_event(event)
+
         if reports:
             self.generate_reports(self._output)
 
