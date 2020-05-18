@@ -45,20 +45,20 @@ def show(stats, output):
     jade stats net
     jade stats cpu disk mem
     """
-    results = EventsSummary(output)
+    events = EventsSummary(output)
 
     if not stats:
         stats = STATS
 
     for stat in stats:
         if stat == "cpu":
-            viewer = CpuStatsViewer(results.events)
+            viewer = CpuStatsViewer(events)
         elif stat == "disk":
-            viewer = DiskStatsViewer(results.events)
+            viewer = DiskStatsViewer(events)
         elif stat == "mem":
-            viewer = MemoryStatsViewer(results.events)
+            viewer = MemoryStatsViewer(events)
         elif stat == "net":
-            viewer = NetworkStatsViewer(results.events)
+            viewer = NetworkStatsViewer(events)
         else:
             print(f"Invalid stat={stat}")
             sys.exit(1)
