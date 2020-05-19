@@ -210,6 +210,10 @@ class EventsSummary:
         self._job_outputs_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
         event_files = os.listdir(self._event_dir)
         if not event_files:
+            # The old "consolidate_events" code stored all events in one file
+            # called events.json.  They are now stored in one file per event
+            # type, but we still detect and convert the old format.  We can
+            # remove this once we're sure the old format doesn't exist.
             legacy_file = os.path.join(output_dir, EVENTS_FILENAME)
             if os.path.exists(legacy_file):
                 self._handle_legacy_file(legacy_file)
@@ -218,6 +222,7 @@ class EventsSummary:
                 self._save_events_summary()
         elif preload:
             self._load_all_events()
+        # else, events have already been consolidated, load them on demand
 
     def _most_recent_event_files(self):
         """
