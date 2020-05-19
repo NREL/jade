@@ -268,7 +268,7 @@ class EventsSummary:
         if name not in self._events:
             self._load_event_file(name)
 
-        return self._events[name]
+        return self._events.get(name, [])
 
     def _handle_legacy_file(self, legacy_file):
         for raw_event in load_data(legacy_file):
@@ -291,8 +291,6 @@ class EventsSummary:
         filename = self._make_event_filename(name)
         if os.path.exists(filename):
             self._deserialize_events(name, filename)
-        else:
-            self._events[name] = []
 
     def _make_event_filename(self, name):
         return os.path.join(self._event_dir, name) + ".json"
