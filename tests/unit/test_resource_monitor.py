@@ -27,26 +27,16 @@ def test_resource_stats():
             resource_monitor.log_resource_stats()
 
         summary = EventsSummary(tmpdir)
-        assert len(summary.events) == count * 4
-        for event in summary.events:
-            if event.name == EVENT_NAME_CPU_STATS:
-                found_cpu += 1
-            elif event.name == EVENT_NAME_DISK_STATS:
-                found_disk += 1
-            elif event.name == EVENT_NAME_MEMORY_STATS:
-                found_mem += 1
-            elif event.name == EVENT_NAME_NETWORK_STATS:
-                found_net += 1
-        assert found_cpu == count
-        assert found_disk == count
-        assert found_mem == count
-        assert found_net == count
+        assert len(summary.list_events(EVENT_NAME_CPU_STATS)) == count
+        assert len(summary.list_events(EVENT_NAME_DISK_STATS)) == count
+        assert len(summary.list_events(EVENT_NAME_MEMORY_STATS)) == count
+        assert len(summary.list_events(EVENT_NAME_NETWORK_STATS)) == count
 
         viewers = [
-            CpuStatsViewer(summary.events),
-            DiskStatsViewer(summary.events),
-            MemoryStatsViewer(summary.events),
-            NetworkStatsViewer(summary.events),
+            CpuStatsViewer(summary),
+            DiskStatsViewer(summary),
+            MemoryStatsViewer(summary),
+            NetworkStatsViewer(summary),
         ]
         for viewer in viewers:
             df = viewer.get_dataframe("test")

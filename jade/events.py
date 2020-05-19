@@ -2,7 +2,9 @@
 This module contains StructuredLogEvent and EventSummary classes.
 """
 
+from collections import defaultdict
 import json
+import logging
 import os
 import re
 import sys
@@ -11,9 +13,11 @@ from datetime import datetime
 from prettytable import PrettyTable
 
 from jade.common import JOBS_OUTPUT_DIR
-from jade.exceptions import InvalidConfiguration
+from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.utils.utils import dump_data, load_data
 
+
+EVENT_DIR = "events"
 
 EVENTS_FILENAME = "events.json"
 
@@ -33,8 +37,10 @@ EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
 EVENT_NAME_ERROR_LOG = "log_error"
 EVENT_NAME_CONFIG_EXEC_SUMMARY = "config_exec_summary"
 
+logger  = logging.getLogger(__name__)
 
-class StructuredLogEvent(object):
+
+class StructuredLogEvent:
     """
     A class for recording structured log events.
     """
@@ -79,7 +85,8 @@ class StructuredLogEvent(object):
         """
         return self._base_field_names()
 
-    def _base_field_names(self):
+    @staticmethod
+    def _base_field_names():
         return ["timestamp", "source", "message"]
 
     def field_names(self):
@@ -102,7 +109,7 @@ class StructuredLogEvent(object):
         """
         # Account for events generated with different versions of code.
         values = [getattr(self, x, "") for x in self.base_field_names()]
-        values += [self.data.get(x, "") for x in self.data.keys()]
+        values += [self.data.get(x, "") for x in self.data]
         return values
 
     @classmethod
@@ -181,10 +188,10 @@ def deserialize_event(data):
     raise Exception(f"unknown event class {data['event_class']}")
 
 
-class EventsSummary(object):
+class EventsSummary:
     """Provides summary of all events."""
 
-    def __init__(self, output_dir):
+    def __init__(self, output_dir, preload=False):
         """
         Initialize EventsSummary class
 
@@ -192,18 +199,30 @@ class EventsSummary(object):
         ----------
         output_dir: str
             Path of jade output directory.
+        preload: bool
+            Load all events into memory; otherwise, load by name on demand.
 
         """
+        self._events = defaultdict(list)
         self._output_dir = output_dir
+        self._event_dir = os.path.join(output_dir, EVENT_DIR)
+        os.makedirs(self._event_dir, exist_ok=True)
         self._job_outputs_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
-        self._summary_file = os.path.join(output_dir, EVENTS_FILENAME)
-        if os.path.exists(self._summary_file):
-            self._events = [
-                deserialize_event(x) for x in load_data(self._summary_file)
-            ]
-        else:
-            self._events = self._consolidate_events()
-            self._save_events_summary()
+        event_files = os.listdir(self._event_dir)
+        if not event_files:
+            # The old "consolidate_events" code stored all events in one file
+            # called events.json.  They are now stored in one file per event
+            # type, but we still detect and convert the old format.  We can
+            # remove this once we're sure the old format doesn't exist.
+            legacy_file = os.path.join(output_dir, EVENTS_FILENAME)
+            if os.path.exists(legacy_file):
+                self._handle_legacy_file(legacy_file)
+            else:
+                self._consolidate_events()
+                self._save_events_summary()
+        elif preload:
+            self._load_all_events()
+        # else, events have already been consolidated, load them on demand
 
     def _most_recent_event_files(self):
         """
@@ -233,32 +252,54 @@ class EventsSummary(object):
 
     def _consolidate_events(self):
         """Find most recent event log files, and merge event data together."""
-        events = []
         for event_file in self._most_recent_event_files():
             with open(event_file, "r") as f:
                 for line in f.readlines():
                     record = json.loads(line)
                     event = deserialize_event(record)
-                    events.append(event)
-        events.sort(key=lambda x: x.timestamp)
-        return events
+                    self._events[event.name].append(event)
+        for name in self._events.keys():
+            self._events[name].sort(key=lambda x: x.timestamp)
+
+    def _deserialize_events(self, name, path):
+        self._events[name] = [deserialize_event(x) for x in load_data(path)]
+
+    def _get_events(self, name):
+        if name not in self._events:
+            self._load_event_file(name)
+
+        return self._events.get(name, [])
+
+    def _handle_legacy_file(self, legacy_file):
+        for raw_event in load_data(legacy_file):
+            event = deserialize_event(raw_event)
+            self._events[event.name].append(event)
+
+        self._save_events_summary()
+        os.remove(legacy_file)
+        logger.info("Converted events to new format")
+
+    def _load_all_events(self):
+        for filename in os.listdir(self._event_dir):
+            name = os.path.splitext(filename)[0]
+            if name in self._events:
+                continue
+            path = os.path.join(self._event_dir, filename)
+            self._deserialize_events(name, path)
+
+    def _load_event_file(self, name):
+        filename = self._make_event_filename(name)
+        if os.path.exists(filename):
+            self._deserialize_events(name, filename)
+
+    def _make_event_filename(self, name):
+        return os.path.join(self._event_dir, name) + ".json"
 
     def _save_events_summary(self):
-        """Save all events data to a JSON file"""
-        dict_events = [event.to_dict() for event in self._events]
-        dump_data(dict_events, self._summary_file)
-
-    @property
-    def events(self):
-        """Return the events.
-
-        Returns
-        -------
-        list
-            list of StructuredLogEvent
-
-        """
-        return self._events
+        """Save events to one file per event name."""
+        for name, events in self._events.items():
+            dict_events = [event.to_dict() for event in events]
+            dump_data(dict_events, self._make_event_filename(name))
 
     def get_bytes_consumed(self):
         """Return a sum of all bytes_consumed events.
@@ -270,9 +311,8 @@ class EventsSummary(object):
 
         """
         total = 0
-        for event in self._events:
-            if event.name == EVENT_NAME_BYTES_CONSUMED:
-                total += event.data["bytes_consumed"]
+        for event in self.iter_events(EVENT_NAME_BYTES_CONSUMED):
+            total += event.data["bytes_consumed"]
 
         return total
 
@@ -284,21 +324,26 @@ class EventsSummary(object):
         int
 
         """
-        for event in self._events:
-            if event.name == EVENT_NAME_CONFIG_EXEC_SUMMARY:
-                return event.data["config_execution_time"]
+        events = self.list_events(EVENT_NAME_CONFIG_EXEC_SUMMARY)
+        if not events:
+            raise InvalidConfiguration("no batch summary events found")
 
-        raise InvalidConfiguration("no batch summary events found")
+        return events[0].data["config_execution_time"]
 
-    def to_json(self):
-        """Return the events in JSON format.
+    def iter_events(self, name):
+        """Return a generator over events with name.
 
-        Returns
-        -------
-        str
+        Parameters
+        ----------
+        name : str
+
+        Yields
+        ------
+        event : StructuredLogEvent
 
         """
-        return json.dumps([x.to_dict() for x in self._events], indent=2)
+        for event in self._get_events(name):
+            yield event
 
     def list_events(self, name):
         """Return the events of type name.
@@ -309,17 +354,25 @@ class EventsSummary(object):
             list of StructuredLogEvent
 
         """
-        return [x for x in self._events if x.name == name]
+        return self._get_events(name)
 
     def list_unique_categories(self):
-        """Return the unique event categories in the log.
+        """Return the unique event categories in the log. Will cause all events
+        to get loaded into memory.
 
         Returns
         -------
         list
 
         """
-        categories = list({x.category for x in self._events})
+        self._load_all_events()
+        categories = set()
+        for events in self._events.values():
+            if not events:
+                continue
+            categories.add(events[0].category)
+
+        categories = list(categories)
         categories.sort()
         return categories
 
@@ -331,14 +384,7 @@ class EventsSummary(object):
         list
 
         """
-        names = list({x.name for x in self._events})
-        names.sort()
-        return names
-
-    def _iter_events(self, name):
-        for event in self._events:
-            if event.name == name:
-                yield event
+        return [os.path.splitext(x) for x in self._event_dir]
 
     def show_events(self, name):
         """Print tabular events in terminal"""
@@ -346,7 +392,7 @@ class EventsSummary(object):
 
         field_names = None
         count = 0
-        for event in self._iter_events(name):
+        for event in self.iter_events(name):
             if field_names is None:
                 field_names = event.field_names()
             table.add_row(event.values())
@@ -362,8 +408,17 @@ class EventsSummary(object):
         print(f"Total events: {count}\n")
 
     def show_events_in_category(self, category):
-        """Print tabular events matching category in terminal"""
-        event_names = {x.name for x in self._events if x.category == category}
+        """Print tabular events matching category in terminal. Will cause all
+        events to get loaded into memory.
+
+        """
+        event_names = []
+        self._load_all_events()
+        for name, events in self._events.items():
+            if not events:
+                continue
+            if events[0].category == category:
+                event_names.append(name)
 
         if not event_names:
             print(f"There are no events in category {category}")
@@ -379,3 +434,17 @@ class EventsSummary(object):
     def show_event_names(self):
         """Show the unique event names in the log."""
         print("Names:  {}".format(" ".join(self.list_unique_names())))
+
+    def to_json(self):
+        """Return all events in JSON format.
+
+        Returns
+        -------
+        str
+
+        """
+        self._load_all_events()
+        return json.dumps(
+            [x.to_dict() for events in self._events.values() for x in events],
+            indent=2
+        )

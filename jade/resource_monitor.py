@@ -145,9 +145,7 @@ class StatsViewerBase(abc.ABC):
         self._stat_totals = {}
         self._num_events = 0
 
-        for event in events:
-            if event.name != event_name:
-                continue
+        for event in events.iter_events(event_name):
             self._num_events += 1
             if not self._stat_totals:
                 self._stat_totals = {

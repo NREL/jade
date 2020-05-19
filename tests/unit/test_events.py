@@ -49,6 +49,3 @@ def test_event_summary__show_events(test_data_dir, capsys):
     assert "Exception" in captured.out
     assert "australia" in captured.out
     assert "united_states" not in captured.out
-
-    if os.path.exists(event_summary._summary_file):
-        os.remove(event_summary._summary_file)
