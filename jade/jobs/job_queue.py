@@ -115,6 +115,10 @@ class JobQueue:
 
         jobs_to_pop = []
         available_jobs = self._queue_depth - len(self._outstanding_jobs)
+        if available_jobs == 0:
+            logger.debug("queue is full")
+            return
+
         num_blocked = 0
         for i, job in enumerate(self._queued_jobs):
             blocking = job.get_blocking_jobs()
