@@ -33,7 +33,7 @@ class GenericCommandParameters(JobParametersInterface):
         return {
             "command": self.command,
             "job_id": self.job_id,
-            "blocked_by": [x for x in self.blocked_by],
+            "blocked_by": list(self.blocked_by),
         }
 
     @classmethod
