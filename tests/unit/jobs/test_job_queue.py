@@ -16,7 +16,7 @@ class FakeJob(AsyncJobInterface):
     def __init__(self, name, duration, blocking_jobs=None):
         self._name = name
         self._duration = duration
-        self._blocking_jobs = [] if blocking_jobs is None else blocking_jobs
+        self._blocking_jobs = set() if blocking_jobs is None else blocking_jobs
         self.start_time = None
         self.end_time = None
 
@@ -62,11 +62,11 @@ def test_job_queue__run_jobs_ordering():
     for i in range(1, 11):
         name = str(i)
         if i == 1:
-            job = FakeJob(name, duration, blocking_jobs=["10"])
+            job = FakeJob(name, duration, blocking_jobs=set(["10"]))
         elif i == 2:
-            job = FakeJob(name, duration, blocking_jobs=["1"])
+            job = FakeJob(name, duration, blocking_jobs=set(["1"]))
         elif i == 3:
-            job = FakeJob(name, duration, blocking_jobs=["4", "5"])
+            job = FakeJob(name, duration, blocking_jobs=set(["4", "5"]))
         else:
             job = FakeJob(name, duration)
         jobs[name] = job

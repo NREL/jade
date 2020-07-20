@@ -166,13 +166,7 @@ class _BatchJobs:
         bool
 
         """
-        # PERF: This will not scale with huge numbers of jobs.
-        for blocking_job in blocking_jobs:
-            if blocking_job not in self._job_names:
-                logger.debug("Blocking job %s is not in the current batch",
-                             blocking_job)
-                return False
-        return True
+        return blocking_jobs.issubset(self._job_names)
 
     def is_job_blocked(self, job, try_add_blocked_jobs):
         """Return True if the job is blocked."""
@@ -274,7 +268,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         logger.info("Assigned job_ID=%s name=%s", self._job_id, self._name)
 
     def get_blocking_jobs(self):
-        return []
+        return set()
 
     def remove_blocking_job(self, name):
         assert False

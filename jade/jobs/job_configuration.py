@@ -115,17 +115,12 @@ class JobConfiguration(abc.ABC):
         blocking_jobs = set()
         for job in self.iter_jobs():
             job_names.add(job.name)
-            for blocking_job in job.get_blocking_jobs():
-                blocking_jobs.add(blocking_job)
+            blocking_jobs.update(job.get_blocking_jobs())
 
-        invalid = False
-        for blocking_job in blocking_jobs:
-            if blocking_job not in job_names:
-                invalid = True
-                logger.error("%s is blocking a job but does not exist",
-                              blocking_job)
-
-        if invalid:
+        missing_jobs = blocking_jobs.difference(job_names)
+        if missing_jobs:
+            for job in missing_jobs:
+                logger.error("%s is blocking a job but does not exist", job)
             raise InvalidConfiguration("job ordering definitions are invalid")
 
     @abc.abstractmethod

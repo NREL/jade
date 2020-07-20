@@ -43,7 +43,7 @@ def test_try_add_blocked_jobs(cleanup):
     jobs = list(inputs.iter_jobs())
     for i, job_param in enumerate(jobs):
         if i == num_commands - 1:
-            job_param.blocked_by[:] = [1, 2, 3, 4]
+            job_param.blocked_by = set([1, 2, 3, 4])
         config.add_job(job_param)
     config.dump(CONFIG_FILE)
 

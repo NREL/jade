@@ -38,8 +38,8 @@ class AsyncJobInterface(abc.ABC):
 
         Returns
         -------
-        list
-            Empty list means that the job is not blocked.
+        set
+            Empty set means that the job is not blocked.
 
         """
 

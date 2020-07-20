@@ -13,10 +13,10 @@ class GenericCommandParameters(JobParametersInterface):
         self.command = command
         self.job_id = job_id  # Gets set when job is added to config.
                               # Uniquely identifies the job.
-        self.blocked_by = []
+        self.blocked_by = set()
         if blocked_by is not None:
             for job_id in blocked_by:
-                self.blocked_by.append(str(job_id))
+                self.blocked_by.add(str(job_id))
 
     def __str__(self):
         return "<GenericCommandParameters: {}>".format(self.name)
@@ -33,7 +33,7 @@ class GenericCommandParameters(JobParametersInterface):
         return {
             "command": self.command,
             "job_id": self.job_id,
-            "blocked_by": self.blocked_by,
+            "blocked_by": [x for x in self.blocked_by],
         }
 
     @classmethod
@@ -41,11 +41,11 @@ class GenericCommandParameters(JobParametersInterface):
         return cls(
             data["command"],
             job_id=data["job_id"],
-            blocked_by=data["blocked_by"],
+            blocked_by=set([str(x) for x in data["blocked_by"]]),
         )
 
     def get_blocking_jobs(self):
-        return [str(x) for x in self.blocked_by]
+        return self.blocked_by
 
     def remove_blocking_job(self, name):
         self.blocked_by.remove(name)
