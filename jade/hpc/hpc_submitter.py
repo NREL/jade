@@ -180,6 +180,7 @@ class _BatchJobs:
         if not blocking_jobs:
             return False
         if try_add_blocked_jobs and self.are_blocking_jobs_present(blocking_jobs):
+            # JobRunner will manage the execution ordering on the compute node.
             return False
         return True
 
