@@ -98,7 +98,8 @@ results_summary={self.get_results_summmary_report()}"""
                     poll_interval=DEFAULTS["poll_interval"],
                     num_processes=None,
                     previous_results=None,
-                    reports=True):
+                    reports=True,
+                    try_add_blocked_jobs=False):
         """Submit simulations. Auto-detect whether the current system is an HPC
         and submit to its queue. Otherwise, run locally.
 
@@ -151,7 +152,8 @@ results_summary={self.get_results_summmary_report()}"""
                 verbose=verbose, num_processes=num_processes)
         else:
             self._submit_to_hpc(name, max_nodes, per_node_batch_size, verbose,
-                                poll_interval, num_processes)
+                                poll_interval, num_processes,
+                                try_add_blocked_jobs)
 
         results_summary = ResultsAggregatorSummary(self._results_dir)
         self._results = results_summary.get_results()
@@ -341,7 +343,7 @@ results_summary={self.get_results_summmary_report()}"""
         return 0
 
     def _submit_to_hpc(self, name, max_nodes, per_node_batch_size, verbose,
-                       poll_interval, num_processes):
+                       poll_interval, num_processes, try_add_blocked_jobs):
         queue_depth = max_nodes
         hpc_submitter = HpcSubmitter(
             name,
@@ -357,6 +359,7 @@ results_summary={self.get_results_summmary_report()}"""
             per_node_batch_size,
             num_processes,
             poll_interval=poll_interval,
+            try_add_blocked_jobs=try_add_blocked_jobs,
             verbose=verbose,
         )
 
