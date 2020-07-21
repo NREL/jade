@@ -53,11 +53,11 @@ class JobParametersInterface:
 
         Returns
         -------
-        list
-            Empty list means that the job is not blocked.
+        set
+            Empty set means that the job is not blocked.
 
         """
-        return []
+        return set()
 
     def remove_blocking_job(self, name):
         """Remove the name from the job's blocking list.

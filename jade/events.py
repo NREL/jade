@@ -384,7 +384,7 @@ class EventsSummary:
         list
 
         """
-        return [os.path.splitext(x) for x in self._event_dir]
+        return [os.path.splitext(x)[0] for x in os.listdir(self._event_dir)]
 
     def show_events(self, name):
         """Print tabular events in terminal"""

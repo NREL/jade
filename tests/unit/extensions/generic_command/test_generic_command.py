@@ -99,11 +99,11 @@ def test_job_order(generic_command_fixture):
     assert config.get_num_jobs() == num_jobs
     job = config.get_job("1")
     for i in range(10, 15):
-        job.blocked_by.append(i)
+        job.blocked_by.add(i)
 
-    config.get_job("2").blocked_by.append("1")
-    config.get_job("21").blocked_by.append("30")
-    config.get_job("41").blocked_by.append("50")
+    config.get_job("2").blocked_by.add("1")
+    config.get_job("21").blocked_by.add("30")
+    config.get_job("41").blocked_by.add("50")
     config.dump(CONFIG_FILE)
 
     os.environ["FAKE_HPC_CLUSTER"] = "True"

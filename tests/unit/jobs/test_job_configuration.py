@@ -39,7 +39,7 @@ def test_job_configuration__check_job_dependencies(job_fixture):
     assert config.get_num_jobs() == 1
 
     job = config.get_job("1")
-    job.blocked_by.append("10")
+    job.blocked_by.add("10")
     with pytest.raises(InvalidConfiguration):
         config.check_job_dependencies()
 
