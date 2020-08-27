@@ -349,6 +349,7 @@ def interpret_datetime(timestamp):
     formats = (
         "%Y-%m-%d_%H:%M:%S.%f",
         "%Y-%m-%d_%H-%M-%S-%f",
+        "%Y-%m-%dT%H:%M:%SZ",
     )
 
     for i, fmt in enumerate(formats):
