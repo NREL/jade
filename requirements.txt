@@ -8,4 +8,5 @@ prettytable
 psutil
 pyyaml
 statsmodels>=0.10.1
+tables
 toml>=0.10.0
