@@ -68,4 +68,3 @@ class JobParametersInterface:
             name of job that is now finished
 
         """
-        assert False, f"method not implemented for {self.__class__.__name__}"
