@@ -61,5 +61,12 @@ class JobContainerByKey(JobContainerInterface):
 
         raise InvalidParameter(f"job {name} not found")
 
+    def get_job_by_key(self, key):
+        job = self._jobs.get(key)
+        if job is None:
+            raise InvalidParameter(f"job key={key} not found")
+
+        return job
+
     def get_num_jobs(self):
         return len(self._jobs)
