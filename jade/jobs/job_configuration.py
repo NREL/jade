@@ -12,7 +12,7 @@ import toml
 from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
-from jade.utils.utils import dump_data, load_data
+from jade.utils.utils import dump_data, load_data, ExtendedJSONEncoder
 from jade.utils.timing_utils import timed_debug
 
 
@@ -83,7 +83,7 @@ class JobConfiguration(abc.ABC):
         # is an order of magnitude slower.
         data = self.serialize()
         if fmt == ".json":
-            json.dump(data, stream, indent=indent)
+            json.dump(data, stream, indent=indent, cls=ExtendedJSONEncoder)
         elif fmt == ".toml":
             toml.dump(data, stream)
         else:
@@ -384,7 +384,7 @@ class JobConfiguration(abc.ABC):
         for job in self.iter_jobs():
             basename = job.name + ".json"
             job_filename = os.path.join(directory, basename)
-            dump_data(job.serialize(), job_filename)
+            dump_data(job.serialize(), job_filename, cls=ExtendedJSONEncoder)
 
         # We will need this to deserialize from a filename that includes only
         # job names.

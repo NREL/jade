@@ -1,6 +1,10 @@
 """Utility functions for the jade package."""
 
-from datetime import datetime
+from datetime import datetime, date
+from dateutil.parser import parse
+from pathlib import PosixPath
+from typing import Union
+import enum
 import functools
 import gzip
 import logging
@@ -361,6 +365,26 @@ def interpret_datetime(timestamp):
             continue
 
 
+def standardize_timestamp(timestamp: Union[str, datetime]) -> str:
+    """Validate string timestamp and output standard format."""
+    stdfmt = "%Y-%m-%dT%H:%M:%S.%f"
+    if isinstance(timestamp, datetime):
+        return timestamp.strftime(stdfmt)
+
+    dt = None
+    formats = ("%Y-%m-%d_%H:%M:%S.%f", "%Y-%m-%d_%H-%M-%S-%f")
+    for fmt in formats:
+        try:
+            dt = datetime.strptime(timestamp, fmt)
+        except ValueError:
+            continue
+
+    if not dt:
+        dt = parse(timestamp)
+
+    return dt.strftime(stdfmt)
+
+
 def rotate_filenames(directory, ext):
     """Rotates filenames in directory, recursively, to .1, .2, .etc.
 
@@ -451,3 +475,17 @@ def _write_file(data, stream=sys.stdout, fmt=".json", indent=2):
         toml.dump(data, stream)
     else:
         assert False, fmt
+
+
+class ExtendedJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, enum.Enum):
+            return obj.value
+
+        if isinstance(obj, PosixPath):
+            return str(obj)
+
+        if isinstance(obj, (datetime, date)):
+            return standardize_timestamp(obj)
+
+        return json.JSONEncoder.default(self, obj)
