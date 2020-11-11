@@ -225,6 +225,22 @@ def get_cli_string():
     return os.path.basename(sys.argv[0]) + " " + " ".join(sys.argv[1:])
 
 
+def handle_file_not_found(func):
+    """Decorator to catch FileNotFoundError exceptions."""
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+        except FileNotFoundError:
+            msg = "one or more input parameters do not exist"
+            logger.debug(msg, exc_info=True)
+            raise InvalidParameter("{}: {}".format(msg, args[1:]))
+
+        return result
+
+    return wrapped
+
+
 def handle_key_error(func):
     """Decorator to catch KeyError exceptions that happen because the user
     performs invalid actions."""
