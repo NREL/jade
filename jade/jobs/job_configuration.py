@@ -371,6 +371,8 @@ class JobConfiguration(abc.ABC):
             "extension": self.extension_name,
             "jobs_directory": self._jobs_directory,
         }
+        if self._job_global_config:
+            data["job_global_config"] = self._job_global_config
 
         if self._job_post_process_config:
             data["job_post_process_config"] = self._job_post_process_config
