@@ -31,8 +31,16 @@ class JobConfiguration(abc.ABC):
 
     FILENAME_DELIMITER = "_"
 
-    def __init__(self, inputs, container, job_parameters_class, extension_name,
-                 job_post_process_config=None, batch_post_process_config=None, **kwargs):
+    def __init__(
+            self,
+            inputs,
+            container,
+            job_parameters_class, extension_name,
+            job_global_config=None,
+            job_post_process_config=None,
+            batch_post_process_config=None, 
+            **kwargs
+        ):
         """
         Constructs JobConfiguration.
 
@@ -49,6 +57,7 @@ class JobConfiguration(abc.ABC):
         self._job_names = None
         self._jobs_directory = kwargs.get("jobs_directory")
         self._registry = Registry()
+        self._job_global_config = job_global_config
         self._job_post_process_config = job_post_process_config
         self._batch_post_process_config = batch_post_process_config
 
@@ -263,6 +272,11 @@ class JobConfiguration(abc.ABC):
 
         """
         return self._jobs.get_num_jobs()
+
+    @property
+    def job_global_config(self):
+        """Return the global configs applied to all jobs."""
+        return self._job_global_config
 
     @property
     def job_post_process_config(self):
