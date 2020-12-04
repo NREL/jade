@@ -1,0 +1,1 @@
+[{"source": "submitter", "category": "ResourceUtilization", "name": "config_exec_summary", "message": "config execution summary", "event_class": "StructuredLogEvent", "timestamp": "2020-05-17 16:08:23.646899", "data": {"config_execution_time": 5.156754732131958, "num_jobs": 17}}]
