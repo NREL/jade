@@ -51,5 +51,5 @@ def test_resource_stats():
         cmd = f"jade stats show -o {tmpdir} cpu disk mem net"
         ret = run_command(cmd, output=output)
         assert ret == 0
-        for term in ("IOPS", "read_bytes", "buffers", "bytes_recv", "idle"):
+        for term in ("IOPS", "read_bytes", "bytes_recv", "idle"):
             assert term in output["stdout"]
