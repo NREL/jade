@@ -6,6 +6,7 @@ import tempfile
 import pandas as pd
 
 import jade
+from jade.extensions.demo.create_merge_pred_gdp import PRED_GDP_COMMANDS_FILE
 from jade.utils.utils import dump_data, load_data
 from jade.utils.subprocess_manager import run_command
 
@@ -73,3 +74,6 @@ def test_demo_extension(test_data_dir):
         
         if os.path.exists(config_file):
             os.remove(config_file)
+
+        if os.path.exists(PRED_GDP_COMMANDS_FILE):
+            os.remove(PRED_GDP_COMMANDS_FILE)

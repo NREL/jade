@@ -1,6 +1,10 @@
 """Utility functions for the jade package."""
 
-from datetime import datetime
+from datetime import datetime, date
+from dateutil.parser import parse
+from pathlib import PosixPath
+from typing import Union
+import enum
 import functools
 import gzip
 import logging
@@ -221,6 +225,22 @@ def get_cli_string():
     return os.path.basename(sys.argv[0]) + " " + " ".join(sys.argv[1:])
 
 
+def handle_file_not_found(func):
+    """Decorator to catch FileNotFoundError exceptions."""
+    @functools.wraps(func)
+    def wrapped(*args, **kwargs):
+        try:
+            result = func(*args, **kwargs)
+        except FileNotFoundError:
+            msg = "one or more input parameters do not exist"
+            logger.debug(msg, exc_info=True)
+            raise InvalidParameter("{}: {}".format(msg, args[1:]))
+
+        return result
+
+    return wrapped
+
+
 def handle_key_error(func):
     """Decorator to catch KeyError exceptions that happen because the user
     performs invalid actions."""
@@ -349,6 +369,7 @@ def interpret_datetime(timestamp):
     formats = (
         "%Y-%m-%d_%H:%M:%S.%f",
         "%Y-%m-%d_%H-%M-%S-%f",
+        "%Y-%m-%dT%H:%M:%SZ",
     )
 
     for i, fmt in enumerate(formats):
@@ -358,6 +379,26 @@ def interpret_datetime(timestamp):
             if i == len(formats) - 1:
                 raise
             continue
+
+
+def standardize_timestamp(timestamp: Union[str, datetime]) -> str:
+    """Validate string timestamp and output standard format."""
+    stdfmt = "%Y-%m-%dT%H:%M:%S.%f"
+    if isinstance(timestamp, datetime):
+        return timestamp.strftime(stdfmt)
+
+    dt = None
+    formats = ("%Y-%m-%d_%H:%M:%S.%f", "%Y-%m-%d_%H-%M-%S-%f")
+    for fmt in formats:
+        try:
+            dt = datetime.strptime(timestamp, fmt)
+        except ValueError:
+            continue
+
+    if not dt:
+        dt = parse(timestamp)
+
+    return dt.strftime(stdfmt)
 
 
 def rotate_filenames(directory, ext):
@@ -450,3 +491,20 @@ def _write_file(data, stream=sys.stdout, fmt=".json", indent=2):
         toml.dump(data, stream)
     else:
         assert False, fmt
+
+
+class ExtendedJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, enum.Enum):
+            return obj.value
+
+        if isinstance(obj, PosixPath):
+            return str(obj)
+
+        if isinstance(obj, (datetime, date)):
+            return standardize_timestamp(obj)
+
+        if isinstance(obj, set):
+            return list(obj)
+
+        return json.JSONEncoder.default(self, obj)

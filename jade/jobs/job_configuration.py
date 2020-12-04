@@ -12,7 +12,7 @@ import toml
 from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
-from jade.utils.utils import dump_data, load_data
+from jade.utils.utils import dump_data, load_data, ExtendedJSONEncoder
 from jade.utils.timing_utils import timed_debug
 
 
@@ -31,8 +31,17 @@ class JobConfiguration(abc.ABC):
 
     FILENAME_DELIMITER = "_"
 
-    def __init__(self, inputs, container, job_parameters_class, extension_name,
-                 job_post_process_config=None, batch_post_process_config=None, **kwargs):
+    def __init__(
+            self,
+            inputs,
+            container,
+            job_parameters_class,
+            extension_name,
+            job_global_config=None,
+            job_post_process_config=None,
+            batch_post_process_config=None, 
+            **kwargs
+        ):
         """
         Constructs JobConfiguration.
 
@@ -49,6 +58,7 @@ class JobConfiguration(abc.ABC):
         self._job_names = None
         self._jobs_directory = kwargs.get("jobs_directory")
         self._registry = Registry()
+        self._job_global_config = job_global_config
         self._job_post_process_config = job_post_process_config
         self._batch_post_process_config = batch_post_process_config
 
@@ -83,7 +93,7 @@ class JobConfiguration(abc.ABC):
         # is an order of magnitude slower.
         data = self.serialize()
         if fmt == ".json":
-            json.dump(data, stream, indent=indent)
+            json.dump(data, stream, indent=indent, cls=ExtendedJSONEncoder)
         elif fmt == ".toml":
             toml.dump(data, stream)
         else:
@@ -265,6 +275,11 @@ class JobConfiguration(abc.ABC):
         return self._jobs.get_num_jobs()
 
     @property
+    def job_global_config(self):
+        """Return the global configs applied to all jobs."""
+        return self._job_global_config
+
+    @property
     def job_post_process_config(self):
         """Return post process config for jobs"""
         return self._job_post_process_config
@@ -357,6 +372,8 @@ class JobConfiguration(abc.ABC):
             "extension": self.extension_name,
             "jobs_directory": self._jobs_directory,
         }
+        if self._job_global_config:
+            data["job_global_config"] = self._job_global_config
 
         if self._job_post_process_config:
             data["job_post_process_config"] = self._job_post_process_config
@@ -384,7 +401,7 @@ class JobConfiguration(abc.ABC):
         for job in self.iter_jobs():
             basename = job.name + ".json"
             job_filename = os.path.join(directory, basename)
-            dump_data(job.serialize(), job_filename)
+            dump_data(job.serialize(), job_filename, cls=ExtendedJSONEncoder)
 
         # We will need this to deserialize from a filename that includes only
         # job names.

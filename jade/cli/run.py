@@ -96,8 +96,12 @@ def run(extension, **kwargs):
         try:
             config = load_data(config_file)
             if "job_post_process_config" in config.keys():
-                post_process = JobPostProcess(*config['job_post_process_config'].values(),
-                                            job_name=name, output=output)
+                post_process = JobPostProcess(
+                    module_name=config['job_post_process_config']['module'],
+                    class_name=config['job_post_process_config']['class'],
+                    job_name=name,
+                    output=output,
+                )
                 post_process.run(config_file=config_file, output=output)
         except Exception as err:
             msg = f"unexpected exception in post-process '{extension}' job={name} - {err}"

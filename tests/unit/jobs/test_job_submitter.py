@@ -6,14 +6,11 @@ import pytest
 from jade.jobs.job_submitter import JobSubmitter
 
 
-TEST_DATA_DIR = "tests/data/example_output"
-
-
-def test_jobs_submitter__find_error_log_messages():
-    events = list(JobSubmitter.find_error_log_messages(TEST_DATA_DIR))
+def test_jobs_submitter__find_error_log_messages(example_output):
+    events = list(JobSubmitter.find_error_log_messages(example_output))
     assert len(events) == 4
     assert events[0].data["error"] == "Traceback"
-    assert events[0].data["filename"] == f"{TEST_DATA_DIR}/job_output_2741821.e"
+    assert events[0].data["filename"] == f"{example_output}/job_output_2741821.e"
     assert events[0].data["line_number"] == 2
     assert events[0].data["text"] == "Traceback (most recent call last):"
     assert events[1].data["error"] == "DUE TO TIME LIMIT"
@@ -25,10 +22,10 @@ def test_jobs_submitter__find_error_log_messages():
 
 
 @pytest.fixture
-def cleanup():
+def cleanup(example_output):
     def delete_files():
         for filename in ("errors.txt", "results.txt", "stats.txt"):
-            path = os.path.join(TEST_DATA_DIR, filename)
+            path = os.path.join(example_output, filename)
             if os.path.exists(path):
                 os.remove(path)
     delete_files()
@@ -36,9 +33,9 @@ def cleanup():
     delete_files()
 
 
-def test_jobs_submitter__generate_reports(cleanup):
-    ret = JobSubmitter.generate_reports(TEST_DATA_DIR)
+def test_jobs_submitter__generate_reports(example_output, cleanup):
+    ret = JobSubmitter.generate_reports(example_output)
     assert ret == 0
     for filename in ("errors.txt", "results.txt", "stats.txt"):
-        path = os.path.join(TEST_DATA_DIR, filename)
+        path = os.path.join(example_output, filename)
         assert os.path.exists(path)
