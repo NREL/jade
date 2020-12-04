@@ -8,6 +8,8 @@ import sys
 from jade.utils.subprocess_manager import run_command
 from jade.utils.utils import load_data
 
+PRED_GDP_COMMANDS_FILE = "pred_gdp_commands.txt"
+
 
 def main():
     status = load_data(os.environ["JADE_PIPELINE_STATUS_FILE"])
@@ -17,7 +19,7 @@ def main():
     previous_stage_output = previous_stage["output_directory"]
     script = "jade/extensions/demo/merge_pred_gdp.py"
 
-    with open("pred_gdp_commands.txt", "w") as f_out:
+    with open(PRED_GDP_COMMANDS_FILE, "w") as f_out:
         cmd = f"python {script} run {previous_stage_output} {cur_stage_output}"
         f_out.write(cmd + "\n")
 

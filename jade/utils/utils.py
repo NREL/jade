@@ -504,4 +504,7 @@ class ExtendedJSONEncoder(json.JSONEncoder):
         if isinstance(obj, (datetime, date)):
             return standardize_timestamp(obj)
 
+        if isinstance(obj, set):
+            return list(obj)
+
         return json.JSONEncoder.default(self, obj)
