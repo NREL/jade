@@ -1,0 +1,1 @@
+[{"source": "australia", "category": "Error", "name": "unhandled_error", "message": "Analysis failed!", "event_class": "StructuredErrorLogEvent", "timestamp": "2020-04-27 14:18:29.636988", "data": {"error": "test", "exception": "<class 'Exception'>", "filename": "autoregression_execution.py", "lineno": 160}}]
