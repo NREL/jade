@@ -28,7 +28,7 @@ class JobPostProcess:
             optional dictionary of additional data to send to post process
 
         """
-        self._data = {} if data is None else data
+        self._data = data or {}
         self._job_name = job_name
         self._output = output
 
