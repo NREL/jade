@@ -175,6 +175,13 @@ configuration::
 Configurations can also be created manually or programmatically. Extensions
 may provide methods to create configurations with a subset of possible jobs.
 
+JADE implements a CLI command to simplify the interface for the
+commonly-executed generic_command extension.
+
+::
+
+    jade config create <commands-file> -c config.json
+
 CLI Execution
 *************
 Jade provides a CLI utility to start jobs.

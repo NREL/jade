@@ -23,7 +23,7 @@ def main():
         cmd = f"python {script} run {previous_stage_output} {cur_stage_output}"
         f_out.write(cmd + "\n")
 
-    cmd = "jade auto-config generic_command pred_gdp_commands.txt -c config-stage2.json"
+    cmd = "jade config create pred_gdp_commands.txt -c config-stage2.json"
     sys.exit(run_command(cmd))
 
 
