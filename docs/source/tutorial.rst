@@ -11,7 +11,12 @@ container.
 
 Computer or HPC in conda environment
 ====================================
-1. Choose a virtual environment in which to install JADE.  This can be an
+1. Clone JADE. ::
+
+    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
+    cd jade
+
+2. Choose a virtual environment in which to install JADE.  This can be an
    existing `conda <https://docs.conda.io/en/latest/miniconda.html>`_
    environment or an environment from something like `pyenv
    <https://github.com/pyenv/pyenv>`_.  A validated conda environment is
@@ -22,11 +27,8 @@ Computer or HPC in conda environment
     conda env create -f environment.yml -n jade
     conda activate jade
 
-2. Install JADE. ::
+3. Install JADE. ::
 
-    cd <your-root-repo-directory>
-    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
-    cd jade
     pip install -e .
 
     # If you will also be developing JADE code then include dev packages.
