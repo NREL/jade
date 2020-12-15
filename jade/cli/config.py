@@ -1,5 +1,6 @@
 """CLI to display and manage config files."""
 
+import logging
 import os
 import re
 import sys
@@ -8,14 +9,47 @@ import tempfile
 import click
 from prettytable import PrettyTable
 
+from jade.common import CONFIG_FILE
+from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
 from jade.loggers import setup_logging
 from jade.utils.utils import dump_data, load_data
+
+
+logger = logging.getLogger(__name__)
 
 
 @click.group()
 def config():
     """Manage a JADE configuration."""
     setup_logging("config", None)
+
+
+@click.command()
+@click.argument("filename", type=click.Path(exists=True))
+@click.option(
+    "-c",
+    "--config-file",
+    default=CONFIG_FILE,
+    show_default=True,
+    help="config file to generate.",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Enable verbose log output.",
+)
+def create(filename, config_file, verbose):
+    """Create a config file from a filename with a list of executable commands."""
+    level = logging.DEBUG if verbose else logging.WARNING
+    setup_logging("auto_config", None, console_level=level)
+
+    config = GenericCommandConfiguration.auto_config(filename)
+    print(f"Created configuration with {config.get_num_jobs()} jobs.")
+    config.dump(config_file)
+    print(f"Dumped configuration to {config_file}.\n")
 
 
 @click.command()
@@ -178,5 +212,6 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
             os.remove(new_config_file)
 
 
+config.add_command(create)
 config.add_command(show)
 config.add_command(_filter)
