@@ -1,7 +1,8 @@
 # JADE
 JADE source code repository
 
-Documentation:  https://nrel.github.io/jade/
+Documentation: https://nrel.github.io/jade/
+Tutorial: https://nrel.github.io/jade/tutorial.html
 
 ## Dev Setup
 This project uses [conda](https://docs.conda.io/en/latest/) to manage software dependencies.

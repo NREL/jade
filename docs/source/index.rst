@@ -5,46 +5,62 @@
 
 JADE documentation
 *******************
-
-What is JADE?
-=============
 JADE stands for **Job Automation and Deployment Engine**.
 
-JADE automates execution of jobs on any computer or HPC. The core
-infrastructure is written in Python, but it allows for each individual job to
-be any executable.
+JADE automates parallelized execution of jobs. It has specific support for
+distributing work on HPC compute nodes but can also be executed locally.
+
+The core infrastructure is written in Python, but it allows for each individual
+job to be any executable.
 
 Types of Jobs
 =============
 There are two ways to use JADE:
 
-1. Generic commands
+1. Execute a list of CLI commands.
 
-You want to submit a list of CLI commands to HPC nodes in parallel. You will
-need to configure the following within JADE:
-
-- how many nodes to use
-- how many jobs to run in parallel on each node
-- how many jobs to run in a single node allocation (consider job duration and
-  which HPC partition you are using)
-- dependencies between jobs (i.e., job ID 4 cannot start until job ID 10
-  finishes)
-
-You can then submit the jobs from either a login node or compute node.
-
-Refer to :ref:`generic_command_extension_label` for more information.
+- Put the commands in a text file, one per line.
+- Create a JADE configuration with ``jade config create commands.txt``
+- Run the jobs with ``jade submit-jobs config.json``
 
 2. User-specific extension
 
-You want develop your own customized JADE extension. Refer to Extending JADE
-below.
+JADE allows users to create extensions in order to customize configuration and
+execution. Refer to :ref:`extending-jade-label` below.
+
+Parallelization on HPC Compute Nodes
+====================================
+JADE offers the following parameters for customizing job execution on an HPC:
+
+- how many nodes to use
+- how many jobs to run in parallel on each node (default is number of CPUs)
+- how many jobs to run in a single node allocation (consider job duration and
+  which HPC partition you are using)
+
+Job Ordering
+============
+JADE's default behavior is to treat each job with equal priority. Dependencies
+can be defined in the configuration to guarantee that a job won't start until
+one or more other jobs complete.
+
+A common use case is to define one data-upload job per batch that runs once all
+jobs in a single batch complete.
+
+Suppose you want to split 1000 jobs across 10 nodes. You want each job to write
+data to the compute node's local storage for performance reasons. You can
+define a 101st job for each batch that uploads that node's data to a permanent
+location.
 
 Batch Pipeline
 ==============
 JADE supports execution of a pipeline of job batches. The output of the first
-batch of jobs can be piped to the next batch, and so on.
+batch of jobs can be piped to the next batch, and so on. This can be much
+simpler and more efficient than defining a complex job-ordering scheme. Each
+stage in the pipeline can also have independent parallelization parameters.
 
 Refer to :ref:`batch_pipeline_label` for more information.
+
+.. _extending-jade-label:
 
 Extending JADE
 ==============

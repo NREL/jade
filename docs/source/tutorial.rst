@@ -22,8 +22,6 @@ Computer or HPC in conda environment
    <https://github.com/pyenv/pyenv>`_.  A validated conda environment is
    provided in the JADE repository. ::
 
-    # If conda is not already in your environment (such as on HPC):
-    module load conda
     conda env create -f environment.yml -n jade
     conda activate jade
 
@@ -34,7 +32,7 @@ Computer or HPC in conda environment
     # If you will also be developing JADE code then include dev packages.
     pip install -e . -r dev-requirements.txt
 
-.. note:: The dev packages that pandoc and plantuml be installed.
+.. note:: The dev packages require that pandoc and plantuml be installed.
 
    - Refer to `pandoc <https://pandoc.org/installing.html>`_.
    - plantuml on Mac: ``brew install plantuml``
@@ -80,20 +78,23 @@ Then type ``jade`` to show JADE related commands
 
     Usage: jade [OPTIONS] COMMAND [ARGS]...
 
-      Available commands for Job Automation and Deployment Engine (JADE)
+      JADE commands
 
     Options:
       --help  Show this message and exit.
 
     Commands:
       auto-config   Automatically create a configuration.
+      config        Manage a JADE configuration.
       extensions    Manage JADE extensions.
+      pipeline      Manage JADE execution pipeline.
       show-events   Shows the events after jobs run.
       show-results  Shows the results of a batch of jobs.
+      stats         View stats from a run.
       submit-jobs   Submits jobs for execution, locally or on HPC.
 
-This base image is https://hub.docker.com/r/continuumio/miniconda3, which is built
-on top of ``debian``, so you can use Linux commands for operation.
+This base image is https://hub.docker.com/r/continuumio/miniconda3, which is
+built on top of ``debian``, so you can use Linux commands for operation.
 
 4. To exit docker environment, just type
 
@@ -123,13 +124,13 @@ to register it as a package that JADE logs.  Here's how to do that::
 
 JADE extensions are stored locally in ~/.jade-registry.json.
 
-If all you want to do is batch a bunch of CLI commands then refer to
+If all you want to do is batch a list of CLI commands then refer to
 :ref:`generic_command_extension_label`.
 
 
 HPC Configuration
 *****************
-This section only applies if you run your jobs on the HPC.
+This section only applies if you run your jobs on an HPC.
 
 HPC Parameters
 ==============
@@ -160,7 +161,7 @@ Prerequistes
 ============
 If you are not using the JADE conda environment then you should take note of
 the packages it installs (environment.yml). One common pitfall is that JADE
-requires a newer version of git than is installed by default on Eagle.
+requires a newer version of git than users have.
 
 Configuring Jobs
 ****************
