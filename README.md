@@ -1,9 +1,7 @@
 # JADE
 JADE source code repository
 
-Documentation:  https://github.nrel.gov/pages/Hosting-Capacity-Analysis/jade
-
-Tutorial:  https://github.nrel.gov/pages/Hosting-Capacity-Analysis/jade/tutorial
+Documentation:  https://nrel.github.io/jade/
 
 ## Dev Setup
 This project uses [conda](https://docs.conda.io/en/latest/) to manage software dependencies.

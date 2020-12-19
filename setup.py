@@ -41,7 +41,7 @@ setup(
     long_description=readme,
     author="NREL",
     maintainer_email="daniel.thom@nrel.gov",
-    url="https://github.nrel.gov/Hosting-Capacity-Analysis/jade",
+    url="https://github.com./NREL/jade",
     packages=find_packages(),
     package_dir={"jade": "jade"},
     entry_points={

@@ -254,7 +254,7 @@ you don't think the method is necessary for you, then just ``pass`` in the imple
 
 Please check the source code
 `jade.extensions.demo.autoregression_paramters
-<https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/jade/extensions/demo/autoregression_parameters.py>`_.
+<https://github.com/NREL/jade/blob/master/jade/extensions/demo/autoregression_parameters.py>`_.
 
 - :class:`~jade.jobs.job_inputs_interface.JobInputsInterface`: Defines the available input parameters for all aut-regression jobs.
 
@@ -269,14 +269,14 @@ Please check the source code
 
 Please check the source code
 `jade.extensions.demo.autoregression_inputs
-<https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/jade/extensions/demo/autoregression_inputs.py>`_.
+<https://github.com/NREL/jade/blob/master/jade/extensions/demo/autoregression_inputs.py>`_.
 
 .. note::
 
     It's the user's responsibility to generate the ``inputs.json`` file that would be
     consumed by this class. For this ``demo`` extension, there's a script file used for creating
     the `json` file. In this demo, the ``inputs.json`` was created using this Python
-    `script <https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/jade/extensions/demo/data/inputs.py>`_.
+    `script <https://github.com/NREL/jade/blob/master/jade/extensions/demo/data/inputs.py>`_.
 
 - :class:`~jade.jobs.job_configuration.JobConfiguration`: Defines a batch of auto-regression jobs to be executed.
 
@@ -292,7 +292,7 @@ Please check the source code
 - :class:`~jade.jobs.job_execution_interface.JobExecutionInterface`: Code to run a auto-regression job.
 
 Please checkout the source code `jade.extensions.demo.autoregression_configuration
-<https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/jade/extensions/demo/autoregression_configuration.py>`_.
+<https://github.com/NREL/jade/blob/master/jade/extensions/demo/autoregression_configuration.py>`_.
 
 .. code-block:: python
 
@@ -303,7 +303,7 @@ Please checkout the source code `jade.extensions.demo.autoregression_configurati
         ...
 
 Please checkout the source code `jade.extensions.demo.autoregression_execution
-<https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/jade/extensions/demo/autoregression_execution.py>`_
+<https://github.com/NREL/jade/blob/master/jade/extensions/demo/autoregression_execution.py>`_
 
 **4. Register Your Extension in JADE**
 
@@ -342,7 +342,7 @@ For ``demo`` extension, the ``auto_config`` and ``run`` functions looks like thi
         ...
 
 Please check the source code `jade.extensions.demo.cli
-<https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/jade/extensions/demo/cli.py>`_.
+<https://github.com/NREL/jade/blob/master/jade/extensions/demo/cli.py>`_.
 Those two functions are consumed by JADE's CLI commands ``jade auto-config`` and
 ``jade submit-jobs`` separately in command line.
 
@@ -354,7 +354,7 @@ Pytest framework - https://docs.pytest.org/en/latest/ to perform unit tests and 
 Here are some examples for ``demo`` extensions.
 
 The following is an unit test from `tests.unit.extensions.demo.test_autregression_execution.py
-<https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/tests/unit/extensions/demo/test_autogression_execution.py>`_.
+<https://github.com/NREL/jade/blob/master/tests/unit/extensions/demo/test_autogression_execution.py>`_.
 
 .. code-block:: python
 
@@ -380,7 +380,7 @@ The following is an unit test from `tests.unit.extensions.demo.test_autregressio
 
 
 The following is an integration test from `tests.integration.extensions.demo.test_auto_config.py
-<https://github.nrel.gov/Hosting-Capacity-Analysis/jade/blob/master/tests/integration/extensions/demo/test_auto_config.py>`_.
+<https://github.com/NREL/jade/blob/master/tests/integration/extensions/demo/test_auto_config.py>`_.
 
 .. code-block:: python
 

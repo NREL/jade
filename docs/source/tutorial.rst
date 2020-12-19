@@ -13,7 +13,7 @@ Computer or HPC in conda environment
 ====================================
 1. Clone JADE. ::
 
-    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
+    git clone git@github.com:NREL/jade.git
     cd jade
 
 2. Choose a virtual environment in which to install JADE.  This can be an
@@ -52,7 +52,7 @@ on your machine first. Then you can continue JADE installation with docker.
 
 ::
 
-    git clone git@github.nrel.gov:Hosting-Capacity-Analysis/jade.git
+    git clone git@github.com:NREL/jade.git
 
 2. Build ``jade`` docker image
 
