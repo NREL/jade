@@ -42,9 +42,7 @@ def test_create_slurm(hpc_fixture):
         create_hpc_manager("eagle", bad_config)
 
     optional_config = copy.deepcopy(hpc_config())
-    optional_config["hpc"].pop("mem")
-    mgr = create_hpc_manager("eagle", optional_config)
-    assert "mem" in mgr.get_hpc_config()["hpc"]
+    create_hpc_manager("eagle", optional_config)
 
 
 def test_create_slurm_invalid_file(hpc_fixture):
