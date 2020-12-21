@@ -1,25 +1,27 @@
 """Common exceptions for jade package"""
 
+class JadeBaseException(Exception):
+    """All JADE exceptions should derive from this class."""
 
-class ExecutionError(Exception):
+class ExecutionError(JadeBaseException):
     """Raised when execution fails."""
 
 
-class InvalidConfiguration(Exception):
+class InvalidConfiguration(JadeBaseException):
     """Raised when the configuration is invalid."""
 
 
-class InvalidParameter(Exception):
+class InvalidParameter(JadeBaseException):
     """Raised when bad user input is detected."""
 
 
-class JobAlreadyInProgress(Exception):
+class JobAlreadyInProgress(JadeBaseException):
     """Raised when a local job is started while another is in progress."""
 
 
-class UserAbort(Exception):
+class UserAbort(JadeBaseException):
     """Raised when the user has aborted the operation."""
 
 
-class InvalidExtension(Exception):
+class InvalidExtension(JadeBaseException):
     """Raise when extension does not exist in EXTENSIONS"""
