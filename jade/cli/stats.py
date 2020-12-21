@@ -3,7 +3,6 @@ CLI to show events of a scenario.
 """
 
 import datetime
-import logging
 import sys
 
 import click
@@ -79,7 +78,7 @@ def show(stats, output):
     help="Output directory."
 )
 @click.command()
-def bytes_consumed(output, human_readable): 
+def bytes_consumed(output, human_readable):
     events = EventsSummary(output)
     consumed = events.get_bytes_consumed()
     if human_readable:

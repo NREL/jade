@@ -39,7 +39,7 @@ class JobConfiguration(abc.ABC):
             extension_name,
             job_global_config=None,
             job_post_process_config=None,
-            batch_post_process_config=None, 
+            batch_post_process_config=None,
             **kwargs
         ):
         """

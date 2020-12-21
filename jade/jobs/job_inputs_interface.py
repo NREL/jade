@@ -7,7 +7,6 @@ class JobInputsInterface(abc.ABC):
     """Interface definition for configuration inputs."""
 
     @property
-    @abc.abstractmethod
     def base_directory(self):
         """Return the base directory."""
 

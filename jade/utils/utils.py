@@ -1,7 +1,6 @@
 """Utility functions for the jade package."""
 
 from datetime import datetime, date
-from dateutil.parser import parse
 from pathlib import PosixPath
 from typing import Union
 import enum
@@ -15,6 +14,7 @@ import shutil
 import stat
 import sys
 import yaml
+from dateutil.parser import parse
 
 import toml
 

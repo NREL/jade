@@ -74,7 +74,7 @@ def submit(config_file, output, verbose=False):
         mgr.submit(verbose=verbose)
     except Exception:
         logger.exception("Pipeline execution failed")
-        sys.exit(1)
+        raise
 
     sys.exit(0)
 

@@ -1,7 +1,6 @@
 """
 The job execution class and methods for auto-regression
 """
-import logging
 import os
 
 import numpy as np
@@ -138,7 +137,6 @@ class AutoRegressionExecution(JobExecutionInterface):
 
     def post_process(self, **kwargs):
         """Run post-process operations on data."""
-        pass
 
     def run(self):
         """Runs the autoregression, and return status code"""

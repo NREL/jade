@@ -8,7 +8,6 @@ from jade.common import OUTPUT_DIR
 from jade.jobs.job_post_process import JobPostProcess
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
-from jade.utils.custom_click_options import CustomOptions
 
 
 @click.option(

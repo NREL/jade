@@ -3,7 +3,6 @@ CLI to show events of a scenario.
 """
 
 import logging
-import sys
 
 import click
 

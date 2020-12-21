@@ -41,7 +41,7 @@ class GenericCommandParameters(JobParametersInterface):
         return cls(
             data["command"],
             job_id=data["job_id"],
-            blocked_by=set([str(x) for x in data["blocked_by"]]),
+            blocked_by={str(x) for x in data["blocked_by"]},
         )
 
     def get_blocking_jobs(self):

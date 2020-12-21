@@ -15,16 +15,14 @@ JADE_PATH = jade.__path__[0]
 
 def test_demo_extension(test_data_dir):
     """Should create a config.json file"""
-    inputs = os.path.join(test_data_dir, "demo")
     config_file = os.path.join(test_data_dir, "config.json")
 
     if os.path.exists(config_file):
         os.remove(config_file)
-    
+
     base = os.path.join(JADE_PATH, "extensions", "demo")
     create_demo_config = os.path.join(base, "create_demo_config.sh")
     create_merge_config = os.path.join(base, "create_merge_pred_gdp.py")
-    script = os.path.join(base, "merge_pred_gdp.py")
     config_file = os.path.join(test_data_dir, "pipeline.toml")
     output = os.path.join(test_data_dir, "output")
 
@@ -71,7 +69,7 @@ def test_demo_extension(test_data_dir):
     finally:
         if os.path.exists(output):
             shutil.rmtree(output)
-        
+
         if os.path.exists(config_file):
             os.remove(config_file)
 

@@ -88,7 +88,6 @@ class Registry:
             emod, extension["job_execution_class"])
         ext[ExtensionClassType.CLI] = cli_mod
 
-        cfg_module = importlib.import_module(ext["job_execution_module"])
         self._extensions[extension["name"]] = ext
 
     def _check_registry_config(self, filename):

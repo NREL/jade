@@ -20,7 +20,7 @@ class JobContainerByKey(JobContainerInterface):
     @staticmethod
     def _get_key(job=None, key=None):
         if key is None and job is None:
-            raise InvalidParameter(f"either key or job must be passed")
+            raise InvalidParameter("either key or job must be passed")
         if key is not None and job is not None:
             raise InvalidParameter("only one of key and job can be "
                                    "passed")

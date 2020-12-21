@@ -5,7 +5,7 @@ import os
 import re
 
 from jade.enums import Status
-from jade.exceptions import ExecutionError, InvalidConfiguration
+from jade.exceptions import ExecutionError  #, InvalidConfiguration
 from jade.hpc.common import HpcJobStatus, HpcJobInfo
 from jade.hpc.hpc_manager_interface import HpcManagerInterface
 from jade.utils.subprocess_manager import run_command
@@ -148,7 +148,7 @@ class SlurmManager(HpcManagerInterface):
             f"#SBATCH --time={self._config['hpc']['walltime']}",
             f"#SBATCH --output={path}/job_output_%j.o",
             f"#SBATCH --error={path}/job_output_%j.e",
-            f"#SBATCH --nodes=1",
+            "#SBATCH --nodes=1",
         ]
 
         for param in ("memory", "partition", "ntasks", "ntasks_per_node",

@@ -277,7 +277,6 @@ results_summary={self.get_results_summmary_report()}"""
             output directory
 
         """
-        errors = []
         substrings = (
             "DUE TO TIME LIMIT",  # includes slurmstepd, but check this first
             "srun",

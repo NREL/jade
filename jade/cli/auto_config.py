@@ -1,7 +1,6 @@
 """CLI to automatically create a configuration."""
 
 import logging
-import sys
 
 import click
 
@@ -10,7 +9,6 @@ from jade.loggers import setup_logging
 from jade.exceptions import InvalidExtension
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.jobs.job_post_process import JobPostProcess
-from jade.utils.utils import load_data
 
 
 # TODO: need one group command for auto-config; this should be a subcommand.

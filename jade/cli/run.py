@@ -12,7 +12,7 @@ from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
 from jade.loggers import log_event, setup_logging
 from jade.jobs.job_post_process import JobPostProcess
 from jade.utils.utils import get_cli_string, load_data
-from jade.exceptions import InvalidExtension, ExecutionError
+from jade.exceptions import InvalidExtension
 from jade.extensions.registry import Registry, ExtensionClassType
 
 

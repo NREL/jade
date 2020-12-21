@@ -13,7 +13,7 @@ from datetime import datetime
 from prettytable import PrettyTable
 
 from jade.common import JOBS_OUTPUT_DIR
-from jade.exceptions import InvalidConfiguration, InvalidParameter
+from jade.exceptions import InvalidConfiguration
 from jade.utils.utils import dump_data, load_data
 
 

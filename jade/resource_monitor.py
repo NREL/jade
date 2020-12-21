@@ -2,7 +2,6 @@
 from collections import defaultdict
 import abc
 import logging
-import os
 import time
 
 import pandas as pd
@@ -89,7 +88,7 @@ class ResourceMonitor:
         stats["read IOPS"] = float(stats["read_count"]) / stats["elapsed_seconds"]
         stats["write IOPS"] = float(stats["write_count"]) / stats["elapsed_seconds"]
         self._update_disk_stats(data)
-        
+
         log_event(
             StructuredLogEvent(
                 source=self._name,
@@ -124,7 +123,7 @@ class ResourceMonitor:
         stats["recv MB/s"] = self._mb_per_sec(stats["bytes_recv"], stats["elapsed_seconds"])
         stats["sent MB/s"] = self._mb_per_sec(stats["bytes_sent"], stats["elapsed_seconds"])
         self._update_net_stats(data)
-        
+
         log_event(
             StructuredLogEvent(
                 source=self._name,
@@ -287,7 +286,7 @@ class DiskStatsViewer(StatsViewerBase):
         elif isinstance(val, float):
             val = "{:.3f}".format(val)
         return val
-        
+
     def show_stats(self):
         print("\nDisk statistics for each batch")
         print("==============================\n")
@@ -331,7 +330,7 @@ class NetworkStatsViewer(StatsViewerBase):
         elif isinstance(val, float):
             val = "{:.3f}".format(val)
         return val
-        
+
     def show_stats(self):
         print("\nNetwork statistics for each batch")
         print("=================================\n")

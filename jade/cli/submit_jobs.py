@@ -6,12 +6,11 @@ import sys
 
 import click
 
-from jade.common import POST_PROCESSING_CONFIG_FILE
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
-from jade.utils.utils import rotate_filenames, get_cli_string, load_data
+from jade.utils.utils import rotate_filenames, get_cli_string
 
 
 logger = logging.getLogger(__name__)

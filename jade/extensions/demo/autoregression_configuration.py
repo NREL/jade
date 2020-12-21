@@ -4,7 +4,6 @@ Implement JobConfiguration for auto-regression analysis.
 from jade.jobs.job_container_by_key import JobContainerByKey
 from jade.jobs.job_configuration import JobConfiguration
 from jade.extensions.demo.autoregression_parameters import AutoRegressionParameters
-from jade.extensions.demo.autoregression_execution import AutoRegressionExecution
 
 
 class AutoRegressionConfiguration(JobConfiguration):
@@ -33,11 +32,9 @@ class AutoRegressionConfiguration(JobConfiguration):
 
     def _serialize(self, data):
         """Fill in instance-specific information."""
-        pass
 
     def _transform_for_local_execution(self, scratch_dir, are_inputs_local):
         """Transform data for efficient execution"""
-        pass
 
     def create_from_result(self, job, output_dir):
         """Create instance from result"""
