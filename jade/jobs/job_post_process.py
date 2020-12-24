@@ -25,7 +25,7 @@ class JobPostProcess:
         class_name : str
             class implementing post process to run
         data : dict
-            optional dictionary of additional data to send to post process
+            optional dictionary of overrides data to send to post process
 
         """
         self._data = data or {}
@@ -35,7 +35,10 @@ class JobPostProcess:
         try:
             process_module = __import__(module_name, fromlist=[class_name])
             process_class = getattr(process_module, class_name)
-            self._post_process = process_class(self._data, self._job_name, *args)
+            self._post_process = process_class(
+                overrides=self._data,
+                job_name=self._job_name
+            )
         except ModuleNotFoundError:
             logger.exception("Could not import module %s", module_name)
             raise

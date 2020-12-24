@@ -99,6 +99,7 @@ def run(extension, **kwargs):
                 post_process = JobPostProcess(
                     module_name=config['job_post_process_config']['module'],
                     class_name=config['job_post_process_config']['class'],
+                    data=config['job_post_process_config']['data'],
                     job_name=name,
                     output=output,
                 )
