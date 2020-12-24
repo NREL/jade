@@ -101,7 +101,7 @@ def run(extension, **kwargs):
                     class_name=config['job_post_process_config']['class'],
                     data=config['job_post_process_config']['data'],
                     job_name=name,
-                    output=output,
+                    output=output
                 )
                 post_process.run(config_file=config_file, output=output)
         except Exception as err:
