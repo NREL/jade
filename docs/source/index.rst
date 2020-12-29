@@ -87,7 +87,6 @@ Refer to :ref:`advanced_guide_label` for more information.
    installation
    tutorial
    pipeline
-   post_process
    advanced_usage
 
 .. toctree::
