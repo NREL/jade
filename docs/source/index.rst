@@ -32,7 +32,7 @@ execution. Refer to :ref:`extending-jade-label` below.
 
 Parallelization on HPC Compute Nodes
 ====================================
-JADE offers the following parameters for customizing job execution on an HPC:
+JADE offers the following parameters for customizing job execution on HPC:
 
 - how many nodes to use
 - how many jobs to run in parallel on each node (default is number of CPUs)

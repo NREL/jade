@@ -3,11 +3,11 @@ Tutorial
 ********
 
 This page describes how to use the JADE package to create, modify, and run
-jobs locally or on an HPC.
+jobs locally or on HPC.
 
 HPC Configuration
 =================
-This section only applies if you run your jobs on an HPC.
+This section only applies if you run your jobs on HPC.
 
 HPC Parameters
 --------------
@@ -107,7 +107,7 @@ Jade provides a CLI utility to start jobs.
 
 submit-jobs
 -----------
-Start execution of jobs defined in a configuration file.  If executed on an HPC
+Start execution of jobs defined in a configuration file.  If executed on HPC
 this will submit the jobs to the HPC queue. Otherwise, it will run the jobs
 locally.
 
