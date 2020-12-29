@@ -1,7 +1,9 @@
 .. _batch_pipeline_label:
 
+**************
 Batch Pipeline
-==============
+**************
+
 After all jobs in a batch complete you may want to run additional code to
 process the results. You can use the ``jade pipeline`` command for this
 purpose.
@@ -13,7 +15,7 @@ To create the pipeline the user must provide a list of scripts that will be
 used to create the JADE config file for each stage.
 
 Create the pipeline
--------------------
+===================
 The user must provide a script that will create the JADE configuration for each
 stage in the pipeline.
 
@@ -25,25 +27,26 @@ order to provide information about completed stages and their outputs:
   information including output directories
 - JADE_PIPELINE_STAGE_ID:  current stage ID
 
-::
+.. code-block:: bash
 
-    jade pipeline create batch1-auto-config.sh batch2-auto-config.sh -c pipeline.toml
+    $ jade pipeline create batch1-auto-config.sh batch2-auto-config.sh -c pipeline.toml
 
 Customize the config
---------------------
+====================
 ``pipeline.toml`` will have default values for each ``jade submit-jobs``
 command. You may may want to override the max-nodes or per-node-batch-size
 parameters for each stage.
 
 Submit the pipeline
--------------------
-::
+===================
 
-    jade pipeline submit pipeline.toml
+.. code-block:: bash
+
+    $ jade pipeline submit pipeline.toml
 
 
 Example
--------
+=======
 Let's use the extension ``demo`` as an example. This extension performs
 auto-regression analysis for the ``gdp`` values for several countries. In each
 job (or country), it reads a CSV file containing ``gdp`` values, and generates
@@ -144,7 +147,7 @@ results are in ``output-stage1`` and the summary file ``pred_gdb.csv`` is in
 
 .. code-block:: bash
 
-    tree output
+    $ tree output
     output
     ├── config-stage1.json
     ├── config-stage2.json
@@ -185,7 +188,7 @@ results are in ``output-stage1`` and the summary file ``pred_gdb.csv`` is in
 
 In ``pred_gdp.csv``, you'll see the content:
 
-.. code-block:: bash
+.. code-block::
 
     year,brazil,australia,united_states
     1960,,,

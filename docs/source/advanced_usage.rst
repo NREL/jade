@@ -1,7 +1,10 @@
-.. _extensions_label:
+.. _advanced_guide_label:
 
-JADE Extensions
-################
+**************
+Advanced Usage
+**************
+
+This section will show how to create customized JADE extensions.
 
 JADE is a framework for running executable computer programs in parallel.
 Generically, any type of scientific simulation, analysis, or computing jobs, like Python, R, C++,
@@ -15,15 +18,15 @@ parallelization in Python, normally three modules make the commitments.
 Here, JADE manages parallelization by using `subprocess` - a Python module. It basically is a wrapper
 around ``os.fork()`` and ``os.execve()`` supporting other executables.
 
-How does JADE work?
-*******************
+**How does JADE work?**
+
 
 .. figure::  images/jade-workflow.png
    :align:   center
    :scale: 60%
 
 Extending JADE
-***************
+==============
 JADE could be extended to support any type of jobs. In JADE, four abstract base classes (ABCs)
 are defined for extending, as below:
 
@@ -67,47 +70,45 @@ be instantiated, and need subclasses to provide implementations.
 
 For more details about ABCs, please refer to https://docs.python.org/3/library/abc.html
 
-Tutorial - Creating a ``demo`` Extension
-****************************************
-There are two ways to extend JADE.
 
-.. _generic_command_extension_label:
+Generic Command Extension
+=============================
+JADE implements an extension called ``generic_command``. You can simply pass a 
+text file with a list of commands to execute and JADE will run them in parallel.
 
-Generic Command Execution
-=========================
-JADE implements an extension called ``generic_command``. You can simply pass
-a text file with a list of commands to execute and JADE will run them in
-parallel.
+Example:
 
-Example::
+.. code-block:: bash
 
-   jade config create commands.txt -c config.json
-   jade submit-jobs config.json
+    $ jade config create commands.txt -c config.json
+    $ jade submit-jobs config.json
 
 Job Ordering
 ------------
-Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
-6 doesn't run until job ID 5 completes then add that ID to the field.
+Each job defines a blocked_by field. If you want to guarantee that job ID 6 
+doesn't run until job ID 5 completes then add that ID to the field.
 
-.. code:: python
+
+.. code-block:: python
 
     {
-      "command": "job_cli_command",
-      "job_id": 6,
-      "blocked_by": [5]
-    },
+        "command": "<job_cli_command>",
+        "job_id": 6,
+        "blocked_by": [5]
+    }
 
 
-Custom Extension
-================
+Demo Extension
+==================
 This section will show you how to create an extension of JADE through implementing abstract
 methods defined in JADE interfaces, and run a Python data analysis program in parallel.
 
-**1. An Auto-regression Analysis Program**
+1. An Auto-regression Analysis Program
+--------------------------------------
 
 Suppose we have a series of United States's GDP data, 1960-2018, named ``united_states.csv``:
 
-::
+.. code-block::
 
     year,gdp
     1960,543300000000
@@ -177,7 +178,7 @@ Base on this dataset, we have developed an auto-regression model with validation
 
 The data columns in result file look like below,
 
-::
+.. code-block::
 
     year,gdp,pred_gdp
     1960,543300000000,
@@ -198,7 +199,8 @@ The result data plots are shown as below,
    :align:   center
 
 
-**2. Auto-regression Analysis for Many Countries**
+2. Auto-regression Analysis for Many Countries
+----------------------------------------------
 
 The auto-regression analysis works good for United States, and we want to apply it
 many more countries, including Australia, Brazil, Canada, China, France, Germany,
@@ -236,7 +238,8 @@ if these are countries of our world? how about if a
 program runs one hour or longer? ``for`` loop might not be a good solution.
 Alternatively, we need to figure out how to run ``autoregression_analysis`` in parallel.
 
-**3. Create Extension by Extending JADE**
+3. Create Extension by Extending JADE
+-------------------------------------
 
 To extend JADE is to implement its abstract methods defined in JADE interface
 classes based on your scenario. All abstract methods should be overwritten by concrete methods. If
@@ -305,7 +308,8 @@ Please checkout the source code `jade.extensions.demo.autoregression_configurati
 Please checkout the source code `jade.extensions.demo.autoregression_execution
 <https://github.com/NREL/jade/blob/master/jade/extensions/demo/autoregression_execution.py>`_
 
-**4. Register Your Extension in JADE**
+4. Register Your Extension in JADE
+----------------------------------
 
 All extensions created by users have to be registered so that JADE can recognize it. In JADE, it uses
 ``jade.extensions.registry.py`` file to register the extensions.
@@ -316,7 +320,8 @@ To register ``demo`` extension, add the followings to ``EXTENSION_REGISTRY`` dic
 - Job execution class, that is, ``demo.autoregression_execution.AutoRegressionExecution``.
 - Job configuration class, that is, ``demo.autoregression_configuration.AutoRegressionConfiguration``.
 
-**5. Create Functions Consumed by CLI**
+5. Create Functions Consumed by CLI
+-----------------------------------
 
 JADE provides consistent CLI commands for all extensions, to enable your extension
 to run using JADE CLI. Two functions ``auto-config``,
@@ -346,7 +351,8 @@ Please check the source code `jade.extensions.demo.cli
 Those two functions are consumed by JADE's CLI commands ``jade auto-config`` and
 ``jade submit-jobs`` separately in command line.
 
-**6. Make a Robust Extension via Test**
+6. Make a Robust Extension via Test
+-----------------------------------
 
 Good unit tests and integration tests can make your JADE extension to be robust. Here, JADE uses
 Pytest framework - https://docs.pytest.org/en/latest/ to perform unit tests and integration tests.
@@ -417,9 +423,9 @@ The following is an integration test from `tests.integration.extensions.demo.tes
 Check the coverage of the unit tests. Normally, the unit test cases should
 cover more than 90% of the code.
 
-::
+.. code-block:: bash
 
-    (jade) user:jade user$ pytest --cov=jade/extensions/demo/ tests/unit/extensions/demo
+    $ pytest --cov=jade/extensions/demo/ tests/unit/extensions/demo
     ===================================================================================== test session starts =====================================================================================
     platform darwin -- Python 3.7.4, pytest-5.1.2, py-1.8.0, pluggy-0.12.0
     rootdir: /Users/jgu2/Workspace/jade
@@ -447,21 +453,22 @@ cover more than 90% of the code.
 Please refer to Pytest https://docs.pytest.org/en/latest/example/index.html to learn
 more about testing.
 
-**7. Try Auto-regression Analysis in Parallel**
+7. Try Auto-regression Analysis in Parallel
+-------------------------------------------
 
 Run the JADE CLI commands at your localhost.
 
-::
+.. code-block:: bash
 
-    (jade) user$ jade auto-config demo data
+    $ jade auto-config demo data
     Created configuration with 12 jobs.
     Dumped configuration to config.json.
 
 This command line generate the global ``config.json`` file with all auto-regression jobs.
 
-::
+.. code-block:: bash
 
-    (jade) user:demo user$ jade submit-jobs config.json -h ../../../hpc_config.toml
+    $ jade submit-jobs config.json -h ../../../hpc_config.toml
     2019-10-14 14:35:21,921 - INFO [jade.cli.submit_jobs submit_jobs.py:92] : jade submit-jobs config.json -h /Users/jgu2/Workspace/jade/hpc_config.toml
     2019-10-14 14:35:22,160 - INFO [jade.jobs.job_submitter job_submitter.py:166] : Submit 12 jobs for execution.
     2019-10-14 14:35:22,160 - INFO [jade.jobs.job_submitter job_submitter.py:167] : JADE version 0.1.0
@@ -502,9 +509,9 @@ This command line generate the global ``config.json`` file with all auto-regress
 
 All job results are saved into ``output`` directory. To check the results,
 
-::
+.. code-block:: bash
 
-    (jade) user:demo user$ jade show-results
+    $ jade show-results
     Results from directory: output
     JADE Version: 0.1.0
     10/14/2019 14:35:27
@@ -534,24 +541,25 @@ All job results are saved into ``output`` directory. To check the results,
     Min execution time (s): 3.14
     Max execution time (s): 4.13
 
-**8. Run Your Extension on HPC**
+8. Run Your Extension on HPC
+----------------------------
 
 Pull the JADE source code, and setup the ``jade`` conda environment on HPC, then
 run the CLI commands to parallelize the auto-regression analysis.
 
 Auto-config auto-regression jobs and create a ``config.json``.
 
-::
+.. code-block:: bash
 
-    (jade) [user@host dir]$ jade auto-config demo data
+    $ jade auto-config demo data
     Created configuration with 12 jobs.
     Dumped configuration to config.json.
 
 Submit auto-regression jobs, and wait for program to finish.
 
-::
+.. code-block:: bash
 
-    (jade) [user@host dir]$ jade submit-jobs config.json -h ~/Workspace/jade/hpc_config.toml
+    $ jade submit-jobs config.json -h ~/Workspace/jade/hpc_config.toml
     2019-10-16 13:50:03,212 - INFO [jade.cli.submit_jobs submit_jobs.py:92] : jade submit-jobs config.json -h /home/jgu2/Workspace/jade/hpc_config.toml
     2019-10-16 13:50:03,843 - INFO [jade.jobs.job_submitter job_submitter.py:166] : Submit 12 jobs for execution.
     2019-10-16 13:50:03,843 - INFO [jade.jobs.job_submitter job_submitter.py:167] : JADE version 0.1.0
@@ -572,9 +580,9 @@ Submit auto-regression jobs, and wait for program to finish.
 
 Check the job results, all desired results are generated.
 
-::
+.. code-block:: bash
 
-    (jade) [user@host dir]$ ls -lh output/job-outputs/
+    $ ls -lh output/job-outputs/
     total 580K
     -rw-rw----. 1 user user 2.2K Oct 16 13:50 australia.csv
     -rw-rw----. 1 user user  31K Oct 16 13:50 australia.png
@@ -625,7 +633,8 @@ Check the job results, all desired results are generated.
     -rw-rw----. 1 user user  37K Oct 16 13:50 united_states.png
     -rw-rw----. 1 user user  173 Oct 16 13:50 united_states_summary.toml
 
-**9. Structured Log Events**
+9. Structured Log Events
+------------------------
 
 JADE provides structured log events so that specific conditions or errors can
 be machine-parsed and summarized after running jobs. Extensions can implement
@@ -683,7 +692,7 @@ The following console output shows ``demo`` extension with a job failure.
 
 .. code-block:: bash
 
-    jade show-results               
+    $ jade show-results               
 
     Results from directory: output
     JADE Version: 0.1.0
@@ -709,7 +718,7 @@ Now, show events using JADE CLI ``show-events``,
 
 .. code-block:: bash
 
-    jade show-events unhandled_error
+    $ jade show-events unhandled_error
 
     Events of type unhandled_error from directory: output
     +----------------------------+-----------+---------------------------------------------------------+-------+---------------------+-----------------------------+--------+

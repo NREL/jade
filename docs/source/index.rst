@@ -3,8 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+******************
 JADE documentation
-*******************
+******************
+
 JADE stands for **Job Automation and Deployment Engine**.
 
 JADE automates parallelized execution of jobs. It has specific support for
@@ -76,16 +78,22 @@ classes from the following:
 - :class:`~jade.jobs.job_execution_interface.JobExecutionInterface`:
   Code to run a job.
 
-Refer to :ref:`extensions_label` for more information.
+Refer to :ref:`advanced_guide_label` for more information.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   installation
    tutorial
-   extensions
    pipeline
    post_process
+   advanced_usage
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Dev & Reference
+
    jade
    design
    build_docs

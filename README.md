@@ -2,6 +2,7 @@
 JADE source code repository
 
 Documentation: https://nrel.github.io/jade/
+
 Tutorial: https://nrel.github.io/jade/tutorial.html
 
 ## Dev Setup
