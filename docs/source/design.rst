@@ -1,5 +1,6 @@
+***********
 JADE Design
-############
+***********
 
 .. toctree::
    :maxdepth: 4
