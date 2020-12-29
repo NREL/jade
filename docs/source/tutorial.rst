@@ -38,7 +38,7 @@ Prerequistes
 ------------
 If you are not using the JADE conda environment then you should take note of
 the packages it installs (environment.yml). One common pitfall is that JADE
-requires a newer version of git than users have.
+requires a newer version of git than some users have.
 
 
 Configuring Jobs
@@ -60,7 +60,7 @@ JADE will run them in parallel. ``config.json`` contains each job definition.
 Job Ordering
 ------------
 Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
-6 doesn't run until job ID 5 completes then add that ID to the field.
+2 doesn't run until job ID 1 completes then add that ID to the field.
 
 .. code:: python
 
@@ -95,7 +95,7 @@ configuration.
 
 .. code-block:: bash
 
-    $ jade auto-config <extension-name> -c config.json
+    $ jade auto-config <extension-name> <input_path> -c config.json
 
 For more details about how to create a custom extension, please refer to 
 :ref:`advanced_guide_label`.
@@ -152,8 +152,7 @@ Examples::
         --output=output \
         --max-nodes=20 \
         --per-node-batch-size=500 \
-        --hpc-config=hpc_config_test.toml \
-        --verbose
+        --hpc-config=hpc_config.toml
 
 .. note::
 

@@ -72,7 +72,7 @@ For more details about ABCs, please refer to https://docs.python.org/3/library/a
 
 
 Generic Command Extension
-=============================
+=========================
 JADE implements an extension called ``generic_command``. You can simply pass a 
 text file with a list of commands to execute and JADE will run them in parallel.
 
@@ -99,7 +99,7 @@ doesn't run until job ID 5 completes then add that ID to the field.
 
 
 Demo Extension
-==================
+==============
 This section will show you how to create an extension of JADE through implementing abstract
 methods defined in JADE interfaces, and run a Python data analysis program in parallel.
 
@@ -793,8 +793,9 @@ To config the post-process with jobs, use the command below,
 Use Job Ordering
 ----------------
 
-Another option is to use job ordering to realize post-process, where it takes
-post-processing work as another job which is blocked by the main job.
+Another option is to use job ordering to perform post-processing. You can set
+the ``blocked_by`` attribute of the post-processing job with the ID of the
+main job.
 
 .. code-block:: python
 
