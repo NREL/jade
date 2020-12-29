@@ -104,10 +104,10 @@ logger = logging.getLogger(__name__)
 @click.option(
     "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
     is_flag=True,
-    default=False,
+    default=True,
     show_default=True,
-    help="Add blocked jobs to HPC batch if they are blocked by jobs already "
-         "in batch."
+    help="Add blocked jobs to a node's batch if they are blocked by jobs "
+         "already in the batch."
 )
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
