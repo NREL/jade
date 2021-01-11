@@ -159,6 +159,8 @@ Examples::
    By default HPC nodes are requested at normal priority. Set qos=high in
    hpc_config.toml to get faster allocations at twice the cost.
 
+Refer to :ref:`submission_strategies` for specific examples on how to configure
+and submit jobs.
 
 Job Results
 ===========

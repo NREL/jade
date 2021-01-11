@@ -86,6 +86,7 @@ Refer to :ref:`advanced_guide_label` for more information.
 
    installation
    tutorial
+   submission_strategies
    pipeline
    advanced_usage
 
