@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 import logging
+import os
 import time
 
 
@@ -37,6 +38,9 @@ class JobQueue:
             Maximum number of sub-processes to maintain
         poll_interval : int
             Seconds to sleep in between completion checks.
+        monitor_interval : int
+            Seconds to sleep in between resource monitor cycles.
+            Can be overridden with environment variable JADE_MONITOR_INTERVAL.
 
         """
         self._queue_depth = max_queue_depth
@@ -46,11 +50,17 @@ class JobQueue:
         self._num_jobs = 0
         self._num_completed = 0
         self._monitor_func = monitor_func
-        self._monitor_interval = monitor_interval
         self._last_monitor_time = None
 
-        logger.debug("queue_depth=%s poll_interval=%s", self._queue_depth,
-                     self._poll_interval)
+        monitor_interval = os.environ.get("JADE_MONITOR_INTERVAL")
+        if monitor_interval is None:
+            self._monitor_interval = monitor_interval
+        else:
+            self._monitor_interval = int(monitor_interval)
+
+        logger.debug("queue_depth=%s poll_interval=%s monitor_interval=%s",
+                     self._queue_depth, self._poll_interval,
+                     self._monitor_interval)
 
     def _check_completions(self):
         logger.debug("check for completions")
