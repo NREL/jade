@@ -52,11 +52,11 @@ class JobQueue:
         self._monitor_func = monitor_func
         self._last_monitor_time = None
 
-        monitor_interval = os.environ.get("JADE_MONITOR_INTERVAL")
-        if monitor_interval is None:
-            self._monitor_interval = monitor_interval
+        interval = os.environ.get("JADE_MONITOR_INTERVAL")
+        if interval:
+            self._monitor_interval = int(interval)
         else:
-            self._monitor_interval = int(monitor_interval)
+            self._monitor_interval = monitor_interval
 
         logger.debug("queue_depth=%s poll_interval=%s monitor_interval=%s",
                      self._queue_depth, self._poll_interval,
