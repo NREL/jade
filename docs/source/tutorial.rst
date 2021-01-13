@@ -246,6 +246,6 @@ is how to view CPU stats for the node that ran the first batch:
    from jade.resource_monitor import CpuStatsViewer
 
    summary = EventsSummary("output")
-   viewer = CpuStatsViewer(summary.events)
-   cpu_df =  viewer.get_dataframe("resource_monitor_batch_0")
+   viewer = CpuStatsViewer(summary)
+   cpu_df =  viewer.get_dataframe("resource_monitor_batch_1")
    cpu_df.head()
