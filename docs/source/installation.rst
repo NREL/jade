@@ -8,39 +8,27 @@ container.
 
 Computer or HPC with conda
 ==========================
-1. Clone JADE.
-
-.. code-block:: bash
-
-    $ git clone git@github.com:NREL/jade.git
-    $ cd jade
-
-2. Choose a virtual environment in which to install JADE.  This can be an
+1. Choose a virtual environment in which to install JADE.  This can be an
    existing `conda <https://docs.conda.io/en/latest/miniconda.html>`_
    environment or an environment from something like `pyenv
-   <https://github.com/pyenv/pyenv>`_.  A validated conda environment is
-   provided in the JADE repository. 
+   <https://github.com/pyenv/pyenv>`_.  A validated conda
+   `environment <https://github.com/NREL/jade/blob/master/environment.yml>`_ is
+   provided in the JADE repository.
+
+   Note that Python 3.7 or greater is required.
+
+   Example with the pre-defined conda environment:
 
 .. code-block:: bash
 
     $ conda env create -f environment.yml -n jade
     $ conda activate jade
 
-3. Install JADE. 
+2. Install JADE.
 
 .. code-block:: bash
 
-    $ pip install -e .
-
-    # If you will also be developing JADE code then include dev packages.
-    $ pip install -e . -r dev-requirements.txt
-
-.. note:: The dev packages require that pandoc and plantuml be installed.
-
-   - Refer to `pandoc <https://pandoc.org/installing.html>`_.
-   - plantuml on Mac: ``brew install plantuml``
-   - plantuml on Linux: ``sudo apt-get install plantuml``
-   - plantuml on Windows: `plantuml <http://plantuml.com/starting>`_.
+    $ pip install git+https://github.com/NREL/jade.git@v0.1.1
 
 
 Computer with docker

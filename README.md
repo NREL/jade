@@ -31,6 +31,14 @@ Deactivate virtual environment
 conda deactivate
 ```
 
+The dev packages require that pandoc and plantuml be installed.
+
+- Refer to https://pandoc.org/installing.html
+- plantuml on Mac: ``brew install plantuml``
+- plantuml on Linux: ``sudo apt-get install plantuml``
+- plantuml on Windows: http://plantuml.com/starting
+
+
 ### Unit & Integration Test
 This project uses [pytest](https://docs.pytest.org/en/latest/) as the framework to run unit tests
 and integration tests, and generate HTML reports of coverage with the plugin
