@@ -29,22 +29,29 @@ class FakeManager(HpcManagerInterface):
     _OPTIONAL_CONFIG_PARAMS = {}
     _REQUIRED_CONFIG_PARAMS = ()
 
+    next_job_id = 1
+
     def __init__(self, _):
         self._subprocess_mgr = None
+        self._job_id = None
 
     def cancel_job(self, job_id):
         return 0
 
     def check_status(self, name=None, job_id=None):
         if self._subprocess_mgr is None:
-            status = HpcJobInfo("", "", HpcJobStatus.NONE)
+            job_info = HpcJobInfo(job_id, "", HpcJobStatus.NONE)
         elif self._subprocess_mgr.in_progress():
-            status = HpcJobInfo("", "", HpcJobStatus.RUNNING)
+            job_info = HpcJobInfo(job_id, "", HpcJobStatus.RUNNING)
         else:
-            status = HpcJobInfo("", "", HpcJobStatus.COMPLETE)
+            job_info = HpcJobInfo(job_id, "", HpcJobStatus.COMPLETE)
 
-        logger.debug("status=%s", status)
-        return status
+        logger.debug("status=%s", job_info)
+        return job_info
+
+    def check_statuses(self):
+        val = {self._job_id: self.check_status(job_id=self._job_id).status}
+        return val
 
     def check_storage_configuration(self):
         pass
@@ -86,7 +93,8 @@ class FakeManager(HpcManagerInterface):
         pass
 
     def submit(self, filename):
+        self._job_id = str(FakeManager.next_job_id)
+        FakeManager.next_job_id += 1
         self._subprocess_mgr = SubprocessManager()
         self._subprocess_mgr.run(filename)
-        job_id = "1234"
-        return Status.GOOD, job_id, None
+        return Status.GOOD, self._job_id, None

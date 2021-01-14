@@ -13,7 +13,7 @@ class HpcJobStatus(enum.Enum):
     COMPLETE = "complete"
 
 
-HpcJobInfo = namedtuple("HpcJobStatusInfo", "job_id, name, status")
+HpcJobInfo = namedtuple("HpcJobInfo", "job_id, name, status")
 
 
 class HpcQos(enum.Enum):

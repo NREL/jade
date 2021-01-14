@@ -61,6 +61,9 @@ class PbsManager(HpcManagerInterface):
 
         return self._get_status_from_output(qstat_rows, name)
 
+    def check_statuses(self):
+        assert False
+
     def check_storage_configuration(self):
         pass
 
