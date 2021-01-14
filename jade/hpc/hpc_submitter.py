@@ -140,14 +140,12 @@ class HpcSubmitter:
             for status in statuses:
                 assert status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
 
-    def _is_job_complete(self, job_name):
-        return job_name in self._results_summary.completed_jobs
-
     def _update_completed_jobs(self, jobs):
         self._results_summary.update_completed_jobs()
         for job in jobs:
             done_jobs = [
-                x for x in job.get_blocking_jobs() if self._is_job_complete(x)
+                x for x in job.get_blocking_jobs()
+                if x in self._results_summary.completed_jobs
             ]
             for name in done_jobs:
                 job.remove_blocking_job(name)
