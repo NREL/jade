@@ -21,7 +21,6 @@ class HpcManager:
     def __init__(self, config_file, output):
         self._intf, self._hpc_type = self._create_hpc_manager(config_file)
         self._output = output
-        self._num_in_progress = 0
 
         logger.debug("Constructed HpcManager with output=%s", output)
 
@@ -58,8 +57,7 @@ class HpcManager:
 
         Returns
         -------
-        HpcJobInfo
-            job info
+        HpcJobStatus
 
         """
         if (name is None and job_id is None) or \
@@ -69,6 +67,17 @@ class HpcManager:
         info = self._intf.check_status(name=name, job_id=job_id)
         logger.debug("info=%s", info)
         return info.status
+
+    def check_statuses(self):
+        """Check the statuses of all user jobs.
+
+        Returns
+        -------
+        dict
+            key is job_id, value is HpcJobStatus
+
+        """
+        return self._intf.check_statuses()
 
     def get_hpc_config(self):
         """Returns the HPC config parameters.

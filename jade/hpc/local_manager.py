@@ -39,6 +39,9 @@ class LocalManager(HpcManagerInterface):
     def check_status(self, name=None, job_id=None):
         return HpcJobInfo("", "", HpcJobStatus.NONE)
 
+    def check_statuses(self):
+        return {}
+
     def check_storage_configuration(self):
         pass
 

@@ -39,7 +39,7 @@ DEFAULTS = {
     "max_nodes": 16,
     "output": OUTPUT_DIR,
     "per_node_batch_size": 500,
-    "poll_interval": 30,
+    "poll_interval": 60,
     "bpp_max_nodes": 1,
     "bpp_per_node_batch_size": 500,
 }

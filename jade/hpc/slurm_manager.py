@@ -71,6 +71,39 @@ class SlurmManager(HpcManagerInterface):
                                                  HpcJobStatus.UNKNOWN))
         return job_info
 
+    def check_statuses(self):
+        field_names = ("jobid", "state")
+        cmd = f"squeue -u {self.USER} --Format \"{','.join(field_names)}\" -h"
+
+        output = {}
+        ret = run_command(cmd, output)
+        if ret != 0:
+            logger.error("Failed to run squeue command=[%s] ret=%s err=%s",
+                         cmd, ret, output["stderr"])
+            raise ExecutionError(f"squeue command failed: {ret}")
+
+        return self._get_statuses_from_output(output["stdout"])
+
+    @staticmethod
+    def _get_statuses_from_output(output):
+        logger.debug("squeue output:  [%s]", output)
+        lines = output.split("\n")
+        if not lines:
+            # No jobs are currently running.
+            return {}
+
+        statuses = {}
+        for line in lines:
+            if line == "":
+                continue
+            fields = line.strip().split()
+            assert len(fields) == 2
+            job_id = fields[0]
+            status = fields[1]
+            statuses[job_id] = SlurmManager._STATUSES.get(status, HpcJobStatus.UNKNOWN)
+
+        return statuses
+
     @staticmethod
     def check_storage_configuration():
         pass

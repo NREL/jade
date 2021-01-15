@@ -52,7 +52,7 @@ class HpcSubmitter:
         text.append(command)
         create_script(filename, "\n".join(text))
 
-    def _make_async_submitter(self, jobs, num_processes, output, verbose):
+    def _make_async_submitter(self, jobs, hpc_mgr, status_collector, num_processes, output, verbose):
         config = copy.copy(self._base_config)
         config["jobs"] = jobs
         suffix = f"_batch_{self._batch_index}"
@@ -67,15 +67,16 @@ class HpcSubmitter:
             new_config_file, run_script, num_processes, output, verbose
         )
 
-        hpc_mgr = HpcManager(self._hpc_config_file, output)
         name = self._name + suffix
-        return AsyncHpcSubmitter(hpc_mgr, run_script, name, output)
+        return AsyncHpcSubmitter(hpc_mgr, status_collector, run_script, name, output)
 
     @timed_debug
     def run(self, output, queue_depth, per_node_batch_size, num_processes,
             poll_interval=60, try_add_blocked_jobs=False, verbose=False):
         """Run all jobs defined in the configuration on the HPC."""
         queue = JobQueue(queue_depth, poll_interval=poll_interval)
+        hpc_mgr = HpcManager(self._hpc_config_file, output)
+        status_collector = HpcStatusCollector(hpc_mgr, poll_interval)
         jobs = list(self._config.iter_jobs())
         while jobs:
             self._update_completed_jobs(jobs)
@@ -94,6 +95,8 @@ class HpcSubmitter:
             if batch.num_jobs > 0:
                 async_submitter = self._make_async_submitter(
                     batch.serialize(),
+                    hpc_mgr,
+                    status_collector,
                     num_processes,
                     output,
                     verbose,
@@ -126,22 +129,23 @@ class HpcSubmitter:
                 # Keep submitting.
                 continue
 
-            # TODO: this will cause up to <queue_depth> slurm status commands
-            # every poll.  We could send one command, get all statuses, and
-            # share it among the submitters.
             queue.process_queue()
             time.sleep(poll_interval)
 
         queue.wait()
 
-    def _is_job_complete(self, job_name):
-        return job_name in self._results_summary.completed_jobs
+        # Sanity check
+        statuses = status_collector.get_statuses()
+        if statuses:
+            for status in statuses:
+                assert status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
 
     def _update_completed_jobs(self, jobs):
         self._results_summary.update_completed_jobs()
         for job in jobs:
             done_jobs = [
-                x for x in job.get_blocking_jobs() if self._is_job_complete(x)
+                x for x in job.get_blocking_jobs()
+                if x in self._results_summary.completed_jobs
             ]
             for name in done_jobs:
                 job.remove_blocking_job(name)
@@ -197,8 +201,9 @@ class _BatchJobs:
 
 class AsyncHpcSubmitter(AsyncJobInterface):
     """Used to submit batches of jobs to multiple nodes, one at a time."""
-    def __init__(self, hpc_manager, run_script, name, output):
+    def __init__(self, hpc_manager, status_collector, run_script, name, output):
         self._mgr = hpc_manager
+        self._status_collector = status_collector
         self._run_script = run_script
         self._job_id = None
         self._output = output
@@ -222,8 +227,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         return self._mgr
 
     def is_complete(self):
-        status = self._mgr.check_status(job_id=self._job_id)
-
+        status = self._status_collector.check_status(self._job_id)
         if status != self._last_status:
             logger.info("Submission %s %s changed status from %s to %s",
                         self._name, self._job_id, self._last_status, status)
@@ -272,3 +276,44 @@ class AsyncHpcSubmitter(AsyncJobInterface):
 
     def remove_blocking_job(self, name):
         assert False
+
+
+class HpcStatusCollector:
+    """Collects status for all user jobs."""
+    def __init__(self, hpc_mgr, poll_interval):
+        self._hpc_mgr = hpc_mgr
+        self._poll_interval = poll_interval
+        self._last_poll_time = None
+        self._statuses = {}
+
+    def check_status(self, job_id):
+        """Return the status for job_id.
+
+        Parameters
+        ----------
+        job_id : str
+
+        Returns
+        -------
+        HpcJobStatus
+
+        """
+        cur_time = time.time()
+        if self._last_poll_time is None or \
+                cur_time - self._last_poll_time > self._poll_interval:
+            logger.debug("Collect new statuses.")
+            self._statuses = self._hpc_mgr.check_statuses()
+            self._last_poll_time = cur_time
+
+        return self._statuses.get(job_id, HpcJobStatus.NONE)
+
+    def get_statuses(self):
+        """Return outstanding statuses
+
+        Returns
+        -------
+        list
+            list of HpcJobStatus
+
+        """
+        return list(self._statuses.values())

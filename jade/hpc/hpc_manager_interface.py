@@ -78,6 +78,17 @@ class HpcManagerInterface(abc.ABC):
         """
 
     @abc.abstractmethod
+    def check_statuses(self):
+        """Check the statuses of all user jobs.
+
+        Returns
+        -------
+        dict
+            key is job_id, value is HpcJobStatus
+
+        """
+
+    @abc.abstractmethod
     def check_storage_configuration(self):
         """Checks if the storage configuration is appropriate for execution.
 

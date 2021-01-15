@@ -1,6 +1,7 @@
 """Synchronizes updates to the results file across jobs."""
 
 import csv
+import glob
 import logging
 import os
 
@@ -124,6 +125,18 @@ class ResultsAggregator:
         """
         return self._do_action_under_lock(self._get_results)
 
+    def get_results_unsafe(self):
+        """Return the results. It is up to the caller to ensure that
+        a lock is not needed.
+
+        Returns
+        -------
+        list
+            list of Result objects
+
+        """
+        return self._get_results()
+
     def _get_results(self):
         with open(self._filename) as f_in:
             results = []
@@ -164,18 +177,16 @@ class ResultsAggregatorSummary:
     def get_results(self):
         """Return results from all ResultsAggregator instances.
         This assumes that all CSV files in stored in path are from
-        ResultsAggregators.
+        ResultsAggregators and that the jobs are complete.
 
         """
         self._aggregators[:] = []
         results = []
 
-        for filename in os.listdir(self._path):
-            if os.path.splitext(filename)[1] == ".csv":
-                results_file = os.path.join(self._path, filename)
-                aggregator = ResultsAggregator(results_file)
-                results += aggregator.get_results()
-                self._aggregators.append(aggregator)
+        for results_file in glob.glob(os.path.join(self._path, "*.csv")):
+            aggregator = ResultsAggregator(results_file)
+            results += aggregator.get_results_unsafe()
+            self._aggregators.append(aggregator)
 
         return results
 

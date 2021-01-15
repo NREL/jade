@@ -6,7 +6,7 @@ import os
 import pytest
 
 from jade.common import OUTPUT_DIR
-from jade.hpc.common import HpcType
+from jade.hpc.common import HpcType, HpcJobStatus
 from jade.hpc.hpc_manager import HpcManager
 from jade.hpc.slurm_manager import SlurmManager
 from jade.jobs.job_submitter import DEFAULTS
@@ -49,6 +49,20 @@ def test_create_slurm_invalid_file(hpc_fixture):
     os.environ["NREL_CLUSTER"] = "eagle"
     with pytest.raises(FileNotFoundError):
         HpcManager("invalid_filename", OUTPUT_DIR)
+
+
+def test_slurm_check_statuses():
+    with open("tests/data/squeue_status.txt") as f_in:
+        text = f_in.read()
+
+    sts = SlurmManager._get_statuses_from_output(text)
+    assert list(sts.keys()) == ["10", "11", "12", "13"]
+    assert list(sts.values()) == [
+        HpcJobStatus.QUEUED,
+        HpcJobStatus.QUEUED,
+        HpcJobStatus.RUNNING,
+        HpcJobStatus.RUNNING,
+    ]
 
 
 def test_create_pbs(hpc_fixture):
