@@ -3,7 +3,7 @@
 import abc
 
 
-class JobContainerInterface:
+class JobContainerInterface(abc.ABC):
     """Defines interface for job containers."""
 
     @abc.abstractmethod

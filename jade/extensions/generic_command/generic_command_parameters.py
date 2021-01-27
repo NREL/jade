@@ -8,6 +8,7 @@ class GenericCommandParameters(JobParametersInterface):
     """A class used for creating a job for a generic command."""
 
     parameters_type = namedtuple("GenericCommand", "command")
+    _EXTENSION = "generic_command"
 
     def __init__(self, command, job_id=None,  blocked_by=None):
         self.command = command
@@ -22,6 +23,10 @@ class GenericCommandParameters(JobParametersInterface):
         return "<GenericCommandParameters: {}>".format(self.name)
 
     @property
+    def extension(self):
+        return self._EXTENSION
+
+    @property
     def name(self):
         return self._create_name()
 
@@ -34,6 +39,7 @@ class GenericCommandParameters(JobParametersInterface):
             "command": self.command,
             "job_id": self.job_id,
             "blocked_by": list(self.blocked_by),
+            "extension": self.extension,
         }
 
     @classmethod

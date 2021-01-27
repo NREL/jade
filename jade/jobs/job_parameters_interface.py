@@ -10,6 +10,17 @@ class JobParametersInterface:
 
     @property
     @abc.abstractmethod
+    def extension(self):
+        """Return the extension name.
+
+        Returns
+        -------
+        str
+
+        """
+
+    @property
+    @abc.abstractmethod
     def name(self):
         """Return the job name. The job name must be unique in a configuration
         and must be usable as a directory or file name on any filesystem.

@@ -1,10 +1,16 @@
 """"Factory functions for simulation configurations"""
 
+import logging
+
 from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
+from jade.jobs.job_configuration import JobConfiguration
 from jade.result import ResultsSummary
-from jade.utils.utils import load_data
+from jade.utils.utils import dump_data, load_data
 from jade.utils.timing_utils import timed_debug
+
+
+logger = logging.getLogger(__name__)
 
 
 @timed_debug
@@ -17,6 +23,10 @@ def create_config_from_file(filename, **kwargs):
 
     """
     data = load_data(filename)
+    format = data.get("format_version", None)
+    if format is None:
+        upgrade_config_file(data, filename)
+
     return deserialize_config(data, **kwargs)
 
 @timed_debug
@@ -82,7 +92,29 @@ def deserialize_config(data, **kwargs):
 
     """
     registry = Registry()
-    extension = data["extension"]
-    cls = registry.get_extension_class(
-        extension, ExtensionClassType.CONFIGURATION)
-    return cls.deserialize(data, **kwargs)
+    config_module = data["configuration_module"]
+    config_class = data["configuration_class"]
+    for ext in registry.iter_extensions():
+        ext_cfg_class = ext[ExtensionClassType.CONFIGURATION]
+        if (ext_cfg_class.__module__ == config_module and
+            ext_cfg_class.__name__ == config_class
+        ):
+            return ext_cfg_class.deserialize(data, **kwargs)
+
+    raise InvalidParameter(f"Cannot deserialize {config_module}.{config_class}")
+
+
+def upgrade_config_file(data, filename):
+    """Upgrades v0.1.0 format to the latest."""
+    if data["class"] != "GenericCommandConfiguration":
+        raise Exception(f"{filename} has an old format and must be regenerated")
+
+    data["configuration_module"] = "jade.extensions.generic_command.generic_command_configuration"
+    data["configuration_class"] = "GenericCommandConfiguration"
+    data["format_version"] = JobConfiguration.FORMAT_VERSION
+    data.pop("class")
+    data.pop("extension")
+    for job in data["jobs"]:
+        job["extension"] = "generic_command"
+    dump_data(data, filename, indent=2)
+    logger.info("Upgraded config file format: %s", filename)

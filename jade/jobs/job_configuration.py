@@ -12,6 +12,7 @@ import toml
 from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
+from jade.jobs.job_container_by_key import JobContainerByKey
 from jade.utils.utils import dump_data, load_data, ExtendedJSONEncoder
 from jade.utils.timing_utils import timed_debug
 
@@ -30,16 +31,13 @@ class JobConfiguration(abc.ABC):
     """Base class for any simulation configuration."""
 
     FILENAME_DELIMITER = "_"
+    FORMAT_VERSION = "v0.2.0"
 
     def __init__(
             self,
-            inputs,
-            container,
-            job_parameters_class,
-            extension_name,
+            container=None,
             job_global_config=None,
             job_post_process_config=None,
-            batch_post_process_config=None,
             **kwargs
         ):
         """
@@ -51,16 +49,12 @@ class JobConfiguration(abc.ABC):
         container : JobContainerInterface
 
         """
-        self._extension_name = extension_name
-        self._inputs = inputs
-        self._jobs = container
-        self._job_parameters_class = job_parameters_class
+        self._jobs = container or JobContainerByKey()
         self._job_names = None
         self._jobs_directory = kwargs.get("jobs_directory")
         self._registry = Registry()
         self._job_global_config = job_global_config
         self._job_post_process_config = job_post_process_config
-        self._batch_post_process_config = batch_post_process_config
 
         if kwargs.get("do_not_deserialize_jobs", False):
             assert "job_names" in kwargs, str(kwargs)
@@ -79,8 +73,9 @@ class JobConfiguration(abc.ABC):
         return self.dumps()
 
     def _deserialize_jobs(self, jobs):
-        for job_ in jobs:
-            job = self._job_parameters_class.deserialize(job_)
+        for _job in jobs:
+            param_class = self.job_parameters_class(_job["extension"])
+            job = param_class.deserialize(_job)
             self.add_job(job)
 
     def _deserialize_jobs_from_names(self, job_names):
@@ -103,7 +98,9 @@ class JobConfiguration(abc.ABC):
         assert self._jobs_directory is not None
         filename = os.path.join(self._jobs_directory, name) + ".json"
         assert os.path.exists(filename), filename
-        return self._job_parameters_class.deserialize(load_data(filename))
+        job = load_data(filename)
+        param_class = self.job_parameters_class(job["extension"])
+        return param_class.deserialize(job)
 
     @abc.abstractmethod
     def _serialize(self, data):
@@ -147,15 +144,6 @@ class JobConfiguration(abc.ABC):
         class
 
         """
-
-    @property
-    def extension_name(self):
-        """Return the extension name for the configuration."""
-        return self._extension_name
-
-    @abc.abstractmethod
-    def get_job_inputs(self):
-        """Return the inputs required to run a job."""
 
     def add_job(self, job):
         """Add a job to the configuration.
@@ -238,13 +226,8 @@ class JobConfiguration(abc.ABC):
         else:
             data = filename_or_data
 
-        # Don't create an inputs object. It can be very expensive and we don't
-        # need it unless the user wants to change the config.
-        # TODO: implement user-friendly error messages when they try to access
-        # inputs.
-        inputs = None
         data["do_not_deserialize_jobs"] = do_not_deserialize_jobs
-        return cls(inputs, **data)
+        return cls(**data)
 
     def get_job(self, name):
         """Return the job matching name.
@@ -260,10 +243,6 @@ class JobConfiguration(abc.ABC):
 
         return self._jobs.get_job(name)
 
-    def get_parameters_class(self):
-        """Return the class used for job parameters."""
-        return self._job_parameters_class
-
     def get_num_jobs(self):
         """Return the number of jobs in the configuration.
 
@@ -278,25 +257,6 @@ class JobConfiguration(abc.ABC):
     def job_global_config(self):
         """Return the global configs applied to all jobs."""
         return self._job_global_config
-
-    @property
-    def job_post_process_config(self):
-        """Return post process config for jobs"""
-        return self._job_post_process_config
-
-    @property
-    def batch_post_process_config(self):
-        """Return batch post process config for task"""
-        return self._batch_post_process_config
-
-    @batch_post_process_config.setter
-    def batch_post_process_config(self, data):
-        self._batch_post_process_config = data
-
-    @property
-    def inputs(self):
-        """Return the instance of JobInputsInterface for the job."""
-        return self._inputs
 
     def iter_jobs(self):
         """Yields a generator over all jobs.
@@ -346,40 +306,19 @@ class JobConfiguration(abc.ABC):
         """
         return self._jobs.remove_job(job)
 
-    def run_job(self, job, output, **kwargs):
-        """Run the job.
-
-        Parameters
-        ----------
-        job : JobParametersInterface
-        output : str
-            output directory
-
-        Returns
-        -------
-        int
-
-        """
-        logger.debug("job=%s kwargs=%s", job, kwargs)
-        cls = self.job_execution_class()
-        job_execution = cls.create(self.get_job_inputs(), job, output)
-        return job_execution.run(**kwargs)
-
     def serialize(self, include=ConfigSerializeOptions.JOBS):
         """Create data for serialization."""
         data = {
-            "class": self.__class__.__name__,
-            "extension": self.extension_name,
             "jobs_directory": self._jobs_directory,
+            "configuration_module": self.__class__.__module__,
+            "configuration_class": self.__class__.__name__,
+            "format_version": self.FORMAT_VERSION
         }
         if self._job_global_config:
             data["job_global_config"] = self._job_global_config
 
         if self._job_post_process_config:
             data["job_post_process_config"] = self._job_post_process_config
-
-        if self._batch_post_process_config:
-            data["batch_post_process_config"] = self._batch_post_process_config
 
         if include == ConfigSerializeOptions.JOBS:
             data["jobs"] = [x.serialize() for x in self.iter_jobs()]
@@ -450,13 +389,34 @@ class JobConfiguration(abc.ABC):
         for job in self.iter_jobs():
             print(job)
 
-    def job_execution_class(self):
+    def job_execution_class(self, extension_name):
         """Return the class used for job execution.
+
+        Parameters
+        ----------
+        extension_name : str
 
         Returns
         -------
         class
 
         """
-        return self._registry.get_extension_class(self.extension_name,
+        return self._registry.get_extension_class(extension_name,
                                                   ExtensionClassType.EXECUTION)
+
+    def job_parameters_class(self, extension_name):
+        """Return the class used for job parameters.
+
+        Parameters
+        ----------
+        extension_name : str
+
+        Returns
+        -------
+        class
+
+        """
+        return self._registry.get_extension_class(
+            extension_name,
+            ExtensionClassType.PARAMETERS
+        )
