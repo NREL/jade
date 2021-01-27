@@ -10,7 +10,7 @@ class GenericCommandParameters(JobParametersInterface):
     parameters_type = namedtuple("GenericCommand", "command")
     _EXTENSION = "generic_command"
 
-    def __init__(self, command, job_id=None,  blocked_by=None):
+    def __init__(self, command, job_id=None, blocked_by=None, append_output_dir=False):
         self.command = command
         self.job_id = job_id  # Gets set when job is added to config.
                               # Uniquely identifies the job.
@@ -18,6 +18,10 @@ class GenericCommandParameters(JobParametersInterface):
         if blocked_by is not None:
             for job_id in blocked_by:
                 self.blocked_by.add(str(job_id))
+
+        # Indicates whether the output directory should be appended to the
+        # command at runtime.
+        self.append_output_dir = append_output_dir
 
     def __str__(self):
         return "<GenericCommandParameters: {}>".format(self.name)
@@ -40,6 +44,7 @@ class GenericCommandParameters(JobParametersInterface):
             "job_id": self.job_id,
             "blocked_by": list(self.blocked_by),
             "extension": self.extension,
+            "append_output_dir": self.append_output_dir,
         }
 
     @classmethod
@@ -48,6 +53,7 @@ class GenericCommandParameters(JobParametersInterface):
             data["command"],
             job_id=data["job_id"],
             blocked_by={str(x) for x in data["blocked_by"]},
+            append_output_dir=data["append_output_dir"],
         )
 
     def get_blocking_jobs(self):

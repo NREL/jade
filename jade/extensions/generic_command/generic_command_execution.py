@@ -35,6 +35,8 @@ class GenericCommandExecution(JobExecutionInterface):
     @staticmethod
     def generate_command(job, output, config_file, verbose=False):
         # These jobs already have a command and are not run with jade-internal.
+        if job.append_output_dir:
+            return job.command + f" --output={output}"
         return job.command
 
     def list_results_files(self):

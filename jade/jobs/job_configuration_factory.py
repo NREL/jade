@@ -116,5 +116,6 @@ def upgrade_config_file(data, filename):
     data.pop("extension")
     for job in data["jobs"]:
         job["extension"] = "generic_command"
+        job["append_output_dir"] = False
     dump_data(data, filename, indent=2)
     logger.info("Upgraded config file format: %s", filename)
