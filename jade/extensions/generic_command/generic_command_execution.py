@@ -1,6 +1,7 @@
 """The job execution class and methods for generic_command."""
 
 import logging
+import os
 
 from jade.jobs.job_execution_interface import JobExecutionInterface
 
@@ -36,7 +37,9 @@ class GenericCommandExecution(JobExecutionInterface):
     def generate_command(job, output, config_file, verbose=False):
         # These jobs already have a command and are not run with jade-internal.
         if job.append_output_dir:
-            return job.command + f" --jade-runtime-output={output}"
+            # output is jobs-output
+            output_dir = os.path.dirname(output)
+            return job.command + f" --jade-runtime-output={output_dir}"
         return job.command
 
     def list_results_files(self):

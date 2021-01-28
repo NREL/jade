@@ -38,6 +38,7 @@ class JobConfiguration(abc.ABC):
             container=None,
             job_global_config=None,
             job_post_process_config=None,
+            user_data=None,
             **kwargs
         ):
         """
@@ -55,6 +56,7 @@ class JobConfiguration(abc.ABC):
         self._registry = Registry()
         self._job_global_config = job_global_config
         self._job_post_process_config = job_post_process_config
+        self._user_data = user_data or {}
 
         if kwargs.get("do_not_deserialize_jobs", False):
             assert "job_names" in kwargs, str(kwargs)
@@ -105,6 +107,64 @@ class JobConfiguration(abc.ABC):
     @abc.abstractmethod
     def _serialize(self, data):
         """Create implementation-specific data for serialization."""
+
+    def add_user_data(self, key, data):
+        """Add user data referenced by a key. Must be JSON-serializable
+
+        Parameters
+        ----------
+        key : str
+        data : any
+
+        Raises
+        ------
+        InvalidParameter
+            Raised if the key is already stored.
+
+        """
+        if key in self._user_data:
+            raise InvalidParameter(f"{key} is already stored. Call remove_user_data first")
+
+        self._user_data[key] = data
+
+    def get_user_data(self, key):
+        """Get the user data associated with key.
+
+        Parameters
+        ----------
+        key : str
+
+        Returns
+        -------
+        any
+
+        """
+        data = self._user_data.get(key)
+        if data is None:
+            raise InvalidParameter(f"{key} is not stored.")
+
+        return data
+
+    def remove_user_data(self, key):
+        """Remove the key from the user data config.
+
+        Parameters
+        ----------
+        key : str
+
+        """
+        self._user_data.pop(key, None)
+
+    def list_user_data_keys(self):
+        """List the stored user data keys.
+
+        Returns
+        -------
+        list
+            list of str
+
+        """
+        return sorted(list(self._user_data.keys()))
 
     def check_job_dependencies(self):
         """Check for impossible conditions with job dependencies.
@@ -312,7 +372,8 @@ class JobConfiguration(abc.ABC):
             "jobs_directory": self._jobs_directory,
             "configuration_module": self.__class__.__module__,
             "configuration_class": self.__class__.__name__,
-            "format_version": self.FORMAT_VERSION
+            "format_version": self.FORMAT_VERSION,
+            "user_data": self._user_data,
         }
         if self._job_global_config:
             data["job_global_config"] = self._job_global_config
