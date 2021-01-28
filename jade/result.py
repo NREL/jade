@@ -103,6 +103,7 @@ class ResultsSummary:
         self._output_dir = output_dir
 
         self._results_file = os.path.join(output_dir, RESULTS_FILE)
+
         data = self._parse(self._results_file)
         data["results"] = deserialize_results(data["results"])
         self._results = data

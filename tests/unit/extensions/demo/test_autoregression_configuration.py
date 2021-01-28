@@ -204,7 +204,8 @@ def test_serialize():
         "configuration_module": "jade.extensions.demo.autoregression_configuration",
         "format_version": "v0.2.0",
         "jobs_directory": None,
-        "jobs": []
+        "jobs": [],
+        "user_data": {},
     }
     assert data == expected
 

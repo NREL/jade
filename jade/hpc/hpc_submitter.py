@@ -15,7 +15,6 @@ from jade.hpc.common import HpcJobStatus
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.job_queue import JobQueue
-from jade.jobs.results_aggregator import ResultsAggregatorSummary
 from jade.loggers import log_event
 from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script, ExtendedJSONEncoder
@@ -32,7 +31,7 @@ class HpcSubmitter:
         self._base_config = config.serialize()
         self._name = name
         self._batch_index = 1
-        self._results_summary = ResultsAggregatorSummary(results_dir)
+        self._completion_detector = CompletionDetector(results_dir)
 
     @staticmethod
     def _create_run_script(config_file, filename, num_processes, output, verbose):
@@ -141,14 +140,39 @@ class HpcSubmitter:
                 assert status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
 
     def _update_completed_jobs(self, jobs):
-        self._results_summary.update_completed_jobs()
+        self._completion_detector.update_completed_jobs()
         for job in jobs:
             done_jobs = [
                 x for x in job.get_blocking_jobs()
-                if x in self._results_summary.completed_jobs
+                if x in self._completion_detector.completed_jobs
             ]
             for name in done_jobs:
                 job.remove_blocking_job(name)
+
+
+class CompletionDetector:
+    """Detects when individual jobs complete to release blocked jobs."""
+    def __init__(self, path):
+        self._path = path
+        self._completed_jobs = set()
+
+    @property
+    def completed_jobs(self):
+        """Return the completed jobs.
+
+        Returns
+        -------
+        set
+
+        """
+        return self._completed_jobs
+
+    def update_completed_jobs(self):
+        """Check for completed jobs."""
+        for filename in os.listdir(self._path):
+            logger.debug("Detected completion of job=%s", filename)
+            self._completed_jobs.add(filename)
+            os.remove(os.path.join(self._path, filename))
 
 
 class _BatchJobs:

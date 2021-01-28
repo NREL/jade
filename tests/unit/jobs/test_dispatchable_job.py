@@ -9,7 +9,9 @@ import time
 import mock
 import pytest
 
+from jade.common import RESULTS_DIR
 from jade.jobs.dispatchable_job import DispatchableJob
+from jade.jobs.results_aggregator import ResultsAggregator
 
 
 @pytest.fixture
@@ -20,7 +22,10 @@ def dispatchable_job():
     cmd = "echo 'Hello World'"
     output = os.path.join(tempfile.gettempdir(), "jade-test-dispatchable-job")
     os.makedirs(output, exist_ok=True)
-    results_file = os.path.join(output, "results_batch_0.csv")
+    os.makedirs(os.path.join(output, RESULTS_DIR), exist_ok=True)
+    results_file = os.path.join(output, "results.csv")
+    results_agg = ResultsAggregator(results_file)
+    results_agg.create_file()
     dispatchable_job = DispatchableJob(job, cmd, output, results_file)
     yield dispatchable_job
     shutil.rmtree(output)

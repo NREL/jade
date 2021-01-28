@@ -11,7 +11,7 @@ import time
 
 import jade
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
-    RESULTS_FILE
+    RESULTS_FILE, get_results_filename
 from jade.enums import Status
 from jade.events import EVENTS_FILENAME, EVENT_NAME_ERROR_LOG, \
     StructuredLogEvent, EVENT_CATEGORY_ERROR, EVENT_CATEGORY_RESOURCE_UTIL, \
@@ -23,7 +23,7 @@ from jade.hpc.hpc_manager import HpcManager
 from jade.hpc.hpc_submitter import HpcSubmitter
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_runner import JobRunner
-from jade.jobs.results_aggregator import ResultsAggregatorSummary
+from jade.jobs.results_aggregator import ResultsAggregator
 from jade.loggers import log_event
 from jade.result import serialize_results
 from jade.utils.repository_info import RepositoryInfo
@@ -145,6 +145,9 @@ results_summary={self.get_results_summmary_report()}"""
         if os.path.exists(events_file):
             os.remove(events_file)
 
+        results_aggregator = ResultsAggregator(get_results_filename(self._output))
+        results_aggregator.create_file()
+
         start_time = time.time()
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)
@@ -155,8 +158,7 @@ results_summary={self.get_results_summmary_report()}"""
                                 poll_interval, num_processes,
                                 try_add_blocked_jobs)
 
-        results_summary = ResultsAggregatorSummary(self._results_dir)
-        self._results = results_summary.get_results()
+        self._results = results_aggregator.get_results()
         if len(self._results) != self._config.get_num_jobs():
             logger.error("Number of results doesn't match number of jobs: "
                          "results=%s jobs=%s. Check for process crashes "
@@ -167,8 +169,7 @@ results_summary={self.get_results_summmary_report()}"""
         if previous_results:
             self._results += previous_results
 
-        self.write_results(RESULTS_FILE)
-        results_summary.delete_files()
+        self.write_results_summary(RESULTS_FILE)
         shutil.rmtree(self._results_dir)
 
         self._log_error_log_messages(self._output)
@@ -198,7 +199,7 @@ results_summary={self.get_results_summmary_report()}"""
 
         return result
 
-    def write_results(self, filename):
+    def write_results_summary(self, filename):
         """Write the results to filename in the output directory."""
         data = OrderedDict()
         data["jade_version"] = jade.version.__version__
