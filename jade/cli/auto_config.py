@@ -54,7 +54,7 @@ def auto_config(
             job_post_process_config_file
         )
         JobPostProcess(module, class_name, data)  # ensure everything ok
-        job_post_process_config = {"module": module, "class_name": class_name, "data": data}
+        job_post_process_config = {"module": module, "class": class_name, "data": data}
     else:
         job_post_process_config = None
 
