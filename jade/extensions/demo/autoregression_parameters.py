@@ -11,6 +11,7 @@ class AutoRegressionParameters(JobParametersInterface):
     """
 
     parameters_type = namedtuple("AutoRegression", "country")
+    _EXTENSION = "demo"
 
     def __init__(self, country, data):
         """
@@ -31,6 +32,10 @@ class AutoRegressionParameters(JobParametersInterface):
         return "<AutoRegressionParameters: {}>".format(self.name)
 
     @property
+    def extension(self):
+        return self._EXTENSION
+
+    @property
     def name(self):
         return self._name
 
@@ -40,7 +45,8 @@ class AutoRegressionParameters(JobParametersInterface):
     def serialize(self):
         return {
             "country": self._name,
-            "data": self.data
+            "data": self.data,
+            "extension": self.extension,
         }
 
     @classmethod

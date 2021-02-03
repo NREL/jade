@@ -5,8 +5,9 @@ import glob
 import logging
 import os
 
-from filelock import FileLock, Timeout
+from filelock import SoftFileLock, Timeout
 
+from jade.common import get_results_filename, RESULTS_DIR
 from jade.result import Result, deserialize_result
 
 
@@ -14,11 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class ResultsAggregator:
-    """Synchronizes updates to the results file across jobs on one system.
-    To use on different systems then the code must use SoftFileLock instead
-    of FileLock.
-
-    """
+    """Synchronizes updates to the results file across jobs on one system."""
     def __init__(self, filename, timeout=30, delimiter=","):
         """
         Constructs ResultsAggregator.
@@ -37,13 +34,19 @@ class ResultsAggregator:
         self._lock_file = self._filename + ".lock"
         self._timeout = timeout
         self._delimiter = delimiter
+        self._temp_results_dir = os.path.join(
+            os.path.dirname(filename),
+            RESULTS_DIR
+        )
 
     @staticmethod
     def _get_fields():
         return Result._fields
 
     def _do_action_under_lock(self, func, *args, **kwargs):
-        lock = FileLock(self._lock_file, timeout=self._timeout)
+        # Using this instead of FileLock because it will be used across nodes
+        # on the Lustre filesystem.
+        lock = SoftFileLock(self._lock_file, timeout=self._timeout)
         try:
             lock.acquire(timeout=self._timeout)
         except Timeout:
@@ -95,22 +98,21 @@ class ResultsAggregator:
         result : Result
 
         """
-        self._do_action_under_lock(self._append_result, result)
+        text = self._delimiter.join(
+            [str(getattr(result, x)) for x in self._get_fields()]
+        )
+        self._do_action_under_lock(self._append_result, text)
         self._add_completion(result)
 
     def _add_completion(self, result):
         completion_filename = os.path.join(
-            os.path.dirname(self._filename),
+            self._temp_results_dir,
             result.name,
         )
         with open(completion_filename, "w") as _:
             pass
 
-    def _append_result(self, result):
-        text = self._delimiter.join(
-            [str(getattr(result, x)) for x in self._get_fields()]
-        )
-
+    def _append_result(self, text):
         with open(self._filename, "a") as f_out:
             f_out.write(text + "\n")
 
@@ -150,50 +152,20 @@ class ResultsAggregator:
 
             return results
 
+    @classmethod
+    def list_results(cls, output_dir, **kwargs):
+        """Return the current results.
 
-class ResultsAggregatorSummary:
-    """Summarizes all ResultsAggregator instances."""
-    def __init__(self, path):
-        self._path = path
-        self._aggregators = []
-        self._completed_jobs = set()
-
-    @property
-    def completed_jobs(self):
-        """Return the completed jobs.
+        Parameters
+        ----------
+        output_dir : str
 
         Returns
         -------
-        set
+        list
+            list of Result objects
 
         """
-        return self._completed_jobs
-
-    def delete_files(self):
-        """Delete results files from all ResultsAggregator instances."""
-        for aggregator in self._aggregators:
-            aggregator.delete_file()
-
-    def get_results(self):
-        """Return results from all ResultsAggregator instances.
-        This assumes that all CSV files in stored in path are from
-        ResultsAggregators and that the jobs are complete.
-
-        """
-        self._aggregators[:] = []
-        results = []
-
-        for results_file in glob.glob(os.path.join(self._path, "*.csv")):
-            aggregator = ResultsAggregator(results_file)
-            results += aggregator.get_results_unsafe()
-            self._aggregators.append(aggregator)
-
-        return results
-
-    def update_completed_jobs(self):
-        """Check for completed jobs."""
-        for filename in os.listdir(self._path):
-            if not filename.endswith(".csv"):
-                logger.debug("Detected completion of job=%s", filename)
-                self._completed_jobs.add(filename)
-                os.remove(os.path.join(self._path, filename))
+        results_file = get_results_filename(output_dir)
+        results = cls(results_file, **kwargs)
+        return results.get_results()

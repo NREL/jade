@@ -20,6 +20,8 @@ DEFAULT_REGISTRY = {
             "job_execution_class": "AutoRegressionExecution",
             "job_configuration_module": "jade.extensions.demo.autoregression_configuration",
             "job_configuration_class": "AutoRegressionConfiguration",
+            "job_parameters_module": "jade.extensions.demo.autoregression_parameters",
+            "job_parameters_class": "AutoRegressionParameters",
             "cli_module": "jade.extensions.demo.cli",
         },
         {
@@ -29,6 +31,8 @@ DEFAULT_REGISTRY = {
             "job_execution_class": "GenericCommandExecution",
             "job_configuration_module": "jade.extensions.generic_command.generic_command_configuration",
             "job_configuration_class": "GenericCommandConfiguration",
+            "job_parameters_module": "jade.extensions.generic_command.generic_command_parameters",
+            "job_parameters_class": "GenericCommandParameters",
             "cli_module": "jade.extensions.generic_command.cli",
         },
     ],
@@ -43,6 +47,7 @@ class ExtensionClassType(enum.Enum):
     CLI = "cli_module"
     CONFIGURATION = "config_class"
     EXECUTION = "exec_class"
+    PARAMETERS = "param_class"
 
 
 logger = logging.getLogger(__name__)
@@ -51,6 +56,7 @@ logger = logging.getLogger(__name__)
 class Registry:
     """Manages extensions registered with JADE."""
     _REGISTRY_FILENAME = ".jade-registry.json"
+    FORMAT_VERSION = "v0.2.0"
 
     def __init__(self, registry_filename=None):
         if registry_filename is None:
@@ -79,6 +85,7 @@ class Registry:
 
         cmod = importlib.import_module(extension["job_configuration_module"])
         emod = importlib.import_module(extension["job_execution_module"])
+        pmod = importlib.import_module(extension["job_parameters_module"])
         cli_mod = importlib.import_module(extension["cli_module"])
 
         ext = copy.copy(extension)
@@ -86,6 +93,8 @@ class Registry:
             cmod, extension["job_configuration_class"])
         ext[ExtensionClassType.EXECUTION] = getattr(
             emod, extension["job_execution_class"])
+        ext[ExtensionClassType.PARAMETERS] = getattr(
+            pmod, extension["job_parameters_class"])
         ext[ExtensionClassType.CLI] = cli_mod
 
         self._extensions[extension["name"]] = ext
@@ -106,10 +115,22 @@ class Registry:
             )
             data = new_data
 
+        format = data.get("format_version", "v0.1.0")
+        if format == "v0.1.0":
+            self.reset_defaults()
+            data = load_data(filename)
+            print(
+                "\nWARNING: Reformatted registry. You will need to "
+                "re-register any external extensions.\n"
+            )
         return data
 
     def _serialize_registry(self):
-        data = {"extensions": [], "logging": list(self._loggers)}
+        data = {
+            "extensions": [],
+            "logging": list(self._loggers),
+            "format_version": self.FORMAT_VERSION,
+        }
         for _, extension in sorted(self._extensions.items()):
             ext = {k: v for k, v in extension.items()
                    if not isinstance(k, ExtensionClassType)}
@@ -179,6 +200,16 @@ class Registry:
         """Check if the extension is registered"""
         return extension_name in self._extensions
 
+    def iter_extensions(self):
+        """Return an iterator over registered extensions.
+
+        Returns
+        -------
+        dict_values
+
+        """
+        return self._extensions.values()
+
     def list_extensions(self):
         """Return a list of registered extensions.
 
@@ -187,7 +218,7 @@ class Registry:
         list of dict
 
         """
-        return list(self._extensions.values())
+        return list(self.iter_extensions())
 
     def register_extension(self, extension):
         """Registers an extension in the registry.

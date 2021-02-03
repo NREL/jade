@@ -39,11 +39,6 @@ class DispatchableJob(DispatchableJobInterface):
         ret = self._pipe.returncode
         exec_time_s = time.time() - self._start_time
 
-        job_filename = self._job.name
-        illegal_chars = ("/", "\\", ":")
-        for char in illegal_chars:
-            job_filename = job_filename.replace(char, "-")
-
         status = "finished"
         output_dir = os.path.join(self._output, JOBS_OUTPUT_DIR, self._job.name)
         bytes_consumed = get_directory_size_bytes(output_dir)

@@ -34,7 +34,8 @@ def test_serialize():
     data = arp.serialize()
     expected = {
         "country": "united_states",
-        "data": "/path/to/data.csv"
+        "data": "/path/to/data.csv",
+        "extension": "demo",
     }
     assert data == expected
 

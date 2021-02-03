@@ -68,5 +68,13 @@ class JobContainerByKey(JobContainerInterface):
 
         return job
 
+    def get_jobs(self, sort_by_key=False):
+        if sort_by_key:
+            keys = list(self._jobs.keys())
+            keys.sort()
+            return [self._jobs[x] for x in keys]
+
+        return list(self.iter_jobs)
+
     def get_num_jobs(self):
         return len(self._jobs)

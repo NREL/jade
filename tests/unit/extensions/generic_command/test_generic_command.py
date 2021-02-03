@@ -48,7 +48,7 @@ def test_run_generic_commands(generic_command_fixture):
             f_out.write(command + "\n")
 
     inputs = GenericCommandInputs(TEST_FILENAME)
-    config = GenericCommandConfiguration(job_inputs=inputs)
+    config = GenericCommandConfiguration()
     for job_param in inputs.iter_jobs():
         config.add_job(job_param)
     assert config.get_num_jobs() == 2
@@ -71,8 +71,7 @@ def test_sorted_order(generic_command_fixture):
     with open(TEST_FILENAME, "w") as f_out:
         pass
 
-    inputs = GenericCommandInputs(TEST_FILENAME)
-    config = GenericCommandConfiguration(inputs)
+    config = GenericCommandConfiguration()
     num_jobs = 20
     for i in range(num_jobs):
         job = GenericCommandParameters("echo hello")
@@ -93,7 +92,7 @@ def test_job_order(generic_command_fixture):
             f_out.write(command + "\n")
 
     inputs = GenericCommandInputs(TEST_FILENAME)
-    config = GenericCommandConfiguration(job_inputs=inputs)
+    config = GenericCommandConfiguration()
     for job_param in inputs.iter_jobs():
         config.add_job(job_param)
     assert config.get_num_jobs() == num_jobs

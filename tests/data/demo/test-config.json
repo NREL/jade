@@ -1,19 +1,23 @@
 {
-  "class": "AutoRegressionConfiguration",
-  "extension": "demo",
   "jobs_directory": null,
+  "format_version": "v0.2.0",
+  "configuration_module": "jade.extensions.demo.autoregression_configuration",
+  "configuration_class": "AutoRegressionConfiguration",
   "jobs": [
     {
       "country": "australia",
-      "data": "demo/gdp/countries/australia.csv"
+      "data": "demo/gdp/countries/australia.csv",
+      "extension": "demo"
     },
     {
       "country": "brazil",
-      "data": "demo/gdp/countries/brazil.csv"
+      "data": "demo/gdp/countries/brazil.csv",
+      "extension": "demo"
     },
     {
       "country": "united_states",
-      "data": "demo/gdp/countries/united_states.csv"
+      "data": "demo/gdp/countries/united_states.csv",
+      "extension": "demo"
     }
   ]
 }

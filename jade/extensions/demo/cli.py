@@ -20,8 +20,8 @@ def auto_config(inputs, **kwargs):
         raise OSError(f"Inputs path '{inputs}' does not exist.")
 
     job_inputs = AutoRegressionInputs(inputs)
-    config = AutoRegressionConfiguration(job_inputs=job_inputs, **kwargs)
-    for job_param in config.inputs.iter_jobs():
+    config = AutoRegressionConfiguration(**kwargs)
+    for job_param in job_inputs.iter_jobs():
         config.add_job(job_param)
 
     return config

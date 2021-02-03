@@ -5,7 +5,7 @@ import os
 import shutil
 import uuid
 
-from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_results_temp_filename
+from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_results_filename
 from jade.enums import Status
 from jade.hpc.common import HpcType
 from jade.hpc.local_manager import LocalManager
@@ -111,22 +111,25 @@ class JobRunner(JobManagerBase):
         return intf, intf_type
 
     def _generate_jobs(self, config_file, verbose):
-        job_exec_class = self._config.job_execution_class()
-        results_filename = get_results_temp_filename(
-            self._output, self._batch_id
-        )
-        results_aggregator = ResultsAggregator(results_filename)
-        results_aggregator.create_file()
+        results_filename = get_results_filename(self._output)
 
-        return [
-            DispatchableJob(
+        jobs = []
+        for job in self._config.iter_jobs():
+            job_exec_class = self._config.job_execution_class(job.extension)
+            djob = DispatchableJob(
                 job,
                 job_exec_class.generate_command(
-                    job, self._jobs_output, config_file, verbose=verbose),
+                    job,
+                    self._jobs_output,
+                    config_file,
+                    verbose=verbose,
+                ),
                 self._output,
-                results_filename
-            ) for job in self._config.iter_jobs()
-        ]
+                results_filename,
+            )
+            jobs.append(djob)
+
+        return jobs
 
     def _run_jobs(self, jobs, num_processes=None):
         num_jobs = len(jobs)

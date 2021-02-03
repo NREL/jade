@@ -18,7 +18,6 @@ def test_auto_config(test_data_dir):
     config = auto_config(inputs)
 
     assert isinstance(config, AutoRegressionConfiguration)
-    assert isinstance(config.inputs, AutoRegressionInputs)
     assert config.get_num_jobs() == 3
 
 

@@ -68,7 +68,6 @@ def show(config_file, fields):
 def _show(config_file, fields):
     cfg = load_data(config_file)
     jobs = cfg["jobs"]
-    print(f"Extension: {cfg['extension']}")
     print(f"Num jobs: {len(cfg['jobs'])}")
     if not jobs:
         return

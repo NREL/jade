@@ -1,7 +1,7 @@
 """Utility functions for the jade package."""
 
 from datetime import datetime, date
-from pathlib import PosixPath
+from pathlib import PosixPath, WindowsPath
 from typing import Union
 import enum
 import functools
@@ -498,7 +498,7 @@ class ExtendedJSONEncoder(json.JSONEncoder):
         if isinstance(obj, enum.Enum):
             return obj.value
 
-        if isinstance(obj, PosixPath):
+        if isinstance(obj, PosixPath) or isinstance(obj, WindowsPath):
             return str(obj)
 
         if isinstance(obj, (datetime, date)):
