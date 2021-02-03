@@ -28,7 +28,7 @@ Computer or HPC with conda
 
 .. code-block:: bash
 
-    $ pip install git+https://github.com/NREL/jade.git@v0.1.2
+    $ pip install git+https://github.com/NREL/jade.git@v0.1.3
 
 
 Computer with docker
