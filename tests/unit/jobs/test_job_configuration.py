@@ -5,8 +5,8 @@ import shutil
 import pytest
 
 from jade.exceptions import InvalidConfiguration
-from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
-from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandInputs
+from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.utils.subprocess_manager import run_command
 
 

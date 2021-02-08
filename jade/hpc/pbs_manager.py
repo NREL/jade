@@ -30,24 +30,14 @@ wait
 class PbsManager(HpcManagerInterface):
     """Manages PBS jobs."""
 
-    _OPTIONAL_CONFIG_PARAMS = {
-        "feature": None,
-        "qos": "high",
-        # memory?  TODO
-    }
-    _REQUIRED_CONFIG_PARAMS = (
-        "allocation",
-        #"queue",
-        "walltime",
-    )
     _STATUSES = {
         "Q": HpcJobStatus.QUEUED,
         "R": HpcJobStatus.RUNNING,
         "C": HpcJobStatus.COMPLETE,
     }
 
-    def __init__(self, config_file):
-        self._config = self.create_config(config_file)
+    def __init__(self, config):
+        self._config = config
 
     def cancel_job(self, job_id):
         return 0
@@ -82,12 +72,6 @@ class PbsManager(HpcManagerInterface):
     @staticmethod
     def get_num_cpus():
         return 18
-
-    def get_optional_config_params(self):
-        return self._OPTIONAL_CONFIG_PARAMS
-
-    def get_required_config_params(self):
-        return self._REQUIRED_CONFIG_PARAMS
 
     @staticmethod
     def _get_status_from_output(qstat_rows, name):

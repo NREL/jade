@@ -11,6 +11,7 @@ from jade.hpc.fake_manager import FakeManager
 from jade.hpc.local_manager import LocalManager
 from jade.hpc.pbs_manager import PbsManager
 from jade.hpc.slurm_manager import SlurmManager
+from jade.models import HpcConfig
 
 
 logger = logging.getLogger(__name__)
@@ -18,8 +19,9 @@ logger = logging.getLogger(__name__)
 
 class HpcManager:
     """Manages HPC job submission and monitoring."""
-    def __init__(self, config_file, output):
-        self._intf, self._hpc_type = self._create_hpc_manager(config_file)
+    def __init__(self, config, output):
+        self._config = config
+        self._intf = self._create_hpc_interface(config)
         self._output = output
 
         logger.debug("Constructed HpcManager with output=%s", output)
@@ -99,7 +101,7 @@ class HpcManager:
         HpcType
 
         """
-        return self._hpc_type
+        return self._config.hpc_type
 
     def submit(self, directory, name, script, wait=False,
                keep_submission_script=True):
@@ -155,30 +157,43 @@ class HpcManager:
         return job_id, result
 
     @staticmethod
-    def _create_hpc_manager(config_file):
+    def _create_hpc_interface(config):
         """Returns an HPC implementation instance appropriate for the current
         environment.
 
         """
+        if config.hpc_type is not None:
+            if config.hpc_type == HpcType.SLURM:
+                intf = SlurmManager(config)
+            elif config.hpc_type == HpcType.FAKE:
+                intf = FakeManager(config)
+            elif config.hpc_type == HpcType.LOCAL:
+                intf = LocalManager(config)
+            else:
+                raise ValueError("Unsupported HPC type: {}".format(config.hpc_type))
+
+            logger.debug("HPC manager type=%s", config.hpc_type)
+            return intf
+
         cluster = os.environ.get("NREL_CLUSTER")
         if cluster is None:
             if os.environ.get("FAKE_HPC_CLUSTER") is not None:
-                intf = FakeManager(config_file)
-                hpc_type = HpcType.FAKE
+                intf = FakeManager(config)
+                config.hpc_type = HpcType.FAKE
             else:
-                intf = LocalManager(config_file)
-                hpc_type = HpcType.LOCAL
+                intf = LocalManager(config)
+                config.hpc_type = HpcType.LOCAL
         elif cluster == "peregrine":
-            intf = PbsManager(config_file)
-            hpc_type = HpcType.PBS
+            intf = PbsManager(config)
+            config.hpc_type = HpcType.PBS
         elif cluster == "eagle":
-            intf = SlurmManager(config_file)
-            hpc_type = HpcType.SLURM
+            intf = SlurmManager(config)
+            config.hpc_type = HpcType.SLURM
         else:
-            raise ValueError("Unsupported cluster type: {}".format(cluster))
+            raise ValueError("Unsupported HPC type: {}".format(cluster))
 
-        logger.debug("HPC manager type=%s", hpc_type)
-        return intf, hpc_type
+        logger.debug("HPC manager type=%s", config.hpc_type)
+        return intf
 
     def _wait_for_completion(self, job_id):
         status = HpcJobStatus.UNKNOWN

@@ -29,8 +29,9 @@ class JobQueue:
 
     """
 
-    def __init__(self, max_queue_depth, poll_interval=DEFAULT_POLL_INTERVAL,
-                 monitor_func=None, monitor_interval=DEFAULT_MONITOR_INTERVAL):
+    def __init__(self, max_queue_depth, existing_jobs=None,
+                 poll_interval=DEFAULT_POLL_INTERVAL, monitor_func=None,
+                 monitor_interval=DEFAULT_MONITOR_INTERVAL):
         """
         Parameters
         ----------
@@ -51,6 +52,10 @@ class JobQueue:
         self._num_completed = 0
         self._monitor_func = monitor_func
         self._last_monitor_time = None
+
+        if existing_jobs is not None:
+            for job in existing_jobs:
+                self._outstanding_jobs[job.name] = job
 
         interval = os.environ.get("JADE_MONITOR_INTERVAL")
         if interval:
@@ -114,6 +119,17 @@ class JobQueue:
             logger.debug("Run monitor function")
             self._monitor_func()
             self._last_monitor_time = cur_time
+
+    @property
+    def outstanding_jobs(self):
+        """Return the outstanding jobs.
+
+        Returns
+        -------
+        dict_values
+
+        """
+        return self._outstanding_jobs.values()
 
     def process_queue(self):
         """Process completions and submit new jobs if the queue is not full."""

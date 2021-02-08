@@ -26,6 +26,10 @@ class JobManagerBase(abc.ABC):
         os.makedirs(self._jobs_output, exist_ok=True)
         os.makedirs(self._results_dir, exist_ok=True)
 
+    @property
+    def config(self):
+        return self._config
+
     def get_num_jobs(self):
         """Get the number of jobs to execute.
 

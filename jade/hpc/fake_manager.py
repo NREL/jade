@@ -26,14 +26,12 @@ DEFAULTS = {
 class FakeManager(HpcManagerInterface):
     """Simulates management of HPC jobs."""
 
-    _OPTIONAL_CONFIG_PARAMS = {}
-    _REQUIRED_CONFIG_PARAMS = ()
-
     next_job_id = 1
 
-    def __init__(self, _):
+    def __init__(self, config):
         self._subprocess_mgr = None
         self._job_id = None
+        self._config = config
 
     def cancel_job(self, job_id):
         return 0
@@ -82,12 +80,6 @@ class FakeManager(HpcManagerInterface):
     @staticmethod
     def get_num_cpus():
         return multiprocessing.cpu_count()
-
-    def get_optional_config_params(self):
-        return self._OPTIONAL_CONFIG_PARAMS
-
-    def get_required_config_params(self):
-        return self._REQUIRED_CONFIG_PARAMS
 
     def log_environment_variables(self):
         pass

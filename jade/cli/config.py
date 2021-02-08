@@ -10,7 +10,7 @@ import click
 from prettytable import PrettyTable
 
 from jade.common import CONFIG_FILE
-from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.loggers import setup_logging
 from jade.utils.utils import dump_data, load_data
 

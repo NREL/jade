@@ -3,6 +3,7 @@
 import copy
 import os
 
+from pydantic import ValidationError
 import pytest
 
 from jade.common import OUTPUT_DIR
@@ -11,44 +12,44 @@ from jade.hpc.hpc_manager import HpcManager
 from jade.hpc.slurm_manager import SlurmManager
 from jade.jobs.job_submitter import DEFAULTS
 from jade.exceptions import InvalidParameter
+from jade.models import HpcConfig
+from jade.utils.subprocess_manager import run_command
 from jade.utils.utils import dump_data, load_data
 
 
 HPC_CONFIG = load_data(DEFAULTS["hpc_config_file"])
 
 
-@pytest.fixture
-def hpc_fixture():
-    original = os.environ.get("NREL_CLUSTER")
-    yield
+def hpc_config(hpc_type, **kwargs):
+    config = {
+        "hpc_type": hpc_type,
+        "hpc": {
+            "account": "abc",
+            "partition": "short",
+            "walltime": "4:00:00",
+        },
+    }
+    for key, val in kwargs.items():
+        config["hpc"][key] = val
 
-    if original is None:
-        if "NREL_CLUSTER" in os.environ:
-            os.environ.pop("NREL_CLUSTER")
-    else:
-        os.environ["NREL_CLUSTER"] = original
-
-
-def hpc_config():
-    return copy.deepcopy(HPC_CONFIG)
-
-
-def test_create_slurm(hpc_fixture):
-    create_hpc_manager("eagle", hpc_config())
-
-    bad_config = hpc_config()
-    bad_config["hpc"].pop("allocation")
-    with pytest.raises(InvalidParameter):
-        create_hpc_manager("eagle", bad_config)
-
-    optional_config = copy.deepcopy(hpc_config())
-    create_hpc_manager("eagle", optional_config)
+    return HpcConfig(**config)
 
 
-def test_create_slurm_invalid_file(hpc_fixture):
-    os.environ["NREL_CLUSTER"] = "eagle"
-    with pytest.raises(FileNotFoundError):
-        HpcManager("invalid_filename", OUTPUT_DIR)
+def test_create_slurm():
+    create_hpc_manager("slurm")
+    config = hpc_config("slurm")
+    bad_config = config.dict()
+    bad_config["hpc"].pop("account")
+    with pytest.raises(ValidationError):
+        HpcConfig(**bad_config)
+
+
+def test_create_fake():
+    create_hpc_manager("fake")
+
+
+def test_create_local():
+    create_hpc_manager("local")
 
 
 def test_slurm_check_statuses():
@@ -65,13 +66,8 @@ def test_slurm_check_statuses():
     ]
 
 
-def test_create_pbs(hpc_fixture):
-    create_hpc_manager("peregrine", hpc_config())
-
-
-def test_create_submission_script(hpc_fixture):
-    config = hpc_config()
-    mgr = create_hpc_manager("eagle", config)
+def test_create_submission_script():
+    mgr = create_hpc_manager("slurm")
     script = "run.sh"
     required = ["account", "time", "job-name", "output",
                 "error", "#SBATCH"]
@@ -89,12 +85,8 @@ def test_create_submission_script(hpc_fixture):
         os.remove(submission_script)
 
 
-def test_qos_setting(hpc_fixture):
-    config = hpc_config()
-
-    # With qos set.
-    config["hpc"]["qos"] = "high"
-    mgr = create_hpc_manager("eagle", config)
+def test_qos_setting():
+    mgr = create_hpc_manager("slurm", qos="high")
     text = mgr._intf._create_submission_script_text("name", "run.sh", ".")
     found = False
     for line in text:
@@ -103,10 +95,7 @@ def test_qos_setting(hpc_fixture):
     assert found
 
     # With qos not set.
-    config = hpc_config()
-    if "hpc" in config["hpc"]:
-        config["hpc"].pop("qos")
-    mgr = create_hpc_manager("eagle", config)
+    mgr = create_hpc_manager("slurm")
     text = mgr._intf._create_submission_script_text("name", "run.sh", ".")
     found = False
     for line in text:
@@ -115,27 +104,23 @@ def test_qos_setting(hpc_fixture):
     assert not found
 
 
-def test_get_stripe_count(hpc_fixture):
+def test_get_stripe_count():
     output = "stripe_count:  16 stripe_size:   1048576 stripe_offset: -1"
     assert SlurmManager._get_stripe_count(output) == 16
 
 
-def create_hpc_manager(cluster, config):
-    os.environ["NREL_CLUSTER"] = cluster
+def create_hpc_manager(hpc_type, **kwargs):
     mgr = None
-    try:
-        hpc_file = "test-hpc-config.toml"
-        dump_data(config, hpc_file)
+    config = hpc_config(hpc_type, **kwargs)
+    mgr = HpcManager(config, OUTPUT_DIR)
 
-        mgr = HpcManager(hpc_file, OUTPUT_DIR)
-    finally:
-        os.remove(hpc_file)
-
-    if cluster == "eagle":
+    if hpc_type == "slurm":
         assert mgr.hpc_type == HpcType.SLURM
-    elif cluster == "peregrine":
-        assert mgr.hpc_type == HpcType.PBS
+    elif hpc_type == "fake":
+        assert mgr.hpc_type == HpcType.FAKE
+    elif hpc_type == "local":
+        assert mgr.hpc_type == HpcType.LOCAL
     else:
-        assert False, "unknown cluster={}".format(cluster)
+        assert False, "unknown hpc_type={}".format(hpc_type)
 
     return mgr

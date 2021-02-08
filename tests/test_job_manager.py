@@ -28,7 +28,7 @@ class TestJobSubmitter(object):
         config.dump(CONFIG_FILE)
 
         try:
-            mgr = JobSubmitter(CONFIG_FILE)
+            mgr = JobSubmitter.create(CONFIG_FILE)
             assert not mgr.get_completed_results()
             assert config.get_num_jobs() == mgr.get_num_jobs()
         finally:

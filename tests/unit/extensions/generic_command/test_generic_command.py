@@ -7,10 +7,10 @@ import shutil
 
 import pytest
 
-from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
-from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
-from jade.extensions.generic_command.generic_command_execution import GenericCommandExecution
-from jade.extensions.generic_command.generic_command_parameters import GenericCommandParameters
+from jade.extensions.generic_command import GenericCommandInputs
+from jade.extensions.generic_command import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandExecution
+from jade.extensions.generic_command import GenericCommandParameters
 from jade.result import ResultsSummary
 from jade.utils.subprocess_manager import run_command
 
@@ -19,6 +19,7 @@ TEST_FILENAME = "inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = "jade submit-jobs"
+WAIT = "jade wait"
 
 
 @pytest.fixture
@@ -62,6 +63,7 @@ def test_run_generic_commands(generic_command_fixture):
         f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 -q 32",
     )
 
+    os.environ["FAKE_HPC_CLUSTER"] = "True"
     for cmd in cmds:
         ret = run_command(cmd)
         assert ret == 0
@@ -106,13 +108,15 @@ def test_job_order(generic_command_fixture):
     config.dump(CONFIG_FILE)
 
     os.environ["FAKE_HPC_CLUSTER"] = "True"
-
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} " \
         "--per-node-batch-size=10 " \
         "--max-nodes=4 " \
-        "--poll-interval=.1 " \
+        "--poll-interval=0.1 " \
         "--num-processes=10"
     ret = run_command(cmd)
+    assert ret == 0
+
+    ret = run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.1")
     assert ret == 0
 
     result_summary = ResultsSummary(OUTPUT)

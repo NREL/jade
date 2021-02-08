@@ -7,8 +7,8 @@ import shutil
 
 import pytest
 
-from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
-from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandInputs
+from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.events import EventsSummary, EVENT_NAME_HPC_SUBMIT
 from jade.utils.subprocess_manager import run_command
 
@@ -48,24 +48,13 @@ def test_try_add_blocked_jobs(cleanup):
     config.dump(CONFIG_FILE)
 
     os.environ["FAKE_HPC_CLUSTER"] = "True"
-    for option in ("--try-add-blocked-jobs", "--no-try-add-blocked-jobs"):
-        cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 {option}"
-        ret = run_command(cmd)
-        assert ret == 0
-        events_file = os.path.join(OUTPUT, "submit_jobs_events.log")
-        events_summary = EventsSummary(OUTPUT, preload=True)
-        submit_events = events_summary.list_events(EVENT_NAME_HPC_SUBMIT)
-        if option == "--try-add-blocked-jobs":
-            assert len(submit_events) == 1
-            event = submit_events[0]
-            assert event.data["batch_size"] == num_commands
-            assert event.data["num_blocked"] == 0
-            shutil.rmtree(OUTPUT)
-        else:
-            assert len(submit_events) == 2
-            event1 = submit_events[0]
-            event2 = submit_events[1]
-            assert event1.data["batch_size"] == num_commands - 1
-            assert event2.data["batch_size"] == 1
-            assert event1.data["num_blocked"] == 1
-            assert event2.data["num_blocked"] == 0
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1"
+    ret = run_command(cmd)
+    assert ret == 0
+    events_file = os.path.join(OUTPUT, "submit_jobs_events.log")
+    events_summary = EventsSummary(OUTPUT, preload=True)
+    submit_events = events_summary.list_events(EVENT_NAME_HPC_SUBMIT)
+    assert len(submit_events) == 1
+    event = submit_events[0]
+    assert event.data["batch_size"] == num_commands
+    shutil.rmtree(OUTPUT)

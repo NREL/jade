@@ -18,13 +18,6 @@ logger = logging.getLogger(__name__)
 class SlurmManager(HpcManagerInterface):
     """Manages Slurm jobs."""
 
-    _OPTIONAL_CONFIG_PARAMS = {
-        "mem": 5,  # TODO
-    }
-    _REQUIRED_CONFIG_PARAMS = (
-        "allocation",
-        "walltime",
-    )
     _STATUSES = {
         "PENDING": HpcJobStatus.QUEUED,
         "CONFIGURING": HpcJobStatus.QUEUED,
@@ -33,8 +26,8 @@ class SlurmManager(HpcManagerInterface):
     }
     _REGEX_SBATCH_OUTPUT = re.compile(r"Submitted batch job (\d+)")
 
-    def __init__(self, config_file):
-        self._config = self.create_config(config_file)
+    def __init__(self, config):
+        self._config = config
 
     def cancel_job(self, job_id):
         return run_command(f"scancel {job_id}")
@@ -176,9 +169,9 @@ class SlurmManager(HpcManagerInterface):
     def _create_submission_script_text(self, name, script, path):
         lines = [
             "#!/bin/bash",
-            f"#SBATCH --account={self._config['hpc']['allocation']}",
+            f"#SBATCH --account={self._config.hpc.account}",
             f"#SBATCH --job-name={name}",
-            f"#SBATCH --time={self._config['hpc']['walltime']}",
+            f"#SBATCH --time={self._config.hpc.walltime}",
             f"#SBATCH --output={path}/job_output_%j.o",
             f"#SBATCH --error={path}/job_output_%j.e",
             "#SBATCH --nodes=1",
@@ -186,7 +179,7 @@ class SlurmManager(HpcManagerInterface):
 
         for param in ("memory", "partition", "ntasks", "ntasks_per_node",
                       "qos"):
-            value = self._config["hpc"].get(param)
+            value = getattr(self._config.hpc, param, None)
             if value is not None:
                 lines.append(f"#SBATCH --{param}={value}")
 
@@ -200,12 +193,6 @@ class SlurmManager(HpcManagerInterface):
     @staticmethod
     def get_num_cpus():
         return int(os.environ["SLURM_CPUS_ON_NODE"])
-
-    def get_optional_config_params(self):
-        return self._OPTIONAL_CONFIG_PARAMS
-
-    def get_required_config_params(self):
-        return self._REQUIRED_CONFIG_PARAMS
 
     def log_environment_variables(self):
         data = {}

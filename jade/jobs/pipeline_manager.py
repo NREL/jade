@@ -6,7 +6,7 @@ import shutil
 import time
 
 from jade.exceptions import ExecutionError
-from jade.jobs.job_submitter import DEFAULTS
+from jade.models.submitter_options import DEFAULTS
 from jade.result import Result, serialize_result
 from jade.utils.subprocess_manager import run_command
 from jade.utils.timing_utils import timed_info

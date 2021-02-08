@@ -52,3 +52,12 @@ class AutoRegressionParameters(JobParametersInterface):
     @classmethod
     def deserialize(cls, param):
         return cls(param["country"], param["data"])
+
+    def get_blocking_jobs(self):
+        return set()
+
+    def remove_blocking_job(self, name):
+        pass
+
+    def set_blocking_jobs(self, blocking_jobs):
+        pass

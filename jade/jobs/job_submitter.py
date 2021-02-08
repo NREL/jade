@@ -10,12 +10,17 @@ import shutil
 import time
 
 import jade
-from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, \
-    RESULTS_FILE, get_results_filename
+from jade.common import (
+    CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, RESULTS_FILE, HPC_CONFIG_FILE,
+    get_results_filename
+)
 from jade.enums import Status
-from jade.events import EVENTS_FILENAME, EVENT_NAME_ERROR_LOG, \
-    StructuredLogEvent, EVENT_CATEGORY_ERROR, EVENT_CATEGORY_RESOURCE_UTIL, \
-    EVENT_NAME_BYTES_CONSUMED, EVENT_NAME_CONFIG_EXEC_SUMMARY
+from jade.events import (
+    EVENTS_FILENAME, EVENT_NAME_ERROR_LOG,
+    StructuredLogEvent, EVENT_CATEGORY_ERROR, EVENT_CATEGORY_RESOURCE_UTIL,
+    EVENT_NAME_BYTES_CONSUMED, EVENT_NAME_SUBMIT_STARTED,
+    EVENT_NAME_SUBMIT_COMPLETED
+)
 from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.hpc.common import HpcType
@@ -35,50 +40,40 @@ import jade.version
 logger = logging.getLogger(__name__)
 
 DEFAULTS = {
-    "hpc_config_file": "hpc_config.toml",
-    "max_nodes": 16,
+    "hpc_config_file": HPC_CONFIG_FILE,
     "output": OUTPUT_DIR,
-    "per_node_batch_size": 500,
-    "poll_interval": 60,
-    "bpp_max_nodes": 1,
-    "bpp_per_node_batch_size": 500,
 }
 
 
 class JobSubmitter(JobManagerBase):
     """Submits jobs for execution locally or on an HPC."""
-    def __init__(self,
-                 config_file,
-                 hpc_config=DEFAULTS["hpc_config_file"],
-                 output=DEFAULTS["output"],
-                 ):
-        """Constructs JobSubmitter.
+    def __init__(self, config_file, output, is_new):
+        """Internal constructor. Callers should use create() or reload()."""
+        super(JobSubmitter, self).__init__(config_file, output)
+        self._hpc = None
+        self._config_file = config_file
+        self._is_new = is_new
+
+    @classmethod
+    def create(cls, config_file, output=DEFAULTS["output"]):
+        """Creates a new instance.
 
         Parameters
         ----------
         config_file : JobConfiguration
             configuration for simulation
-        hpc_config : dict, optional
-            HPC configuration parameters
-            Job timeout in seconds
         output : str
             Output directory
 
         """
-        super(JobSubmitter, self).__init__(config_file, output)
-        self._hpc = None
         master_file = os.path.join(output, CONFIG_FILE)
         shutil.copyfile(config_file, master_file)
-        self._config_file = master_file
-        logger.debug("Copied %s to %s", config_file, master_file)
+        return cls(master_file, output, True)
 
-        if isinstance(hpc_config, str):
-            self._hpc_config_file = hpc_config
-        else:
-            assert isinstance(hpc_config, dict)
-            self._hpc_config_file = os.path.join(self._output,
-                                                 "hpc_config.toml")
-            dump_data(hpc_config, self._hpc_config_file)
+    @classmethod
+    def reload(cls, output):
+        """Reloads an instance from an existing directory."""
+        return cls(os.path.join(output, CONFIG_FILE), output, False)
 
     def __repr__(self):
         return f"""hpc_config_file={self._hpc_config_file}
@@ -89,76 +84,67 @@ results_summary={self.get_results_summmary_report()}"""
         """Cancel running and pending jobs."""
         # TODO
 
-    def submit_jobs(self,
-                    name="job",
-                    per_node_batch_size=DEFAULTS["per_node_batch_size"],
-                    max_nodes=DEFAULTS["max_nodes"],
-                    force_local=False,
-                    verbose=False,
-                    poll_interval=DEFAULTS["poll_interval"],
-                    num_processes=None,
-                    previous_results=None,
-                    reports=True,
-                    try_add_blocked_jobs=False):
+    def submit_jobs(self, cluster, force_local=False, previous_results=None):
         """Submit simulations. Auto-detect whether the current system is an HPC
         and submit to its queue. Otherwise, run locally.
 
         Parameters
         ----------
-        name : str
-            batch name, applies to HPC job submission only
-        per_node_batch_size : int
-            Number of jobs to run on one node in one batch.
-        max_nodes : int
-            Max number of node submission requests to make in parallel.
         force_local : bool
             If on HPC, run jobs through subprocess as if local.
-        wait : bool
-            Don't return until HPC jobs have finished.
-        verbose : bool
-            Enable debug logging.
-        poll_interval : int
-            Inteval in seconds on which to poll jobs.
-        num_processes : int
-            Number of processes to run in parallel; defaults to num CPUs
 
         Returns
         -------
         Status
 
         """
-        logger.info("Submit %s jobs for execution.",
-                    self._config.get_num_jobs())
-        logger.info("JADE version %s", jade.version.__version__)
-        registry = Registry()
-        loggers = registry.list_loggers()
-        logger.info("Registered modules for logging: %s", ", ".join(loggers))
-        self._save_repository_info(registry)
+        if self._is_new:
+            logger.info("Submit %s jobs for execution.",
+                        self._config.get_num_jobs())
+            logger.info("JADE version %s", jade.version.__version__)
+            registry = Registry()
+            loggers = registry.list_loggers()
+            logger.info("Registered modules for logging: %s", ", ".join(loggers))
+            self._save_repository_info(registry)
+            self._config.check_job_dependencies()
 
-        self._config.check_job_dependencies()
+            results_aggregator = ResultsAggregator(get_results_filename(self._output))
+            results_aggregator.create_file()
 
-        self._hpc = HpcManager(self._hpc_config_file, self._output)
-        result = Status.GOOD
+            # If an events summary file exists, it is invalid.
+            events_file = os.path.join(self._output, EVENTS_FILENAME)
+            if os.path.exists(events_file):
+                os.remove(events_file)
 
-        # If an events summary file exists, it is invalid.
-        events_file = os.path.join(self._output, EVENTS_FILENAME)
-        if os.path.exists(events_file):
-            os.remove(events_file)
+            event = StructuredLogEvent(
+                source="submitter",
+                category=EVENT_CATEGORY_RESOURCE_UTIL,
+                name=EVENT_NAME_SUBMIT_COMPLETED,
+                message="job submission started",
+                num_jobs=self.get_num_jobs(),
+            )
+            log_event(event)
 
-        results_aggregator = ResultsAggregator(get_results_filename(self._output))
-        results_aggregator.create_file()
+        result = Status.IN_PROGRESS
+        self._hpc = HpcManager(cluster.config.submitter_options.hpc_config, self._output)
 
-        start_time = time.time()
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)
-            result = runner.run_jobs(
-                verbose=verbose, num_processes=num_processes)
+            num_processes = cluster.config.submitter_options.num_processes
+            verbose = cluster.config.submitter_options.verbose
+            result = runner.run_jobs(verbose=verbose, num_processes=num_processes)
+            is_complete = True
         else:
-            self._submit_to_hpc(name, max_nodes, per_node_batch_size, verbose,
-                                poll_interval, num_processes,
-                                try_add_blocked_jobs)
+            is_complete = self._submit_to_hpc(cluster)
 
-        self._results = results_aggregator.get_results()
+        if is_complete:
+            result = self._handle_completion(cluster, previous_results)
+
+        return result
+
+    def _handle_completion(self, cluster, previous_results):
+        result = Status.GOOD
+        self._results = ResultsAggregator.list_results(self._output)
         if len(self._results) != self._config.get_num_jobs():
             logger.error("Number of results doesn't match number of jobs: "
                          "results=%s jobs=%s. Check for process crashes "
@@ -187,16 +173,16 @@ results_summary={self.get_results_summmary_report()}"""
         event = StructuredLogEvent(
             source="submitter",
             category=EVENT_CATEGORY_RESOURCE_UTIL,
-            name=EVENT_NAME_CONFIG_EXEC_SUMMARY,
-            message="config execution summary",
-            config_execution_time=time.time() - start_time,
+            name=EVENT_NAME_SUBMIT_COMPLETED,
+            message="job submission completed",
             num_jobs=self.get_num_jobs(),
         )
         log_event(event)
 
-        if reports:
+        if cluster.config.submitter_options.generate_reports:
             self.generate_reports(self._output)
 
+        cluster.mark_complete()
         return result
 
     def write_results_summary(self, filename):
@@ -339,25 +325,18 @@ results_summary={self.get_results_summmary_report()}"""
         logger.info("Generated reports %s.", " ".join(reports))
         return 0
 
-    def _submit_to_hpc(self, name, max_nodes, per_node_batch_size, verbose,
-                       poll_interval, num_processes, try_add_blocked_jobs):
-        queue_depth = max_nodes
+    def _submit_to_hpc(self, cluster):
         hpc_submitter = HpcSubmitter(
-            name,
             self._config,
             self._config_file,
-            self._hpc_config_file,
             self._results_dir,
-        )
-
-        hpc_submitter.run(
+            cluster,
             self._output,
-            queue_depth,
-            per_node_batch_size,
-            num_processes,
-            poll_interval=poll_interval,
-            try_add_blocked_jobs=try_add_blocked_jobs,
-            verbose=verbose,
         )
 
-        logger.info("All submitters have completed.")
+        if hpc_submitter.run():
+            logger.info("All submitters have completed.")
+            return True
+
+        logger.debug("jobs are still pending")
+        return False

@@ -61,3 +61,6 @@ class GenericCommandParameters(JobParametersInterface):
 
     def remove_blocking_job(self, name):
         self.blocked_by.remove(name)
+
+    def set_blocking_jobs(self, blocking_jobs):
+        self.blocked_by = blocking_jobs

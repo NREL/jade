@@ -1,4 +1,4 @@
-"""CLI to run a scenario."""
+"""CLI to run jobs."""
 
 import logging
 import os
@@ -6,11 +6,15 @@ import sys
 
 import click
 
+from jade.enums import Status
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
+from jade.models import HpcConfig, SubmitterOptions
+from jade.models.submitter_options import DEFAULTS as SUBMITTER_DEFAULTS
 from jade.result import ResultsSummary
-from jade.utils.utils import rotate_filenames, get_cli_string
+from jade.jobs.cluster import Cluster
+from jade.utils.utils import rotate_filenames, get_cli_string, load_data
 
 
 logger = logging.getLogger(__name__)
@@ -23,7 +27,7 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-b", "--per-node-batch-size",
-    default=DEFAULTS["per_node_batch_size"],
+    default=SUBMITTER_DEFAULTS["per_node_batch_size"],
     show_default=True,
     help="Number of jobs to run on one node in one batch."
 )
@@ -43,7 +47,7 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-n", "--max-nodes",
-    default=DEFAULTS["max_nodes"],
+    default=SUBMITTER_DEFAULTS["max_nodes"],
     show_default=True,
     help="Max number of node submission requests to make in parallel."
 )
@@ -55,7 +59,7 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-p", "--poll-interval",
-    default=DEFAULTS["poll_interval"],
+    default=SUBMITTER_DEFAULTS["poll_interval"],
     type=float,
     show_default=True,
     help="Interval in seconds on which to poll jobs for status."
@@ -101,19 +105,10 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Generate reports after execution."
 )
-@click.option(
-    "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
-    is_flag=True,
-    default=True,
-    show_default=True,
-    help="Add blocked jobs to a node's batch if they are blocked by jobs "
-         "already in the batch."
-)
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs,
-        verbose, restart_failed, restart_missing, reports,
-        try_add_blocked_jobs):
+        verbose, restart_failed, restart_missing, reports):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
 
@@ -146,17 +141,32 @@ def submit_jobs(
     setup_logging("event", event_file, console_level=logging.ERROR,
                   file_level=logging.INFO)
 
-    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
-    ret = mgr.submit_jobs(
-        per_node_batch_size=per_node_batch_size,
+    options = SubmitterOptions(
+        generate_reports=reports,
+        hpc_config=HpcConfig(**load_data(hpc_config)),
         max_nodes=max_nodes,
-        force_local=local,
-        verbose=verbose,
         num_processes=num_processes,
+        per_node_batch_size=per_node_batch_size,
         poll_interval=poll_interval,
-        previous_results=previous_results,
-        reports=reports,
-        try_add_blocked_jobs=try_add_blocked_jobs,
+        verbose=verbose,
     )
+    mgr = JobSubmitter.create(config_file, output=output)
+    cluster = Cluster.create(output, options, mgr.config)
 
-    sys.exit(ret.value)
+    ret = 1
+    try:
+        status = mgr.submit_jobs(
+            cluster,
+            force_local=local,
+            previous_results=previous_results,
+        )
+        if status == Status.IN_PROGRESS:
+            check_cmd = f"jade show-status {output}"
+            print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
+            ret = 0
+        else:
+            ret = status.value
+    finally:
+        cluster.demote_from_submitter()
+
+    sys.exit(ret)
