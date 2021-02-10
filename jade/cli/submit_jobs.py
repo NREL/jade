@@ -10,7 +10,7 @@ from jade.enums import Status
 from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
-from jade.models import HpcConfig, SubmitterOptions
+from jade.models import HpcConfig, LocalHpcConfig, SubmitterOptions
 from jade.models.submitter_options import DEFAULTS as SUBMITTER_DEFAULTS
 from jade.result import ResultsSummary
 from jade.jobs.cluster import Cluster
@@ -141,9 +141,14 @@ def submit_jobs(
     setup_logging("event", event_file, console_level=logging.ERROR,
                   file_level=logging.INFO)
 
+    if local:
+        hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
+    else:
+        hpc_config = HpcConfig(**load_data(hpc_config))
+
     options = SubmitterOptions(
         generate_reports=reports,
-        hpc_config=HpcConfig(**load_data(hpc_config)),
+        hpc_config=hpc_config,
         max_nodes=max_nodes,
         num_processes=num_processes,
         per_node_batch_size=per_node_batch_size,
