@@ -59,7 +59,7 @@ def try_submit_jobs(output, verbose):
         mgr = JobSubmitter.reload(output)
         status = mgr.submit_jobs(cluster)
         if status == Status.IN_PROGRESS:
-            check_cmd = f"jade show-status {output}"
+            check_cmd = f"jade show-status -o {output}"
             print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
             ret = 0
         else:
