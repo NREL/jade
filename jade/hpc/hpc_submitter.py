@@ -35,9 +35,9 @@ class HpcSubmitter:
         self._batch_index = cluster.job_status.batch_index
         self._completion_detector = CompletionDetector(results_dir)
         self._cluster = cluster
-        self._options = self._cluster.config.submitter_options
-        self._hpc_mgr = HpcManager(self._options.hpc_config, output)
-        self._status_collector = HpcStatusCollector(self._hpc_mgr, self._options.poll_interval)
+        self._params = self._cluster.config.submitter_params
+        self._hpc_mgr = HpcManager(self._params.hpc_config, output)
+        self._status_collector = HpcStatusCollector(self._hpc_mgr, self._params.poll_interval)
         self._output = output
 
     def _create_run_script(self, config_file, filename):
@@ -50,9 +50,9 @@ class HpcSubmitter:
 
         command = f"jade-internal run-jobs {config_file} " \
                   f"--output={self._output}"
-        if self._options.num_processes is not None:
-            command += f" --num-processes={self._options.num_processes}"
-        if self._options.verbose:
+        if self._params.num_processes is not None:
+            command += f" --num-processes={self._params.num_processes}"
+        if self._params.verbose:
             command += " --verbose"
 
         text.append(command)
@@ -71,7 +71,7 @@ class HpcSubmitter:
         run_script = os.path.join(self._output, f"run{suffix}.sh")
         self._create_run_script(new_config_file, run_script)
 
-        name = self._options.hpc_config.job_prefix + suffix
+        name = self._params.hpc_config.job_prefix + suffix
         return AsyncHpcSubmitter(
             self._hpc_mgr,
             self._status_collector,
@@ -98,9 +98,9 @@ class HpcSubmitter:
         ]
 
         queue = JobQueue(
-            self._options.max_nodes,
+            self._params.max_nodes,
             existing_jobs=hpc_submitters,
-            poll_interval=self._options.poll_interval,
+            poll_interval=self._params.poll_interval,
         )
         # Statuses may have changed since we last ran.
         queue.process_queue()
@@ -120,7 +120,7 @@ class HpcSubmitter:
                 batch.append(jade_job)
                 submitted_jobs.append(job)
 
-            if batch is not None and batch.num_jobs >= self._options.per_node_batch_size:
+            if batch is not None and batch.num_jobs >= self._params.per_node_batch_size:
                 self._submit_batch(queue, batch, hpc_job_ids)
                 batch = None
 
@@ -157,12 +157,12 @@ class HpcSubmitter:
 
     def _log_submission_event(self, batch):
         event = StructuredLogEvent(
-            source=self._options.hpc_config.job_prefix,
+            source=self._params.hpc_config.job_prefix,
             category=EVENT_CATEGORY_HPC,
             name=EVENT_NAME_HPC_SUBMIT,
             message="Submitted HPC batch",
             batch_size=batch.num_jobs,
-            per_node_batch_size=self._options.per_node_batch_size,
+            per_node_batch_size=self._params.per_node_batch_size,
         )
         log_event(event)
 

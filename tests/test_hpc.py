@@ -10,7 +10,7 @@ from jade.common import OUTPUT_DIR
 from jade.hpc.common import HpcType, HpcJobStatus
 from jade.hpc.hpc_manager import HpcManager
 from jade.hpc.slurm_manager import SlurmManager
-from jade.jobs.job_submitter import DEFAULTS
+from jade.models.submitter_params import DEFAULTS
 from jade.exceptions import InvalidParameter
 from jade.models import HpcConfig
 from jade.utils.subprocess_manager import run_command

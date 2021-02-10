@@ -4,8 +4,9 @@ import os
 from mock import MagicMock, patch
 
 from jade.jobs.job_runner import JobRunner
-from jade.jobs.job_submitter import JobSubmitter, DEFAULTS
+from jade.jobs.job_submitter import JobSubmitter
 from jade.extensions.demo.autoregression_configuration import AutoRegressionConfiguration
+from jade.models.submitter_params import DEFAULTS
 
 
 CONFIG_FILE = "test-config.json"

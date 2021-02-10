@@ -31,13 +31,13 @@ class Cluster:
     def __init__(self, config, job_status=None, lock_timeout=LOCK_TIMEOUT):
         """Internal constructor. Use create() or deserialize()."""
         self._config = config
-        self._lock_file = self.LOCK_FILE
         self._timeout = lock_timeout
         self._job_status = job_status
         self._config_hash = None
         self._job_status_hash = None
         self._config_file = self.get_config_file(self._config.path)
         self._job_status_file = self.get_job_status_file(self._config.path)
+        self._lock_file = self.get_lock_file(self._config.path)
 
         # These two files contain versions that are duplicated with the files
         # above. They exist to allow very quick reads to verify updates.
@@ -45,21 +45,25 @@ class Cluster:
         self._job_status_version_file = os.path.join(config.path, self.JOB_STATUS_VERSION_FILE)
 
     @classmethod
-    def create(cls, path, submitter_options, jade_config):
+    def create(cls, path, submitter_params, jade_config, pipeline_stage_index=None):
         """Create a new instance of a Cluster. Promotes itself to submitter.
 
         Parameters
         ----------
         path : str
             Base directory for a JADE submission
-        submitter_options : SubmitterOptions
+        submitter_params : SubmitterParams
+        jade_config : JobConfiguration
+        pipeline_stage_index : None | int
+            True if the config is one stage of a pipeline
 
         """
         config = ClusterConfig(
             path = path,
+            pipeline_stage_index=pipeline_stage_index,
             num_jobs=jade_config.get_num_jobs(),
             submitter=socket.gethostname(),
-            submitter_options=submitter_options,
+            submitter_params=submitter_params,
             version=0,
         )
         job_status = JobStatus(

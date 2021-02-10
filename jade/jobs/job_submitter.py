@@ -26,23 +26,21 @@ from jade.extensions.registry import Registry, ExtensionClassType
 from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.hpc.hpc_submitter import HpcSubmitter
+from jade.jobs.cluster import Cluster
+from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_runner import JobRunner
 from jade.jobs.results_aggregator import ResultsAggregator
+from jade.models import LocalHpcConfig
 from jade.loggers import log_event
-from jade.result import serialize_results
+from jade.result import serialize_results, ResultsSummary
 from jade.utils.repository_info import RepositoryInfo
 from jade.utils.subprocess_manager import run_command
-from jade.utils.utils import dump_data, get_directory_size_bytes
+from jade.utils.utils import dump_data, get_directory_size_bytes, rotate_filenames
 import jade.version
 
 
 logger = logging.getLogger(__name__)
-
-DEFAULTS = {
-    "hpc_config_file": HPC_CONFIG_FILE,
-    "output": OUTPUT_DIR,
-}
 
 
 class JobSubmitter(JobManagerBase):
@@ -55,7 +53,7 @@ class JobSubmitter(JobManagerBase):
         self._is_new = is_new
 
     @classmethod
-    def create(cls, config_file, output=DEFAULTS["output"]):
+    def create(cls, config_file, output=OUTPUT_DIR):
         """Creates a new instance.
 
         Parameters
@@ -126,12 +124,12 @@ results_summary={self.get_results_summmary_report()}"""
             log_event(event)
 
         result = Status.IN_PROGRESS
-        self._hpc = HpcManager(cluster.config.submitter_options.hpc_config, self._output)
+        self._hpc = HpcManager(cluster.config.submitter_params.hpc_config, self._output)
 
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)
-            num_processes = cluster.config.submitter_options.num_processes
-            verbose = cluster.config.submitter_options.verbose
+            num_processes = cluster.config.submitter_params.num_processes
+            verbose = cluster.config.submitter_params.verbose
             result = runner.run_jobs(verbose=verbose, num_processes=num_processes)
             is_complete = True
         else:
@@ -179,10 +177,20 @@ results_summary={self.get_results_summmary_report()}"""
         )
         log_event(event)
 
-        if cluster.config.submitter_options.generate_reports:
+        if cluster.config.submitter_params.generate_reports:
             self.generate_reports(self._output)
 
         cluster.mark_complete()
+
+        if cluster.config.pipeline_stage_index is not None:
+            # The pipeline directory must be the one above this one.
+            pipeline_dir = os.path.dirname(self._output)
+            next_stage = cluster.config.pipeline_stage_index + 1
+            cmd = f"jade pipeline try-submit {pipeline_dir} " \
+                f"--stage-index={next_stage} " \
+                f"--return-code={result.value}"
+            run_command(cmd) 
+
         return result
 
     def write_results_summary(self, filename):
@@ -340,3 +348,55 @@ results_summary={self.get_results_summmary_report()}"""
 
         logger.debug("jobs are still pending")
         return False
+
+    @staticmethod
+    def run_submit_jobs(
+        config_file,
+        output,
+        params,
+        rotate_logs=True,
+        restart_failed=False,
+        restart_missing=False,
+        pipeline_stage_index=None
+    ):
+        """Allows submission from an existing Python process."""
+        os.makedirs(output, exist_ok=True)
+        mgr = JobSubmitter.create(config_file, output=output)
+        cluster = Cluster.create(output, params, mgr.config, pipeline_stage_index=pipeline_stage_index)
+
+        previous_results = []
+        if restart_failed:
+            failed_job_config = create_config_from_previous_run(config_file, output,
+                                                                result_type='failed')
+            previous_results = ResultsSummary(output).get_successful_results()
+            config_file = "failed_job_inputs.json"
+            failed_job_config.dump(config_file)
+
+        if restart_missing:
+            missing_job_config = create_config_from_previous_run(config_file, output,
+                                                                 result_type='missing')
+            config_file = "missing_job_inputs.json"
+            missing_job_config.dump(config_file)
+            previous_results = ResultsSummary(output).list_results()
+
+        if rotate_logs:
+            rotate_filenames(output, ".log")
+
+        force_local = isinstance(params.hpc_config, LocalHpcConfig)
+        ret = 1
+        try:
+            status = mgr.submit_jobs(
+                cluster,
+                force_local=force_local,
+                previous_results=previous_results,
+            )
+            if status == Status.IN_PROGRESS:
+                check_cmd = f"jade show-status {output}"
+                print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
+                ret = 0
+            else:
+                ret = status.value
+        finally:
+            cluster.demote_from_submitter()
+
+        return ret

@@ -8,7 +8,7 @@ import jade
 from jade.jobs.cluster import Cluster
 from jade.common import CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration
-from jade.models import SubmitterOptions, HpcConfig, SlurmConfig
+from jade.models import SubmitterParams, HpcConfig, SlurmConfig
 
 
 OUTPUT = "test-output"
@@ -35,8 +35,8 @@ def jade_output():
 def test_cluster__create(jade_output):
     jade_config, output = jade_output
     hpc_config = HpcConfig(hpc_type="slurm", hpc=SlurmConfig(account="abc"))
-    options = SubmitterOptions(hpc_config=hpc_config)
-    cluster = Cluster.create(output, options, jade_config)
+    params = SubmitterParams(hpc_config=hpc_config)
+    cluster = Cluster.create(output, params, jade_config)
     assert cluster.config.num_jobs == 2
     assert cluster.config.submitted_jobs == 0
     assert cluster.config.completed_jobs == 0

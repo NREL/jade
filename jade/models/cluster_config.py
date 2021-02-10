@@ -4,7 +4,7 @@ from typing import Optional
 
 from pydantic import Field
 
-from jade.models import JadeBaseModel, SubmitterOptions
+from jade.models import JadeBaseModel, SubmitterParams
 
 
 class ClusterConfig(JadeBaseModel):
@@ -15,13 +15,17 @@ class ClusterConfig(JadeBaseModel):
         description="defines the current submitter, hostname or None",
         default=None,
     )
-    submitter_options: SubmitterOptions = Field(
-        title="submitter_options",
+    submitter_params: SubmitterParams = Field(
+        title="submitter_params",
         description="defines the submitter options selected by the user",
     )
     path: str = Field(
         title="path",
         description="directory on shared filesystem containing config",
+    )
+    pipeline_stage_index: Optional[int] = Field(
+        title="pipeline_stage_index",
+        description="stage index if the config part of a pipeline",
     )
     num_jobs: int = Field(
         title="num_jobs",

@@ -6,15 +6,14 @@ import sys
 
 import click
 
+from jade.common import OUTPUT_DIR
 from jade.enums import Status
-from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
-from jade.jobs.job_configuration_factory import create_config_from_previous_run
+from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging
-from jade.models import HpcConfig, LocalHpcConfig, SubmitterOptions
-from jade.models.submitter_options import DEFAULTS as SUBMITTER_DEFAULTS
-from jade.result import ResultsSummary
+from jade.models import HpcConfig, LocalHpcConfig
+from jade.models.submitter_params import DEFAULTS, SubmitterParams
 from jade.jobs.cluster import Cluster
-from jade.utils.utils import rotate_filenames, get_cli_string, load_data
+from jade.utils.utils import get_cli_string, load_data
 
 
 logger = logging.getLogger(__name__)
@@ -27,7 +26,7 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-b", "--per-node-batch-size",
-    default=SUBMITTER_DEFAULTS["per_node_batch_size"],
+    default=DEFAULTS["per_node_batch_size"],
     show_default=True,
     help="Number of jobs to run on one node in one batch."
 )
@@ -47,19 +46,19 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-n", "--max-nodes",
-    default=SUBMITTER_DEFAULTS["max_nodes"],
+    default=DEFAULTS["max_nodes"],
     show_default=True,
     help="Max number of node submission requests to make in parallel."
 )
 @click.option(
     "-o", "--output",
-    default=DEFAULTS["output"],
+    default=OUTPUT_DIR,
     show_default=True,
     help="Output directory."
 )
 @click.option(
     "-p", "--poll-interval",
-    default=SUBMITTER_DEFAULTS["poll_interval"],
+    default=DEFAULTS["poll_interval"],
     type=float,
     show_default=True,
     help="Interval in seconds on which to poll jobs for status."
@@ -111,26 +110,6 @@ def submit_jobs(
         verbose, restart_failed, restart_missing, reports):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
-
-    previous_results = []
-
-    if restart_failed:
-        failed_job_config = create_config_from_previous_run(config_file, output,
-                                                            result_type='failed')
-        previous_results = ResultsSummary(output).get_successful_results()
-        config_file = "failed_job_inputs.json"
-        failed_job_config.dump(config_file)
-
-    if restart_missing:
-        missing_job_config = create_config_from_previous_run(config_file, output,
-                                                             result_type='missing')
-        config_file = "missing_job_inputs.json"
-        missing_job_config.dump(config_file)
-        previous_results = ResultsSummary(output).list_results()
-
-    if rotate_logs:
-        rotate_filenames(output, ".log")
-
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level)
@@ -146,7 +125,7 @@ def submit_jobs(
     else:
         hpc_config = HpcConfig(**load_data(hpc_config))
 
-    options = SubmitterOptions(
+    params = SubmitterParams(
         generate_reports=reports,
         hpc_config=hpc_config,
         max_nodes=max_nodes,
@@ -155,23 +134,13 @@ def submit_jobs(
         poll_interval=poll_interval,
         verbose=verbose,
     )
-    mgr = JobSubmitter.create(config_file, output=output)
-    cluster = Cluster.create(output, options, mgr.config)
 
-    ret = 1
-    try:
-        status = mgr.submit_jobs(
-            cluster,
-            force_local=local,
-            previous_results=previous_results,
-        )
-        if status == Status.IN_PROGRESS:
-            check_cmd = f"jade show-status {output}"
-            print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
-            ret = 0
-        else:
-            ret = status.value
-    finally:
-        cluster.demote_from_submitter()
-
+    ret = JobSubmitter.run_submit_jobs(
+        config_file,
+        output,
+        params,
+        rotate_logs,
+        restart_failed,
+        restart_missing,
+    )
     sys.exit(ret)

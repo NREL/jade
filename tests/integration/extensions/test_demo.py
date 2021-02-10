@@ -23,29 +23,22 @@ def test_demo_extension(test_data_dir):
     base = os.path.join(JADE_PATH, "extensions", "demo")
     create_demo_config = os.path.join(base, "create_demo_config.sh")
     create_merge_config = os.path.join(base, "create_merge_pred_gdp.py")
-    config_file = os.path.join(test_data_dir, "pipeline.toml")
+    config_file = os.path.join(test_data_dir, "pipeline.json")
     output = os.path.join(test_data_dir, "output")
 
     try:
-        cmd = f"jade pipeline create {create_demo_config} {create_merge_config} -c {config_file}"
+        cmd = f"jade pipeline create {create_demo_config} {create_merge_config} -c {config_file} -l"
         returncode = run_command(cmd=cmd)
         assert returncode == 0
         assert os.path.exists(config_file)
-
-        # check result
-        data = load_data(config_file)
-        assert len(data["stages"]) == 2
-        for stage in data["stages"]:
-            stage["submit-params"]["--poll-interval"] = 0.1
-        dump_data(data, config_file)
 
         if os.path.exists(output):
             shutil.rmtree(output)
         returncode = run_command(f"jade pipeline submit {config_file} -o {output}")
         assert returncode == 0
 
-        output_stage1 = os.path.join(output, "output-stage1")
-        output_stage2 = os.path.join(output, "output-stage2")
+        output_stage1 = os.path.join(output, "output-stage0")
+        output_stage2 = os.path.join(output, "output-stage1")
         assert os.path.exists(output)
         assert os.path.exists(output_stage1)
         assert os.path.exists(output_stage2)

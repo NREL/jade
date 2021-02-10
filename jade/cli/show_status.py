@@ -11,10 +11,9 @@ from jade.common import OUTPUT_DIR
 from jade.enums import Status
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
-from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
-from jade.models import HpcConfig, SubmitterOptions
+from jade.models import HpcConfig
 from jade.utils.utils import rotate_filenames, get_cli_string, load_data
 
 

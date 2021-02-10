@@ -60,7 +60,7 @@ def run_jobs(config_file, output, num_processes, verbose):
     # When running on compute nodes try to submit more jobs before and after
     # running this batch's jobs.
     cluster, _ = Cluster.deserialize(output)
-    hpc = cluster.config.submitter_options.hpc_config.hpc_type
+    hpc = cluster.config.submitter_params.hpc_config.hpc_type
     if hpc != HpcType.LOCAL:
         _try_submit_jobs(output)
 
