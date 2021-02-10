@@ -42,3 +42,7 @@ class ClusterConfig(JadeBaseModel):
         description="set to True when the submission is complete",
         default=False,
     )
+    version: int = Field(
+        title="version",
+        description="version of the config, increments with each update",
+    )

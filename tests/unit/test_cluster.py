@@ -43,12 +43,20 @@ def test_cluster__create(jade_output):
     assert not cluster.all_jobs_submitted()
     assert cluster.has_submitter()
     assert cluster.am_i_submitter()
+    assert cluster.config.version == 1
     cluster.demote_from_submitter()
     assert not cluster.am_i_submitter()
+    assert cluster.config.version == 2
 
-    cluster2, _ = Cluster.deserialize(output)
+    cluster, _ = Cluster.deserialize(output)
     assert not cluster.has_submitter()
     assert not cluster.am_i_submitter()
     assert cluster.config.num_jobs == 2
     assert cluster.config.submitted_jobs == 0
     assert cluster.config.completed_jobs == 0
+    assert cluster.config.version == 2
+
+    cluster, promoted = Cluster.deserialize(output, try_promote_to_submitter=True)
+    assert promoted
+    assert cluster.am_i_submitter()
+    assert cluster.config.version == 3

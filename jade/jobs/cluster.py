@@ -9,7 +9,7 @@ from filelock import SoftFileLock, Timeout
 
 from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration
-from jade.models import ClusterConfig, Job, JobState, JobStatuses
+from jade.models import ClusterConfig, Job, JobState, JobStatus
 from jade.utils.utils import load_data, dump_data
 
 
@@ -25,13 +25,24 @@ class Cluster:
     CLUSTER_CONFIG_FILE = "cluster_config.json"
     JOB_STATUS_FILE = "job_status.json"
     LOCK_FILE = "cluster_config.json.lock"
+    CONFIG_VERSION_FILE = "config_version.txt"
+    JOB_STATUS_VERSION_FILE = "job_status_version.txt"
 
-    def __init__(self, config, job_statuses=None, lock_timeout=LOCK_TIMEOUT):
+    def __init__(self, config, job_status=None, lock_timeout=LOCK_TIMEOUT):
         """Internal constructor. Use create() or deserialize()."""
         self._config = config
         self._lock_file = self.LOCK_FILE
         self._timeout = lock_timeout
-        self._job_statuses = job_statuses
+        self._job_status = job_status
+        self._config_hash = None
+        self._job_status_hash = None
+        self._config_file = self.get_config_file(self._config.path)
+        self._job_status_file = self.get_job_status_file(self._config.path)
+
+        # These two files contain versions that are duplicated with the files
+        # above. They exist to allow very quick reads to verify updates.
+        self._config_version_file = os.path.join(config.path, self.CONFIG_VERSION_FILE)
+        self._job_status_version_file = os.path.join(config.path, self.JOB_STATUS_VERSION_FILE)
 
     @classmethod
     def create(cls, path, submitter_options, jade_config):
@@ -49,8 +60,9 @@ class Cluster:
             num_jobs=jade_config.get_num_jobs(),
             submitter=socket.gethostname(),
             submitter_options=submitter_options,
+            version=0,
         )
-        job_statuses = JobStatuses(
+        job_status = JobStatus(
             jobs=[
                 Job(
                     name=x.name,
@@ -60,9 +72,13 @@ class Cluster:
                 for x in jade_config.iter_jobs()
             ],
             hpc_job_ids=[],
+            version=0,
         )
-        cluster = cls(config, job_statuses=job_statuses)
-        cluster.serialize()
+        cluster = cls(config, job_status=job_status)
+        cluster._serialize_config_version()
+        cluster._serialize_job_status_version()
+        cluster.serialize("create")
+        cluster.serialize_jobs("create")
         return cluster
 
     @classmethod
@@ -198,7 +214,7 @@ class Cluster:
         }
 
         if include_jobs:
-            summary["job_status"] = self._job_statuses.dict()
+            summary["job_status"] = self._job_status.dict()
 
         return summary
 
@@ -219,8 +235,8 @@ class Cluster:
         Job
 
         """
-        assert self._job_statuses is not None
-        for job in self._job_statuses.jobs:
+        assert self._job_status is not None
+        for job in self._job_status.jobs:
             if state is not None and job.state != state:
                 continue
             yield job
@@ -234,14 +250,14 @@ class Cluster:
             HPC job ID
 
         """
-        assert self._job_statuses is not None
-        for job_id in self._job_statuses.hpc_job_ids:
+        assert self._job_status is not None
+        for job_id in self._job_status.hpc_job_ids:
             yield job_id
 
     @property
-    def job_statuses(self):
-        """Return the JobStatuses"""
-        return self._job_statuses
+    def job_status(self):
+        """Return the JobStatus"""
+        return self._job_status
 
     def is_complete(self):
         """Return True if the submission is complete."""
@@ -261,15 +277,13 @@ class Cluster:
         """
         return self._do_action_under_lock(self._promote_to_submitter, serialize=serialize)
 
-    def serialize(self):
+    def serialize(self, reason):
         """Serialize the config to a file."""
-        self._do_action_under_lock(self._serialize)
-        logger.info("Serialized config to file")
+        self._do_action_under_lock(self._serialize, reason)
 
-    def serialize_jobs(self):
+    def serialize_jobs(self, reason):
         """Serialize the job status to a file."""
-        self._do_action_under_lock(self._serialize_jobs)
-        logger.info("Serialized config to file")
+        self._do_action_under_lock(self._serialize_jobs, reason)
 
     def update_job_status(
         self,
@@ -307,7 +321,7 @@ class Cluster:
         assert self.am_i_submitter(), self._config.submitter
         self._config.submitter = None
         if serialize:
-            self._serialize()
+            self._serialize("demote_from_submitter")
 
     @classmethod
     def _deserialize(cls, path, try_promote_to_submitter=False, deserialize_jobs=False):
@@ -320,6 +334,7 @@ class Cluster:
         promoted = False
         if try_promote_to_submitter:
             promoted = cluster._promote_to_submitter()
+            assert cluster.am_i_submitter()
         if deserialize_jobs:
             cluster._deserialize_jobs()
 
@@ -327,7 +342,7 @@ class Cluster:
 
     def _deserialize_jobs(self):
         data = load_data(self.get_job_status_file(self._config.path))
-        self._job_statuses = JobStatuses(**data)
+        self._job_status = JobStatus(**data)
 
     def _do_action_under_lock(self, func, *args, **kwargs):
         return self._do_action_under_lock_internal(
@@ -355,10 +370,18 @@ class Cluster:
         finally:
             lock.release()
 
+    def _get_config_version(self):
+        with open(self._config_version_file, "r") as f_in:
+            return int(f_in.read().strip())
+
+    def _get_job_status_version(self):
+        with open(self._job_status_version_file, "r") as f_in:
+            return int(f_in.read().strip())
+
     def _mark_complete(self):
         assert not self._config.is_complete
         self._config.is_complete = True
-        self._serialize()
+        self._serialize("mark_complete")
 
     def _promote_to_submitter(self, serialize=True):
         if self.has_submitter():
@@ -366,20 +389,59 @@ class Cluster:
 
         self._config.submitter = socket.gethostname()
         if serialize:
-            self._serialize()
+            self._serialize("promote_to_submitter")
 
         return True
 
-    def _serialize(self):
-        with open(self.get_config_file(self._config.path), "w") as f_out:
-            f_out.write(self._config.json())
+    def _serialize(self, reason):
+        current = self._get_config_version()
+        if self._config.version != current:
+            raise ConfigVersionMismatch(
+                f"expected={current} actual={self._config.version} {reason}"
+            )
 
-        if self._job_statuses is not None:
-            self._serialize_jobs()
+        # Check the hash before the version update.
+        if hash(self._config.json()) != self._config_hash:
+            self._config.version += 1
+            self._serialize_config_version()
+            text = self._config.json()
+            self._config_hash = hash(text)
+            self._serialize_file(self._config.json(), self._config_file)
+            logger.debug("Wrote config version %s reason=%s",
+                self._config.version, reason)
 
-    def _serialize_jobs(self):
-        with open(self.get_job_status_file(self._config.path), "w") as f_out:
-            f_out.write(self._job_statuses.json())
+    def _serialize_jobs(self, reason):
+        current = self._get_job_status_version()
+        if self._job_status.version != current:
+            raise JobStatusVersionMismatch(
+                f"expected={current} actual={self._job_status.version} {reason}"
+            )
+
+        # Check the hash before the version update.
+        if hash(self._job_status.json()) != self._config_hash:
+            self._job_status.version += 1
+            self._serialize_job_status_version()
+            text = self._job_status.json()
+            self._serialize_file(text, self._job_status_file)
+            self._job_status_hash = hash(text)
+            logger.debug("Wrote job_status version %s reason=%s",
+                self._job_status.version, reason)
+
+    @staticmethod
+    def _serialize_file(text, filename):
+        if os.path.exists(filename):
+            backup = filename + ".bk"
+            os.rename(filename, backup)
+        with open(filename, "w") as f_out:
+            f_out.write(text)
+
+    def _serialize_config_version(self):
+        with open(self._config_version_file, "w") as f_out:
+            f_out.write(str(self._config.version) + "\n")
+
+    def _serialize_job_status_version(self):
+        with open(self._job_status_version_file, "w") as f_out:
+            f_out.write(str(self._job_status.version) + "\n")
 
     def _update_job_status(
         self,
@@ -387,12 +449,11 @@ class Cluster:
         blocked_jobs,
         completed_job_names,
         hpc_job_ids,
-        batch_index
+        batch_index,
     ):
-        self._deserialize_jobs()
-        self._job_statuses.hpc_job_ids = hpc_job_ids
-        self._job_statuses.batch_index = batch_index
-        status_lookup = {x.name: x for x in self._job_statuses.jobs}
+        self._job_status.hpc_job_ids = hpc_job_ids
+        self._job_status.batch_index = batch_index
+        status_lookup = {x.name: x for x in self._job_status.jobs}
 
         processed = set()
         for job in submitted_jobs:
@@ -416,8 +477,16 @@ class Cluster:
                     (JobState.SUBMITTED, JobState.DONE):
                 job.blocked_by.clear()
 
-        self._serialize()
+        self._serialize("update_job_status")
+        self._serialize_jobs("update_job_status")
 
         not_submitted = self._config.num_jobs - self._config.submitted_jobs
         logger.info("Updated job status submitted=%s not_submitted=%s completed=%s",
             self._config.submitted_jobs, not_submitted, self._config.completed_jobs)
+
+
+class ConfigVersionMismatch(Exception):
+    """Raised when user tries to perform an update with an old version."""
+
+class JobStatusVersionMismatch(Exception):
+    """Raised when user tries to perform an update with an old version."""

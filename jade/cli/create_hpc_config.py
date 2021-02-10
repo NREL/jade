@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-w", "--walltime",
-    default="",
+    default="4:00:00",
     help="HPC walltime",
 )
 def create_hpc_config(account, config_file, partition, qos, hpc_type, walltime):

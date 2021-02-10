@@ -32,7 +32,7 @@ class Job(JadeBaseModel):
     )
 
 
-class JobStatuses(JadeBaseModel):
+class JobStatus(JadeBaseModel):
     """Describes all jobs in the JADE config."""
 
     jobs: List[Job] = Field(
@@ -47,4 +47,8 @@ class JobStatuses(JadeBaseModel):
         title="batch_index",
         description="HPC batch index",
         default=1,
+    )
+    version: int = Field(
+        title="version",
+        description="version of the statuses, increments with each update",
     )

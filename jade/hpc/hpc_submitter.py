@@ -32,7 +32,7 @@ class HpcSubmitter:
         self._config = config
         self._config_file = config_file
         self._base_config = config.serialize()
-        self._batch_index = cluster.job_statuses.batch_index
+        self._batch_index = cluster.job_status.batch_index
         self._completion_detector = CompletionDetector(results_dir)
         self._cluster = cluster
         self._options = self._cluster.config.submitter_options
@@ -104,13 +104,7 @@ class HpcSubmitter:
         )
         # Statuses may have changed since we last ran.
         queue.process_queue()
-        hpc_job_ids = [x.job_id for x in queue.outstanding_jobs]
-
-        self._update_status(
-            [],
-            [x for x in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED) if x.blocked_by],
-            hpc_job_ids,
-        )
+        hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
 
         blocked_jobs = []
         submitted_jobs = []
@@ -145,13 +139,15 @@ class HpcSubmitter:
 
     def _update_status(self, submitted_jobs, blocked_jobs, hpc_job_ids):
         completed_job_names = self._update_completed_jobs(blocked_jobs)
-        self._cluster.update_job_status(
-            submitted_jobs,
-            blocked_jobs,
-            completed_job_names,
-            hpc_job_ids,
-            self._batch_index,
-        )
+        hpc_job_changes = self._cluster.job_status.hpc_job_ids != hpc_job_ids
+        if completed_job_names or submitted_jobs or blocked_jobs or hpc_job_changes:
+            self._cluster.update_job_status(
+                submitted_jobs,
+                blocked_jobs,
+                completed_job_names,
+                hpc_job_ids,
+                self._batch_index,
+            )
 
     def _submit_batch(self, queue, batch, hpc_job_ids):
         async_submitter = self._make_async_submitter(batch.serialize())
