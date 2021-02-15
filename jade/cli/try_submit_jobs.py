@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 @click.command()
 @click.argument(
     "output",
-    type=str,
+    type=click.Path(exists=True),
 )
 @click.option(
     "--verbose",
@@ -34,7 +34,7 @@ def try_submit_jobs(output, verbose):
     """Tries to submit new jobs for an existing submission."""
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging("try-submit-jobs", filename, file_level=level, console_level=level, mode="a")
+    setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
 
     event_file = os.path.join(output, "submit_jobs_events.log")
     # This effectively means no console logging.
@@ -47,7 +47,7 @@ def try_submit_jobs(output, verbose):
         deserialize_jobs=True,
     )
     if not promoted:
-        logger.info("Another node is already the submitter.")
+        print("Another node is already the submitter.")
         sys.exit(0)
     elif cluster.is_complete():
         cluster.demote_from_submitter()

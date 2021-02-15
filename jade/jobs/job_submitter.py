@@ -36,7 +36,7 @@ from jade.loggers import log_event
 from jade.result import serialize_results, ResultsSummary
 from jade.utils.repository_info import RepositoryInfo
 from jade.utils.subprocess_manager import run_command
-from jade.utils.utils import dump_data, get_directory_size_bytes, rotate_filenames
+from jade.utils.utils import dump_data, get_directory_size_bytes
 import jade.version
 
 
@@ -354,7 +354,6 @@ results_summary={self.get_results_summmary_report()}"""
         config_file,
         output,
         params,
-        rotate_logs=True,
         restart_failed=False,
         restart_missing=False,
         pipeline_stage_index=None
@@ -362,25 +361,33 @@ results_summary={self.get_results_summmary_report()}"""
         """Allows submission from an existing Python process."""
         os.makedirs(output, exist_ok=True)
         mgr = JobSubmitter.create(config_file, output=output)
-        cluster = Cluster.create(output, params, mgr.config, pipeline_stage_index=pipeline_stage_index)
+        cluster = Cluster.create(
+            output,
+            params,
+            mgr.config,
+            pipeline_stage_index=pipeline_stage_index,
+        )
 
         previous_results = []
         if restart_failed:
-            failed_job_config = create_config_from_previous_run(config_file, output,
-                                                                result_type='failed')
+            failed_job_config = create_config_from_previous_run(
+                config_file,
+                output,
+                result_type='failed',
+            )
             previous_results = ResultsSummary(output).get_successful_results()
             config_file = "failed_job_inputs.json"
             failed_job_config.dump(config_file)
 
         if restart_missing:
-            missing_job_config = create_config_from_previous_run(config_file, output,
-                                                                 result_type='missing')
+            missing_job_config = create_config_from_previous_run(
+                config_file,
+                output,
+                result_type='missing',
+            )
             config_file = "missing_job_inputs.json"
             missing_job_config.dump(config_file)
             previous_results = ResultsSummary(output).list_results()
-
-        if rotate_logs:
-            rotate_filenames(output, ".log")
 
         force_local = isinstance(params.hpc_config, LocalHpcConfig)
         ret = 1

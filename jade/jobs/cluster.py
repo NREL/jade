@@ -41,8 +41,14 @@ class Cluster:
 
         # These two files contain versions that are duplicated with the files
         # above. They exist to allow very quick reads to verify updates.
-        self._config_version_file = os.path.join(config.path, self.CONFIG_VERSION_FILE)
-        self._job_status_version_file = os.path.join(config.path, self.JOB_STATUS_VERSION_FILE)
+        self._config_version_file = os.path.join(
+            config.path,
+            self.CONFIG_VERSION_FILE,
+        )
+        self._job_status_version_file = os.path.join(
+            config.path,
+            self.JOB_STATUS_VERSION_FILE,
+        )
 
     @classmethod
     def create(cls, path, submitter_params, jade_config, pipeline_stage_index=None):

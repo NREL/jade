@@ -13,7 +13,7 @@ from jade.loggers import setup_logging
 from jade.models import HpcConfig, LocalHpcConfig
 from jade.models.submitter_params import DEFAULTS, SubmitterParams
 from jade.jobs.cluster import Cluster
-from jade.utils.utils import get_cli_string, load_data
+from jade.utils.utils import get_cli_string, load_data, rotate_filenames
 
 
 logger = logging.getLogger(__name__)
@@ -112,9 +112,12 @@ def submit_jobs(
         verbose, restart_failed, restart_missing, reports):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
+    if rotate_logs:
+        rotate_filenames(output, ".log")
+
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging("submit-jobs", filename, file_level=level, console_level=level, mode="w")
+    setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
     logger.info(get_cli_string())
 
     event_file = os.path.join(output, "submit_jobs_events.log")
@@ -141,7 +144,6 @@ def submit_jobs(
         config_file,
         output,
         params,
-        rotate_logs,
         restart_failed,
         restart_missing,
     )
