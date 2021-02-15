@@ -42,7 +42,9 @@ logger = logging.getLogger(__name__)
     is_flag=True,
     default=False,
     show_default=True,
-    help="Run locally even if on HPC."
+    envvar="LOCAL_SUBMITTER",
+    help="Run on local system. Optionally, set the environment variable "
+         "LOCAL_SUBMITTER=1."
 )
 @click.option(
     "-n", "--max-nodes",
@@ -112,7 +114,7 @@ def submit_jobs(
     os.makedirs(output, exist_ok=True)
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level, console_level=level)
+    setup_logging("submit-jobs", filename, file_level=level, console_level=level, mode="w")
     logger.info(get_cli_string())
 
     event_file = os.path.join(output, "submit_jobs_events.log")

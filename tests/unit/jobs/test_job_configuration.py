@@ -24,8 +24,6 @@ def job_fixture():
             shutil.rmtree(path)
         elif os.path.exists(path):
             os.remove(path)
-    if "FAKE_HPC_CLUSTER" in os.environ:
-        os.environ.pop("FAKE_HPC_CLUSTER")
 
 
 def test_job_configuration__check_job_dependencies(job_fixture):

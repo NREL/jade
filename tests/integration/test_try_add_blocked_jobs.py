@@ -10,6 +10,7 @@ import pytest
 from jade.extensions.generic_command import GenericCommandInputs
 from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.events import EventsSummary, EVENT_NAME_HPC_SUBMIT
+from jade.test_common import FAKE_HPC_CONFIG
 from jade.utils.subprocess_manager import run_command
 
 
@@ -27,8 +28,6 @@ def cleanup():
             shutil.rmtree(path)
         elif os.path.exists(path):
             os.remove(path)
-    if "FAKE_HPC_CLUSTER" in os.environ:
-        os.environ.pop("FAKE_HPC_CLUSTER")
 
 
 def test_try_add_blocked_jobs(cleanup):
@@ -47,8 +46,7 @@ def test_try_add_blocked_jobs(cleanup):
         config.add_job(job_param)
     config.dump(CONFIG_FILE)
 
-    os.environ["FAKE_HPC_CLUSTER"] = "True"
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 -h {FAKE_HPC_CONFIG}"
     ret = run_command(cmd)
     assert ret == 0
     events_file = os.path.join(OUTPUT, "submit_jobs_events.log")

@@ -42,12 +42,6 @@ class HpcSubmitter:
 
     def _create_run_script(self, config_file, filename):
         text = ["#!/bin/bash"]
-        # TODO DT: do we need this?
-        #if shutil.which("module") is not None:
-        #    # Required for HPC systems.
-        #    text.append("module load conda")
-        #    text.append("conda activate jade")
-
         command = f"jade-internal run-jobs {config_file} " \
                   f"--output={self._output}"
         if self._params.num_processes is not None:
@@ -91,7 +85,7 @@ class HpcSubmitter:
 
         """
         starting_batch_index = self._batch_index
-        # TODO DT: consider whether we need to save the real job names
+        # TODO: consider whether we need to save the real job names
         hpc_submitters = [
             AsyncHpcSubmitter.create_from_id(self._hpc_mgr, self._status_collector, x)
             for x in self._cluster.iter_hpc_job_ids()
@@ -105,6 +99,7 @@ class HpcSubmitter:
         # Statuses may have changed since we last ran.
         queue.process_queue()
         hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
+        completed_job_names = self._update_completed_jobs()
 
         blocked_jobs = []
         submitted_jobs = []
@@ -131,14 +126,13 @@ class HpcSubmitter:
             self._submit_batch(queue, batch, hpc_job_ids)
 
         num_submissions = self._batch_index - starting_batch_index
-        logger.info("num_batches=%s num_submitted=%s num_blocked=%s",
-                    num_submissions, len(submitted_jobs), len(blocked_jobs))
+        logger.info("num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
+                    num_submissions, len(submitted_jobs), len(blocked_jobs), len(completed_job_names))
 
-        self._update_status(submitted_jobs, blocked_jobs, hpc_job_ids)
+        self._update_status(submitted_jobs, blocked_jobs, hpc_job_ids, completed_job_names)
         return self._cluster.are_all_jobs_complete()
 
-    def _update_status(self, submitted_jobs, blocked_jobs, hpc_job_ids):
-        completed_job_names = self._update_completed_jobs(blocked_jobs)
+    def _update_status(self, submitted_jobs, blocked_jobs, hpc_job_ids, completed_job_names):
         hpc_job_changes = self._cluster.job_status.hpc_job_ids != hpc_job_ids
         if completed_job_names or submitted_jobs or blocked_jobs or hpc_job_changes:
             self._cluster.update_job_status(
@@ -166,13 +160,12 @@ class HpcSubmitter:
         )
         log_event(event)
 
-    def _update_completed_jobs(self, jobs):
+    def _update_completed_jobs(self):
         newly_completed = self._completion_detector.update_completed_jobs()
         all_completed_jobs = self._completion_detector.completed_jobs
-        for job in jobs:
-            done_jobs = job.blocked_by.intersection(all_completed_jobs)
-            for name in done_jobs:
-                job.blocked_by.remove(name)
+        for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
+            if job.blocked_by:
+                job.blocked_by.difference_update(all_completed_jobs)
 
         return newly_completed
 

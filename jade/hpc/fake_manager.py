@@ -71,11 +71,7 @@ class FakeManager(HpcManagerInterface):
         return {"hpc": {}}
 
     def get_local_scratch(self):
-        for envvar in ("TMP", "TEMP"):
-            tmpdir = os.environ.get(envvar)
-            if tmpdir:
-                return tmpdir
-        return "."
+        return tempfile.gettempdir()
 
     @staticmethod
     def get_num_cpus():

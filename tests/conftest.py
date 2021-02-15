@@ -1,6 +1,13 @@
 
 import os
+import sys
+
 import pytest
+
+
+if os.environ.get("LOCAL_SUBMITTER") is not None:
+    print("You must unset the environment variable LOCAL_SUBMITTER.")
+    sys.exit(1)
 
 
 @pytest.fixture

@@ -21,7 +21,7 @@ class HpcManager:
     """Manages HPC job submission and monitoring."""
     def __init__(self, config, output):
         self._config = config
-        self._intf = self._create_hpc_interface(config)
+        self._intf = self.create_hpc_interface(config)
         self._output = output
 
         logger.debug("Constructed HpcManager with output=%s", output)
@@ -157,40 +157,19 @@ class HpcManager:
         return job_id, result
 
     @staticmethod
-    def _create_hpc_interface(config):
+    def create_hpc_interface(config):
         """Returns an HPC implementation instance appropriate for the current
         environment.
 
         """
-        if config.hpc_type is not None:
-            if config.hpc_type == HpcType.SLURM:
-                intf = SlurmManager(config)
-            elif config.hpc_type == HpcType.FAKE:
-                intf = FakeManager(config)
-            elif config.hpc_type == HpcType.LOCAL:
-                intf = LocalManager(config)
-            else:
-                raise ValueError("Unsupported HPC type: {}".format(config.hpc_type))
-
-            logger.debug("HPC manager type=%s", config.hpc_type)
-            return intf
-
-        cluster = os.environ.get("NREL_CLUSTER")
-        if cluster is None:
-            if os.environ.get("FAKE_HPC_CLUSTER") is not None:
-                intf = FakeManager(config)
-                config.hpc_type = HpcType.FAKE
-            else:
-                intf = LocalManager(config)
-                config.hpc_type = HpcType.LOCAL
-        elif cluster == "peregrine":
-            intf = PbsManager(config)
-            config.hpc_type = HpcType.PBS
-        elif cluster == "eagle":
+        if config.hpc_type == HpcType.SLURM:
             intf = SlurmManager(config)
-            config.hpc_type = HpcType.SLURM
+        elif config.hpc_type == HpcType.FAKE:
+            intf = FakeManager(config)
+        elif config.hpc_type == HpcType.LOCAL:
+            intf = LocalManager(config)
         else:
-            raise ValueError("Unsupported HPC type: {}".format(cluster))
+            raise ValueError("Unsupported HPC type: {}".format(config.hpc_type))
 
         logger.debug("HPC manager type=%s", config.hpc_type)
         return intf

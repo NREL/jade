@@ -9,7 +9,6 @@ import click
 
 from jade.common import OUTPUT_DIR
 from jade.enums import Status
-from jade.hpc.common import HpcType
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_runner import JobRunner
 from jade.loggers import setup_logging
@@ -61,21 +60,22 @@ def run_jobs(config_file, output, num_processes, verbose):
     # running this batch's jobs.
     cluster, _ = Cluster.deserialize(output)
     hpc = cluster.config.submitter_params.hpc_config.hpc_type
-    if hpc != HpcType.LOCAL:
-        _try_submit_jobs(output)
+    _try_submit_jobs(output, verbose)
 
     mgr = JobRunner(config_file, output=output, batch_id=batch_id)
     status = mgr.run_jobs(verbose=verbose, num_processes=num_processes)
     ret = status.value
 
-    if status == Status.GOOD and hpc != HpcType.LOCAL:
-        _try_submit_jobs(output)
+    if status == Status.GOOD:
+        _try_submit_jobs(output, verbose=verbose)
 
     sys.exit(ret)
 
 
-def _try_submit_jobs(output):
+def _try_submit_jobs(output, verbose):
     try_submit_cmd = f"jade try-submit-jobs {output}"
+    if verbose:
+        try_submit_cmd += " --verbose"
     ret = run_command(try_submit_cmd)
     if ret != 0:
         logger.error("Failed to run '%s' ret=%s", try_submit_cmd, ret)
