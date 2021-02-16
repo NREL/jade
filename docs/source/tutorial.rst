@@ -14,7 +14,7 @@ HPC Parameters
 You must define your HPC configuration in settings file. Run this command
 customized to your parameters.
 
-.. code-block::bash
+.. code-block:: bash
 
     $ jade config hpc -a my-project -p short -t slurm -w "4:00:00" -c hpc.toml
     Created HPC config file hpc_config.toml
@@ -84,21 +84,6 @@ Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
       "job_id": 4,
       "blocked_by": [2, 3]
     }
-
-Custom Extension (Optional)
----------------------------
-
-If you are creating a customized JADE extension, it is recommended to provide
-an ``auto-confg`` method that will automatically create a configuration with
-all possible jobs.  If that is in place then this command will create the
-configuration.
-
-.. code-block:: bash
-
-    $ jade auto-config <extension-name> <input_path> -c config.json
-
-For more details about how to create a custom extension, please refer to 
-:ref:`advanced_guide_label`.
 
 
 CLI Execution
@@ -190,22 +175,29 @@ automatically creates ``<output-dir>/job-outputs`` for this purpose.
 
 Job Execution
 =============
-The job submitter runs in a disconnected fashion if execution occurs on an HPC.
-The ``submit-jobs`` command should be run from the login node. JADE will submit
-all possible batches in that first execution and then exit. If there are
-blocked jobs that cannot be submitted then JADE will try to submit them again
-from compute nodes. Here is the sequence:
 
-1. ``submit-jobs`` runs on the login node and submits as many batches as
-   possible.
-2. Compute node gets allocated and starts the JADE job runner which will run a
-   batch of jobs.
-3. Both before and after running a batch of jobs the job runner will run
+HPC
+---
+The job submitter runs in a distributed fashion across the login node and all
+compute nodes that get allocated.
+
+1. User initiates execution by running ``jade submit-jobs`` on the login node.
+2. JADE submits as many batches as possible and then exits. Jobs can be blocked
+   by ordering requirements or the user-specified max-node limit.
+3. HPC queueing system allocates a compute node for a batch of jobs and starts
+   the JADE job runner process.
+4. Both before and after running a batch of jobs the job runner will run
    ``jade try-submit-jobs``. If it finds newly-unblocked jobs then it will
    submit them in a new batch. This will occur on every allocated compute node.
+5. When a submitter detects that all jobs are complete it will summarize
+   results and mark the configuration as complete.
 
 The JADE processes synchronize their activity with status files and a file lock
 in the output directory.
+
+Local
+-----
+JADE runs all jobs at the specified queue depth until they all complete.
 
 Job Status
 ===========

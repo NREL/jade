@@ -106,10 +106,18 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="Generate reports after execution."
 )
+@click.option(
+    "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
+    is_flag=True,
+    default=True,
+    show_default=True,
+    help="Add blocked jobs to a node's batch if they are blocked by jobs "
+         "already in the batch."
+)
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs,
-        verbose, restart_failed, restart_missing, reports):
+        verbose, restart_failed, restart_missing, reports, try_add_blocked_jobs):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
     if rotate_logs:
@@ -137,6 +145,7 @@ def submit_jobs(
         num_processes=num_processes,
         per_node_batch_size=per_node_batch_size,
         poll_interval=poll_interval,
+        try_add_blocked_jobs=try_add_blocked_jobs,
         verbose=verbose,
     )
 

@@ -398,7 +398,7 @@ results_summary={self.get_results_summmary_report()}"""
                 previous_results=previous_results,
             )
             if status == Status.IN_PROGRESS:
-                check_cmd = f"jade show-status {output}"
+                check_cmd = f"jade show-status -o {output}"
                 print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
                 ret = 0
             else:

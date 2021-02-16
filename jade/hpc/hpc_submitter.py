@@ -85,6 +85,7 @@ class HpcSubmitter:
 
         """
         starting_batch_index = self._batch_index
+        try_add_blocked_jobs = self._cluster.config.submitter_params.try_add_blocked_jobs
         # TODO: consider whether we need to save the real job names
         hpc_submitters = [
             AsyncHpcSubmitter.create_from_id(self._hpc_mgr, self._status_collector, x)
@@ -108,7 +109,7 @@ class HpcSubmitter:
             if batch is None:
                 batch = _BatchJobs()
             jade_job = self._config.get_job(job.name)
-            if batch.is_job_blocked(job):
+            if batch.is_job_blocked(job, try_add_blocked_jobs):
                 blocked_jobs.append(job)
             else:
                 jade_job.set_blocking_jobs(job.blocked_by)
@@ -128,6 +129,8 @@ class HpcSubmitter:
         num_submissions = self._batch_index - starting_batch_index
         logger.info("num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
                     num_submissions, len(submitted_jobs), len(blocked_jobs), len(completed_job_names))
+        if submitted_jobs:
+            logger.debug("Submitted %s", ", ".join((x.name for x in submitted_jobs)))
 
         self._update_status(submitted_jobs, blocked_jobs, hpc_job_ids, completed_job_names)
         return self._cluster.are_all_jobs_complete()
@@ -220,7 +223,7 @@ class _BatchJobs:
         """
         return blocking_jobs.issubset(self._job_names)
 
-    def is_job_blocked(self, job):
+    def is_job_blocked(self, job, try_add_blocked_jobs):
         """Return True if the job is blocked.
 
         Parameters
@@ -234,7 +237,7 @@ class _BatchJobs:
         """
         if not job.blocked_by:
             return False
-        if self.are_blocking_jobs_present(job.blocked_by):
+        if try_add_blocked_jobs and self.are_blocking_jobs_present(job.blocked_by):
             # JobRunner will manage the execution ordering on the compute node.
             return False
         return True

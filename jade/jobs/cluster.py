@@ -119,7 +119,7 @@ class Cluster:
         )
 
     def are_all_jobs_complete(self):
-        """Return True if all jobs are complete
+        """Return True if all jobs are complete.
 
         Returns
         -------

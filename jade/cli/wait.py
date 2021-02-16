@@ -25,7 +25,7 @@ def wait(output, poll_interval):
     """Wait for a JADE submission to complete."""
     while True:
         cluster, _ = Cluster.deserialize(output)
-        if cluster.are_all_jobs_complete():
+        if cluster.is_complete():
             print("All jobs are complete")
             break
         time.sleep(poll_interval * 60)

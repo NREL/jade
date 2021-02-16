@@ -18,6 +18,7 @@ TEST_FILENAME = "inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = "jade submit-jobs"
+WAIT = "jade wait"
 
 
 @pytest.fixture
@@ -32,7 +33,7 @@ def cleanup():
 
 def test_try_add_blocked_jobs(cleanup):
     num_commands = 5
-    commands = ["ls ."] * num_commands
+    commands = ["echo \"hello world\""] * num_commands
     with open(TEST_FILENAME, "w") as f_out:
         for command in commands:
             f_out.write(command + "\n")
@@ -46,13 +47,23 @@ def test_try_add_blocked_jobs(cleanup):
         config.add_job(job_param)
     config.dump(CONFIG_FILE)
 
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 -h {FAKE_HPC_CONFIG}"
-    ret = run_command(cmd)
-    assert ret == 0
-    events_file = os.path.join(OUTPUT, "submit_jobs_events.log")
-    events_summary = EventsSummary(OUTPUT, preload=True)
-    submit_events = events_summary.list_events(EVENT_NAME_HPC_SUBMIT)
-    assert len(submit_events) == 1
-    event = submit_events[0]
-    assert event.data["batch_size"] == num_commands
-    shutil.rmtree(OUTPUT)
+    for option in ("--try-add-blocked-jobs", "--no-try-add-blocked-jobs"):
+        cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -h {FAKE_HPC_CONFIG} -p 0.1 {option}"
+        ret = run_command(cmd)
+        assert ret == 0
+        ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
+        assert ret == 0
+        events_file = os.path.join(OUTPUT, "submit_jobs_events.log")
+        events_summary = EventsSummary(OUTPUT, preload=True)
+        submit_events = events_summary.list_events(EVENT_NAME_HPC_SUBMIT)
+        if option == "--try-add-blocked-jobs":
+            assert len(submit_events) == 1
+            event = submit_events[0]
+            assert event.data["batch_size"] == num_commands
+            shutil.rmtree(OUTPUT)
+        else:
+            assert len(submit_events) == 2
+            event1 = submit_events[0]
+            event2 = submit_events[1]
+            assert event1.data["batch_size"] == num_commands - 1
+            assert event2.data["batch_size"] == 1

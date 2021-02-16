@@ -49,6 +49,12 @@ class SubmitterParams(JadeBaseModel):
         description="interval in seconds on which to poll jobs for status",
         default=DEFAULTS["poll_interval"],
     )
+    try_add_blocked_jobs: Optional[bool] = Field(
+        title="try_add_blocked_jobs",
+        description="add blocked jobs to a batch if all blocking jobs are in "
+                    "the batch",
+        default=False,
+    )
     verbose: Optional[bool] = Field(
         title="verbose",
         description="enable debug logging",
