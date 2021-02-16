@@ -9,10 +9,11 @@ import tempfile
 import click
 from prettytable import PrettyTable
 
-from jade.common import CONFIG_FILE
+from jade.common import CONFIG_FILE, HPC_CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.loggers import setup_logging
 from jade.utils.utils import dump_data, load_data
+from jade.models import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig
 
 
 logger = logging.getLogger(__name__)
@@ -50,6 +51,63 @@ def create(filename, config_file, verbose):
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
     print(f"Dumped configuration to {config_file}.\n")
+
+
+@click.command()
+@click.option(
+    "-a", "--account",
+    default="",
+    help="HPC account/allocation",
+)
+@click.option(
+    "-c", "--config-file",
+    default="hpc_config.toml",
+    show_default=True,
+    help="config file to create",
+)
+@click.option(
+    "-p", "--partition",
+    default="",
+    help="HPC partition",
+)
+@click.option(
+    "-q", "--qos",
+    default=None,
+    type=str,
+    help="QoS value",
+)
+@click.option(
+    "-t", "--hpc-type",
+    type=click.Choice(["slurm", "fake", "local"]),
+    default="slurm",
+    show_default=True,
+    help="HPC queueing system",
+)
+@click.option(
+    "-w", "--walltime",
+    default="4:00:00",
+    help="HPC walltime",
+)
+def hpc(account, config_file, partition, qos, hpc_type, walltime):
+    """Create an HPC config file."""
+    if hpc_type == "slurm":
+        hpc = SlurmConfig(
+            account=account,
+            partition=partition,
+            qos=qos,
+            walltime=walltime,
+        )
+    elif hpc_type == "fake":
+        hpc = FakeHpcConfig(walltime=walltime)
+    else:
+        assert hpc_type == "local"
+        hpc = LocalHpcConfig()
+
+    config = HpcConfig(hpc_type=hpc_type, hpc=hpc)
+    data = config.dict()
+    data["hpc_type"] = data["hpc_type"].value
+    dump_data(data, config_file)
+    print(f"Created HPC config file {config_file}")
 
 
 @click.command()
@@ -212,5 +270,6 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 
 
 config.add_command(create)
+config.add_command(hpc)
 config.add_command(show)
 config.add_command(_filter)

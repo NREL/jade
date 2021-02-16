@@ -7,7 +7,6 @@ import click
 
 from jade.cli.auto_config import auto_config
 from jade.cli.config import config
-from jade.cli.create_hpc_config import create_hpc_config
 from jade.cli.extensions import extensions
 from jade.cli.pipeline import pipeline
 from jade.cli.show_events import show_events
@@ -30,7 +29,6 @@ def cli():
 cli.add_command(extensions)
 cli.add_command(auto_config)
 cli.add_command(config)
-cli.add_command(create_hpc_config)
 cli.add_command(pipeline)
 cli.add_command(show_events)
 cli.add_command(show_results)
