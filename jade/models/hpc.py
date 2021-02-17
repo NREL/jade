@@ -56,7 +56,7 @@ class LocalHpcConfig(JadeBaseModel):
 class HpcConfig(JadeBaseModel):
     """Defines config options for the HPC."""
 
-    hpc_type: Optional[HpcType] = Field(
+    hpc_type: HpcType = Field(
         title="hpc_type",
         description="type of HPC queueing system (such as 'slurm')",
     )

@@ -136,6 +136,10 @@ def submit_jobs(
     if local:
         hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
     else:
+        if not os.path.exists(hpc_config):
+            print(f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
+                   "or run in local mode with '-l'")
+            sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 
     params = SubmitterParams(

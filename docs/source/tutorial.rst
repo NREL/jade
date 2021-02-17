@@ -19,7 +19,8 @@ customized to your parameters.
     $ jade config hpc -a my-project -p short -t slurm -w "4:00:00" -c hpc.toml
     Created HPC config file hpc_config.toml
 
-All parameters have defaults, and so you can edit the file afterwards.
+All parameters have defaults, and so you can run ``jade config hpc`` and then
+edit the file afterwards.
 
 Lustre Filesystem
 -----------------
