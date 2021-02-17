@@ -417,7 +417,7 @@ class Cluster:
             text = self._config.json()
             self._config_hash = hash(text)
             self._serialize_file(self._config.json(), self._config_file)
-            logger.debug("Wrote config version %s reason=%s",
+            logger.info("Wrote config version %s reason=%s",
                 self._config.version, reason)
 
     def _serialize_jobs(self, reason):
@@ -434,7 +434,7 @@ class Cluster:
             text = self._job_status.json()
             self._serialize_file(text, self._job_status_file)
             self._job_status_hash = hash(text)
-            logger.debug("Wrote job_status version %s reason=%s",
+            logger.info("Wrote job_status version %s reason=%s",
                 self._job_status.version, reason)
 
     @staticmethod

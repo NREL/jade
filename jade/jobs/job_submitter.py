@@ -46,7 +46,7 @@ logger = logging.getLogger(__name__)
 class JobSubmitter(JobManagerBase):
     """Submits jobs for execution locally or on an HPC."""
     def __init__(self, config_file, output, is_new):
-        """Internal constructor. Callers should use create() or reload()."""
+        """Internal constructor. Callers should use create() or load()."""
         super(JobSubmitter, self).__init__(config_file, output)
         self._hpc = None
         self._config_file = config_file
@@ -69,8 +69,8 @@ class JobSubmitter(JobManagerBase):
         return cls(master_file, output, True)
 
     @classmethod
-    def reload(cls, output):
-        """Reloads an instance from an existing directory."""
+    def load(cls, output):
+        """Loads an instance from an existing directory."""
         return cls(os.path.join(output, CONFIG_FILE), output, False)
 
     def __repr__(self):
@@ -189,7 +189,7 @@ results_summary={self.get_results_summmary_report()}"""
             cmd = f"jade pipeline try-submit {pipeline_dir} " \
                 f"--stage-index={next_stage} " \
                 f"--return-code={result.value}"
-            run_command(cmd) 
+            run_command(cmd)
 
         return result
 
