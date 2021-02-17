@@ -1,6 +1,0 @@
-[hpc]
-allocation = "<project-allocation>"
-partition = "short"
-walltime = "4:00:00"
-# Uncomment this to get faster node allocations at twice the cost.
-#qos = "high"
