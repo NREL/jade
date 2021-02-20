@@ -389,12 +389,12 @@ results_summary={self.get_results_summmary_report()}"""
             missing_job_config.dump(config_file)
             previous_results = ResultsSummary(output).list_results()
 
-        force_local = isinstance(params.hpc_config, LocalHpcConfig)
+        local = params.hpc_config.hpc_type == HpcType.LOCAL
         ret = 1
         try:
             status = mgr.submit_jobs(
                 cluster,
-                force_local=force_local,
+                force_local=local,
                 previous_results=previous_results,
             )
             if status == Status.IN_PROGRESS:
@@ -405,5 +405,8 @@ results_summary={self.get_results_summmary_report()}"""
                 ret = status.value
         finally:
             cluster.demote_from_submitter()
+            if local:
+                # These files were not used in this case.
+                cluster.delete_files_internal()
 
         return ret

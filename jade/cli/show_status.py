@@ -9,6 +9,7 @@ from prettytable import PrettyTable
 
 from jade.common import OUTPUT_DIR
 from jade.enums import Status
+from jade.exceptions import InvalidConfiguration
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
@@ -37,7 +38,12 @@ logger = logging.getLogger(__name__)
 def show_status(output, job_status):
     """Shows the status of active HPC jobs."""
     setup_logging(__name__, None, console_level=logging.INFO)
-    cluster, _ = Cluster.deserialize(output, deserialize_jobs=job_status)
+    try:
+        cluster, _ = Cluster.deserialize(output, deserialize_jobs=job_status)
+    except InvalidConfiguration:
+        print(f"{output} is not a JADE output directory used in cluster mode")
+        sys.exit(1)
+
     summary = cluster.get_status_summary(include_jobs=job_status)
     print(f"Summary of jobs running in path={output}:")
     for key, val in summary.items():

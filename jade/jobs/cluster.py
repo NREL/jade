@@ -152,6 +152,18 @@ class Cluster:
         """
         return self.get_config_file(self._config.path)
 
+    def delete_files_internal(self):
+        # This should not be used in normal circumstances.
+        for filename in (
+            self.CLUSTER_CONFIG_FILE,
+            self.JOB_STATUS_FILE,
+            self.CONFIG_VERSION_FILE,
+            self.JOB_STATUS_VERSION_FILE,
+        ):
+            path = os.path.join(self.config.path, filename)
+            os.remove(path)
+            logger.debug("Deleted %s", path)
+
     def demote_from_submitter(self, serialize=True):
         """Clear the submitter, which must be the current system."""
         return self._do_action_under_lock(self._demote_from_submitter, serialize=serialize)
@@ -443,7 +455,7 @@ class Cluster:
             backup = filename + ".bk"
             os.rename(filename, backup)
         with open(filename, "w") as f_out:
-            f_out.write(text)
+            f_out.write(text + "\n")
 
     def _serialize_config_version(self):
         with open(self._config_version_file, "w") as f_out:
