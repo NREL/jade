@@ -48,8 +48,8 @@ class PipelineManager:
         master_file = os.path.join(output, cls.CONFIG_FILENAME)
         shutil.copyfile(config_file, master_file)
         mgr = cls(master_file, output)
-        for i, stage in enumerate(mgr.stages):
-            stage.path = cls.get_stage_output_path(output, i)
+        for stage in mgr.stages:
+            stage.path = cls.get_stage_output_path(output, stage.stage_num)
         mgr._serialize()
         return mgr
 
@@ -69,11 +69,13 @@ class PipelineManager:
         config_file = os.path.join(output, cls.CONFIG_FILENAME)
         return cls(config_file, output)
 
-    def submit_next_stage(self, stage_index, return_code=None):
+    def submit_next_stage(self, stage_num, return_code=None):
         """Submit the next stage of the pipeline for execution.
 
         Parameters
         ----------
+        stage_num : int
+            stage number to submit
         return_code : int
             status of the previous stage if this wasn't the first
 
@@ -88,7 +90,7 @@ class PipelineManager:
         os.environ["JADE_PIPELINE_OUTPUT_DIR"] = self._output
         os.environ["JADE_PIPELINE_STATUS_FILE"] = self._config_file
         try:
-            self._submit_next_stage(stage_index, return_code=return_code)
+            self._submit_next_stage(stage_num, return_code=return_code)
         finally:
             os.environ.pop("JADE_PIPELINE_OUTPUT_DIR")
             os.environ.pop("JADE_PIPELINE_STATUS_FILE")
@@ -118,57 +120,58 @@ class PipelineManager:
                 PipelineStage(
                     auto_config_cmd=cmd,
                     config_file=PipelineManager.get_stage_config_file_name(stage_num),
+                    stage_num=stage_num,
                     submitter_params=submit_params,
                 )
             )
 
-        config = PipelineConfig(stages=stages, stage_index=0)
+        config = PipelineConfig(stages=stages, stage_num=1)
         with open(config_file, "w") as f_out:
-            f_out.write(config.json())
+            f_out.write(config.json(indent=2))
         logger.info("Created pipeline config file %s", config_file)
 
     def _deserialize(self):
         return PipelineConfig(**load_data(self._config_file))
 
     def _serialize(self):
-        print(self.stage_index)
+        print(self.stage_num)
         with open(self._config_file, "w") as f_out:
-            f_out.write(self._config.json())
+            f_out.write(self._config.json(indent=2))
 
-    def _submit_next_stage(self, stage_index, return_code=None):
+    def _submit_next_stage(self, stage_num, return_code=None):
         if return_code is None:
-            assert stage_index == 0, str(stage_index)
+            assert stage_num == 1, str(stage_num)
         else:
-            if stage_index != self.stage_index + 1:
+            if stage_num != self.stage_num + 1:
                 raise InvalidParameter(
-                    f"expected stage index {self.stage_index + 1}, received {stage_index}"
+                    f"expected stage_num {self.stage_num + 1}, received {stage_num}"
                 )
 
-            self._config.stages[-1].return_code = return_code
-            self._config.stage_index += 1
+            self._config.stages[stage_num - 2].return_code = return_code
+            self._config.stage_num += 1
 
-        if self._config.stage_index == len(self._config.stages):
+        if self._config.stage_num == len(self._config.stages) + 1:
             logger.info("Pipeline is complete")
             self._config.is_complete = True
             self._serialize()
             return
 
         logger.info("Start execution pipeline stage %s/%s",
-                    stage_index, len(self._config.stages))
+                    stage_num, len(self._config.stages))
 
         self._serialize()
-        stage = self._config.stages[self.stage_index]
-        os.environ["JADE_PIPELINE_STAGE_ID"] = str(self.stage_index)
+        stage = self._config.stages[self.stage_num - 1]
+        os.environ["JADE_PIPELINE_STAGE_ID"] = str(self.stage_num)
         self._run_auto_config(stage)
-        output = self.get_stage_output_path(self.path, self.stage_index)
+        output = self.get_stage_output_path(self.path, self.stage_num)
         ret = JobSubmitter.run_submit_jobs(
             stage.config_file,
             output,
             stage.submitter_params,
-            pipeline_stage_index=self.stage_index,
+            pipeline_stage_num=self.stage_num,
         )
         if ret != 0:
-            raise ExecutionError(f"stage {self.stage_index} failed")
+            raise ExecutionError(f"stage {self.stage_num} failed")
 
     def _run_auto_config(self, stage):
         if os.path.exists(stage.config_file):
@@ -177,15 +180,15 @@ class PipelineManager:
         ret = run_command(stage.auto_config_cmd)
         if ret != 0:
             raise ExecutionError(
-                f"Failed to auto-config stage {self.stage_index}: {ret}"
+                f"Failed to auto-config stage {self.stage_num}: {ret}"
             )
 
         if not os.path.exists(stage.config_file):
             raise ExecutionError(
-                f"auto-config stage {self.stage_index} did not produce {stage.config_file}"
+                f"auto-config stage {self.stage_num} did not produce {stage.config_file}"
             )
 
-        final_file = self.get_stage_config_file_path(self._output, self.stage_index)
+        final_file = self.get_stage_config_file_path(self._output, self.stage_num)
         shutil.move(stage.config_file, final_file)
         stage.config_file = final_file
 
@@ -212,7 +215,7 @@ class PipelineManager:
         return self._config.path
 
     @property
-    def stage_index(self):
+    def stage_num(self):
         """Return the current stage index
 
         Returns
@@ -220,7 +223,7 @@ class PipelineManager:
         int
 
         """
-        return self._config.stage_index
+        return self._config.stage_num
 
     @property
     def stages(self):

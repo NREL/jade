@@ -18,6 +18,10 @@ class PipelineStage(JadeBaseModel):
         title="config_file",
         description="JADE configuration file",
     )
+    stage_num: int = Field(
+        title="stage_num",
+        description="1-based ID of the stage in the pipeline",
+    )
     path: Optional[str] = Field(
         title="path",
         description="directory on shared filesystem containing config",
@@ -39,9 +43,9 @@ class PipelineConfig(JadeBaseModel):
         title="path",
         description="directory on shared filesystem containing config",
     )
-    stage_index: int = Field(
-        title="stage_index",
-        description="index of current stage",
+    stage_num: int = Field(
+        title="stage_num",
+        description="number of current stage",
     )
     stages: List[PipelineStage] = Field(
         title="stages",

@@ -37,8 +37,8 @@ def test_demo_extension(test_data_dir):
         returncode = run_command(f"jade pipeline submit {config_file} -o {output}")
         assert returncode == 0
 
-        output_stage1 = os.path.join(output, "output-stage0")
-        output_stage2 = os.path.join(output, "output-stage1")
+        output_stage1 = os.path.join(output, "output-stage1")
+        output_stage2 = os.path.join(output, "output-stage2")
         assert os.path.exists(output)
         assert os.path.exists(output_stage1)
         assert os.path.exists(output_stage2)

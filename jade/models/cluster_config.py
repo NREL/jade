@@ -23,9 +23,9 @@ class ClusterConfig(JadeBaseModel):
         title="path",
         description="directory on shared filesystem containing config",
     )
-    pipeline_stage_index: Optional[int] = Field(
-        title="pipeline_stage_index",
-        description="stage index if the config part of a pipeline",
+    pipeline_stage_num: Optional[int] = Field(
+        title="pipeline_stage_num",
+        description="stage number if the config is part of a pipeline",
     )
     num_jobs: int = Field(
         title="num_jobs",

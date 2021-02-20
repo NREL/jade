@@ -51,7 +51,7 @@ class Cluster:
         )
 
     @classmethod
-    def create(cls, path, submitter_params, jade_config, pipeline_stage_index=None):
+    def create(cls, path, submitter_params, jade_config, pipeline_stage_num=None):
         """Create a new instance of a Cluster. Promotes itself to submitter.
 
         Parameters
@@ -60,13 +60,13 @@ class Cluster:
             Base directory for a JADE submission
         submitter_params : SubmitterParams
         jade_config : JobConfiguration
-        pipeline_stage_index : None | int
+        pipeline_stage_num : None | int
             True if the config is one stage of a pipeline
 
         """
         config = ClusterConfig(
             path = path,
-            pipeline_stage_index=pipeline_stage_index,
+            pipeline_stage_num=pipeline_stage_num,
             num_jobs=jade_config.get_num_jobs(),
             submitter=socket.gethostname(),
             submitter_params=submitter_params,

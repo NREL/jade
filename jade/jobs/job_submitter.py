@@ -182,12 +182,12 @@ results_summary={self.get_results_summmary_report()}"""
 
         cluster.mark_complete()
 
-        if cluster.config.pipeline_stage_index is not None:
+        if cluster.config.pipeline_stage_num is not None:
             # The pipeline directory must be the one above this one.
             pipeline_dir = os.path.dirname(self._output)
-            next_stage = cluster.config.pipeline_stage_index + 1
-            cmd = f"jade pipeline try-submit {pipeline_dir} " \
-                f"--stage-index={next_stage} " \
+            next_stage = cluster.config.pipeline_stage_num + 1
+            cmd = f"jade pipeline submit-next-stage {pipeline_dir} " \
+                f"--stage-num={next_stage} " \
                 f"--return-code={result.value}"
             run_command(cmd)
 
@@ -356,7 +356,7 @@ results_summary={self.get_results_summmary_report()}"""
         params,
         restart_failed=False,
         restart_missing=False,
-        pipeline_stage_index=None
+        pipeline_stage_num=None
     ):
         """Allows submission from an existing Python process."""
         os.makedirs(output, exist_ok=True)
@@ -365,7 +365,7 @@ results_summary={self.get_results_summmary_report()}"""
             output,
             params,
             mgr.config,
-            pipeline_stage_index=pipeline_stage_index,
+            pipeline_stage_num=pipeline_stage_num,
         )
 
         previous_results = []

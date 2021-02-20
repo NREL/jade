@@ -119,7 +119,7 @@ creates its config file.
 
     $ cat jade/extensions/demo/create_demo_config.sh
     #!/bin/bash
-    jade auto-config demo tests/data/demo -c config-stage0.json
+    jade auto-config demo tests/data/demo -c config-stage1.json
 
 The second stage will use the ``generic_command`` extension. We will create a
 config that runs one "generic_command" - the script above to post-process the
@@ -142,16 +142,16 @@ Let's create the pipeline and submit it for execution.
     $ jade pipeline submit pipeline.toml
 
 Let's take a look at the ``output`` directory. You'll notice that per-country
-results are in ``output-stage0`` and the summary file ``pred_gdb.csv`` is in
+results are in ``output-stage1`` and the summary file ``pred_gdb.csv`` is in
 ``output-stage1``.
 
 .. code-block:: bash
 
     $ tree output
     output
-    ├── config-stage0.json
     ├── config-stage1.json
-    ├── output-stage0
+    ├── config-stage2.json
+    ├── output-stage1
     │   ├── config.json
     │   ├── diff.patch
     │   ├── job-outputs
@@ -175,7 +175,7 @@ results are in ``output-stage0`` and the summary file ``pred_gdb.csv`` is in
     │   │       └── summary.toml
     │   ├── results.json
     │   └── submit_jobs.log
-    ├── output-stage1
+    ├── output-stage2
     │   ├── config.json
     │   ├── diff.patch
     │   ├── job-outputs

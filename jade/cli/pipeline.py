@@ -95,6 +95,10 @@ def create(auto_config_cmds, per_node_batch_size, config_file, hpc_config,
     if local:
         hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
     else:
+        if not os.path.exists(hpc_config):
+            print(f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
+                   "or run in local mode with '-l'")
+            sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 
     submit_params = SubmitterParams(
@@ -126,32 +130,31 @@ def create(auto_config_cmds, per_node_batch_size, config_file, hpc_config,
 )
 def submit(config_file, output, verbose=False):
     """Submit the pipeline for execution."""
-    global logger
     os.makedirs(output, exist_ok=True)
     filename = os.path.join(output, "pipeline_submit.log")
     level = logging.DEBUG if verbose else logging.INFO
-    logger = setup_logging(__name__, filename, file_level=level,
-                           console_level=level)
-
+    setup_logging(__name__, filename, file_level=level,
+                  console_level=level)
     logger.info(get_cli_string())
 
     mgr = PipelineManager.create(config_file, output)
     try:
-        mgr.submit_next_stage(0)
+        mgr.submit_next_stage(1)
     except Exception:
         logger.exception("Pipeline execution failed")
         raise
 
+    logging.shutdown()
     sys.exit(0)
 
 
 @click.command()
 @click.argument("output")
 @click.option(
-    "--stage-index",
+    "--stage-num",
     required=True,
     type=int,
-    help="stage index to submit",
+    help="stage number to submit",
 )
 @click.option(
     "--return-code",
@@ -166,23 +169,25 @@ def submit(config_file, output, verbose=False):
     show_default=True,
     help="Enable verbose log output."
 )
-def try_submit(output, stage_index, return_code, verbose=False):
-    """Submit the pipeline for execution."""
+def submit_next_stage(output, stage_num, return_code, verbose=False):
+    """Submit the next stage of the pipeline for execution."""
     filename = os.path.join(output, "pipeline_submit.log")
     level = logging.DEBUG if verbose else logging.INFO
-    logger = setup_logging(__name__, filename, file_level=level,
-                           console_level=level, mode="a")
+    setup_logging(__name__, filename, file_level=level,
+                  console_level=level, mode="a")
+    logger.info(get_cli_string())
 
     mgr = PipelineManager.load(output)
     try:
-        mgr.submit_next_stage(stage_index, return_code=return_code)
+        mgr.submit_next_stage(stage_num, return_code=return_code)
     except Exception:
         logger.exception("Pipeline execution failed")
         raise
 
+    logging.shutdown()
     sys.exit(0)
 
 
 pipeline.add_command(create)
 pipeline.add_command(submit)
-pipeline.add_command(try_submit)
+pipeline.add_command(submit_next_stage)
