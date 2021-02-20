@@ -17,9 +17,6 @@ from jade.utils.subprocess_manager import run_command
 from jade.utils.utils import dump_data, load_data
 
 
-HPC_CONFIG = load_data(DEFAULTS["hpc_config_file"])
-
-
 def hpc_config(hpc_type, **kwargs):
     config = {
         "hpc_type": hpc_type,
