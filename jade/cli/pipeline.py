@@ -168,7 +168,6 @@ def submit(config_file, output, verbose=False):
 )
 def try_submit(output, stage_index, return_code, verbose=False):
     """Submit the pipeline for execution."""
-    # TODO DT: try commands should be jade-internal
     filename = os.path.join(output, "pipeline_submit.log")
     level = logging.DEBUG if verbose else logging.INFO
     logger = setup_logging(__name__, filename, file_level=level,

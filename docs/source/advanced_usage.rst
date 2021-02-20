@@ -468,7 +468,7 @@ This command line generate the global ``config.json`` file with all auto-regress
 
 .. code-block:: bash
 
-    $ jade submit-jobs config.json -h ../../../hpc_config.toml
+    $ jade submit-jobs config.json -h hpc_config.toml
     2019-10-14 14:35:21,921 - INFO [jade.cli.submit_jobs submit_jobs.py:92] : jade submit-jobs config.json -h /Users/jgu2/Workspace/jade/hpc_config.toml
     2019-10-14 14:35:22,160 - INFO [jade.jobs.job_submitter job_submitter.py:166] : Submit 12 jobs for execution.
     2019-10-14 14:35:22,160 - INFO [jade.jobs.job_submitter job_submitter.py:167] : JADE version 0.1.0
@@ -559,7 +559,7 @@ Submit auto-regression jobs, and wait for program to finish.
 
 .. code-block:: bash
 
-    $ jade submit-jobs config.json -h ~/Workspace/jade/hpc_config.toml
+    $ jade submit-jobs config.json -h hpc_config.toml
     2019-10-16 13:50:03,212 - INFO [jade.cli.submit_jobs submit_jobs.py:92] : jade submit-jobs config.json -h /home/jgu2/Workspace/jade/hpc_config.toml
     2019-10-16 13:50:03,843 - INFO [jade.jobs.job_submitter job_submitter.py:166] : Submit 12 jobs for execution.
     2019-10-16 13:50:03,843 - INFO [jade.jobs.job_submitter job_submitter.py:167] : JADE version 0.1.0
