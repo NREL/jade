@@ -6,6 +6,7 @@ numpy
 pandas
 prettytable
 psutil
+pydantic
 pyyaml
 statsmodels>=0.10.1
 tables

@@ -4,6 +4,7 @@ import logging
 import multiprocessing
 import tempfile
 
+from jade.enums import Status
 from jade.hpc.common import HpcJobStatus, HpcJobInfo
 from jade.hpc.hpc_manager_interface import HpcManagerInterface
 
@@ -22,8 +23,6 @@ DEFAULTS = {
 class LocalManager(HpcManagerInterface):
     """Manages local execution of jobs."""
 
-    _OPTIONAL_CONFIG_PARAMS = {}
-    _REQUIRED_CONFIG_PARAMS = []
     _STATUSES = {
         "PD": HpcJobStatus.QUEUED,
         "R": HpcJobStatus.RUNNING,
@@ -64,14 +63,8 @@ class LocalManager(HpcManagerInterface):
     def get_num_cpus():
         return multiprocessing.cpu_count()
 
-    def get_optional_config_params(self):
-        return self._OPTIONAL_CONFIG_PARAMS
-
-    def get_required_config_params(self):
-        return self._REQUIRED_CONFIG_PARAMS
-
     def log_environment_variables(self):
         pass
 
     def submit(self, filename):
-        return 0
+        return Status.GOOD, 1, None

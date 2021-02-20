@@ -7,7 +7,7 @@ from jade.extensions.registry import Registry
 
 
 def setup_logging(name, filename, console_level=logging.INFO,
-                  file_level=logging.INFO, packages=None):
+                  file_level=logging.INFO, mode="w", packages=None):
     """Configures logging to file and console.
 
     Parameters
@@ -50,7 +50,7 @@ def setup_logging(name, filename, console_level=logging.INFO,
                 "class": "logging.FileHandler",
                 "level": file_level,
                 "filename": filename,
-                "mode": "w",
+                "mode": mode,
                 "formatter": "detailed",
             },
             "structured_file": {

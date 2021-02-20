@@ -5,8 +5,8 @@ import shutil
 import pytest
 
 from jade.exceptions import InvalidConfiguration
-from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
-from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandInputs
+from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.utils.subprocess_manager import run_command
 
 
@@ -24,8 +24,6 @@ def job_fixture():
             shutil.rmtree(path)
         elif os.path.exists(path):
             os.remove(path)
-    if "FAKE_HPC_CLUSTER" in os.environ:
-        os.environ.pop("FAKE_HPC_CLUSTER")
 
 
 def test_job_configuration__check_job_dependencies(job_fixture):

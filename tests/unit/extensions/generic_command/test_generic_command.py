@@ -7,11 +7,12 @@ import shutil
 
 import pytest
 
-from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
-from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
-from jade.extensions.generic_command.generic_command_execution import GenericCommandExecution
-from jade.extensions.generic_command.generic_command_parameters import GenericCommandParameters
+from jade.extensions.generic_command import GenericCommandInputs
+from jade.extensions.generic_command import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandExecution
+from jade.extensions.generic_command import GenericCommandParameters
 from jade.result import ResultsSummary
+from jade.test_common import FAKE_HPC_CONFIG
 from jade.utils.subprocess_manager import run_command
 
 
@@ -19,6 +20,7 @@ TEST_FILENAME = "inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = "jade submit-jobs"
+WAIT = "jade wait"
 
 
 @pytest.fixture
@@ -29,8 +31,6 @@ def generic_command_fixture():
             shutil.rmtree(path)
         elif os.path.exists(path):
             os.remove(path)
-    if "FAKE_HPC_CLUSTER" in os.environ:
-        os.environ.pop("FAKE_HPC_CLUSTER")
 
 
 # TODO: make unit tests. This is an integration test to quickly get full
@@ -55,11 +55,11 @@ def test_run_generic_commands(generic_command_fixture):
     config.dump(CONFIG_FILE)
 
     cmds = (
-        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1",
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 -h {FAKE_HPC_CONFIG}",
         # Test with higher queue depth. This exercises the code paths but
         # doesn't actually verify the functionality.
         # The infrastructure to do that is currently lacking. TODO
-        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 -q 32",
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 -q 32 -h {FAKE_HPC_CONFIG}",
     )
 
     for cmd in cmds:
@@ -105,22 +105,22 @@ def test_job_order(generic_command_fixture):
     config.get_job("41").blocked_by.add("50")
     config.dump(CONFIG_FILE)
 
-    os.environ["FAKE_HPC_CLUSTER"] = "True"
-
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} " \
         "--per-node-batch-size=10 " \
         "--max-nodes=4 " \
-        "--poll-interval=.1 " \
+        "--poll-interval=0.1 " \
+        f"--hpc-config {FAKE_HPC_CONFIG} " \
         "--num-processes=10"
     ret = run_command(cmd)
+    assert ret == 0
+
+    ret = run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.1")
     assert ret == 0
 
     result_summary = ResultsSummary(OUTPUT)
     results = result_summary.list_results()
     assert len(results) == num_jobs
-    tracker = {}
-    for result in results:
-        tracker[result.name] = result
+    tracker = {x.name: x for x in results}
 
     for i in range(10, 15):
         assert tracker["1"].completion_time > tracker[str(i)].completion_time

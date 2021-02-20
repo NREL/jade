@@ -10,6 +10,7 @@ class Status(enum.Enum):
     """Return status."""
     GOOD = 0
     ERROR = 1
+    IN_PROGRESS = 2
 
 
 class Mode(enum.Enum):

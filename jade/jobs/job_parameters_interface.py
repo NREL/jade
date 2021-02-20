@@ -56,9 +56,7 @@ class JobParametersInterface:
 
         """
 
-    # Derived classes must override the next two methods if jobs have ordering
-    # requirements.
-    # Default behavior is provided for jobs that have no dependencies.
+    @abc.abstractmethod
     def get_blocking_jobs(self):
         """Return the job names blocking this job.
 
@@ -68,8 +66,8 @@ class JobParametersInterface:
             Empty set means that the job is not blocked.
 
         """
-        return set()
 
+    @abc.abstractmethod
     def remove_blocking_job(self, name):
         """Remove the name from the job's blocking list.
 
@@ -77,5 +75,15 @@ class JobParametersInterface:
         ----------
         name : str
             name of job that is now finished
+
+        """
+
+    @abc.abstractmethod
+    def set_blocking_jobs(self, blocking_jobs):
+        """Set the blocking jobs.
+
+        Parameters
+        ----------
+        blocking_jobs : set
 
         """

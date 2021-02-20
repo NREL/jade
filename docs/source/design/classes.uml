@@ -62,10 +62,6 @@ class HpcManagerInterface {
     {abstract} void cancel_job(string job_id)
     {abstract} HpcJobInfo check_status(string job_id)
     {abstract} void create_submission_script(string name, string script)
-    {abstract} Cluster create_cluster()
-    {abstract} Cluster create_local_cluster()
-    {abstract} dict get_optional_config_params()
-    {abstract} tuple get_required_config_params()
     {abstract} int submit(string filename)
 }
 

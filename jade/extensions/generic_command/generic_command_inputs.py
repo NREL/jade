@@ -2,7 +2,7 @@
 
 import os
 from jade.jobs.job_inputs_interface import JobInputsInterface
-from jade.extensions.generic_command.generic_command_parameters import GenericCommandParameters
+from jade.extensions.generic_command import GenericCommandParameters
 
 
 class GenericCommandInputs(JobInputsInterface):

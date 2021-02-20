@@ -1,4 +1,4 @@
-"""CLI to run a scenario."""
+"""CLI to run jobs."""
 
 import logging
 import os
@@ -6,11 +6,14 @@ import sys
 
 import click
 
-from jade.jobs.job_submitter import DEFAULTS, JobSubmitter
-from jade.jobs.job_configuration_factory import create_config_from_previous_run
+from jade.common import OUTPUT_DIR
+from jade.enums import Status
+from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging
-from jade.result import ResultsSummary
-from jade.utils.utils import rotate_filenames, get_cli_string
+from jade.models import HpcConfig, LocalHpcConfig
+from jade.models.submitter_params import DEFAULTS, SubmitterParams
+from jade.jobs.cluster import Cluster
+from jade.utils.utils import get_cli_string, load_data, rotate_filenames
 
 
 logger = logging.getLogger(__name__)
@@ -39,7 +42,9 @@ logger = logging.getLogger(__name__)
     is_flag=True,
     default=False,
     show_default=True,
-    help="Run locally even if on HPC."
+    envvar="LOCAL_SUBMITTER",
+    help="Run on local system. Optionally, set the environment variable "
+         "LOCAL_SUBMITTER=1."
 )
 @click.option(
     "-n", "--max-nodes",
@@ -49,7 +54,7 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-o", "--output",
-    default=DEFAULTS["output"],
+    default=OUTPUT_DIR,
     show_default=True,
     help="Output directory."
 )
@@ -112,33 +117,15 @@ logger = logging.getLogger(__name__)
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
         output, poll_interval, num_processes, rotate_logs,
-        verbose, restart_failed, restart_missing, reports,
-        try_add_blocked_jobs):
+        verbose, restart_failed, restart_missing, reports, try_add_blocked_jobs):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
-
-    previous_results = []
-
-    if restart_failed:
-        failed_job_config = create_config_from_previous_run(config_file, output,
-                                                            result_type='failed')
-        previous_results = ResultsSummary(output).get_successful_results()
-        config_file = "failed_job_inputs.json"
-        failed_job_config.dump(config_file)
-
-    if restart_missing:
-        missing_job_config = create_config_from_previous_run(config_file, output,
-                                                             result_type='missing')
-        config_file = "missing_job_inputs.json"
-        missing_job_config.dump(config_file)
-        previous_results = ResultsSummary(output).list_results()
-
     if rotate_logs:
         rotate_filenames(output, ".log")
 
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level, console_level=level)
+    setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
     logger.info(get_cli_string())
 
     event_file = os.path.join(output, "submit_jobs_events.log")
@@ -146,17 +133,31 @@ def submit_jobs(
     setup_logging("event", event_file, console_level=logging.ERROR,
                   file_level=logging.INFO)
 
-    mgr = JobSubmitter(config_file, hpc_config=hpc_config, output=output)
-    ret = mgr.submit_jobs(
-        per_node_batch_size=per_node_batch_size,
+    if local:
+        hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
+    else:
+        if not os.path.exists(hpc_config):
+            print(f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
+                   "or run in local mode with '-l'")
+            sys.exit(1)
+        hpc_config = HpcConfig(**load_data(hpc_config))
+
+    params = SubmitterParams(
+        generate_reports=reports,
+        hpc_config=hpc_config,
         max_nodes=max_nodes,
-        force_local=local,
-        verbose=verbose,
         num_processes=num_processes,
+        per_node_batch_size=per_node_batch_size,
         poll_interval=poll_interval,
-        previous_results=previous_results,
-        reports=reports,
         try_add_blocked_jobs=try_add_blocked_jobs,
+        verbose=verbose,
     )
 
-    sys.exit(ret.value)
+    ret = JobSubmitter.run_submit_jobs(
+        config_file,
+        output,
+        params,
+        restart_failed,
+        restart_missing,
+    )
+    sys.exit(ret)

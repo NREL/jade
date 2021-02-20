@@ -125,7 +125,7 @@ The second stage will use the ``generic_command`` extension. We will create a
 config that runs one "generic_command" - the script above to post-process the
 results.
 
-The script to create the stage 2 configuration is
+The script to create the stage 1 configuration is
 :mod:`jade.extensions.demo.create_merge_pred_gdp`.
 
 Note that this script reads the environment variable JADE_PIPELINE_STATUS_FILE
@@ -143,7 +143,7 @@ Let's create the pipeline and submit it for execution.
 
 Let's take a look at the ``output`` directory. You'll notice that per-country
 results are in ``output-stage1`` and the summary file ``pred_gdb.csv`` is in
-``output-stage2``.
+``output-stage1``.
 
 .. code-block:: bash
 

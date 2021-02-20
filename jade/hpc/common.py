@@ -24,7 +24,7 @@ class HpcQos(enum.Enum):
 
 class HpcType(enum.Enum):
     """HPC types"""
-    LOCAL = "Local"
-    PBS = "PBS"
-    SLURM = "SLURM"
-    FAKE = "Fake"
+    LOCAL = "local"
+    PBS = "pbs"
+    SLURM = "slurm"
+    FAKE = "fake"

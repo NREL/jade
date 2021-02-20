@@ -2,7 +2,7 @@
 
 import os
 
-from jade.extensions.generic_command.generic_command_configuration import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandConfiguration
 
 
 def auto_config(inputs, **kwargs):

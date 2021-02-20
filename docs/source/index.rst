@@ -74,7 +74,7 @@ classes from the following:
 - :class:`~jade.jobs.job_inputs_interface.JobInputsInterface`:
   Defines the available input parameters for all jobs.
 - :class:`~jade.jobs.job_configuration.JobConfiguration`:
-  Defines a batch of jobs to be executed. 
+  Defines a batch of jobs to be executed.
 - :class:`~jade.jobs.job_execution_interface.JobExecutionInterface`:
   Code to run a job.
 

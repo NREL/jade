@@ -8,9 +8,8 @@ import uuid
 from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_results_filename
 from jade.enums import Status
 from jade.hpc.common import HpcType
-from jade.hpc.local_manager import LocalManager
-from jade.hpc.pbs_manager import PbsManager
-from jade.hpc.slurm_manager import SlurmManager
+from jade.hpc.hpc_manager import HpcManager
+from jade.jobs.cluster import Cluster
 from jade.jobs.dispatchable_job import DispatchableJob
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
@@ -27,12 +26,14 @@ class JobRunner(JobManagerBase):
     """Manages execution of jobs on a node."""
     def __init__(self,
                  config_file,
-                 output=OUTPUT_DIR,
+                 output,
                  batch_id=0,
                  ):
         super(JobRunner, self).__init__(config_file, output)
-
-        self._intf, self._intf_type = self._create_node_interface()
+        cluster, _ = Cluster.deserialize(output)
+        config = cluster.config.submitter_params.hpc_config
+        self._intf = HpcManager.create_hpc_interface(config)
+        self._intf_type = config.hpc_type
         self._batch_id = batch_id
         self._event_file = os.path.join(
             output,
@@ -85,30 +86,6 @@ class JobRunner(JobManagerBase):
         os.makedirs(scratch_dir, exist_ok=True)
         logger.info("Created jade scratch_dir=%s", scratch_dir)
         return scratch_dir
-
-    @staticmethod
-    def _create_node_interface():
-        """Returns an interface implementation appropriate for the current
-        environment.
-
-        """
-        cluster = os.environ.get("NREL_CLUSTER")
-        # These will not be used, but are required.
-        config = {"hpc": {"allocation": None, "walltime": None}}
-        if cluster is None:
-            intf = LocalManager(config)
-            intf_type = HpcType.LOCAL
-        elif cluster == "peregrine":
-            intf = PbsManager(config)
-            intf_type = HpcType.PBS
-        elif cluster == "eagle":
-            intf = SlurmManager(config)
-            intf_type = HpcType.SLURM
-        else:
-            raise ValueError("Unsupported node type: {}".format(cluster))
-
-        logger.debug("node manager type=%s", intf_type)
-        return intf, intf_type
 
     def _generate_jobs(self, config_file, verbose):
         results_filename = get_results_filename(self._output)

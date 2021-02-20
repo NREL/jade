@@ -13,38 +13,6 @@ class HpcManagerInterface(abc.ABC):
 
     USER = getpass.getuser()
 
-    def create_config(self, config_file):
-        """Creates a configuration from a config file.
-
-        Parameters
-        ----------
-        config_file : str | dict
-            HPC config
-
-        Returns
-        -------
-        dict
-
-        """
-        if isinstance(config_file, dict):
-            config = config_file
-        else:
-            if not os.path.exists(config_file):
-                raise FileNotFoundError(
-                    f"HPC config file {config_file} does not exist"
-                )
-            config = load_data(config_file)
-
-        for param in self.get_required_config_params():
-            if param not in config["hpc"]:
-                raise InvalidParameter(f"missing HPC config parameter {param}")
-
-        for param, val in self.get_optional_config_params().items():
-            if param not in config["hpc"]:
-                config["hpc"][param] = val
-
-        return config
-
     @abc.abstractmethod
     def cancel_job(self, job_id):
         """Cancel job.
@@ -164,28 +132,6 @@ class HpcManagerInterface(abc.ABC):
         Returns
         -------
         int
-
-        """
-
-    @abc.abstractmethod
-    def get_optional_config_params(self):
-        """Get optional config parameters and default values for the HPC.
-
-        Returns
-        -------
-        dict
-            keys are parameter names, values are default values
-
-        """
-
-    @abc.abstractmethod
-    def get_required_config_params(self):
-        """Get required config parameters for the HPC.
-
-        Returns
-        -------
-        tuple
-            parameter names
 
         """
 

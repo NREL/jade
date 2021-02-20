@@ -53,7 +53,7 @@ class GenericCommandParameters(JobParametersInterface):
             data["command"],
             job_id=data["job_id"],
             blocked_by={str(x) for x in data["blocked_by"]},
-            append_output_dir=data["append_output_dir"],
+            append_output_dir=data.get("append_output_dir", False),
         )
 
     def get_blocking_jobs(self):
@@ -61,3 +61,6 @@ class GenericCommandParameters(JobParametersInterface):
 
     def remove_blocking_job(self, name):
         self.blocked_by.remove(name)
+
+    def set_blocking_jobs(self, blocking_jobs):
+        self.blocked_by = blocking_jobs

@@ -1,0 +1,4 @@
+hpc_type = "fake"
+
+[hpc]
+walltime = "4:00:00"

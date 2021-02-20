@@ -35,6 +35,8 @@ EVENT_NAME_NETWORK_STATS = "net_stats"
 EVENT_NAME_BYTES_CONSUMED = "bytes_consumed"
 EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
 EVENT_NAME_ERROR_LOG = "log_error"
+EVENT_NAME_SUBMIT_STARTED = "submit_started"
+EVENT_NAME_SUBMIT_COMPLETED = "submit_completed"
 EVENT_NAME_CONFIG_EXEC_SUMMARY = "config_exec_summary"
 
 logger  = logging.getLogger(__name__)

@@ -11,8 +11,16 @@ This section only applies if you run your jobs on HPC.
 
 HPC Parameters
 --------------
-JADE will submit jobs to the HPC with parameters defined in
-``hpc_config.toml``.  Create a copy and customize according to your needs.
+You must define your HPC configuration in settings file. Run this command
+customized to your parameters.
+
+.. code-block:: bash
+
+    $ jade config hpc -a my-project -p short -t slurm -w "4:00:00" -c hpc.toml
+    Created HPC config file hpc_config.toml
+
+All parameters have defaults, and so you can run ``jade config hpc`` and then
+edit the file afterwards.
 
 Lustre Filesystem
 -----------------
@@ -34,18 +42,11 @@ References:
 
     $ lfs setstripe -c 16 <run-directory>
 
-Prerequistes
-------------
-If you are not using the JADE conda environment then you should take note of
-the packages it installs (environment.yml). One common pitfall is that JADE
-requires a newer version of git than some users have.
-
-
 Configuring Jobs
 ================
-A JADE configuration contains a list of jobs to run. Configurations can also be 
+A JADE configuration contains a list of jobs to run. Configurations can be 
 created manually or programmatically. JADE implements a CLI command to simplify 
-the interface for the commonly-executed  ``generic_command`` extension behind.
+the interface for the commonly-executed  ``generic_command`` extension.
 
 Job Commands
 ------------
@@ -85,21 +86,6 @@ Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
       "blocked_by": [2, 3]
     }
 
-Custom Extension (Optional)
----------------------------
-
-If you are creating a customized JADE extension, it is recommended to provide
-an ``auto-confg`` method that will automatically create a configuration with
-all possible jobs.  If that is in place then this command will create the
-configuration.
-
-.. code-block:: bash
-
-    $ jade auto-config <extension-name> <input_path> -c config.json
-
-For more details about how to create a custom extension, please refer to 
-:ref:`advanced_guide_label`.
-
 
 CLI Execution
 =============
@@ -110,13 +96,6 @@ submit-jobs
 Start execution of jobs defined in a configuration file.  If executed on HPC
 this will submit the jobs to the HPC queue. Otherwise, it will run the jobs
 locally.
-
-.. note::
-
-   If running on the HPC then you should start jobs from a `tmux
-   <https://github.com/tmux/tmux/wiki>`_ or `screen
-   <https://www.gnu.org/software/screen>`_ session so that the job manager
-   stays alive if you disconnect from the network.
 
 It's important to understand how JADE submits HPC jobs in order to optimize
 your performance.  JADE divides the jobs created by the user into batches.  It
@@ -162,9 +141,93 @@ Examples::
 Refer to :ref:`submission_strategies` for specific examples on how to configure
 and submit jobs.
 
+Output Directory
+----------------
+JADE stores all of its configuration information and log files in the output
+directory specified by the ``submit-jobs`` command. You can tell JADE to
+forward this directory to the job CLI commands by setting the
+``append_output_dir`` job parameter to true.
+
+Suppose you submit jobs with
+
+.. code-block:: bash
+
+    jade submit-jobs config.json -o output
+
+Where ``config.json`` contains a job definition like this:
+
+.. code-block:: json
+
+    {
+      "command": "bash my_script.sh",
+      "job_id": 1,
+      "blocked_by": [],
+      "append_output_dir": true
+    }
+
+JADE will actually invoke this:
+
+.. code-block:: bash
+
+    $ bash my_script.sh --jade-runtime-output=output
+
+This can be useful to collect all job outputs in a common location. JADE
+automatically creates ``<output-dir>/job-outputs`` for this purpose.
+
+Job Execution
+=============
+
+HPC
+---
+The job submitter runs in a distributed fashion across the login node and all
+compute nodes that get allocated.
+
+1. User initiates execution by running ``jade submit-jobs`` on the login node.
+2. JADE submits as many batches as possible and then exits. Jobs can be blocked
+   by ordering requirements or the user-specified max-node limit.
+3. HPC queueing system allocates a compute node for a batch of jobs and starts
+   the JADE job runner process.
+4. Both before and after running a batch of jobs the job runner will run
+   ``jade try-submit-jobs``. If it finds newly-unblocked jobs then it will
+   submit them in a new batch. This will occur on every allocated compute node.
+5. When a submitter detects that all jobs are complete it will summarize
+   results and mark the configuration as complete.
+
+The JADE processes synchronize their activity with status files and a file lock
+in the output directory.
+
+Local
+-----
+JADE runs all jobs at the specified queue depth until they all complete.
+
+Job Status
+===========
+While jobs are running you can check status with this command:
+
+.. code-block:: bash
+
+    $ jade show-status -o output
+
+The status is updated when each compute node starts or completes its execution
+of a batch. You can trigger an immediate status update by manually trying to
+submit new jobs.
+
+.. code-block:: bash
+
+    $ jade try-submit-jobs output
+    $ jade show-status -o output
+
+Every submitter will log to the same file, so you can also monitor status with
+this command:
+
+.. code-block:: bash
+
+    $ tail -f output/submit-jobs.log
+
+
 Job Results
 ===========
-View the results of the jobs.
+Once execution is complete you can view the results of the jobs.
 
 .. code-block:: bash
 
@@ -249,3 +312,21 @@ is how to view CPU stats for the node that ran the first batch:
    viewer = CpuStatsViewer(summary)
    cpu_df =  viewer.get_dataframe("resource_monitor_batch_1")
    cpu_df.head()
+
+Deadlocks
+---------
+While it should be very rare, it is possible that JADE gets deadlocked and
+stops submitting jobs. When a compute node finishes a batch of jobs it acquires
+a file lock in order to update status and attempt to submit new jobs. This
+should usually take less than one second. If a walltime timeout occurs while
+this lock is held and the JADE process is terminated then no other node will be
+able to promote itself to submitter and jobs will be stuck.
+
+We plan to add code to detect this condition and resolve it in the future. If
+this occurs you can fix it manually by deleting the lock file and restarting
+jobs.
+
+.. code-block:: bash
+
+    $ rm <output-dir>/cluster_config.json.lock
+    $ jade try-submit-jobs <output-dir>
