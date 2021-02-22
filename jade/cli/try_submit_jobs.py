@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
     help="Enable verbose log output."
 )
 def try_submit_jobs(output, verbose):
-    """Tries to submit new jobs for an existing submission."""
+    """Internal command to try to submit new jobs for an existing submission."""
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")

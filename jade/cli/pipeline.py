@@ -170,7 +170,7 @@ def submit(config_file, output, verbose=False):
     help="Enable verbose log output."
 )
 def submit_next_stage(output, stage_num, return_code, verbose=False):
-    """Submit the next stage of the pipeline for execution."""
+    """Internal command to submit the next stage of the pipeline for execution."""
     filename = os.path.join(output, "pipeline_submit.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level,
