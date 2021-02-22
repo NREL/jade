@@ -38,6 +38,7 @@ class Cluster:
         self._config_file = self.get_config_file(self._config.path)
         self._job_status_file = self.get_job_status_file(self._config.path)
         self._lock_file = self.get_lock_file(self._config.path)
+        self._hostname = socket.gethostname()
 
         # These two files contain versions that are duplicated with the files
         # above. They exist to allow very quick reads to verify updates.
@@ -134,7 +135,7 @@ class Cluster:
 
     def am_i_submitter(self):
         """Return True if the current system is the submitter."""
-        return self._config.submitter == socket.gethostname()
+        return self._config.submitter == self._hostname
 
     @property
     def config(self):
@@ -382,8 +383,8 @@ class Cluster:
             # Picked a default value such that this should not trip. If it does
             # trip under normal circumstances then we need to reconsider this.
             logger.error(
-                "Failed to acquire file lock %s within %s seconds",
-                lock_file, timeout
+                "Failed to acquire file lock %s within %s seconds. hostname=%s",
+                lock_file, timeout, socket.gethostname()
             )
             raise
 
@@ -409,7 +410,7 @@ class Cluster:
         if self.has_submitter():
             return False
 
-        self._config.submitter = socket.gethostname()
+        self._config.submitter = self._hostname
         if serialize:
             self._serialize("promote_to_submitter")
 
@@ -429,8 +430,8 @@ class Cluster:
             text = self._config.json()
             self._config_hash = hash(text)
             self._serialize_file(self._config.json(), self._config_file)
-            logger.info("Wrote config version %s reason=%s",
-                self._config.version, reason)
+            logger.info("Wrote config version %s reason=%s hostname=%s",
+                self._config.version, reason, self._hostname)
 
     def _serialize_jobs(self, reason):
         current = self._get_job_status_version()
@@ -446,16 +447,19 @@ class Cluster:
             text = self._job_status.json()
             self._serialize_file(text, self._job_status_file)
             self._job_status_hash = hash(text)
-            logger.info("Wrote job_status version %s reason=%s",
-                self._job_status.version, reason)
+            logger.info("Wrote job_status version %s reason=%s hostname=%s",
+                self._job_status.version, reason, self._hostname)
 
     @staticmethod
     def _serialize_file(text, filename):
+        backup = None
         if os.path.exists(filename):
             backup = filename + ".bk"
             os.rename(filename, backup)
         with open(filename, "w") as f_out:
             f_out.write(text + "\n")
+        if backup:
+            os.remove(backup)
 
     def _serialize_config_version(self):
         with open(self._config_version_file, "w") as f_out:
@@ -503,8 +507,10 @@ class Cluster:
         self._serialize_jobs("update_job_status")
 
         not_submitted = self._config.num_jobs - self._config.submitted_jobs
-        logger.info("Updated job status submitted=%s not_submitted=%s completed=%s",
-            self._config.submitted_jobs, not_submitted, self._config.completed_jobs)
+        logger.info("Updated job status submitted=%s not_submitted=%s completed=%s hostname=%s",
+            self._config.submitted_jobs, not_submitted, self._config.completed_jobs,
+            self._hostname
+        )
 
 
 class ConfigVersionMismatch(Exception):
