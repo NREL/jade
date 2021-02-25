@@ -120,12 +120,13 @@ class JobRunner(JobManagerBase):
         self._intf.log_environment_variables()
 
         name = f"resource_monitor_batch_{self._batch_id}"
+        cluster, _ = Cluster.deserialize(self._output)
         resource_monitor = ResourceMonitor(name)
-        # TODO: make this non-blocking so that we can report status.
         JobQueue.run_jobs(
             jobs,
             max_queue_depth=num_workers,
             monitor_func=resource_monitor.log_resource_stats,
+            monitor_interval=cluster.config.submitter_params.resource_monitor_interval,
         )
 
         logger.info("Jobs are complete. count=%s", num_jobs)

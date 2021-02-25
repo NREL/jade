@@ -5,12 +5,12 @@ import logging
 import os
 import time
 
+from jade.models.submitter_params import DEFAULTS
 
 logger = logging.getLogger(__name__)
 
 
 DEFAULT_POLL_INTERVAL = 1
-DEFAULT_MONITOR_INTERVAL = 30
 
 
 class JobQueue:
@@ -31,7 +31,7 @@ class JobQueue:
 
     def __init__(self, max_queue_depth, existing_jobs=None,
                  poll_interval=DEFAULT_POLL_INTERVAL, monitor_func=None,
-                 monitor_interval=DEFAULT_MONITOR_INTERVAL):
+                 monitor_interval=DEFAULTS["resource_monitor_interval"]):
         """
         Parameters
         ----------
@@ -214,7 +214,7 @@ class JobQueue:
     @classmethod
     def run_jobs(cls, jobs, max_queue_depth,
                  poll_interval=DEFAULT_POLL_INTERVAL,
-                 monitor_func=None, monitor_interval=DEFAULT_MONITOR_INTERVAL):
+                 monitor_func=None, monitor_interval=DEFAULTS["resource_monitor_interval"]):
         """
         Run job queue synchronously. Blocks until all jobs are complete.
 
@@ -237,5 +237,6 @@ class JobQueue:
             max_queue_depth,
             poll_interval=poll_interval,
             monitor_func=monitor_func,
+            monitor_interval=monitor_interval,
         )
         queue.run(jobs)

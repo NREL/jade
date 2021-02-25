@@ -66,6 +66,13 @@ logger = logging.getLogger(__name__)
     help="Interval in seconds on which to poll jobs for status."
 )
 @click.option(
+    "-r", "--resource-monitor-interval",
+    default=DEFAULTS["resource_monitor_interval"],
+    type=int,
+    show_default=True,
+    help="interval in seconds on which to collect resource stats."
+)
+@click.option(
     "-q", "--num-processes",
     default=None,
     show_default=False,
@@ -116,7 +123,7 @@ logger = logging.getLogger(__name__)
 )
 def submit_jobs(
         config_file, per_node_batch_size, hpc_config, local, max_nodes,
-        output, poll_interval, num_processes, rotate_logs,
+        output, poll_interval, resource_monitor_interval, num_processes, rotate_logs,
         verbose, restart_failed, restart_missing, reports, try_add_blocked_jobs):
     """Submits jobs for execution, locally or on HPC."""
     os.makedirs(output, exist_ok=True)
@@ -149,6 +156,7 @@ def submit_jobs(
         num_processes=num_processes,
         per_node_batch_size=per_node_batch_size,
         poll_interval=poll_interval,
+        resource_monitor_interval=resource_monitor_interval,
         try_add_blocked_jobs=try_add_blocked_jobs,
         verbose=verbose,
     )

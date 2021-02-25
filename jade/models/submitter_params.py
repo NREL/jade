@@ -14,6 +14,7 @@ DEFAULTS = {
     "max_nodes": 16,
     "per_node_batch_size": 500,
     "poll_interval": 60,
+    "resource_monitor_interval": 30,
 }
 
 
@@ -48,6 +49,11 @@ class SubmitterParams(JadeBaseModel):
         title="poll_interval",
         description="interval in seconds on which to poll jobs for status",
         default=DEFAULTS["poll_interval"],
+    )
+    resource_monitor_interval: Optional[int] = Field(
+        title="resource_monitor_interval",
+        description="interval in seconds on which to collect resource stats",
+        default=DEFAULTS["resource_monitor_interval"],
     )
     try_add_blocked_jobs: Optional[bool] = Field(
         title="try_add_blocked_jobs",
