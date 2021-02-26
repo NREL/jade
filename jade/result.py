@@ -107,6 +107,7 @@ class ResultsSummary:
         data = self._parse(self._results_file)
         data["results"] = deserialize_results(data["results"])
         self._results = data
+        self._missing_jobs = data["missing_jobs"]
         self._base_directory = data["base_directory"]
 
     @property
@@ -268,13 +269,17 @@ class ResultsSummary:
             table.add_row([result.name, result.return_code, result.status,
                            result.exec_time_s, datetime.fromtimestamp(result.completion_time)])
 
-        total = num_successful + num_failed
-        assert total == len(self._results["results"])
+        num_missing = len(self._missing_jobs)
+        total = num_successful + num_failed + num_missing
+        assert total == len(self._results["results"]) + num_missing
         avg_exec = sum(exec_times) / len(exec_times)
 
         print(table)
         print(f"\nNum successful: {num_successful}")
         print(f"Num failed: {num_failed}")
+        print(f"Num missing: {num_missing}")
+        if self._missing_jobs:
+            print(f"Missing job names: {self._missing_jobs}")
         print(f"Total: {total}\n")
         print("Avg execution time (s): {:.2f}".format(avg_exec))
         print("Min execution time (s): {:.2f}".format(min_exec))

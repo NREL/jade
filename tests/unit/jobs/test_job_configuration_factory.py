@@ -17,6 +17,7 @@ def jade_data():
     """Fixture of serialized jade result"""
     return {
         "base_directory": "/jade/results/base/directory/",
+        "missing_jobs": [],
         "results": [
             {
                 "name": "australia",

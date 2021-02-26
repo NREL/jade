@@ -12,7 +12,7 @@ from jade.events import (
     EVENT_NAME_HPC_JOB_ASSIGNED, EVENT_NAME_HPC_JOB_STATE_CHANGE
 )
 from jade.exceptions import ExecutionError
-from jade.hpc.common import HpcJobStatus
+from jade.hpc.common import HpcJobStatus, HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.job_queue import JobQueue
@@ -133,7 +133,16 @@ class HpcSubmitter:
             logger.debug("Submitted %s", ", ".join((x.name for x in submitted_jobs)))
 
         self._update_status(submitted_jobs, blocked_jobs, hpc_job_ids, completed_job_names)
-        return self._cluster.are_all_jobs_complete()
+        is_complete = self._cluster.are_all_jobs_complete()
+
+        if not is_complete and not self._cluster.job_status.hpc_job_ids:
+            # TODO: need to implement persistent recording of fake status
+            if self._hpc_mgr.hpc_type != HpcType.FAKE:
+                logger.error("Some jobs are not complete but there are no active HPC job IDs. "
+                             "Force completion.")
+                is_complete = True
+
+        return is_complete
 
     def _update_status(self, submitted_jobs, blocked_jobs, hpc_job_ids, completed_job_names):
         hpc_job_changes = self._cluster.job_status.hpc_job_ids != hpc_job_ids

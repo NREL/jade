@@ -144,16 +144,19 @@ results_summary={self.get_results_summmary_report()}"""
         result = Status.GOOD
         self._results = ResultsAggregator.list_results(self._output)
         if len(self._results) != self._config.get_num_jobs():
-            logger.error("Number of results doesn't match number of jobs: "
-                         "results=%s jobs=%s. Check for process crashes "
-                         "or HPC timeouts.",
-                         len(self._results), self._config.get_num_jobs())
+            finished_jobs = {x.name for x in self._results}
+            all_jobs = {x.name for x in self._config.iter_jobs()}
+            missing_jobs = sorted(all_jobs.difference(finished_jobs))
+            logger.error("These jobs did not finish: %s. Check for process crashes "
+                         "or HPC timeouts.", missing_jobs)
             result = Status.ERROR
+        else:
+            missing_jobs = []
 
         if previous_results:
             self._results += previous_results
 
-        self.write_results_summary(RESULTS_FILE)
+        self.write_results_summary(RESULTS_FILE, missing_jobs)
         shutil.rmtree(self._results_dir)
 
         self._log_error_log_messages(self._output)
@@ -193,31 +196,36 @@ results_summary={self.get_results_summmary_report()}"""
 
         return result
 
-    def write_results_summary(self, filename):
+    def write_results_summary(self, filename, missing_jobs):
         """Write the results to filename in the output directory."""
         data = OrderedDict()
         data["jade_version"] = jade.version.__version__
         now = datetime.datetime.now()
         data["timestamp"] = now.strftime("%m/%d/%Y %H:%M:%S")
         data["base_directory"] = os.getcwd()
-        results = self._build_results()
+        results = self._build_results(missing_jobs)
         data["results_summary"] = results["summary"]
+        data["missing_jobs"] = missing_jobs
         data["results"] = results["results"]
 
         output_file = os.path.join(self._output, filename)
         dump_data(data, output_file)
 
         logger.info("Wrote results to %s.", output_file)
+        num_successful = results["summary"]["num_successful"]
         num_failed = results["summary"]["num_failed"]
-        log_func = logger.info if num_failed == 0 else logger.warning
-        log_func("Successful=%s Failed=%s Total=%s",
-                 results["summary"]["num_successful"],
+        num_missing = len(missing_jobs)
+        total = num_successful + num_failed + num_missing
+        log_func = logger.info if num_successful == total else logger.warning
+        log_func("Successful=%s Failed=%s Missing=%s Total=%s",
+                 num_successful,
                  num_failed,
-                 results["summary"]["total"])
+                 num_missing,
+                 total)
 
         return output_file
 
-    def _build_results(self):
+    def _build_results(self, missing_jobs):
         num_successful = 0
         num_failed = 0
         for result in self._results:
@@ -231,7 +239,7 @@ results_summary={self.get_results_summmary_report()}"""
             "summary": {
                 "num_successful": num_successful,
                 "num_failed": num_failed,
-                "total": num_successful + num_failed,
+                "num_missing": len(missing_jobs),
             },
         }
 
