@@ -278,7 +278,6 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         self._output = output
         self._name = name
         self._last_status = HpcJobStatus.NONE
-        self._is_pending = False
 
     @classmethod
     def create_from_id(cls, hpc_manager, status_collector, job_id):
@@ -319,10 +318,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             log_event(event)
             self._last_status = status
 
-        if status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE):
-            self._is_pending = False
-
-        return not self._is_pending
+        return status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
 
     @property
     def job_id(self):
@@ -336,7 +332,6 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         job_id, result = self._mgr.submit(self._output,
                                           self._name,
                                           self._run_script)
-        self._is_pending = True
         if result != Status.GOOD:
             raise ExecutionError("Failed to submit name={self._name}")
 
