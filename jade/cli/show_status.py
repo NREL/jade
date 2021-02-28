@@ -12,9 +12,12 @@ from jade.enums import Status
 from jade.exceptions import InvalidConfiguration
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_configuration_factory import create_config_from_previous_run
+from jade.hpc.common import HpcJobStatus
+from jade.hpc.hpc_manager import HpcManager
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
 from jade.models import HpcConfig
+from jade.utils.subprocess_manager import run_command
 from jade.utils.utils import rotate_filenames, get_cli_string, load_data
 
 
@@ -26,6 +29,7 @@ logger = logging.getLogger(__name__)
     "-o", "--output",
     default=OUTPUT_DIR,
     show_default=True,
+    type=click.Path(exists=True),
     help="directory containing submission output",
 )
 @click.option(
@@ -35,11 +39,19 @@ logger = logging.getLogger(__name__)
     show_default=True,
     help="include individual job status",
 )
-def show_status(output, job_status):
+@click.option(
+    "--verbose",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Enable verbose log output."
+)
+def show_status(output, job_status, verbose):
     """Shows the status of active HPC jobs."""
-    setup_logging(__name__, None, console_level=logging.INFO)
+    level = logging.DEBUG if verbose else logging.INFO
+    setup_logging(__name__, None, console_level=level)
     try:
-        cluster, _ = Cluster.deserialize(output, deserialize_jobs=job_status)
+        cluster, _ = Cluster.deserialize(output, deserialize_jobs=True)
     except InvalidConfiguration:
         print(f"{output} is not a JADE output directory used in cluster mode")
         sys.exit(1)
@@ -68,3 +80,26 @@ def show_status(output, job_status):
                     row.append(job[name])
             table.add_row(row)
         print(table)
+
+    if not cluster.is_complete():
+        # Check if the last job got killed or timed-out and try to restart.
+        run_new_submitter = False
+        if cluster.job_status.hpc_job_ids:
+            hpc_mgr = HpcManager(cluster.config.submitter_params.hpc_config, output)
+            all_jobs_are_none = True
+            for job_id in cluster.job_status.hpc_job_ids:
+                status = hpc_mgr.check_status(job_id=job_id)
+                if status != HpcJobStatus.NONE:
+                    all_jobs_are_none = False
+                    break
+            if all_jobs_are_none:
+                logger.warn("HPC job statuses may be out-of-date.")
+                run_new_submitter = True
+        else:
+            logger.error("Jobs are not complete but there no active HPC jobs.")
+            run_new_submitter = True
+        if run_new_submitter:
+            try_submit_cmd = f"jade try-submit-jobs {output}"
+            if verbose:
+                try_submit_cmd += " --verbose"
+            run_command(try_submit_cmd)
