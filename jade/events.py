@@ -273,9 +273,10 @@ class EventsSummary:
         return self._events.get(name, [])
 
     def _handle_legacy_file(self, legacy_file):
-        for raw_event in load_data(legacy_file):
-            event = deserialize_event(raw_event)
-            self._events[event.name].append(event)
+        with open(legacy_file) as f_in:
+            for line in f_in:
+                event = deserialize_event(json.loads(line.strip()))
+                self._events[event.name].append(event)
 
         self._save_events_summary()
         os.remove(legacy_file)

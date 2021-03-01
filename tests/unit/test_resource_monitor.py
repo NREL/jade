@@ -1,6 +1,7 @@
 
 import logging
 import os
+import shutil
 import tempfile
 
 from jade.events import EventsSummary, EVENT_NAME_CPU_STATS, \
@@ -53,3 +54,19 @@ def test_resource_stats():
         assert ret == 0
         for term in ("IOPS", "read_bytes", "bytes_recv", "idle"):
             assert term in output["stdout"]
+
+
+def test_collect_stats():
+    output_dir = os.path.join(tempfile.gettempdir(), "test-stats-output")
+    try:
+        ret = run_command(f"jade stats collect -i1 -o {output_dir} -d 1 -f")
+        assert ret == 0
+        cmd = f"jade stats show -o {output_dir} cpu disk mem net"
+        output = {}
+        ret = run_command(cmd, output=output)
+        assert ret == 0
+        for term in ("IOPS", "read_bytes", "bytes_recv", "idle"):
+            assert term in output["stdout"]
+    finally:
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)

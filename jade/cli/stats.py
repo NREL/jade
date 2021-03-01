@@ -8,6 +8,7 @@ import sys
 import click
 from psutil._common import bytes2human
 
+from jade.cli.collect_stats import collect
 from jade.common import OUTPUT_DIR
 from jade.loggers import setup_logging
 from jade.events import EventsSummary
@@ -21,7 +22,7 @@ STATS = (
 
 @click.group()
 def stats():
-    """View stats from a run."""
+    """Collect new stats or view stats from an existing run."""
     setup_logging("stats", None)
 
 @click.argument("stats", nargs=-1)
@@ -111,5 +112,6 @@ def exec_time(output, human_readable):
 
 
 stats.add_command(bytes_consumed)
+stats.add_command(collect)
 stats.add_command(exec_time)
 stats.add_command(show)
