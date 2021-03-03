@@ -239,6 +239,19 @@ Or only the ones that failed
 
     $ jade show-results --failed
 
+Failed or Missing Jobs
+======================
+If some jobs fail because of a walltime timeout or code/data error then you can
+resubmit those specific jobs without re-running all the jobs that passed.
+
+Jobs that timeout will be reported as missing.
+
+.. code-block:: bash
+
+    $ jade resubmit-jobs --missing --failed output
+
+.. note:: This command is currently not supported in local mode.
+
 Debugging
 =========
 By default JADE generates report files that summarize what happened. Refer to
