@@ -12,7 +12,6 @@ import time
 import jade
 from jade.common import (
     CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, RESULTS_FILE, HPC_CONFIG_FILE,
-    get_results_filename
 )
 from jade.enums import Status
 from jade.events import (
@@ -82,7 +81,7 @@ results_summary={self.get_results_summmary_report()}"""
         """Cancel running and pending jobs."""
         # TODO
 
-    def submit_jobs(self, cluster, force_local=False, previous_results=None):
+    def submit_jobs(self, cluster, force_local=False):
         """Submit simulations. Auto-detect whether the current system is an HPC
         and submit to its queue. Otherwise, run locally.
 
@@ -106,7 +105,7 @@ results_summary={self.get_results_summmary_report()}"""
             self._save_repository_info(registry)
             self._config.check_job_dependencies()
 
-            results_aggregator = ResultsAggregator(get_results_filename(self._output))
+            results_aggregator = ResultsAggregator.load(self._output)
             results_aggregator.create_file()
 
             # If an events summary file exists, it is invalid.
@@ -136,11 +135,11 @@ results_summary={self.get_results_summmary_report()}"""
             is_complete = self._submit_to_hpc(cluster)
 
         if is_complete:
-            result = self._handle_completion(cluster, previous_results)
+            result = self._handle_completion(cluster)
 
         return result
 
-    def _handle_completion(self, cluster, previous_results):
+    def _handle_completion(self, cluster):
         result = Status.GOOD
         self._results = ResultsAggregator.list_results(self._output)
         if len(self._results) != self._config.get_num_jobs():
@@ -152,9 +151,6 @@ results_summary={self.get_results_summmary_report()}"""
             result = Status.ERROR
         else:
             missing_jobs = []
-
-        if previous_results:
-            self._results += previous_results
 
         self.write_results_summary(RESULTS_FILE, missing_jobs)
         shutil.rmtree(self._results_dir)
@@ -362,12 +358,11 @@ results_summary={self.get_results_summmary_report()}"""
         config_file,
         output,
         params,
-        restart_failed=False,
-        restart_missing=False,
         pipeline_stage_num=None
     ):
         """Allows submission from an existing Python process."""
         os.makedirs(output, exist_ok=True)
+
         mgr = JobSubmitter.create(config_file, output=output)
         cluster = Cluster.create(
             output,
@@ -376,35 +371,10 @@ results_summary={self.get_results_summmary_report()}"""
             pipeline_stage_num=pipeline_stage_num,
         )
 
-        previous_results = []
-        if restart_failed:
-            failed_job_config = create_config_from_previous_run(
-                config_file,
-                output,
-                result_type='failed',
-            )
-            previous_results = ResultsSummary(output).get_successful_results()
-            config_file = "failed_job_inputs.json"
-            failed_job_config.dump(config_file)
-
-        if restart_missing:
-            missing_job_config = create_config_from_previous_run(
-                config_file,
-                output,
-                result_type='missing',
-            )
-            config_file = "missing_job_inputs.json"
-            missing_job_config.dump(config_file)
-            previous_results = ResultsSummary(output).list_results()
-
         local = params.hpc_config.hpc_type == HpcType.LOCAL
         ret = 1
         try:
-            status = mgr.submit_jobs(
-                cluster,
-                force_local=local,
-                previous_results=previous_results,
-            )
+            status = mgr.submit_jobs(cluster, force_local=local)
             if status == Status.IN_PROGRESS:
                 check_cmd = f"jade show-status -o {output}"
                 print(f"Jobs are in progress. Run '{check_cmd}' for updates.")

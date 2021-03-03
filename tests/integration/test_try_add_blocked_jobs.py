@@ -1,5 +1,5 @@
 """
-Unit tests for auto-regression execution class methods and properties.
+Unit tests for adding blocked jobs.
 """
 
 import os
@@ -14,7 +14,7 @@ from jade.test_common import FAKE_HPC_CONFIG
 from jade.utils.subprocess_manager import run_command
 
 
-TEST_FILENAME = "inputs.txt"
+TEST_FILENAME = "test-inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = "jade submit-jobs"
@@ -51,7 +51,7 @@ def test_try_add_blocked_jobs(cleanup):
         cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -h {FAKE_HPC_CONFIG} -p 0.1 {option}"
         ret = run_command(cmd)
         assert ret == 0
-        ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
+        ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
         assert ret == 0
         events_file = os.path.join(OUTPUT, "submit_jobs_events.log")
         events_summary = EventsSummary(OUTPUT, preload=True)

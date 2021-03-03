@@ -152,7 +152,6 @@ class ResultsSummary:
 
         return None
 
-
     def get_successful_result(self, job_name):
         """Return the successful job result from the results
         Parameters
@@ -186,8 +185,8 @@ class ResultsSummary:
 
         return successful_results
 
-    def get_missing_results(self, expected_jobs):
-        """Return the missing results.
+    def get_missing_jobs(self, expected_jobs):
+        """Return the jobs for which there are no results.
 
         Parameters
         ----------
@@ -199,18 +198,18 @@ class ResultsSummary:
         list
 
         """
-        missing_results =  []
+        missing_jobs =  []
         for job in expected_jobs:
             if self.get_result(job.name) is None:
-                missing_results.append(job)
+                missing_jobs.append(job)
 
-        return missing_results
+        return missing_jobs
 
     def get_failed_results(self):
         """Return the failed results."""
         failed_results = []
         for result in self._results["results"]:
-            if result.return_code != 0 or result.status != "finished":
+            if result.return_code != 0:
                 failed_results.append(result)
 
         return failed_results
