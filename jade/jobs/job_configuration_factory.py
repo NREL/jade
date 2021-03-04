@@ -66,9 +66,10 @@ def create_config_from_previous_run(config_file, output, result_type="successful
     elif result_type == "failed":
         results_of_type = summary.get_failed_results()
     elif result_type == "missing":
-        results_of_type = summary.get_missing_results(config.iter_jobs())
+        results_of_type = summary.get_missing_jobs(config.iter_jobs())
 
     parameters = []
+    # Note that both jobs and results have `.name`.
     for result in results_of_type:
         job_parameters = config.get_job(result.name)
         parameters.append(job_parameters)

@@ -19,7 +19,7 @@ from jade.utils.subprocess_manager import run_command
 TEST_FILENAME = "inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
-SUBMIT_JOBS = "jade submit-jobs"
+SUBMIT_JOBS = "jade submit-jobs -f"
 WAIT = "jade wait"
 
 
@@ -114,7 +114,7 @@ def test_job_order(generic_command_fixture):
     ret = run_command(cmd)
     assert ret == 0
 
-    ret = run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.1")
+    ret = run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
     assert ret == 0
 
     result_summary = ResultsSummary(OUTPUT)

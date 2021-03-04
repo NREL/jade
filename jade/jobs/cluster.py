@@ -290,6 +290,30 @@ class Cluster:
         """Mark the submission as being complete."""
         return self._do_action_under_lock(self._mark_complete)
 
+    def prepare_for_resubmission(self, jobs_to_resubmit):
+        """Reset the state of the cluster for resubmission of jobs.
+
+        Parameters
+        ----------
+        jobs_to_resubmit : set
+            job names that will be resubmitted
+
+        """
+        # Locking is not required for this function.
+        assert self._config.is_complete
+        self._config.is_complete = False
+        self._config.submitted_jobs = self._config.num_jobs - len(jobs_to_resubmit)
+        self._config.completed_jobs = 0
+
+        for job in self.iter_jobs():
+            if job.name in jobs_to_resubmit:
+                job.state = JobState.NOT_SUBMITTED
+            elif job.state == JobState.DONE:
+                self._config.completed_jobs += 1
+
+        self._serialize("prepare_for_resubmission")
+        self._serialize_jobs("prepare_for_resubmission")
+
     def promote_to_submitter(self, serialize=True):
         """Promote the current system to submitter.
 

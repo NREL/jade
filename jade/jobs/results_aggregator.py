@@ -8,7 +8,7 @@ import os
 from filelock import SoftFileLock, Timeout
 
 from jade.common import get_results_filename, RESULTS_DIR
-from jade.result import Result, deserialize_result
+from jade.result import Result, deserialize_result, serialize_result
 
 
 logger = logging.getLogger(__name__)
@@ -38,6 +38,18 @@ class ResultsAggregator:
             os.path.dirname(filename),
             RESULTS_DIR
         )
+
+    @classmethod
+    def load(cls, output_dir, **kwargs):
+        """Load an instance from an output directory.
+
+        Parameters
+        ----------
+        output_dir : str
+
+        """
+        results_file = get_results_filename(output_dir)
+        return cls(results_file, **kwargs)
 
     @staticmethod
     def _get_fields():
@@ -116,6 +128,26 @@ class ResultsAggregator:
         with open(self._filename, "a") as f_out:
             f_out.write(text + "\n")
 
+    def clear_failed_results(self):
+        """Remove failed results from the results file.
+
+        Parameters
+        ----------
+        output_dir : str
+
+        """
+        results = [x for x in self.get_results() if x.return_code == 0]
+        self._write_results(results)
+        logger.info("Cleared failed results from %s", self._filename)
+
+    def _write_results(self, results):
+        _results = [serialize_result(x) for x in results]
+        with open(self._filename, "w") as f_out:
+            if results:
+                writer = csv.DictWriter(f_out, fieldnames=_results[0].keys())
+                writer.writeheader()
+                writer.writerows(_results)
+
     def get_results(self):
         """Return the current results.
 
@@ -166,6 +198,5 @@ class ResultsAggregator:
             list of Result objects
 
         """
-        results_file = get_results_filename(output_dir)
-        results = cls(results_file, **kwargs)
+        results = cls.load(output_dir, **kwargs)
         return results.get_results()

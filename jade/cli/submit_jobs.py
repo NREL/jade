@@ -2,6 +2,7 @@
 
 import logging
 import os
+import shutil
 import sys
 
 import click
@@ -13,7 +14,7 @@ from jade.loggers import setup_logging
 from jade.models import HpcConfig, LocalHpcConfig
 from jade.models.submitter_params import DEFAULTS, SubmitterParams
 from jade.jobs.cluster import Cluster
-from jade.utils.utils import get_cli_string, load_data, rotate_filenames
+from jade.utils.utils import get_cli_string, load_data
 
 
 logger = logging.getLogger(__name__)
@@ -29,6 +30,13 @@ logger = logging.getLogger(__name__)
     default=DEFAULTS["per_node_batch_size"],
     show_default=True,
     help="Number of jobs to run on one node in one batch."
+)
+@click.option(
+    "-f", "--force",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Delete output directory if it exists."
 )
 @click.option(
     "-h", "--hpc-config",
@@ -80,31 +88,11 @@ logger = logging.getLogger(__name__)
     help="Number of processes to run in parallel; defaults to num CPUs."
 )
 @click.option(
-    "--rotate-logs/--no-rotate-logs",
-    default=True,
-    show_default=True,
-    help="Rotate log files so that they aren't overwritten."
-)
-@click.option(
     "--verbose",
     is_flag=True,
     default=False,
     show_default=True,
     help="Enable verbose log output."
-)
-@click.option(
-    "--restart-failed",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Restart only failed jobs."
-)
-@click.option(
-    "--restart-missing",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Restart only missing jobs."
 )
 @click.option(
     "--reports/--no-reports",
@@ -122,13 +110,18 @@ logger = logging.getLogger(__name__)
          "already in the batch."
 )
 def submit_jobs(
-        config_file, per_node_batch_size, hpc_config, local, max_nodes,
-        output, poll_interval, resource_monitor_interval, num_processes, rotate_logs,
-        verbose, restart_failed, restart_missing, reports, try_add_blocked_jobs):
+        config_file, per_node_batch_size, force, hpc_config, local, max_nodes,
+        output, poll_interval, resource_monitor_interval, num_processes,
+        verbose, reports, try_add_blocked_jobs):
     """Submits jobs for execution, locally or on HPC."""
-    os.makedirs(output, exist_ok=True)
-    if rotate_logs:
-        rotate_filenames(output, ".log")
+    if os.path.exists(output):
+        if force:
+            shutil.rmtree(output)
+        else:
+            print(f"{output} already exists. Delete it or use '--force' to overwrite.")
+            sys.exit(1)
+
+    os.makedirs(output)
 
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
@@ -161,11 +154,5 @@ def submit_jobs(
         verbose=verbose,
     )
 
-    ret = JobSubmitter.run_submit_jobs(
-        config_file,
-        output,
-        params,
-        restart_failed,
-        restart_missing,
-    )
+    ret = JobSubmitter.run_submit_jobs(config_file, output, params)
     sys.exit(ret)
