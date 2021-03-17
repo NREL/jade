@@ -140,7 +140,7 @@ def _show(config_file, fields=None, blocked_by=True):
 
     field_names = ["index", "name"]
     if blocked_by:
-        field_names.append("blocked_by")
+        field_names.append("blocked_by (job names)")
     if fields is not None:
         field_names += fields
 
@@ -149,7 +149,11 @@ def _show(config_file, fields=None, blocked_by=True):
     for i, job in enumerate(config.iter_jobs()):
         row = [i, job.name]
         if blocked_by:
-            row.append(", ".join(job.get_blocking_jobs()))
+            blocking_jobs = sorted(list(job.get_blocking_jobs()))
+            text = ", ".join(blocking_jobs)
+            if len(text) > 50:
+                text = f"truncated...blocked by {len(blocking_jobs)} jobs"
+            row.append(text)
         if fields is not None:
             job_dict = job.serialize()
             for field in fields:
