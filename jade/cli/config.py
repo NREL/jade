@@ -11,6 +11,7 @@ from prettytable import PrettyTable
 
 from jade.common import CONFIG_FILE, HPC_CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration
+from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
 from jade.utils.utils import dump_data, load_data
 from jade.models import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig
@@ -117,36 +118,42 @@ def hpc(account, config_file, partition, qos, hpc_type, walltime):
     multiple=True,
     help="include in output table; can specify mulitple times",
 )
-def show(config_file, fields):
+@click.option(
+    "-n", "--no-blocked-by",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="exclude blocking jobs in table",
+)
+def show(config_file, fields, no_blocked_by):
     """Show the jobs in the configuration."""
-    _show(config_file, fields)
+    _show(config_file, fields, not no_blocked_by)
 
 
 # This is a standalone function so that it can be called from _filter.
-def _show(config_file, fields):
-    cfg = load_data(config_file)
-    jobs = cfg["jobs"]
-    print(f"Num jobs: {len(cfg['jobs'])}")
-    if not jobs:
+def _show(config_file, fields=None, blocked_by=True):
+    config = create_config_from_file(config_file)
+    num_jobs = config.get_num_jobs()
+    print(f"Num jobs: {num_jobs}")
+    if num_jobs == 0:
         return
 
-    for field in fields:
-        if field not in jobs[0]:
-            print(f"field={field} is not a job field in {cfg['extension']}")
-            sys.exit(1)
-
-    field_names = ["index"]
-    if "name" in jobs[0]:
-        field_names.append("name")
-    else:
-        field_names.append(list(jobs[0].keys())[0])
-    if "blocked_by" in jobs[0]:
+    field_names = ["index", "name"]
+    if blocked_by:
         field_names.append("blocked_by")
+    if fields is not None:
+        field_names += fields
 
     table = PrettyTable()
-    table.field_names = field_names + list(fields)
-    for i, job in enumerate(jobs):
-        row = [i] + [job[x] for x in field_names[1:]]
+    table.field_names = field_names
+    for i, job in enumerate(config.iter_jobs()):
+        row = [i, job.name]
+        if blocked_by:
+            row.append(", ".join(job.get_blocking_jobs()))
+        if fields is not None:
+            job_dict = job.serialize()
+            for field in fields:
+                row.append(job_dict.get(field, ""))
         table.add_row(row)
     print(table)
 
@@ -263,7 +270,7 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
             print(f"Wrote new config to {output_file}")
 
         if show_config:
-            _show(new_config_file, [])
+            _show(new_config_file)
     finally:
         if output_file is None:
             os.remove(new_config_file)

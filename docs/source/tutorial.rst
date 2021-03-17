@@ -86,6 +86,23 @@ Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
       "blocked_by": [2, 3]
     }
 
+Show Job Summary
+----------------
+In order to view a summary of your jobs in a table:
+
+.. code:: bash
+
+    $ jade config show config.json
+
+    Num jobs: 4
+    +-------+------+------------+
+    | index | name | blocked_by |
+    +-------+------+------------+
+    |   0   |  1   |            |
+    |   1   |  2   |     1      |
+    |   2   |  3   |     1      |
+    |   3   |  4   |    2, 3    |
+    +-------+------+------------+
 
 CLI Execution
 =============
