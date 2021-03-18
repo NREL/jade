@@ -381,7 +381,6 @@ class Cluster:
         promoted = False
         if try_promote_to_submitter:
             promoted = cluster._promote_to_submitter()
-            assert cluster.am_i_submitter()
         if deserialize_jobs:
             cluster._deserialize_jobs()
 
