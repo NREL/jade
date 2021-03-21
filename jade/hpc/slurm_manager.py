@@ -46,6 +46,9 @@ class SlurmManager(HpcManagerInterface):
         output = {}
         ret = run_command(cmd, output)
         if ret != 0:
+            if "Invalid job id specified" in output["stderr"]:
+                return HpcJobInfo("", "", HpcJobStatus.NONE)
+
             logger.error("Failed to run squeue command=[%s] ret=%s err=%s",
                          cmd, ret, output["stderr"])
             raise ExecutionError(f"squeue command failed: {ret}")
