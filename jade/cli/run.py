@@ -74,7 +74,7 @@ def run(extension, **kwargs):
 
     # Structural logging setup
     event_file = os.path.join(job_dir, "events.log")
-    setup_logging("event", event_file, console_level=level, file_level=level)
+    setup_logging("event", event_file, console_level=logging.ERROR, file_level=level)
 
     # Create config for run
     try:
