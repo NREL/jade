@@ -226,20 +226,29 @@ While jobs are running you can check status with this command:
     $ jade show-status -o output
 
 The status is updated when each compute node starts or completes its execution
-of a batch. You can trigger an immediate status update by manually trying to
-submit new jobs.
+of a batch, so this status may not be current.
+
+Every job runner will log completions to the same file, so you can see live job
+completions with this command:
+
+.. code-block:: bash
+
+    $ tail -f output/results.csv
+
+Every submitter will log to the same file, so you can monitor submission status
+with this command:
+
+.. code-block:: bash
+
+    $ tail -f output/submit-jobs.log
+
+You can also trigger a full status update by manually trying to submit new
+jobs.
 
 .. code-block:: bash
 
     $ jade try-submit-jobs output
     $ jade show-status -o output
-
-Every submitter will log to the same file, so you can also monitor status with
-this command:
-
-.. code-block:: bash
-
-    $ tail -f output/submit-jobs.log
 
 
 Job Results
