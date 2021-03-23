@@ -246,66 +246,67 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
     return file_path
 
 
-def convert_csvs_to_feather(directory, compress=False, column_map=None,
-                            exclude_substrings=None, keep_original=False):
-    """Load CSV files as dataframes and convert them to feather files.
-
-    Parameters
-    ----------
-    directory : str
-        Convert all CSV files in the directory.
-    compress : bool
-        Compress the feather files.
-    column_map : dict
-        For CSV files without a header, pass basename-to-columns mapping
-    exclude_substrings : list
-        List of filename substrings to exclude.
-
-    """
-    for filename in os.listdir(directory):
-        skip = False
-        for substring in exclude_substrings:
-            if substring is not None and substring in filename:
-                skip = True
-                break
-        if skip:
-            continue
-        if os.path.splitext(filename)[1] == ".csv":
-            convert_csv_to_feather(os.path.join(directory, filename),
-                                   compress=compress,
-                                   column_map=column_map,
-                                   keep_original=keep_original)
-
-
-def convert_csv_to_feather(file_path, compress=False, column_map=None,
-                           keep_original=False):
-    """Load CSV files as dataframes and convert them to feather files.
-
-    Parameters
-    ----------
-    directory : str
-    filename : str
-    compress : bool
-        Compress the feather files.
-    column_map: dict
-        For CSV files without a header, pass basename-to-columns mapping
-
-    """
-    directory = os.path.dirname(file_path)
-    filename = os.path.basename(file_path)
-
-    assert os.path.splitext(filename)[1] == ".csv"
-
-    columns = None
-    if column_map is not None:
-        columns = column_map.get(os.path.basename(filename))
-
-    df = read_dataframe(os.path.join(directory, filename), columns=columns)
-    new_filename = os.path.splitext(filename)[0] + ".feather"
-    write_dataframe(df, os.path.join(directory, new_filename),
-                    compress=compress)
-
-    if not keep_original:
-        os.remove(os.path.join(directory, filename))
-
-    logger.debug("Converted %s: %s to %s", directory, filename, new_filename)
+# TODO: broken with newer versions of pandas because of mishandling of indices
+#def convert_csvs_to_feather(directory, compress=False, column_map=None,
+#                            exclude_substrings=None, keep_original=False):
+#    """Load CSV files as dataframes and convert them to feather files.
+#
+#    Parameters
+#    ----------
+#    directory : str
+#        Convert all CSV files in the directory.
+#    compress : bool
+#        Compress the feather files.
+#    column_map : dict
+#        For CSV files without a header, pass basename-to-columns mapping
+#    exclude_substrings : list
+#        List of filename substrings to exclude.
+#
+#    """
+#    for filename in os.listdir(directory):
+#        skip = False
+#        for substring in exclude_substrings:
+#            if substring is not None and substring in filename:
+#                skip = True
+#                break
+#        if skip:
+#            continue
+#        if os.path.splitext(filename)[1] == ".csv":
+#            convert_csv_to_feather(os.path.join(directory, filename),
+#                                   compress=compress,
+#                                   column_map=column_map,
+#                                   keep_original=keep_original)
+#
+#
+#def convert_csv_to_feather(file_path, compress=False, column_map=None,
+#                           keep_original=False):
+#    """Load CSV files as dataframes and convert them to feather files.
+#
+#    Parameters
+#    ----------
+#    directory : str
+#    filename : str
+#    compress : bool
+#        Compress the feather files.
+#    column_map: dict
+#        For CSV files without a header, pass basename-to-columns mapping
+#
+#    """
+#    directory = os.path.dirname(file_path)
+#    filename = os.path.basename(file_path)
+#
+#    assert os.path.splitext(filename)[1] == ".csv"
+#
+#    columns = None
+#    if column_map is not None:
+#        columns = column_map.get(os.path.basename(filename))
+#
+#    df = read_dataframe(os.path.join(directory, filename), columns=columns)
+#    new_filename = os.path.splitext(filename)[0] + ".feather"
+#    write_dataframe(df, os.path.join(directory, new_filename),
+#                    compress=compress)
+#
+#    if not keep_original:
+#        os.remove(os.path.join(directory, filename))
+#
+#    logger.debug("Converted %s: %s to %s", directory, filename, new_filename)
