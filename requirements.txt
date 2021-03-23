@@ -1,7 +1,7 @@
 click
 feather-format
 filelock
-matplotlib==2.2.3
+matplotlib
 numpy
 pandas
 prettytable
