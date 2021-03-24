@@ -199,7 +199,7 @@ options to automate this process.
 
 .. code-block:: bash
 
-    jade submit-jobs --node-setup-script="python setup_node.py --node-shutdown-script="python shutdown_node.py" config.json
+    jade submit-jobs --node-setup-script="python setup_node.py" --node-shutdown-script="python shutdown_node.py" config.json
 
 In this example JADE will invoke these commands on each compute node.
 
