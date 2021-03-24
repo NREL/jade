@@ -4,8 +4,6 @@ from jade.jobs.job_container_by_key import JobContainerByKey
 from jade.jobs.job_configuration import JobConfiguration
 from jade.extensions.generic_command.generic_command_inputs import \
     GenericCommandInputs
-from jade.extensions.generic_command.generic_command_parameters import \
-    GenericCommandParameters
 
 
 class GenericCommandConfiguration(JobConfiguration):

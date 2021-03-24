@@ -45,6 +45,14 @@ class SubmitterParams(JadeBaseModel):
         description="how many jobs to assign to each node",
         default=DEFAULTS["per_node_batch_size"],
     )
+    node_setup_script: Optional[str] = Field(
+        title="node_setup_script",
+        description="script to run on each node before starting jobs",
+    )
+    node_shutdown_script: Optional[str] = Field(
+        title="node_shutdown_script",
+        description="script to run on each node after completing jobs",
+    )
     poll_interval: Optional[int] = Field(
         title="poll_interval",
         description="interval in seconds on which to poll jobs for status",

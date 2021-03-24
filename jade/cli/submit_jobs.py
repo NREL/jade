@@ -109,10 +109,18 @@ logger = logging.getLogger(__name__)
     help="Add blocked jobs to a node's batch if they are blocked by jobs "
          "already in the batch."
 )
+@click.option(
+    "-x", "--node-setup-script",
+    help="Script to run on each node before starting jobs (download input files)."
+)
+@click.option(
+    "-y", "--node-shutdown-script",
+    help="Script to run on each after completing jobs (upload output files)."
+)
 def submit_jobs(
         config_file, per_node_batch_size, force, hpc_config, local, max_nodes,
         output, poll_interval, resource_monitor_interval, num_processes,
-        verbose, reports, try_add_blocked_jobs):
+        verbose, reports, try_add_blocked_jobs, node_setup_script, node_shutdown_script):
     """Submits jobs for execution, locally or on HPC."""
     if os.path.exists(output):
         if force:
@@ -148,6 +156,8 @@ def submit_jobs(
         max_nodes=max_nodes,
         num_processes=num_processes,
         per_node_batch_size=per_node_batch_size,
+        node_setup_script=node_setup_script,
+        node_shutdown_script=node_shutdown_script,
         poll_interval=poll_interval,
         resource_monitor_interval=resource_monitor_interval,
         try_add_blocked_jobs=try_add_blocked_jobs,

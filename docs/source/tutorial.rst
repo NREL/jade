@@ -191,6 +191,65 @@ JADE will actually invoke this:
 This can be useful to collect all job outputs in a common location. JADE
 automatically creates ``<output-dir>/job-outputs`` for this purpose.
 
+Node setup and shutdown scripts
+-------------------------------
+When running on an HPC you might want to copy input files to each compute node
+before running jobs and then upload output data afterwards. JADE provides
+options to automate this process.
+
+.. code-block:: bash
+
+    jade submit-jobs --node-setup-script="python setup_node.py --node-shutdown-script="python shutdown_node.py" config.json
+
+In this example JADE will invoke these commands on each compute node.
+
+.. code-block:: bash
+
+    python setup_node.py config_batch1.json output-dir
+    python shutdown_node.py config_batch1.json output-dir
+
+Note the arguments:
+
+1. JADE config file for that node's batch. It contains only the jobs in the batch.
+2. the output directory passed to ``jade submit-jobs``
+
+You can use this information to decide what files to copy. Here is an example
+of how to use it.
+
+Pre-requisite: define required files for each in each job's ``ext`` field.
+
+.. code-block:: json
+
+    {
+      "command": "bash my-script.sh",
+      "job_id": 1,
+      "blocked_by": [],
+      "extension": "generic_command",
+      "ext": {"required_files": ["/projects/X/input_data.json"]}
+    }
+
+Here is what you can do in the setup script.
+
+.. code-block:: python
+
+    import os
+    import shutil
+    import sys
+    from pathlib import Path
+
+    from jade.jobs.job_configuration_factory import create_config_from_file
+
+    config_file = sys.argv[1]
+    config = create_config_from_file(config_file)
+    required_files = set()
+    for job in config.iter_jobs():
+        required_files.update(set(job.ext.get("required_files", [])))
+
+    work_dir = os.environ["LOCAL_SCRATCH"]  # or whatever is appropriate for your environment
+    for filename in required_files:
+        shutil.copyfile(filename, Path(work_dir) / os.path.basename(filename))
+
+
 Job Execution
 =============
 
