@@ -6,6 +6,7 @@ import os
 import shutil
 import time
 
+from jade.common import get_results_filename
 from jade.enums import Status
 from jade.events import (
     StructuredLogEvent, EVENT_CATEGORY_HPC, EVENT_NAME_HPC_SUBMIT,
@@ -20,6 +21,7 @@ from jade.jobs.cluster import Cluster
 from jade.jobs.cluster import Cluster
 from jade.loggers import log_event
 from jade.models import ClusterConfig, JobState
+from jade.jobs.results_aggregator import ResultsAggregator
 from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script, ExtendedJSONEncoder
 
@@ -28,12 +30,11 @@ logger = logging.getLogger(__name__)
 
 class HpcSubmitter:
     """Submits batches of jobs to HPC. Manages job ordering."""
-    def __init__(self, config, config_file, results_dir, cluster, output):
+    def __init__(self, config, config_file, cluster, output):
         self._config = config
         self._config_file = config_file
         self._base_config = config.serialize()
         self._batch_index = cluster.job_status.batch_index
-        self._completion_detector = CompletionDetector(results_dir)
         self._cluster = cluster
         self._params = self._cluster.config.submitter_params
         self._hpc_mgr = HpcManager(self._params.hpc_config, output)
@@ -173,40 +174,12 @@ class HpcSubmitter:
         log_event(event)
 
     def _update_completed_jobs(self):
-        newly_completed = self._completion_detector.update_completed_jobs()
-        all_completed_jobs = self._completion_detector.completed_jobs
+        aggregator = ResultsAggregator.load(self._output)
+        newly_completed = {x.name for x in aggregator.process_results()}
+        logger.debug("Detected completion of jobs: %s", newly_completed)
         for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
             if job.blocked_by:
-                job.blocked_by.difference_update(all_completed_jobs)
-
-        return newly_completed
-
-
-class CompletionDetector:
-    """Detects when individual jobs complete to release blocked jobs."""
-    def __init__(self, path):
-        self._path = path
-        self._completed_jobs = set()
-
-    @property
-    def completed_jobs(self):
-        """Return the completed jobs.
-
-        Returns
-        -------
-        set
-
-        """
-        return self._completed_jobs
-
-    def update_completed_jobs(self):
-        """Check for completed jobs."""
-        newly_completed = []
-        for filename in os.listdir(self._path):
-            logger.debug("Detected completion of job=%s", filename)
-            self._completed_jobs.add(filename)
-            os.remove(os.path.join(self._path, filename))
-            newly_completed.append(filename)
+                job.blocked_by.difference_update(newly_completed)
 
         return newly_completed
 

@@ -101,7 +101,6 @@ class ResultsSummary:
     """Provides summary of all job results."""
     def __init__(self, output_dir):
         self._output_dir = output_dir
-
         self._results_file = os.path.join(output_dir, RESULTS_FILE)
 
         data = self._parse(self._results_file)
@@ -249,6 +248,9 @@ class ResultsSummary:
         if self._results["results"]:
             min_exec = self._results["results"][0].exec_time_s
             max_exec = self._results["results"][0].exec_time_s
+        else:
+            print("There are no results.")
+            return
 
         exec_times = []
         for result in self._results["results"]:

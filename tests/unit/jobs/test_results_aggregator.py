@@ -6,7 +6,7 @@ import tempfile
 
 import pytest
 
-from jade.common import get_results_filename, RESULTS_DIR
+from jade.common import get_temp_results_filename
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.result import Result
 
@@ -38,22 +38,18 @@ def test_results_aggregator(cleanup):
     """Test ResultsAggregator"""
     if os.path.exists(OUTPUT):
         shutil.rmtree(OUTPUT)
-    os.makedirs(os.path.join(OUTPUT, RESULTS_DIR))
 
     results = [create_result(i) for i in range(100)]
-    batch_file = get_results_filename(OUTPUT)
-    pytest.aggregator = ResultsAggregator(batch_file)
-    pytest.aggregator.create_file()
-    assert os.path.exists(pytest.aggregator._filename)
+    os.makedirs(OUTPUT)
+    pytest.aggregator = ResultsAggregator.create(OUTPUT)
+    assert os.path.exists(pytest.aggregator._processed_filename)
 
     with ProcessPoolExecutor() as executor:
         executor.map(append, results)
 
-    final_results = pytest.aggregator.get_results()
+    final_results = pytest.aggregator.process_results()
     final_results.sort(key=lambda x: int(x.name))
 
     expected = [x for x in results if int(x.name) % 2 == 0]
 
     assert final_results == expected
-
-    results_dir = os.path.join(OUTPUT, RESULTS_DIR)

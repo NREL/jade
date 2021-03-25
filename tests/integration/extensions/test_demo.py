@@ -7,7 +7,7 @@ import pandas as pd
 
 import jade
 from jade.extensions.demo.create_merge_pred_gdp import PRED_GDP_COMMANDS_FILE
-from jade.utils.utils import dump_data, load_data
+from jade.utils.utils import dump_data
 from jade.utils.subprocess_manager import run_command
 
 JADE_PATH = jade.__path__[0]
@@ -25,6 +25,8 @@ def test_demo_extension(test_data_dir):
     create_merge_config = os.path.join(base, "create_merge_pred_gdp.py")
     config_file = os.path.join(test_data_dir, "pipeline.json")
     output = os.path.join(test_data_dir, "output")
+    if os.path.exists(output):
+        shutil.rmtree(output)
 
     try:
         cmd = f"jade pipeline create {create_demo_config} {create_merge_config} -c {config_file} -l"
@@ -32,8 +34,6 @@ def test_demo_extension(test_data_dir):
         assert returncode == 0
         assert os.path.exists(config_file)
 
-        if os.path.exists(output):
-            shutil.rmtree(output)
         returncode = run_command(f"jade pipeline submit {config_file} -o {output}")
         assert returncode == 0
 

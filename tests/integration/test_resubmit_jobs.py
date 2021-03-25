@@ -102,10 +102,10 @@ def test_resubmit_missing(cleanup):
 
     results_filename = os.path.join(OUTPUT, RESULTS_FILE)
     final_results = load_data(results_filename)
-    final_results["results"].pop()
+    missing = final_results["results"].pop()
     final_results["results_summary"]["num_missing"] = 1
     final_results["results_summary"]["num_successful"] -= 1
-    final_results["missing_jobs"] = str(NUM_COMMANDS)
+    final_results["missing_jobs"] = [missing["name"]]
     dump_data(final_results, results_filename)
 
     summary = ResultsSummary(OUTPUT)

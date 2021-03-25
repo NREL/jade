@@ -288,11 +288,12 @@ The status is updated when each compute node starts or completes its execution
 of a batch, so this status may not be current.
 
 Every job runner will log completions to the same file, so you can see live job
-completions with this command:
+completions with this command. Note that this file is cleared each time a
+submitter processes it.
 
 .. code-block:: bash
 
-    $ tail -f output/results.csv
+    $ tail -F output/results.csv
 
 Every submitter will log to the same file, so you can monitor submission status
 with this command:

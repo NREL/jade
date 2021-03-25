@@ -5,7 +5,7 @@ import os
 import shutil
 import uuid
 
-from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_results_filename
+from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_temp_results_filename
 from jade.enums import Status
 from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
@@ -15,7 +15,6 @@ from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
 from jade.loggers import setup_logging
 from jade.resource_monitor import ResourceMonitor
-from jade.jobs.results_aggregator import ResultsAggregator
 from jade.utils.timing_utils import timed_info
 
 
@@ -88,7 +87,7 @@ class JobRunner(JobManagerBase):
         return scratch_dir
 
     def _generate_jobs(self, config_file, verbose):
-        results_filename = get_results_filename(self._output)
+        results_filename = get_temp_results_filename(self._output)
 
         jobs = []
         for job in self._config.iter_jobs():

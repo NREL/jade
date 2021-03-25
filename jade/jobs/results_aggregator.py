@@ -7,7 +7,7 @@ import os
 
 from filelock import SoftFileLock, Timeout
 
-from jade.common import get_results_filename, RESULTS_DIR
+from jade.common import get_results_filename, get_temp_results_filename
 from jade.result import Result, deserialize_result, serialize_result
 
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class ResultsAggregator:
     """Synchronizes updates to the results file across jobs on one system."""
-    def __init__(self, filename, timeout=30, delimiter=","):
+    def __init__(self, path, timeout=30, delimiter=","):
         """
         Constructs ResultsAggregator.
 
@@ -30,14 +30,28 @@ class ResultsAggregator:
             Delimiter to use for CSV formatting.
 
         """
-        self._filename = filename
+        self._filename = get_temp_results_filename(path)
+        self._processed_filename = get_results_filename(path)
         self._lock_file = self._filename + ".lock"
         self._timeout = timeout
         self._delimiter = delimiter
-        self._temp_results_dir = os.path.join(
-            os.path.dirname(filename),
-            RESULTS_DIR
-        )
+
+    @classmethod
+    def create(cls, output_dir, **kwargs):
+        """Create a new instance.
+
+        Parameters
+        ----------
+        output_dir : str
+
+        Returns
+        -------
+        ResultsAggregator
+
+        """
+        agg = cls(output_dir, **kwargs)
+        agg.create_files()
+        return agg
 
     @classmethod
     def load(cls, output_dir, **kwargs):
@@ -47,9 +61,12 @@ class ResultsAggregator:
         ----------
         output_dir : str
 
+        Returns
+        -------
+        ResultsAggregator
+
         """
-        results_file = get_results_filename(output_dir)
-        return cls(results_file, **kwargs)
+        return cls(output_dir, **kwargs)
 
     @staticmethod
     def _get_fields():
@@ -75,33 +92,27 @@ class ResultsAggregator:
         finally:
             lock.release()
 
-    def create_file(self):
+    def create_files(self):
         """Initialize the results file. Should only be called by the parent
         process.
 
         """
-        self._do_action_under_lock(self._create_file)
+        self._do_action_under_lock(self._create_files)
 
-    def _create_file(self):
-        with open(self._filename, "w") as f_out:
-            f_out.write(self._delimiter.join(self._get_fields()) + "\n")
-
-    def delete_file(self):
-        """Delete the results file and lock file."""
-        assert os.path.exists(self._filename)
-        os.remove(self._filename)
-        if os.path.exists(self._lock_file):
-            os.remove(self._lock_file)
-        logger.debug("Deleted results file %s", self._filename)
+    def _create_files(self):
+        for filename in (self._filename, self._processed_filename):
+            with open(filename, "w") as f_out:
+                f_out.write(self._delimiter.join(self._get_fields()))
+                f_out.write("\n")
 
     @classmethod
-    def append(cls, filename, result):
+    def append(cls, output_dir, result):
         """Append a result to the file.
 
         result : Result
 
         """
-        aggregator = cls(filename)
+        aggregator = cls.load(output_dir)
         aggregator.append_result(result)
 
     def append_result(self, result):
@@ -114,19 +125,26 @@ class ResultsAggregator:
             [str(getattr(result, x)) for x in self._get_fields()]
         )
         self._do_action_under_lock(self._append_result, text)
-        self._add_completion(result)
-
-    def _add_completion(self, result):
-        completion_filename = os.path.join(
-            self._temp_results_dir,
-            result.name,
-        )
-        with open(completion_filename, "w") as _:
-            pass
 
     def _append_result(self, text):
         with open(self._filename, "a") as f_out:
-            f_out.write(text + "\n")
+            f_out.write(text)
+            f_out.write("\n")
+
+    def _append_processed_results(self, results):
+        with open(self._processed_filename, "a") as f_out:
+            for result in results:
+                text = self._delimiter.join(
+                    [str(getattr(result, x)) for x in self._get_fields()]
+                )
+                f_out.write(text)
+                f_out.write("\n")
+
+    def _clear_temp_results(self):
+        """Clear the file, once the results have been processed."""
+        with open(self._filename, "w") as f_out:
+            f_out.write(self._delimiter.join(self._get_fields()))
+            f_out.write("\n")
 
     def clear_failed_results(self):
         """Remove failed results from the results file.
@@ -142,10 +160,10 @@ class ResultsAggregator:
 
     def _write_results(self, results):
         _results = [serialize_result(x) for x in results]
-        with open(self._filename, "w") as f_out:
+        with open(self._processed_filename, "w") as f_out:
+            writer = csv.DictWriter(f_out, fieldnames=_results[0].keys())
+            writer.writeheader()
             if results:
-                writer = csv.DictWriter(f_out, fieldnames=_results[0].keys())
-                writer.writeheader()
                 writer.writerows(_results)
 
     def get_results(self):
@@ -171,8 +189,9 @@ class ResultsAggregator:
         """
         return self._get_results()
 
-    def _get_results(self):
-        with open(self._filename) as f_in:
+    def _get_results(self, processed_results=True):
+        filename = self._processed_filename if processed_results else self._filename
+        with open(filename) as f_in:
             results = []
             reader = csv.DictReader(f_in, delimiter=self._delimiter)
             for row in reader:
@@ -200,3 +219,20 @@ class ResultsAggregator:
         """
         results = cls.load(output_dir, **kwargs)
         return results.get_results()
+
+    def process_results(self):
+        """Move all temp results into the consolidated file, then clear the file.
+
+        Returns
+        -------
+        list
+            list of Result objects
+
+        """
+        return self._do_action_under_lock(self._process_results)
+
+    def _process_results(self):
+        results = self._get_results(processed_results=False)
+        self._append_processed_results(results)
+        self._clear_temp_results()
+        return results

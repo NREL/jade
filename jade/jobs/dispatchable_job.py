@@ -27,7 +27,6 @@ class DispatchableJob(DispatchableJobInterface):
         self._cli_cmd = cmd
         self._output = output
         self._pipe = None
-        self._results_filename = results_filename
         self._is_pending = False
         self._start_time = None
 
@@ -51,7 +50,7 @@ class DispatchableJob(DispatchableJobInterface):
         )
         log_event(event)
         result = Result(self._job.name, ret, status, exec_time_s)
-        ResultsAggregator.append(self._results_filename, result)
+        ResultsAggregator.append(self._output, result)
 
         logger.info("Job %s completed return_code=%s exec_time_s=%s",
                     self._job.name, ret, exec_time_s)

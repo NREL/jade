@@ -105,8 +105,7 @@ results_summary={self.get_results_summmary_report()}"""
             self._save_repository_info(registry)
             self._config.check_job_dependencies()
 
-            results_aggregator = ResultsAggregator.load(self._output)
-            results_aggregator.create_file()
+            ResultsAggregator.create(self._output)
 
             # If an events summary file exists, it is invalid.
             events_file = os.path.join(self._output, EVENTS_FILENAME)
@@ -130,6 +129,8 @@ results_summary={self.get_results_summmary_report()}"""
             num_processes = cluster.config.submitter_params.num_processes
             verbose = cluster.config.submitter_params.verbose
             result = runner.run_jobs(verbose=verbose, num_processes=num_processes)
+            agg = ResultsAggregator.load(self._output)
+            agg.process_results()
             is_complete = True
         else:
             is_complete = self._submit_to_hpc(cluster)
@@ -153,8 +154,6 @@ results_summary={self.get_results_summmary_report()}"""
             missing_jobs = []
 
         self.write_results_summary(RESULTS_FILE, missing_jobs)
-        shutil.rmtree(self._results_dir)
-
         self._log_error_log_messages(self._output)
 
         bytes_consumed = get_directory_size_bytes(self._output, recursive=False)
@@ -341,7 +340,6 @@ results_summary={self.get_results_summmary_report()}"""
         hpc_submitter = HpcSubmitter(
             self._config,
             self._config_file,
-            self._results_dir,
             cluster,
             self._output,
         )
