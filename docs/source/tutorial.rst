@@ -125,6 +125,8 @@ Parameters to keep in mind:
 - **Number of jobs**: Number of jobs created by the user.
 - **Max nodes**: Max number of job submissions (batches) to run in parallel.
 - **Per-node batch size**: Number of jobs to run on one node in one batch.
+  Set this to 0 to tell JADE to determine batch sizes based on per-job
+  estimated time. This requires that each job define estimated_run_minutes.
 - **Allocation time**: How long it takes to acquire a node. Dependent on the
   HPC queue chosen and the priority given.
 - **Average job runtime**: How long it takes a job to complete.

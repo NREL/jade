@@ -29,7 +29,8 @@ logger = logging.getLogger(__name__)
     "-b", "--per-node-batch-size",
     default=DEFAULTS["per_node_batch_size"],
     show_default=True,
-    help="Number of jobs to run on one node in one batch."
+    help="Number of jobs to run on one node in one batch. If 0, auto-determine batches based on "
+         "estimated time of each job."
 )
 @click.option(
     "-f", "--force",
@@ -149,6 +150,11 @@ def submit_jobs(
                    "or run in local mode with '-l'")
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
+
+    if per_node_batch_size == 0 and num_processes is None:
+        print("Submitting batches by time requires that num_processes be set in order to know "
+              "how many jobs each compute node will run in parallel.")
+        sys.exit(1)
 
     params = SubmitterParams(
         generate_reports=reports,

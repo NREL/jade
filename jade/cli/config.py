@@ -36,6 +36,12 @@ def config():
     help="config file to generate.",
 )
 @click.option(
+    "-m",
+    "--minutes-per-job",
+    type=int,
+    help="estimated minutes per job.",
+)
+@click.option(
     "-v",
     "--verbose",
     is_flag=True,
@@ -43,12 +49,12 @@ def config():
     show_default=True,
     help="Enable verbose log output.",
 )
-def create(filename, config_file, verbose):
+def create(filename, config_file, minutes_per_job, verbose):
     """Create a config file from a filename with a list of executable commands."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("auto_config", None, console_level=level)
 
-    config = GenericCommandConfiguration.auto_config(filename)
+    config = GenericCommandConfiguration.auto_config(filename, minutes_per_job=minutes_per_job)
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
     print(f"Dumped configuration to {config_file}.\n")

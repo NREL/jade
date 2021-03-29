@@ -22,13 +22,14 @@ class GenericCommandConfiguration(JobConfiguration):
         super(GenericCommandConfiguration, self).__init__(**kwargs)
 
     @classmethod
-    def auto_config(cls, inputs, **kwargs):
+    def auto_config(cls, inputs, minutes_per_job=None, **kwargs):
         """Create a configuration from all available inputs."""
         if isinstance(inputs, str):
             inputs = GenericCommandInputs(inputs)
 
         config = GenericCommandConfiguration(**kwargs)
         for job_param in inputs.iter_jobs():
+            job_param.estimated_run_minutes = minutes_per_job
             config.add_job(job_param)
 
         return config
