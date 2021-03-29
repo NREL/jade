@@ -29,8 +29,7 @@ logger = logging.getLogger(__name__)
     "-b", "--per-node-batch-size",
     default=DEFAULTS["per_node_batch_size"],
     show_default=True,
-    help="Number of jobs to run on one node in one batch. If 0, auto-determine batches based on "
-         "estimated time of each job."
+    help="Number of jobs to run on one node in one batch."
 )
 @click.option(
     "-f", "--force",
@@ -86,6 +85,7 @@ logger = logging.getLogger(__name__)
     default=None,
     show_default=False,
     type=int,
+    is_eager=True,
     help="Number of processes to run in parallel; defaults to num CPUs."
 )
 @click.option(
@@ -101,6 +101,14 @@ logger = logging.getLogger(__name__)
     default=True,
     show_default=True,
     help="Generate reports after execution."
+)
+@click.option(
+    "-t", "--time-based-batching",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Use estimated runtimes to create batches. Each job must have its estimated runtime "
+         "defined. Also requires --num-processes to be set. Overrides --per-node-batch-size."
 )
 @click.option(
     "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
@@ -121,7 +129,8 @@ logger = logging.getLogger(__name__)
 def submit_jobs(
         config_file, per_node_batch_size, force, hpc_config, local, max_nodes,
         output, poll_interval, resource_monitor_interval, num_processes,
-        verbose, reports, try_add_blocked_jobs, node_setup_script, node_shutdown_script):
+        verbose, reports, try_add_blocked_jobs, time_based_batching, node_setup_script,
+        node_shutdown_script):
     """Submits jobs for execution, locally or on HPC."""
     if os.path.exists(output):
         if force:
@@ -151,10 +160,15 @@ def submit_jobs(
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 
-    if per_node_batch_size == 0 and num_processes is None:
-        print("Submitting batches by time requires that num_processes be set in order to know "
-              "how many jobs each compute node will run in parallel.")
+    if time_based_batching and per_node_batch_size != DEFAULTS["per_node_batch_size"]:
+        # This doesn't catch the case where the user passes --per-node-batch-size=default, but
+        # I don't see that click provides a way to detect that condition.
+        print("--per-node-batch-size and --time-based-batching are mutually exclusive")
         sys.exit(1)
+
+    if time_based_batching:
+        # From this point on, this parameter is overloaded. 0 means time-based-batching.
+        per_node_batch_size = 0
 
     params = SubmitterParams(
         generate_reports=reports,
