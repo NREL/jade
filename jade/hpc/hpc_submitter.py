@@ -114,7 +114,7 @@ class HpcSubmitter:
                 batch.append(jade_job)
                 submitted_jobs.append(job)
 
-            if batch is not None and batch.ready_to_submit():
+            if batch.ready_to_submit():
                 self._submit_batch(queue, batch, hpc_job_ids)
                 batch = None
 
