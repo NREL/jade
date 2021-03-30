@@ -78,6 +78,7 @@ class Cluster:
                 Job(
                     name=x.name,
                     blocked_by=x.get_blocking_jobs(),
+                    cancel_on_blocking_job_failure=x.cancel_on_blocking_job_failure,
                     state=JobState.NOT_SUBMITTED,
                 )
                 for x in jade_config.iter_jobs()
@@ -336,6 +337,7 @@ class Cluster:
         self,
         submitted_jobs,
         blocked_jobs,
+        canceled_jobs,
         completed_job_names,
         hpc_job_ids,
         batch_index,
@@ -345,9 +347,11 @@ class Cluster:
         Parameters
         ----------
         submitted_jobs : list
-            list of JobParametersInterface
+            list of Job
         blocked_jobs : list
-            list of JobParametersInterface
+            list of Job
+        canceled_jobs : list
+            list of Job
         completed_job_names : set
             set of str
         hpc_job_ids : list
@@ -357,7 +361,7 @@ class Cluster:
 
         """
         self._do_action_under_lock(
-            self._update_job_status, submitted_jobs, blocked_jobs,
+            self._update_job_status, submitted_jobs, blocked_jobs, canceled_jobs,
             completed_job_names, hpc_job_ids, batch_index
         )
 
@@ -496,6 +500,7 @@ class Cluster:
         self,
         submitted_jobs,
         blocked_jobs,
+        canceled_jobs,
         completed_job_names,
         hpc_job_ids,
         batch_index,
@@ -515,6 +520,9 @@ class Cluster:
             assert old.state == JobState.NOT_SUBMITTED, f"name={job.name} state={old.state}"
             old.blocked_by = job.blocked_by
             processed.add(job.name)
+
+        for job in canceled_jobs:
+            self._config.submitted_jobs += 1
 
         for name in completed_job_names:
             assert name not in processed, name

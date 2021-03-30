@@ -19,13 +19,28 @@ class FakeJob(AsyncJobInterface):
         self._blocking_jobs = set() if blocking_jobs is None else blocking_jobs
         self.start_time = None
         self.end_time = None
+        self._is_complete = False
+
+    def cancel(self):
+        self._is_complete = True
+
+    @property
+    def cancel_on_blocking_job_failure(self):
+        return False
 
     def is_complete(self):
+        if self._is_complete:
+            return True
         return time.time() > self.end_time
 
     @property
     def name(self):
         return self._name
+
+    @property
+    def return_code(self):
+        assert self.is_complete()
+        return 0
 
     def run(self):
         self.start_time = time.time()
@@ -36,6 +51,9 @@ class FakeJob(AsyncJobInterface):
 
     def remove_blocking_job(self, name):
         self._blocking_jobs.remove(name)
+
+    def set_blocking_jobs(self, jobs):
+        assert False
 
 
 def test_job_queue__is_full():

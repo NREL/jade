@@ -26,6 +26,11 @@ class Job(JadeBaseModel):
         title="blocked_by",
         description="job names that are blocking this job",
     )
+    cancel_on_blocking_job_failure: Optional[bool] = Field(
+        title="cancel_on_blocking_job_failure",
+        description="cancel job if one of its blocking jobs fails",
+        default=False,
+    )
     state: JobState = Field(
         title="state",
         description="job state",

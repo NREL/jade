@@ -70,7 +70,7 @@ def test_cluster__create(cluster):
 
 def test_cluster__submit_jobs(cluster):
     submitted_jobs = cluster.job_status.jobs
-    cluster.update_job_status(submitted_jobs, [], set(), [1], 1)
+    cluster.update_job_status(submitted_jobs, [], set(), [], [1], 1)
     assert cluster.config.submitted_jobs == 2
     assert cluster.job_status.version == 2
 
@@ -88,4 +88,4 @@ def test_cluster__version_mismatch(cluster):
 
     with pytest.raises(ConfigVersionMismatch):
         submitted_jobs = cluster.job_status.jobs
-        cluster.update_job_status(submitted_jobs, [], set(), [1], 1)
+        cluster.update_job_status(submitted_jobs, [], set(), [], [1], 1)

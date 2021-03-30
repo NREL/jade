@@ -7,6 +7,15 @@ class AsyncJobInterface(abc.ABC):
     """Defines interface for async jobs."""
 
     @abc.abstractmethod
+    def cancel(self):
+        """Cancel the job."""
+
+    @property
+    @abc.abstractmethod
+    def cancel_on_blocking_job_failure(self):
+        """Cancel the job if a blocking job fails."""
+
+    @abc.abstractmethod
     def is_complete(self):
         """Return True if the job is complete.
 
@@ -25,6 +34,19 @@ class AsyncJobInterface(abc.ABC):
         Returns
         -------
         str
+
+        """
+
+
+    @property
+    @abc.abstractmethod
+    def return_code(self):
+        """Returns the return code of the job.
+
+        Returns
+        -------
+        int
+            0 means success, otherwise failure
 
         """
 
@@ -51,5 +73,16 @@ class AsyncJobInterface(abc.ABC):
         ----------
         name : str
             name of job that is now finished
+
+        """
+
+    @abc.abstractmethod
+    def set_blocking_jobs(self, jobs):
+        """Set the blocking jobs.
+
+        Parameters
+        ----------
+        jobs : set
+            names that are blocking
 
         """

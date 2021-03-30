@@ -4,6 +4,7 @@ import logging
 import os
 
 from jade.common import JOBS_OUTPUT_DIR
+from jade.enums import JobCompletionStatus
 from jade.exceptions import ExecutionError, InvalidParameter
 from jade.result import ResultsSummary
 from jade.utils.utils import load_data
@@ -121,7 +122,7 @@ def get_successful_result(results_file, job_name):
 
     """
     result = get_result(results_file, job_name)
-    if result.return_code != 0 or result.status != "finished":
+    if not result.is_successful():
         raise ExecutionError(f"result was not successful: {result}")
 
     return result

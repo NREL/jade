@@ -8,6 +8,7 @@ import sys
 import time
 
 from jade.common import JOBS_OUTPUT_DIR
+from jade.enums import JobCompletionStatus
 from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, \
     EVENT_CATEGORY_RESOURCE_UTIL
 from jade.jobs.dispatchable_job_interface import DispatchableJobInterface
@@ -22,23 +23,25 @@ logger = logging.getLogger(__name__)
 
 class DispatchableJob(DispatchableJobInterface):
     """Defines a dispatchable job."""
-    def __init__(self, job, cmd, output, results_filename):
+    def __init__(self, job, cmd, output):
         self._job = job
         self._cli_cmd = cmd
         self._output = output
         self._pipe = None
         self._is_pending = False
         self._start_time = None
+        self._return_code = None
+        self._is_complete = False
 
     def __del__(self):
         if self._is_pending:
             logger.warning("job %s destructed while pending", self._cli_cmd)
 
     def _complete(self):
-        ret = self._pipe.returncode
+        self._return_code = self._pipe.returncode
         exec_time_s = time.time() - self._start_time
 
-        status = "finished"
+        status = JobCompletionStatus.FINISHED
         output_dir = os.path.join(self._output, JOBS_OUTPUT_DIR, self._job.name)
         bytes_consumed = get_directory_size_bytes(output_dir)
         event = StructuredLogEvent(
@@ -49,13 +52,30 @@ class DispatchableJob(DispatchableJobInterface):
             bytes_consumed=bytes_consumed,
         )
         log_event(event)
-        result = Result(self._job.name, ret, status, exec_time_s)
+        result = Result(self._job.name, self._return_code, status, exec_time_s)
         ResultsAggregator.append(self._output, result)
 
         logger.info("Job %s completed return_code=%s exec_time_s=%s",
-                    self._job.name, ret, exec_time_s)
+                    self._job.name, self._return_code, exec_time_s)
+
+    def cancel(self):
+        self._return_code = 1
+        self._is_complete = True
+        result = Result(self._job.name, self._return_code, JobCompletionStatus.CANCELED, 0.0)
+        ResultsAggregator.append(self._output, result)
+        logger.info("Canceled job %s", self._job.name)
+
+    @property
+    def cancel_on_blocking_job_failure(self):
+        return self._job.cancel_on_blocking_job_failure
+
+    def set_blocking_jobs(self, jobs):
+        self._job.set_blocking_jobs(jobs)
 
     def is_complete(self):
+        if self._is_complete:
+            return True
+
         if not self._is_pending:
             ret = self._pipe.poll()
             assert ret is None, f"{ret}"
@@ -80,6 +100,10 @@ class DispatchableJob(DispatchableJobInterface):
 
     def remove_blocking_job(self, name):
         self._job.remove_blocking_job(name)
+
+    @property
+    def return_code(self):
+        return self._return_code
 
     def run(self):
         """Run the job. Writes results to file when complete."""

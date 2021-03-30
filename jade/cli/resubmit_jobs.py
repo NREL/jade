@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)
     is_flag=True,
     default=True,
     show_default=True,
-    help="Resubmit failed jobs."
+    help="Resubmit failed and canceled jobs."
 )
 @click.option(
     "--missing/--no-missing",
@@ -81,10 +81,11 @@ def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
     results = ResultsSummary(output)
     jobs_to_resubmit = []
     if failed:
+        jobs_to_resubmit += results.get_canceled_results()
         jobs_to_resubmit += results.get_failed_results()
         # Clear these results.
         aggregator = ResultsAggregator.load(output)
-        aggregator.clear_failed_results()
+        aggregator.clear_unsuccessful_results()
     if missing:
         jobs_to_resubmit += results.get_missing_jobs(cluster.iter_jobs())
 

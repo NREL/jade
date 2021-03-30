@@ -3,7 +3,7 @@
 import abc
 
 
-class JobParametersInterface:
+class JobParametersInterface(abc.ABC):
     """Job Parameters interface definitio."""
 
     DELIMITER = "__"
@@ -96,5 +96,16 @@ class JobParametersInterface:
         Parameters
         ----------
         blocking_jobs : set
+
+        """
+
+    @property
+    @abc.abstractmethod
+    def cancel_on_blocking_job_failure(self):
+        """Return False if the job should be canceled if any blocking job fails.
+
+        Returns
+        -------
+        bool
 
         """

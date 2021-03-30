@@ -1,11 +1,9 @@
 """Implements a container for jobs represented by a key."""
 
-from collections import OrderedDict
 import logging
 
 from jade.exceptions import InvalidParameter
 from jade.jobs.job_container_interface import JobContainerInterface
-from jade.utils.utils import check_filename
 
 
 logger = logging.getLogger(__name__)
@@ -15,7 +13,7 @@ class JobContainerByName(JobContainerInterface):
     """Stores jobs by name, which must be unique."""
     def __init__(self):
         # name: JobParametersInterface
-        self._jobs = OrderedDict()
+        self._jobs = {}
 
     def add_job(self, job):
         self._jobs[job.name] = job
@@ -34,6 +32,9 @@ class JobContainerByName(JobContainerInterface):
             yield job
 
     def get_job(self, name):
+        job = self._jobs.get(name)
+        if job is None:
+            raise InvalidParameter(f"job={name} is not stored")
         return self._jobs[name]
 
     def get_jobs(self, sort_by_name=False):

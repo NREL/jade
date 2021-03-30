@@ -7,7 +7,7 @@ import re
 import time
 from datetime import timedelta
 
-from jade.enums import Status
+from jade.enums import JobCompletionStatus, Status
 from jade.events import (
     StructuredLogEvent, EVENT_CATEGORY_HPC, EVENT_NAME_HPC_SUBMIT,
     EVENT_NAME_HPC_JOB_ASSIGNED, EVENT_NAME_HPC_JOB_STATE_CHANGE
@@ -20,6 +20,8 @@ from jade.jobs.job_queue import JobQueue
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.loggers import log_event
 from jade.models import JobState
+from jade.jobs.results_aggregator import ResultsAggregator
+from jade.result import Result
 from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script, ExtendedJSONEncoder
 
@@ -98,7 +100,7 @@ class HpcSubmitter:
         # Statuses may have changed since we last ran.
         queue.process_queue()
         hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
-        completed_job_names = self._update_completed_jobs()
+        completed_job_names, canceled_jobs = self._update_completed_jobs()
 
         blocked_jobs = []
         submitted_jobs = []
@@ -130,7 +132,13 @@ class HpcSubmitter:
         if submitted_jobs:
             logger.debug("Submitted %s", ", ".join((x.name for x in submitted_jobs)))
 
-        self._update_status(submitted_jobs, blocked_jobs, hpc_job_ids, completed_job_names)
+        self._update_status(
+            submitted_jobs,
+            blocked_jobs,
+            canceled_jobs,
+            hpc_job_ids,
+            completed_job_names,
+        )
         is_complete = self._cluster.are_all_jobs_complete()
 
         if not is_complete and not self._cluster.job_status.hpc_job_ids:
@@ -142,12 +150,14 @@ class HpcSubmitter:
 
         return is_complete
 
-    def _update_status(self, submitted_jobs, blocked_jobs, hpc_job_ids, completed_job_names):
+    def _update_status(self, submitted_jobs, blocked_jobs, canceled_jobs, hpc_job_ids,
+                       completed_job_names):
         hpc_job_changes = self._cluster.job_status.hpc_job_ids != hpc_job_ids
         if completed_job_names or submitted_jobs or blocked_jobs or hpc_job_changes:
             self._cluster.update_job_status(
                 submitted_jobs,
                 blocked_jobs,
+                canceled_jobs,
                 completed_job_names,
                 hpc_job_ids,
                 self._batch_index,
@@ -170,15 +180,40 @@ class HpcSubmitter:
         )
         log_event(event)
 
-    def _update_completed_jobs(self):
-        aggregator = ResultsAggregator.load(self._output)
-        newly_completed = {x.name for x in aggregator.process_results()}
-        logger.debug("Detected completion of jobs: %s", newly_completed)
-        for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
-            if job.blocked_by:
-                job.blocked_by.difference_update(newly_completed)
+    def _cancel_job(self, job):
+        job.state = JobState.DONE
+        job.blocked_by.clear()
+        result = Result(job.name, 1, JobCompletionStatus.CANCELED, 0)
+        ResultsAggregator.append(self._output, result)
+        logger.info("Canceled job %s because one of its blocking jobs failed.", job.name)
 
-        return newly_completed
+    def _update_completed_jobs(self):
+        newly_completed = set()
+        canceled_jobs = []
+        # If jobs fail and are configured to cancel blocked jobs, we may need to run this
+        # loop many times to cancel the entire chain.
+        need_to_rerun = True
+        while need_to_rerun:
+            need_to_rerun = False
+            aggregator = ResultsAggregator.load(self._output)
+            failed_jobs = set()
+            for result in aggregator.process_results():
+                newly_completed.add(result.name)
+                if result.return_code != 0:
+                    failed_jobs.add(result.name)
+
+            logger.debug("Detected completion of jobs: %s", newly_completed)
+            logger.debug("Detected failed jobs: %s", failed_jobs)
+            for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
+                if job.blocked_by:
+                    if job.cancel_on_blocking_job_failure and job.blocked_by.intersection(failed_jobs):
+                        self._cancel_job(job)
+                        canceled_jobs.append(job)
+                        need_to_rerun = True
+                    else:
+                        job.blocked_by.difference_update(newly_completed)
+
+        return newly_completed, canceled_jobs
 
 
 class _BatchJobs:
@@ -267,6 +302,14 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         self._output = output
         self._name = name
         self._last_status = HpcJobStatus.NONE
+        self._is_complete = False
+
+    def cancel(self):
+        self._mgr.cancel_job(self._job_id)
+
+    @property
+    def cancel_on_blocking_job_failure(self):
+        return False
 
     @classmethod
     def create_from_id(cls, hpc_manager, status_collector, job_id):
@@ -307,7 +350,8 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             log_event(event)
             self._last_status = status
 
-        return status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
+        self._is_complete = status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
+        return self._is_complete
 
     @property
     def job_id(self):
@@ -316,6 +360,11 @@ class AsyncHpcSubmitter(AsyncJobInterface):
     @property
     def name(self):
         return self._name
+
+    @property
+    def return_code(self):
+        assert self._is_complete
+        return 0
 
     def run(self):
         job_id, result = self._mgr.submit(self._output,
@@ -339,6 +388,9 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         return set()
 
     def remove_blocking_job(self, name):
+        assert False
+
+    def set_blocking_jobs(self, jobs):
         assert False
 
 

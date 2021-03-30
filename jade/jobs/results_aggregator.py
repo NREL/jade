@@ -146,8 +146,8 @@ class ResultsAggregator:
             f_out.write(self._delimiter.join(self._get_fields()))
             f_out.write("\n")
 
-    def clear_failed_results(self):
-        """Remove failed results from the results file.
+    def clear_unsuccessful_results(self):
+        """Remove failed and canceled results from the results file.
 
         Parameters
         ----------

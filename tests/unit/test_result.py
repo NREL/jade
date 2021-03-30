@@ -7,7 +7,7 @@ def jade_results():
     """Fixture of jade results"""
     return [
         Result("deployment__result__1", 0, "finished", 10, 15555555555),
-        Result("deployment__result__2", 1, "unfinished", 20, 15555555555),
+        Result("deployment__result__2", 1, "finished", 20, 15555555555),
         Result("deployment__result__3", 0, "finished", 30, 15555555555),
     ]
 
@@ -28,7 +28,7 @@ def jade_data():
             {
                 "name": "deployment__result__2",
                 "return_code": 1,
-                "status": "unfinished",
+                "status": "finished",
                 "exec_time_s": 20,
                 "completion_time": 15555555555
             },

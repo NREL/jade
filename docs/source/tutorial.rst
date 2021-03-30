@@ -63,6 +63,10 @@ Job Ordering
 Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
 2 doesn't run until job ID 1 completes then add that ID to the field.
 
+If a job that is blocking another job fails then JADE will still run the
+blocked job by default. This may not be what you want. You can optionally set
+``cancel_on_blocking_job_failure`` to cause those blocked jobs to be canceled.
+
 .. code:: python
 
     {
@@ -79,12 +83,15 @@ Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
       "command": "<job_cli_command3>",
       "job_id": 3,
       "blocked_by": [1]
+      "cancel_on_blocking_job_failure": false
     },
     {
       "command": "<job_cli_command4>",
       "job_id": 4,
-      "blocked_by": [2, 3]
+      "blocked_by": [2, 3],
+      "cancel_on_blocking_job_failure": true
     }
+
 
 Show Job Summary
 ----------------

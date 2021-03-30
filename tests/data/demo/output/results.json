@@ -11,12 +11,13 @@
     "results_summary": {
         "num_successful": 10,
         "num_failed": 2,
+        "num_canceled": 0,
         "total": 12
     },
     "results": [{
         "name": "australia",
         "return_code": 1,
-        "status": "unfinished",
+        "status": "finished",
         "exec_time_s": 2.0531511306762695,
         "completion_time": "1577822161.5694602"
     }, {

@@ -22,7 +22,7 @@ def jade_data():
             {
                 "name": "australia",
                 "return_code": 1,
-                "status": "unfinished",
+                "status": "finished",
                 "exec_time_s": 10,
                 "completion_time": 15555555555
             },
