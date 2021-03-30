@@ -176,7 +176,8 @@ results_summary={self.get_results_summmary_report()}"""
         log_event(event)
 
         if cluster.config.submitter_params.generate_reports:
-            self.generate_reports(self._output)
+            include_stats = bool(cluster.config.submitter_params.resource_monitor_interval)
+            self.generate_reports(self._output, include_stats=include_stats)
 
         cluster.mark_complete()
 
@@ -305,7 +306,7 @@ results_summary={self.get_results_summmary_report()}"""
                     break
 
     @staticmethod
-    def generate_reports(directory):
+    def generate_reports(directory, include_stats=False):
         """Create reports summarizing the output results of a set of jobs.
 
         Parameters
@@ -314,11 +315,12 @@ results_summary={self.get_results_summmary_report()}"""
             output directory
 
         """
-        commands = (
+        commands = [
             (f"jade show-results -o {directory}", "results.txt"),
             (f"jade show-events -o {directory} --categories Error", "errors.txt"),
-            (f"jade stats show -o {directory}", "stats.txt"),
-        )
+        ]
+        if include_stats:
+            commands.append((f"jade stats show -o {directory}", "stats.txt"))
 
         reports = []
         for cmd in commands:

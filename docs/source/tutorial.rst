@@ -390,8 +390,12 @@ JADE will also log any unhandled exceptions here.
 
 Resource Monitoring
 -------------------
-JADE automatically monitors CPU, disk, memory, and network utilization
-statistics in structured log events.  Use this CLI command to view them,
+JADE optionally monitors CPU, disk, memory, and network utilization
+statistics in structured log events. You can enable the feature by passing
+``-rX`` or ``--resource-monitor-interval=X`` where ``X`` is an interval in
+seconds.
+
+Use this CLI command to view them afterwards:
 
 .. code-block:: bash
 

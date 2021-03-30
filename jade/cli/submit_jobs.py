@@ -75,10 +75,10 @@ logger = logging.getLogger(__name__)
 )
 @click.option(
     "-r", "--resource-monitor-interval",
-    default=DEFAULTS["resource_monitor_interval"],
+    default=None,
     type=int,
     show_default=True,
-    help="interval in seconds on which to collect resource stats."
+    help="Interval in seconds on which to collect resource stats. Default is None."
 )
 @click.option(
     "-q", "--num-processes",
