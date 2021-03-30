@@ -12,7 +12,7 @@ import toml
 from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
-from jade.jobs.job_container_by_key import JobContainerByKey
+from jade.jobs.job_container_by_name import JobContainerByName
 from jade.utils.utils import dump_data, load_data, ExtendedJSONEncoder
 from jade.utils.timing_utils import timed_debug
 
@@ -50,7 +50,7 @@ class JobConfiguration(abc.ABC):
         container : JobContainerInterface
 
         """
-        self._jobs = container or JobContainerByKey()
+        self._jobs = container or JobContainerByName()
         self._job_names = None
         self._jobs_directory = kwargs.get("jobs_directory")
         self._registry = Registry()
