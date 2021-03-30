@@ -121,10 +121,14 @@ class JobRunner(JobManagerBase):
         name = f"resource_monitor_batch_{self._batch_id}"
         cluster, _ = Cluster.deserialize(self._output)
         resource_monitor = ResourceMonitor(name)
+        if cluster.config.submitter_params.resource_monitor_interval is None:
+            monitor_func = None
+        else:
+            monitor_func = resource_monitor.log_resource_stats
         JobQueue.run_jobs(
             jobs,
             max_queue_depth=num_workers,
-            monitor_func=resource_monitor.log_resource_stats,
+            monitor_func=monitor_func,
             monitor_interval=cluster.config.submitter_params.resource_monitor_interval,
         )
 

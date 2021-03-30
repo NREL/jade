@@ -166,8 +166,12 @@ class JobConfiguration(abc.ABC):
         """
         return sorted(list(self._user_data.keys()))
 
-    def check_job_dependencies(self):
+    def check_job_dependencies(self, submitter_params):
         """Check for impossible conditions with job dependencies.
+
+        Parameters
+        ----------
+        submitter_params : SubmitterParams
 
         Raises
         ------
@@ -175,20 +179,32 @@ class JobConfiguration(abc.ABC):
             Raised if job dependencies have an impossible condition.
 
         """
+        requires_estimated_time = submitter_params.per_node_batch_size == 0
+
         # This currently only checks that all jobs defined as blocking exist.
         # It does not look for deadlocks.
 
         job_names = set()
         blocking_jobs = set()
+        missing_estimate = []
         for job in self.iter_jobs():
             job_names.add(job.name)
             blocking_jobs.update(job.get_blocking_jobs())
+            if requires_estimated_time and job.estimated_run_minutes is None:
+                missing_estimate.append(job.name)
 
         missing_jobs = blocking_jobs.difference(job_names)
         if missing_jobs:
             for job in missing_jobs:
                 logger.error("%s is blocking a job but does not exist", job)
             raise InvalidConfiguration("job ordering definitions are invalid")
+
+        if missing_estimate:
+            for job in missing_estimate:
+                logger.error("Job %s does not define estimated_run_minutes", job)
+            raise InvalidConfiguration(
+                "Submitting batches by time requires that each job define estimated_run_minutes"
+            )
 
     @abc.abstractmethod
     def create_from_result(self, job, output_dir):

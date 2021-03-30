@@ -3,10 +3,10 @@
 import copy
 import logging
 import os
-import shutil
+import re
 import time
+from datetime import timedelta
 
-from jade.common import get_results_filename
 from jade.enums import Status
 from jade.events import (
     StructuredLogEvent, EVENT_CATEGORY_HPC, EVENT_NAME_HPC_SUBMIT,
@@ -17,11 +17,9 @@ from jade.hpc.common import HpcJobStatus, HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.job_queue import JobQueue
-from jade.jobs.cluster import Cluster
-from jade.jobs.cluster import Cluster
-from jade.loggers import log_event
-from jade.models import ClusterConfig, JobState
 from jade.jobs.results_aggregator import ResultsAggregator
+from jade.loggers import log_event
+from jade.models import JobState
 from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script, ExtendedJSONEncoder
 
@@ -86,7 +84,6 @@ class HpcSubmitter:
 
         """
         starting_batch_index = self._batch_index
-        try_add_blocked_jobs = self._cluster.config.submitter_params.try_add_blocked_jobs
         # TODO: consider whether we need to save the real job names
         hpc_submitters = [
             AsyncHpcSubmitter.create_from_id(self._hpc_mgr, self._status_collector, x)
@@ -108,16 +105,16 @@ class HpcSubmitter:
         batch = None
         for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
             if batch is None:
-                batch = _BatchJobs()
+                batch = _BatchJobs(self._params)
             jade_job = self._config.get_job(job.name)
-            if batch.is_job_blocked(job, try_add_blocked_jobs):
+            if batch.is_job_blocked(job):
                 blocked_jobs.append(job)
             else:
                 jade_job.set_blocking_jobs(job.blocked_by)
                 batch.append(jade_job)
                 submitted_jobs.append(job)
 
-            if batch is not None and batch.num_jobs >= self._params.per_node_batch_size:
+            if batch.ready_to_submit():
                 self._submit_batch(queue, batch, hpc_job_ids)
                 batch = None
 
@@ -186,14 +183,24 @@ class HpcSubmitter:
 
 class _BatchJobs:
     """Helper class to manage jobs in a batch."""
-    def __init__(self):
+    def __init__(self, params):
+        self._estimated_batch_time = timedelta(seconds=0)
+        self._num_processes = params.num_processes
+        self._per_node_batch_size = params.per_node_batch_size
+        self._try_add_blocked_jobs = params.try_add_blocked_jobs
         self._jobs = []
         self._job_names = set()
+        if self._per_node_batch_size == 0:
+            self._max_batch_time = _to_timedelta(params.hpc_config.hpc.walltime) * self._num_processes
+        else:
+            self._max_batch_time = None
 
     def append(self, job):
         """Append a job."""
         self._jobs.append(job)
         self._job_names.add(job.name)
+        if self._per_node_batch_size == 0:
+            self._estimated_batch_time += timedelta(minutes=job.estimated_run_minutes)
 
     def are_blocking_jobs_present(self, blocking_jobs):
         """Return True if all blocking jobs are already in the batch.
@@ -205,7 +212,16 @@ class _BatchJobs:
         """
         return blocking_jobs.issubset(self._job_names)
 
-    def is_job_blocked(self, job, try_add_blocked_jobs):
+    def ready_to_submit(self):
+        """Return True if the batch has enough jobs to submit."""
+        if self._per_node_batch_size == 0:
+            if self._estimated_batch_time >= self._max_batch_time:
+                return True
+        elif self.num_jobs >= self._per_node_batch_size:
+            return True
+        return False
+
+    def is_job_blocked(self, job):
         """Return True if the job is blocked.
 
         Parameters
@@ -219,7 +235,7 @@ class _BatchJobs:
         """
         if not job.blocked_by:
             return False
-        if try_add_blocked_jobs and self.are_blocking_jobs_present(job.blocked_by):
+        if self._try_add_blocked_jobs and self.are_blocking_jobs_present(job.blocked_by):
             # JobRunner will manage the execution ordering on the compute node.
             return False
         return True
@@ -365,3 +381,15 @@ class HpcStatusCollector:
 
         """
         return list(self._statuses.values())
+
+
+_REGEX_WALL_TIME = re.compile(r"(\d+):(\d+):(\d+)")
+
+
+def _to_timedelta(wall_time):
+    match = _REGEX_WALL_TIME.search(wall_time)
+    assert match
+    hours = int(match.group(1))
+    minutes = int(match.group(2))
+    seconds = int(match.group(3))
+    return timedelta(hours=hours, minutes=minutes, seconds=seconds)

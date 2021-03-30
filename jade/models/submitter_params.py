@@ -45,6 +45,11 @@ class SubmitterParams(JadeBaseModel):
         description="how many jobs to assign to each node",
         default=DEFAULTS["per_node_batch_size"],
     )
+    per_node_batch_size: Optional[int] = Field(
+        title="per_node_batch_size",
+        description="how many jobs to assign to each node. If 0, use time-based batching.",
+        default=DEFAULTS["per_node_batch_size"],
+    )
     node_setup_script: Optional[str] = Field(
         title="node_setup_script",
         description="script to run on each node before starting jobs",

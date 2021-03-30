@@ -10,6 +10,17 @@ class JobParametersInterface:
 
     @property
     @abc.abstractmethod
+    def estimated_run_minutes(self):
+        """Return the estimated execution time or None if it isn't known.
+
+        Returns
+        -------
+        float | None
+
+        """
+
+    @property
+    @abc.abstractmethod
     def extension(self):
         """Return the extension name.
 

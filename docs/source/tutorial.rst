@@ -129,6 +129,10 @@ Parameters to keep in mind:
   HPC queue chosen and the priority given.
 - **Average job runtime**: How long it takes a job to complete.
 - **HPC config file**: Customized HPC parameters like walltime and partition
+- **Time-based batching: If jobs have variable runtimes then it is better to
+  define those runtimes in the config file and then use the
+  ``--time-based-batching`` flag to let JADE create variable-sized batches.
+  Mutually exclusive with --per-node-batch-size.
 
 If the jobs are very quick to execute and it takes a long time to acquire a
 node then you may be better off making per_node_batch_size higher and max_nodes
@@ -386,8 +390,12 @@ JADE will also log any unhandled exceptions here.
 
 Resource Monitoring
 -------------------
-JADE automatically monitors CPU, disk, memory, and network utilization
-statistics in structured log events.  Use this CLI command to view them,
+JADE optionally monitors CPU, disk, memory, and network utilization
+statistics in structured log events. You can enable the feature by passing
+``-rX`` or ``--resource-monitor-interval=X`` where ``X`` is an interval in
+seconds.
+
+Use this CLI command to view them afterwards:
 
 .. code-block:: bash
 
