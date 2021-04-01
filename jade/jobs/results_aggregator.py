@@ -175,7 +175,7 @@ class ResultsAggregator:
             list of Result objects
 
         """
-        return self._do_action_under_lock(self._get_results)
+        return self._do_action_under_lock(self._get_all_results)
 
     def get_results_unsafe(self):
         """Return the results. It is up to the caller to ensure that
@@ -188,6 +188,10 @@ class ResultsAggregator:
 
         """
         return self._get_results()
+
+    def _get_all_results(self):
+        # Include unprocessed and processed results.
+        return self._get_results(processed_results=True) + self._get_results(processed_results=False)
 
     def _get_results(self, processed_results=True):
         filename = self._processed_filename if processed_results else self._filename
@@ -226,7 +230,7 @@ class ResultsAggregator:
         Returns
         -------
         list
-            list of Result objects
+            list of Result objects that are newly completed
 
         """
         return self._do_action_under_lock(self._process_results)
