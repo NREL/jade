@@ -7,6 +7,14 @@ class JobContainerInterface(abc.ABC):
     """Defines interface for job containers."""
 
     @abc.abstractmethod
+    def __iter__(self):
+        pass
+
+    @abc.abstractmethod
+    def __len__(self):
+        pass
+
+    @abc.abstractmethod
     def add_job(self, job):
         """Add a job to the configuration.
 
@@ -31,37 +39,16 @@ class JobContainerInterface(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get_jobs(self, sort_by_key=False):
+    def get_jobs(self, sort=False):
         """Return all jobs.
 
         Parameters
         ----------
-        sort_by_key : bool
-            If true, sort the list by key.
+        sort : bool
 
         Returns
         -------
         list
-
-        """
-
-    @abc.abstractmethod
-    def get_num_jobs(self, sort_by_key=False):
-        """Return the number of jobs.
-
-        Returns
-        -------
-        int
-
-        """
-
-    @abc.abstractmethod
-    def iter_jobs(self):
-        """Yields a generator over all jobs.
-
-        Yields
-        ------
-        iterator over JobParametersInterface
 
         """
 
@@ -74,7 +61,7 @@ class JobContainerInterface(abc.ABC):
             list of JobParametersInterface
 
         """
-        return list(self.iter_jobs)
+        return list(iter(self))
 
     @abc.abstractmethod
     def remove_job(self, job):

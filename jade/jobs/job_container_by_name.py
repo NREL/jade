@@ -15,6 +15,13 @@ class JobContainerByName(JobContainerInterface):
         # name: JobParametersInterface
         self._jobs = {}
 
+    def __iter__(self):
+        for job in self._jobs.values():
+            yield job
+
+    def __len__(self):
+        return len(self._jobs)
+
     def add_job(self, job):
         self._jobs[job.name] = job
         logger.debug("Added job %s", job.name)
@@ -27,23 +34,16 @@ class JobContainerByName(JobContainerInterface):
         self._jobs.pop(job.name)
         logger.info("Removed job %s", job.name)
 
-    def iter_jobs(self):
-        for job in self._jobs.values():
-            yield job
-
     def get_job(self, name):
         job = self._jobs.get(name)
         if job is None:
             raise InvalidParameter(f"job={name} is not stored")
         return self._jobs[name]
 
-    def get_jobs(self, sort_by_name=False):
-        if sort_by_name:
+    def get_jobs(self, sort=False):
+        if sort:
             names = list(self._jobs.keys())
             names.sort()
             return [self._jobs[x] for x in names]
 
-        return list(self.iter_jobs())
-
-    def get_num_jobs(self):
-        return len(self._jobs)
+        return list(self)

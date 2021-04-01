@@ -327,7 +327,7 @@ class JobConfiguration(abc.ABC):
         int
 
         """
-        return self._jobs.get_num_jobs()
+        return len(self._jobs)
 
     @property
     def job_global_config(self):
@@ -342,7 +342,7 @@ class JobConfiguration(abc.ABC):
         iterator over JobParametersInterface
 
         """
-        return self._jobs.iter_jobs()
+        return iter(self._jobs)
 
     @timed_debug
     def list_jobs(self):
