@@ -38,11 +38,11 @@ class Result(namedtuple("Result", "name, return_code, status, exec_time_s, compl
 
     def is_canceled(self):
         """Return True if the result was canceled."""
-        return self.return_code == 1 and self.status == JobCompletionStatus.CANCELED.value
+        return self.return_code != 0 and self.status == JobCompletionStatus.CANCELED.value
 
     def is_failed(self):
         """Return True if the result was failed."""
-        return self.return_code == 1 and self.status == JobCompletionStatus.FINISHED.value
+        return self.return_code != 0 and self.status == JobCompletionStatus.FINISHED.value
 
     def is_successful(self):
         """Return True if the result was successful."""
@@ -274,7 +274,7 @@ class ResultsSummary:
                 num_canceled += 1
             if only_failed and result.return_code == 0:
                 continue
-            if only_successful and result.return_code == 1:
+            if only_successful and result.return_code != 0:
                 continue
             if result.exec_time_s < min_exec:
                 min_exec = result.exec_time_s

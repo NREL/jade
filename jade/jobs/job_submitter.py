@@ -232,7 +232,7 @@ results_summary={self.get_results_summmary_report()}"""
             elif result.is_failed():
                 num_failed += 1
             else:
-                assert result.is_canceled()
+                assert result.is_canceled(), str(result)
                 num_canceled += 1
 
         return {
