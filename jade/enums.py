@@ -19,8 +19,16 @@ class Mode(enum.Enum):
     SEQUENTIAL = "sequential"
 
 
+class JobCompletionStatus(enum.Enum):
+    """Possible values for job completion status"""
+    FINISHED = "finished"  # Job ran. return code could be 0 or 1
+    CANCELED = "canceled"  # Job never ran.
+    MISSING = "missing"    # No result recorded. Happens with walltime timeout.
+
+
 PUBLIC_ENUMS = {
     "Mode": Mode,
+    "JobCompletionStatus": JobCompletionStatus,
 }
 
 

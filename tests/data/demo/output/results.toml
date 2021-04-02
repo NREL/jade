@@ -5,7 +5,7 @@ job_outputs = []
 [[results]]
 name = "australia"
 return_code = 1
-status = "unfinished"
+status = "finished"
 exec_time_s = 1.0070960521698
 completion_time = 1576267095.055788
 

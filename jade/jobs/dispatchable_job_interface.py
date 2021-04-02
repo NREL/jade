@@ -14,6 +14,6 @@ class DispatchableJobInterface(AsyncJobInterface, abc.ABC):
 
         Parameters
         ----------
-        job : namedtuple
+        job : JobParametersInterface
 
         """

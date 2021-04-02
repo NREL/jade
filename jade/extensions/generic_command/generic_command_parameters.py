@@ -11,16 +11,17 @@ class GenericCommandParameters(JobParametersInterface):
     _EXTENSION = "generic_command"
 
     def __init__(self, command, job_id=None, blocked_by=None, append_output_dir=False, ext=None,
-                 estimated_run_minutes=None):
+                 estimated_run_minutes=None, cancel_on_blocking_job_failure=False):
         self.command = command
         self.job_id = job_id  # Gets set when job is added to config.
                               # Uniquely identifies the job.
+        self._cancel_on_blocking_job_failure = cancel_on_blocking_job_failure
         self._estimated_run_minutes = estimated_run_minutes
         self.ext = ext or {}  # user-defined data
         self.blocked_by = set()
         if blocked_by is not None:
-            for job_id in blocked_by:
-                self.blocked_by.add(str(job_id))
+            for _job_id in blocked_by:
+                self.blocked_by.add(str(_job_id))
 
         # Indicates whether the output directory should be appended to the
         # command at runtime.
@@ -57,6 +58,7 @@ class GenericCommandParameters(JobParametersInterface):
             "blocked_by": list(self.blocked_by),
             "extension": self.extension,
             "append_output_dir": self.append_output_dir,
+            "cancel_on_blocking_job_failure": self.cancel_on_blocking_job_failure,
             "estimated_run_minutes": self.estimated_run_minutes,
             "ext": self.ext,
         }
@@ -68,9 +70,18 @@ class GenericCommandParameters(JobParametersInterface):
             job_id=data["job_id"],
             blocked_by={str(x) for x in data.get("blocked_by", [])},
             append_output_dir=data.get("append_output_dir", False),
+            cancel_on_blocking_job_failure=data.get("cancel_on_blocking_job_failure", False),
             estimated_run_minutes=data.get("estimated_run_minutes"),
             ext=data.get("ext", {}),
         )
+
+    @property
+    def cancel_on_blocking_job_failure(self):
+        return self._cancel_on_blocking_job_failure
+
+    @cancel_on_blocking_job_failure.setter
+    def cancel_on_blocking_job_failure(self, val):
+        self._cancel_on_blocking_job_failure = val
 
     def get_blocking_jobs(self):
         return self.blocked_by

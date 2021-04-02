@@ -8,6 +8,7 @@ from datetime import datetime
 from prettytable import PrettyTable
 
 from jade.common import RESULTS_FILE
+from jade.enums import JobCompletionStatus
 from jade.exceptions import InvalidParameter, ExecutionError
 from jade.utils.utils import load_data
 
@@ -30,8 +31,23 @@ class Result(namedtuple("Result", "name, return_code, status, exec_time_s, compl
         # add default values
         if completion_time is None:
             completion_time = time()
+        if isinstance(status, JobCompletionStatus):
+            status = status.value
         return super(Result, cls).__new__(cls, name, return_code, status,
                                           exec_time_s, completion_time)
+
+    def is_canceled(self):
+        """Return True if the result was canceled."""
+        return self.return_code == 1 and self.status == JobCompletionStatus.CANCELED.value
+
+    def is_failed(self):
+        """Return True if the result was failed."""
+        return self.return_code == 1 and self.status == JobCompletionStatus.FINISHED.value
+
+    def is_successful(self):
+        """Return True if the result was successful."""
+        return self.return_code == 0 and self.status == JobCompletionStatus.FINISHED.value
+
 
 def serialize_result(result):
     """Serialize a Result to a dict.
@@ -170,19 +186,14 @@ class ResultsSummary:
         if result is None:
             raise InvalidParameter(f"result not found {job_name}")
 
-        if result.return_code != 0 or result.status != "finished":
+        if not result.is_successful():
             raise ExecutionError(f"result wasn't successful: {result}")
 
         return result
 
     def get_successful_results(self):
         """Return the successful results."""
-        successful_results = []
-        for result in self._results["results"]:
-            if result.return_code == 0 and result.status == "finished":
-                successful_results.append(result)
-
-        return successful_results
+        return [x for x in self._results["results"] if x.is_successful()]
 
     def get_missing_jobs(self, expected_jobs):
         """Return the jobs for which there are no results.
@@ -204,14 +215,13 @@ class ResultsSummary:
 
         return missing_jobs
 
+    def get_canceled_results(self):
+        """Return the canceled results."""
+        return [x for x in self._results["results"] if x.is_canceled()]
+
     def get_failed_results(self):
         """Return the failed results."""
-        failed_results = []
-        for result in self._results["results"]:
-            if result.return_code != 0:
-                failed_results.append(result)
-
-        return failed_results
+        return [x for x in self._results["results"] if x.is_failed()]
 
     def list_results(self):
         """Return the results.
@@ -240,6 +250,7 @@ class ResultsSummary:
 
         num_successful = 0
         num_failed = 0
+        num_canceled = 0
         table = PrettyTable()
         table.field_names = ["Job Name", "Return Code", "Status",
                              "Execution Time (s)", "Completion Time"]
@@ -254,10 +265,13 @@ class ResultsSummary:
 
         exec_times = []
         for result in self._results["results"]:
-            if result.return_code == 0 and result.status == "finished":
+            if result.is_successful():
                 num_successful += 1
-            else:
+            elif result.is_failed():
                 num_failed += 1
+            else:
+                assert result.is_canceled()
+                num_canceled += 1
             if only_failed and result.return_code == 0:
                 continue
             if only_successful and result.return_code == 1:
@@ -271,13 +285,14 @@ class ResultsSummary:
                            result.exec_time_s, datetime.fromtimestamp(result.completion_time)])
 
         num_missing = len(self._missing_jobs)
-        total = num_successful + num_failed + num_missing
+        total = num_successful + num_failed + num_canceled + num_missing
         assert total == len(self._results["results"]) + num_missing
         avg_exec = sum(exec_times) / len(exec_times)
 
         print(table)
         print(f"\nNum successful: {num_successful}")
         print(f"Num failed: {num_failed}")
+        print(f"Num canceled: {num_canceled}")
         print(f"Num missing: {num_missing}")
         if self._missing_jobs:
             print(f"Missing job names: {self._missing_jobs}")

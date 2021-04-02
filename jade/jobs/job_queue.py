@@ -69,22 +69,43 @@ class JobQueue:
 
     def _check_completions(self):
         logger.debug("check for completions")
-        completed_jobs = []
-        for name, job in self._outstanding_jobs.items():
-            if job.is_complete():
-                completed_jobs.append(name)
+        failed_jobs = set()
+        # If jobs fail and are configured to cancel blocked jobs, we may need to run this
+        # loop many times to cancel the entire chain.
+        need_to_rerun = True
+        while need_to_rerun:
+            need_to_rerun = False
+            completed_jobs = []
+            for name, job in self._outstanding_jobs.items():
+                if job.is_complete():
+                    completed_jobs.append(name)
+                    if job.return_code != 0:
+                        failed_jobs.add(job.name)
 
-        self._num_completed += len(completed_jobs)
-        logger.debug("found num_completed=%s", len(completed_jobs))
-        for name in completed_jobs:
-            self._outstanding_jobs.pop(name)
-            logger.debug("Completed a job %s", name)
+            self._num_completed += len(completed_jobs)
+            logger.debug("found num_completed=%s", len(completed_jobs))
+            for name in completed_jobs:
+                self._outstanding_jobs.pop(name)
+                logger.debug("Completed a job %s", name)
 
-            for _job in self._queued_jobs:
-                if name in _job.get_blocking_jobs():
-                    logger.debug("Remove %s from job=%s blocked list",
-                                 name, _job.name)
-                    _job.remove_blocking_job(name)
+                canceled_indices = []
+                for i, job in enumerate(self._queued_jobs):
+                    blocking_jobs = job.get_blocking_jobs()
+                    if blocking_jobs:
+                        if job.cancel_on_blocking_job_failure and blocking_jobs.intersection(failed_jobs):
+                            job.set_blocking_jobs(set())
+                            job.cancel()
+                            canceled_indices.append(i)
+                            self._num_jobs += 1
+                            self._outstanding_jobs[job.name] = job
+                            need_to_rerun = True
+                        elif name in blocking_jobs:
+                            logger.debug("Remove %s from job=%s blocked list",
+                                         name, job.name)
+                            job.remove_blocking_job(name)
+
+                for index in reversed(canceled_indices):
+                    self._queued_jobs.pop(index)
 
     def _run_job(self, job):
         logger.debug("Run job %s", job.name)

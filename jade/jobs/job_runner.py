@@ -87,8 +87,6 @@ class JobRunner(JobManagerBase):
         return scratch_dir
 
     def _generate_jobs(self, config_file, verbose):
-        results_filename = get_temp_results_filename(self._output)
-
         jobs = []
         for job in self._config.iter_jobs():
             job_exec_class = self._config.job_execution_class(job.extension)
@@ -101,7 +99,6 @@ class JobRunner(JobManagerBase):
                     verbose=verbose,
                 ),
                 self._output,
-                results_filename,
             )
             jobs.append(djob)
 

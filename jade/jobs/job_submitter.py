@@ -7,13 +7,12 @@ import importlib
 import logging
 import os
 import shutil
-import time
 
 import jade
 from jade.common import (
     CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, RESULTS_FILE, HPC_CONFIG_FILE,
 )
-from jade.enums import Status
+from jade.enums import JobCompletionStatus, Status
 from jade.events import (
     EVENTS_FILENAME, EVENT_NAME_ERROR_LOG,
     StructuredLogEvent, EVENT_CATEGORY_ERROR, EVENT_CATEGORY_RESOURCE_UTIL,
@@ -209,13 +208,15 @@ results_summary={self.get_results_summmary_report()}"""
 
         logger.info("Wrote results to %s.", output_file)
         num_successful = results["summary"]["num_successful"]
+        num_canceled = results["summary"]["num_canceled"]
         num_failed = results["summary"]["num_failed"]
         num_missing = len(missing_jobs)
         total = num_successful + num_failed + num_missing
         log_func = logger.info if num_successful == total else logger.warning
-        log_func("Successful=%s Failed=%s Missing=%s Total=%s",
+        log_func("Successful=%s Failed=%s Canceled=%s Missing=%s Total=%s",
                  num_successful,
                  num_failed,
+                 num_canceled,
                  num_missing,
                  total)
 
@@ -224,17 +225,22 @@ results_summary={self.get_results_summmary_report()}"""
     def _build_results(self, missing_jobs):
         num_successful = 0
         num_failed = 0
+        num_canceled = 0
         for result in self._results:
-            if result.return_code == 0 and result.status == "finished":
+            if result.is_successful():
                 num_successful += 1
-            else:
+            elif result.is_failed():
                 num_failed += 1
+            else:
+                assert result.is_canceled()
+                num_canceled += 1
 
         return {
             "results": serialize_results(self._results),
             "summary": {
                 "num_successful": num_successful,
                 "num_failed": num_failed,
+                "num_canceled": num_canceled,
                 "num_missing": len(missing_jobs),
             },
         }

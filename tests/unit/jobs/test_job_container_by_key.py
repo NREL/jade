@@ -20,12 +20,12 @@ def test_job_conatainer_by_key():
 
     # Add job with key=None
     job_container.add_job(job1)
-    assert job_container.get_num_jobs() == 1
+    assert len(job_container) == 1
     assert job1.name in job_container._jobs
 
     # Add job with key != None
     job_container.add_job(job2, key=job2.name)
-    assert job_container.get_num_jobs() == 2
+    assert len(job_container) == 2
     assert job2.name in job_container._jobs
 
     # Add job, but job already in container
@@ -43,13 +43,13 @@ def test_job_conatainer_by_key():
     assert "job OtherJob not found" in str(exc.value)
 
     # Iter jobs
-    jobs = job_container.iter_jobs()
+    jobs = iter(job_container)
     assert next(jobs) in [job1, job2]
     assert next(jobs) in [job1, job2]
 
     # Remove jobs
     job_container.remove_job(key=job1.name)
-    assert job_container.get_num_jobs() == 1
+    assert len(job_container) == 1
     assert job1.name not in job_container._jobs
 
     with pytest.raises(InvalidParameter) as exc:
@@ -62,7 +62,7 @@ def test_job_conatainer_by_key():
 
     # Clear jobs
     job_container.clear()
-    assert job_container.get_num_jobs() == 0
+    assert len(job_container) == 0
 
     # Job with illegal name
     illegal_job = mock.MagicMock()

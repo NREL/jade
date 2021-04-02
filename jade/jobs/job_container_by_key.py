@@ -12,10 +12,17 @@ logger = logging.getLogger(__name__)
 
 
 class JobContainerByKey(JobContainerInterface):
-    """Stores jobs by key."""
+    """Stores jobs by key which is a namedtuple."""
     def __init__(self):
         # collections.namedtuple: JobParametersInterface
         self._jobs = OrderedDict()
+
+    def __iter__(self):
+        for job in self._jobs.values():
+            yield job
+
+    def __len__(self):
+        return len(self._jobs)
 
     @staticmethod
     def _get_key(job=None, key=None):
@@ -50,12 +57,8 @@ class JobContainerByKey(JobContainerInterface):
         self._jobs.pop(key)
         logger.info("Removed job with key=%s", key)
 
-    def iter_jobs(self):
-        for job in self._jobs.values():
-            yield job
-
     def get_job(self, name):
-        for job in self.iter_jobs():
+        for job in self:
             if job.name == name:
                 return job
 
@@ -68,13 +71,10 @@ class JobContainerByKey(JobContainerInterface):
 
         return job
 
-    def get_jobs(self, sort_by_key=False):
-        if sort_by_key:
+    def get_jobs(self, sort=False):
+        if sort:
             keys = list(self._jobs.keys())
             keys.sort()
             return [self._jobs[x] for x in keys]
 
-        return list(self.iter_jobs)
-
-    def get_num_jobs(self):
-        return len(self._jobs)
+        return list(self)

@@ -53,6 +53,14 @@ class AutoRegressionParameters(JobParametersInterface):
     def deserialize(cls, param):
         return cls(param["country"], param["data"])
 
+    @property
+    def estimated_run_minutes(self):
+        return None
+
+    @property
+    def cancel_on_blocking_job_failure(self):
+        return False
+
     def get_blocking_jobs(self):
         return set()
 

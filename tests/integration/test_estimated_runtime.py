@@ -52,7 +52,7 @@ def test_estimated_run_time(cleanup):
     # 10-minute jobs
     # Each of 4 cores can each complete 24 jobs. 4 * 24 = 96 jobs
     # 100 jobs will take two batches.
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -b0 -n2 -q4"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -t -n2 -q4"
     ret = run_command(cmd)
     assert ret == 0
     ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")

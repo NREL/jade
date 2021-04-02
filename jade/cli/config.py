@@ -36,6 +36,14 @@ def config():
     help="config file to generate.",
 )
 @click.option(
+    "-C",
+    "--cancel-on-blocking-job-failure",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="cancel any job if one of its blocking jobs fails.",
+)
+@click.option(
     "-m",
     "--minutes-per-job",
     type=int,
@@ -49,12 +57,16 @@ def config():
     show_default=True,
     help="Enable verbose log output.",
 )
-def create(filename, config_file, minutes_per_job, verbose):
+def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_job, verbose):
     """Create a config file from a filename with a list of executable commands."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("auto_config", None, console_level=level)
 
-    config = GenericCommandConfiguration.auto_config(filename, minutes_per_job=minutes_per_job)
+    config = GenericCommandConfiguration.auto_config(
+        filename,
+        cancel_on_blocking_job_failure=cancel_on_blocking_job_failure,
+        minutes_per_job=minutes_per_job,
+    )
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
     print(f"Dumped configuration to {config_file}.\n")
