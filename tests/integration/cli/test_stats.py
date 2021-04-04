@@ -1,5 +1,21 @@
 
+import os
+import shutil
+
 from jade.utils.subprocess_manager import run_command
+
+
+def test_stats__plot(example_output):
+    path = os.path.join(example_output, "stats")
+    try:
+        ret = run_command(f"jade stats plot -o {example_output}")
+        assert ret == 0
+        for stat in ("Cpu", "Disk", "Memory", "Network"):
+            filename = os.path.join(path, stat + "StatsViewer__resource_monitor_batch_0.html")
+            assert os.path.exists(filename)
+    finally:
+        if os.path.exists(path):
+            shutil.rmtree(path)
 
 
 def test_stats__show(example_output):

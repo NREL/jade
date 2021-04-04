@@ -402,7 +402,10 @@ statistics in structured log events. You can enable the feature by passing
 ``-rX`` or ``--resource-monitor-interval=X`` where ``X`` is an interval in
 seconds.
 
-Use this CLI command to view them afterwards:
+If reports are enabled (in ``submit-jobs``) then JADE will save plots of the
+this data in ``<output-dir>/stats``.
+
+Use this CLI command to view textual tables after a run:
 
 .. code-block:: bash
 
@@ -424,8 +427,9 @@ is how to view CPU stats for the node that ran the first batch:
 
    summary = EventsSummary("output")
    viewer = CpuStatsViewer(summary)
-   cpu_df =  viewer.get_dataframe("resource_monitor_batch_1")
-   cpu_df.head()
+   for name in viewer.iter_batch_names():
+       cpu_df =  viewer.get_dataframe(name)
+       print(cpu_df.head())
 
 Deadlocks
 ---------

@@ -1,8 +1,9 @@
 
-from collections import defaultdict
 import abc
 import logging
 import time
+from collections import defaultdict
+from pathlib import Path
 
 import pandas as pd
 from prettytable import PrettyTable
@@ -199,6 +200,30 @@ class StatsViewerBase(abc.ABC):
             records.append(data)
 
         return pd.DataFrame.from_records(records, index="timestamp")
+
+    def iter_batch_names(self):
+        """Return an iterator over the batch names."""
+        return self._events_by_batch.keys()
+
+    def plot_to_file(self, output_dir):
+        """Make plots of resource utilization for one node.
+
+        Parameters
+        ----------
+        directory : str
+            output directory
+
+        """
+        if pd.options.plotting.backend != "plotly":
+            pd.options.plotting.backend = "plotly"
+
+        for name in self.iter_batch_names():
+            df = self.get_dataframe(name)
+            title = f"{self.__class__.__name__} {name}"
+            fig = df.plot(title=title)
+            filename = Path(output_dir) / f"{self.__class__.__name__}__{name}.html"
+            fig.write_html(str(filename))
+            logger.info("Generated plot in %s", filename)
 
     @abc.abstractmethod
     def show_stats(self):

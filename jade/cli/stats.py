@@ -3,7 +3,9 @@ CLI to show events of a scenario.
 """
 
 import datetime
+import os
 import sys
+from pathlib import Path
 
 import click
 from psutil._common import bytes2human
@@ -30,6 +32,47 @@ def stats():
     "-o", "--output",
     default=OUTPUT_DIR,
     show_default=True,
+    help="JADE submission output directory."
+)
+@click.command()
+def plot(stats, output):
+    """Plot stats from a run to files.
+
+    \b
+    Examples:
+    jade stats plot
+    jade stats plot cpu
+    jade stats plot disk
+    jade stats plot mem
+    jade stats plot net
+    jade stats plot cpu disk mem
+    """
+    events = EventsSummary(output)
+
+    if not stats:
+        stats = STATS
+
+    plot_dir = Path(output) / "stats"
+    os.makedirs(plot_dir, exist_ok=True)
+    for stat in stats:
+        if stat == "cpu":
+            viewer = CpuStatsViewer(events)
+        elif stat == "disk":
+            viewer = DiskStatsViewer(events)
+        elif stat == "mem":
+            viewer = MemoryStatsViewer(events)
+        elif stat == "net":
+            viewer = NetworkStatsViewer(events)
+        else:
+            print(f"Invalid stat={stat}")
+            sys.exit(1)
+        viewer.plot_to_file(plot_dir)
+
+@click.argument("stats", nargs=-1)
+@click.option(
+    "-o", "--output",
+    default=OUTPUT_DIR,
+    show_default=True,
     help="Output directory."
 )
 @click.command()
@@ -38,12 +81,12 @@ def show(stats, output):
 
     \b
     Examples:
-    jade stats
-    jade stats cpu
-    jade stats disk
-    jade stats mem
-    jade stats net
-    jade stats cpu disk mem
+    jade stats show
+    jade stats show cpu
+    jade stats show disk
+    jade stats show mem
+    jade stats show net
+    jade stats show cpu disk mem
     """
     events = EventsSummary(output)
 
@@ -114,4 +157,5 @@ def exec_time(output, human_readable):
 stats.add_command(bytes_consumed)
 stats.add_command(collect)
 stats.add_command(exec_time)
+stats.add_command(plot)
 stats.add_command(show)

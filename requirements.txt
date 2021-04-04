@@ -4,6 +4,7 @@ filelock
 matplotlib
 numpy
 pandas
+plotly
 prettytable
 psutil
 pydantic
