@@ -85,6 +85,7 @@ Refer to :ref:`advanced_guide_label` for more information.
    :caption: Contents:
 
    installation
+   quickstart
    tutorial
    submission_strategies
    pipeline

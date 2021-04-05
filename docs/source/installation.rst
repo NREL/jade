@@ -17,12 +17,12 @@ Computer or HPC with conda
 
    Note that Python 3.7 or greater is required.
 
-   Example with the pre-defined conda environment:
+   Example with a new conda environment:
 
 .. code-block:: bash
 
-    $ conda env create -f environment.yml -n jade
-    $ conda activate jade
+    $ conda create --name jade python=3.7
+
 
 2. Install JADE.
 
@@ -32,10 +32,12 @@ Computer or HPC with conda
 
 
 Computer with docker
-=====================
+====================
 Docker can run on different OS platforms - Linux, Mac, Windows, etc.
 Please follow the document https://docs.docker.com/ to install Docker CE
 on your machine first. Then you can continue JADE installation with docker.
+
+Here are instructions to build a container with JADE installed.
 
 1. Clone JADE source code to your machine.
 

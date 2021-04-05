@@ -1,5 +1,6 @@
 """CLI to display and manage config files."""
 
+import json
 import logging
 import os
 import re
@@ -9,12 +10,14 @@ import tempfile
 import click
 from prettytable import PrettyTable
 
+from jade.cli.common import COMMON_SUBMITTER_OPTIONS, add_options, make_submitter_params
 from jade.common import CONFIG_FILE, HPC_CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
 from jade.utils.utils import dump_data, load_data
 from jade.models import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig
+from jade.models.submitter_params import SubmitterParams
 
 
 logger = logging.getLogger(__name__)
@@ -122,9 +125,8 @@ def hpc(account, config_file, partition, qos, hpc_type, walltime):
         assert hpc_type == "local"
         hpc = LocalHpcConfig()
 
-    config = HpcConfig(hpc_type=hpc_type, hpc=hpc)
-    data = config.dict()
-    data["hpc_type"] = data["hpc_type"].value
+    # This converts enums to values.
+    data = json.loads(HpcConfig(hpc_type=hpc_type, hpc=hpc).json())
     dump_data(data, config_file)
     print(f"Created HPC config file {config_file}")
 
@@ -298,7 +300,54 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
             os.remove(new_config_file)
 
 
+@click.command()
+@click.option(
+    "-c", "--config-file",
+    default="submitter_params.toml",
+    show_default=True,
+    help="config file to create",
+)
+@add_options(COMMON_SUBMITTER_OPTIONS)
+def submitter_params(
+        config_file=None,
+        per_node_batch_size=None,
+        hpc_config=None,
+        local=None,
+        max_nodes=None,
+        poll_interval=None,
+        resource_monitor_interval=None,
+        num_processes=None,
+        verbose=None,
+        reports=None,
+        try_add_blocked_jobs=None,
+        time_based_batching=None,
+        node_setup_script=None,
+        node_shutdown_script=None,
+    ):
+    """Create parameters for use in 'jade submit-jobs'."""
+    params = make_submitter_params(
+        per_node_batch_size=per_node_batch_size,
+        hpc_config=hpc_config,
+        local=local,
+        max_nodes=max_nodes,
+        poll_interval=poll_interval,
+        resource_monitor_interval=resource_monitor_interval,
+        num_processes=num_processes,
+        verbose=verbose,
+        reports=reports,
+        try_add_blocked_jobs=try_add_blocked_jobs,
+        time_based_batching=time_based_batching,
+        node_setup_script=node_setup_script,
+        node_shutdown_script=node_shutdown_script,
+    )
+    # This converts enums to values.
+    data = json.loads(params.json())
+    dump_data(data, config_file)
+    print(f"Created submitter parameter file {config_file}")
+
+
 config.add_command(create)
 config.add_command(hpc)
 config.add_command(show)
 config.add_command(_filter)
+config.add_command(submitter_params)

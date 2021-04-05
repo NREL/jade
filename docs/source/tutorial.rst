@@ -9,6 +9,9 @@ HPC Configuration
 =================
 This section only applies if you run your jobs on HPC.
 
+Change to a directory on the shared filesystem (such as /scratch on Eagle).
+JADE uses the filesystem for internal synchronization.
+
 HPC Parameters
 --------------
 You must define your HPC configuration in settings file. Run this command
@@ -44,19 +47,25 @@ References:
 
 Configuring Jobs
 ================
-A JADE configuration contains a list of jobs to run. Configurations can be 
-created manually or programmatically. JADE implements a CLI command to simplify 
-the interface for the commonly-executed  ``generic_command`` extension.
+Create a text file with a list of commands, one per line.
+
+.. code-block:: bash
+
+    $ cat commands.txt
+    bash my_script.sh ARG1
+    bash my_script.sh ARG2
 
 Job Commands
 ------------
 
 .. code-block:: bash
 
-    $ jade config create <commands-file> -c config.json
+    $ jade config create commands.txt -c config.json
+    Created configuration with 2 jobs.
+    Dumped configuration to config.json.
 
-Where ``commands-file`` is a text file with a list of commands to execute and 
-JADE will run them in parallel. ``config.json`` contains each job definition.
+JADE created ``config.json`` with one definition per job. You can edit this
+file to customize execution behavior.
 
 Job Ordering
 ------------
@@ -136,18 +145,18 @@ Parameters to keep in mind:
   HPC queue chosen and the priority given.
 - **Average job runtime**: How long it takes a job to complete.
 - **HPC config file**: Customized HPC parameters like walltime and partition
-- **Time-based batching: If jobs have variable runtimes then it is better to
+- **Time-based batching**: If jobs have variable runtimes then it is better to
   define those runtimes in the config file and then use the
   ``--time-based-batching`` flag to let JADE create variable-sized batches.
   Mutually exclusive with --per-node-batch-size.
 
 If the jobs are very quick to execute and it takes a long time to acquire a
 node then you may be better off making per_node_batch_size higher and max_nodes
-lower.
+lower. Conversely, if the jobs take a long time then you may want to do the
+opposite.
 
-Conversely, if the jobs take a long time then you may want to do the opposite.
-
-Run ``jade submit-jobs --help`` to see defaults.
+Refer to :ref:`submission_strategies` for a description of how to handle
+specific use cases.
 
 Examples::
 
@@ -161,13 +170,28 @@ Examples::
         --per-node-batch-size=500 \
         --hpc-config=hpc_config.toml
 
+Run ``jade submit-jobs --help`` to see all command options and defaults.
+
+To aid with repeated runs you can pass these parameters in a config file.
+Generate the defaults with
+
+.. code-block:: bash
+
+    $ jade config submitter-params
+
+    Created submitter parameter file submitter_params.toml
+
+And then pass this file to ``submit-jobs``
+
+.. code-block:: bash
+
+    $ jade submit-jobs config.json -s submitter_params.toml
+
 .. note::
 
    By default HPC nodes are requested at normal priority. Set qos=high in
    hpc_config.toml to get faster allocations at twice the cost.
 
-Refer to :ref:`submission_strategies` for specific examples on how to configure
-and submit jobs.
 
 Output Directory
 ----------------
@@ -306,6 +330,17 @@ submitter processes it.
 
     $ tail -F output/results.csv
 
+Check processed jobs in this file:
+
+.. code-block:: bash
+
+    # Find out how many have completed.
+    $ wc -l output/processed_results.csv
+
+    # Follow updates.
+    $ tail -f output/processed_results.csv
+
+
 Every submitter will log to the same file, so you can monitor submission status
 with this command:
 
@@ -402,8 +437,17 @@ statistics in structured log events. You can enable the feature by passing
 ``-rX`` or ``--resource-monitor-interval=X`` where ``X`` is an interval in
 seconds.
 
-If reports are enabled (in ``submit-jobs``) then JADE will save plots of the
-this data in ``<output-dir>/stats``.
+If reports are enabled (in ``submit-jobs``) then JADE will save interactive
+plots of the this data in ``<output-dir>/stats``.
+
+.. code-block:: bash
+
+    $ tree output/stats
+    output/stats
+    ├── CpuStatsViewer__resource_monitor_batch_0.html
+    ├── DiskStatsViewer__resource_monitor_batch_0.html
+    ├── MemoryStatsViewer__resource_monitor_batch_0.html
+    └── NetworkStatsViewer__resource_monitor_batch_0.html
 
 Use this CLI command to view textual tables after a run:
 
