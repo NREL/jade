@@ -114,8 +114,8 @@ class Timer:
 
 
 
-class TimerStatsManager:
-    """Tracks statistics for timed code segments."""
+class TimerStatsCollector:
+    """Collects statistics for timed code segments."""
     def __init__(self):
         self._stats = {}
 
