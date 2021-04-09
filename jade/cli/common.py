@@ -205,6 +205,9 @@ def make_submitter_params(
         sys.exit(1)
 
     if time_based_batching:
+        if num_processes is None:
+            print("num_processes must be set with time-based batching")
+            sys.exit(1)
         # From this point on, this parameter is overloaded. 0 means time-based-batching.
         per_node_batch_size = 0
 

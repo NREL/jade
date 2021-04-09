@@ -180,7 +180,7 @@ def test_modify_file():
 def test_cli_string():
     """Should return command-line arguments issued"""
     cmd = get_cli_string()
-    assert "tests" in cmd
+    assert "pytest" in cmd
 
 
 def test_handle_key_error():

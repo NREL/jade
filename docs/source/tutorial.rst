@@ -357,6 +357,15 @@ jobs.
     $ jade show-status -o output
 
 
+Canceling Jobs
+==============
+You can cancel all jobs running in a submission with this command:
+
+.. code-block:: bash
+
+    $ jade cancel-jobs output
+
+
 Job Results
 ===========
 Once execution is complete you can view the results of the jobs.

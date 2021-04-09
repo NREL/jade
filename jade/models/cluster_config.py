@@ -46,6 +46,11 @@ class ClusterConfig(JadeBaseModel):
         description="set to True when the submission is complete",
         default=False,
     )
+    is_canceled: Optional[bool] = Field(
+        title="is_canceled",
+        description="set to True if the submission is canceled",
+        default=False,
+    )
     version: int = Field(
         title="version",
         description="version of the config, increments with each update",

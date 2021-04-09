@@ -45,7 +45,7 @@ class JobSubmitter(JobManagerBase):
     """Submits jobs for execution locally or on an HPC."""
     def __init__(self, config_file, output, is_new):
         """Internal constructor. Callers should use create() or load()."""
-        super(JobSubmitter, self).__init__(config_file, output)
+        super().__init__(config_file, output)
         self._hpc = None
         self._config_file = config_file
         self._is_new = is_new
@@ -72,13 +72,16 @@ class JobSubmitter(JobManagerBase):
         return cls(os.path.join(output, CONFIG_FILE), output, False)
 
     def __repr__(self):
-        return f"""hpc_config_file={self._hpc_config_file}
-num_jobs={self.get_num_jobs()}
+        return f"""num_jobs={self.get_num_jobs()}
 results_summary={self.get_results_summmary_report()}"""
 
-    def cancel_jobs(self):
+    def cancel_jobs(self, cluster):
         """Cancel running and pending jobs."""
-        # TODO
+        hpc = HpcManager(cluster.config.submitter_params.hpc_config, self._output)
+        for job_id in cluster.job_status.hpc_job_ids:
+            hpc.cancel_job(job_id)
+
+        cluster.mark_complete(canceled=True)
 
     def submit_jobs(self, cluster, force_local=False):
         """Submit simulations. Auto-detect whether the current system is an HPC
