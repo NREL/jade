@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 class ResultsAggregator:
     """Synchronizes updates to the results file across jobs on one system."""
-    def __init__(self, path, timeout=30, delimiter=","):
+    def __init__(self, path, timeout=60, delimiter=","):
         """
         Constructs ResultsAggregator.
 

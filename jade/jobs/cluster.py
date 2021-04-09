@@ -16,7 +16,7 @@ from jade.utils.utils import load_data, dump_data
 logger = logging.getLogger(__name__)
 
 
-LOCK_TIMEOUT = 30
+LOCK_TIMEOUT = 60
 
 
 class Cluster:
