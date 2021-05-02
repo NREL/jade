@@ -1,10 +1,12 @@
 """Main CLI command for jade."""
 
 import logging
+import sys
 
 
 import click
 
+import jade.version
 from jade.cli.auto_config import auto_config
 from jade.cli.cancel_jobs import cancel_jobs
 from jade.cli.config import config
@@ -23,8 +25,22 @@ from jade.cli.wait import wait
 logger = logging.getLogger(__name__)
 
 
+def _show_version(_, version):
+    if version:
+        print(f"JADE version {jade.version.__version__}")
+        sys.exit(0)
+    return version
+
+
 @click.group()
-def cli():
+@click.option(
+    "--version",
+    callback=_show_version,
+    is_flag=True,
+    show_default=True,
+    help="Show version and exit",
+)
+def cli(version):
     """JADE commands"""
 
 
