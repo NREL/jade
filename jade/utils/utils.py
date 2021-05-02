@@ -149,7 +149,11 @@ def load_data(filename, **kwargs):
     #  as the default Loader is unsafe. Please read https://msg.pyyaml.org/load for full details.
     mod = _get_module_from_extension(filename, **kwargs)
     with open(filename) as f_in:
-        data = mod.load(f_in)
+        try:
+            data = mod.load(f_in)
+        except Exception:
+            logger.exception(f"Failed to load {filename}")
+            raise
 
     logger.debug("Loaded data from %s", filename)
     return data
