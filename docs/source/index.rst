@@ -89,6 +89,7 @@ Refer to :ref:`advanced_guide_label` for more information.
    tutorial
    submission_strategies
    pipeline
+   distributed_submission
    advanced_usage
 
 .. toctree::

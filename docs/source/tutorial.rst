@@ -307,6 +307,8 @@ compute nodes that get allocated.
 The JADE processes synchronize their activity with status files and a file lock
 in the output directory.
 
+Refer to :ref:`distributed_submission_workflow` for a diagram of this process.
+
 Local
 -----
 JADE runs all jobs at the specified queue depth until they all complete.
