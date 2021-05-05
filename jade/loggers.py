@@ -95,7 +95,8 @@ def setup_logging(name, filename, console_level=logging.INFO,
         log_config["handlers"].pop("file")
         log_config["loggers"][name]["handlers"].remove("file")
         for package in logging_packages:
-            log_config["loggers"][package]["handlers"].remove("file")
+            if "file" in log_config["loggers"][package]["handlers"]:
+                log_config["loggers"][package]["handlers"].remove("file")
 
     # For event logging
     if name == "event":
