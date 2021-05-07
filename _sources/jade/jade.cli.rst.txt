@@ -1,0 +1,165 @@
+jade.cli package
+================
+
+Submodules
+----------
+
+jade.cli.auto\_config module
+----------------------------
+
+.. automodule:: jade.cli.auto_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.cancel\_jobs module
+----------------------------
+
+.. automodule:: jade.cli.cancel_jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.collect\_stats module
+------------------------------
+
+.. automodule:: jade.cli.collect_stats
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.common module
+----------------------
+
+.. automodule:: jade.cli.common
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.config module
+----------------------
+
+.. automodule:: jade.cli.config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.extensions module
+--------------------------
+
+.. automodule:: jade.cli.extensions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.jade module
+--------------------
+
+.. automodule:: jade.cli.jade
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.jade\_internal module
+------------------------------
+
+.. automodule:: jade.cli.jade_internal
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.pipeline module
+------------------------
+
+.. automodule:: jade.cli.pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.resubmit\_jobs module
+------------------------------
+
+.. automodule:: jade.cli.resubmit_jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.run module
+-------------------
+
+.. automodule:: jade.cli.run
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.run\_jobs module
+-------------------------
+
+.. automodule:: jade.cli.run_jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.show\_events module
+----------------------------
+
+.. automodule:: jade.cli.show_events
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.show\_results module
+-----------------------------
+
+.. automodule:: jade.cli.show_results
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.show\_status module
+----------------------------
+
+.. automodule:: jade.cli.show_status
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.stats module
+---------------------
+
+.. automodule:: jade.cli.stats
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.submit\_jobs module
+----------------------------
+
+.. automodule:: jade.cli.submit_jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.try\_submit\_jobs module
+---------------------------------
+
+.. automodule:: jade.cli.try_submit_jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.cli.wait module
+--------------------
+
+.. automodule:: jade.cli.wait
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:

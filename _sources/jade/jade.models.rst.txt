@@ -1,0 +1,61 @@
+jade.models package
+===================
+
+Submodules
+----------
+
+jade.models.base module
+-----------------------
+
+.. automodule:: jade.models.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.models.cluster\_config module
+----------------------------------
+
+.. automodule:: jade.models.cluster_config
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.models.hpc module
+----------------------
+
+.. automodule:: jade.models.hpc
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.models.jobs module
+-----------------------
+
+.. automodule:: jade.models.jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.models.pipeline module
+---------------------------
+
+.. automodule:: jade.models.pipeline
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.models.submitter\_params module
+------------------------------------
+
+.. automodule:: jade.models.submitter_params
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.models
+   :members:
+   :undoc-members:
+   :show-inheritance:

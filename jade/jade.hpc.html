@@ -1,0 +1,1625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade.hpc package &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jade.jobs package" href="jade.jobs.html" />
+    <link rel="prev" title="jade.extensions.generic_command package" href="jade.extensions.generic_command.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../jade.html">jade</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">jade</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jade.html">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../jade.html">jade</a> &raquo;</li>
+        
+          <li><a href="modules.html">jade</a> &raquo;</li>
+        
+          <li><a href="jade.html">jade package</a> &raquo;</li>
+        
+      <li>jade.hpc package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jade/jade.hpc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jade-hpc-package">
+<h1>jade.hpc package<a class="headerlink" href="#jade-hpc-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jade.hpc.common">
+<span id="jade-hpc-common-module"></span><h2>jade.hpc.common module<a class="headerlink" href="#module-jade.hpc.common" title="Permalink to this headline">¶</a></h2>
+<p>Common definitions for HPC functionality</p>
+<dl class="py class">
+<dt id="jade.hpc.common.HpcJobStatus">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.common.</span></code><code class="sig-name descname"><span class="pre">HpcJobStatus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/common.html#HpcJobStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.common.HpcJobStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Represents the status of an HPC job.</p>
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcJobStatus.UNKNOWN">
+<code class="sig-name descname"><span class="pre">UNKNOWN</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'unknown'</span></em><a class="headerlink" href="#jade.hpc.common.HpcJobStatus.UNKNOWN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcJobStatus.NONE">
+<code class="sig-name descname"><span class="pre">NONE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'none'</span></em><a class="headerlink" href="#jade.hpc.common.HpcJobStatus.NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcJobStatus.QUEUED">
+<code class="sig-name descname"><span class="pre">QUEUED</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'queued'</span></em><a class="headerlink" href="#jade.hpc.common.HpcJobStatus.QUEUED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcJobStatus.RUNNING">
+<code class="sig-name descname"><span class="pre">RUNNING</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'running'</span></em><a class="headerlink" href="#jade.hpc.common.HpcJobStatus.RUNNING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcJobStatus.COMPLETE">
+<code class="sig-name descname"><span class="pre">COMPLETE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'complete'</span></em><a class="headerlink" href="#jade.hpc.common.HpcJobStatus.COMPLETE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.hpc.common.HpcJobInfo">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.common.</span></code><code class="sig-name descname"><span class="pre">HpcJobInfo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#jade.hpc.common.HpcJobInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<p>Create new instance of HpcJobInfo(job_id, name, status)</p>
+<dl class="py method">
+<dt id="jade.hpc.common.HpcJobInfo.job_id">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">job_id</span></code><a class="headerlink" href="#jade.hpc.common.HpcJobInfo.job_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.common.HpcJobInfo.name">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#jade.hpc.common.HpcJobInfo.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.common.HpcJobInfo.status">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">status</span></code><a class="headerlink" href="#jade.hpc.common.HpcJobInfo.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.hpc.common.HpcQos">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.common.</span></code><code class="sig-name descname"><span class="pre">HpcQos</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/common.html#HpcQos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.common.HpcQos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>HPC Quality of Service values</p>
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcQos.LOW">
+<code class="sig-name descname"><span class="pre">LOW</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#jade.hpc.common.HpcQos.LOW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcQos.HIGH">
+<code class="sig-name descname"><span class="pre">HIGH</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#jade.hpc.common.HpcQos.HIGH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.hpc.common.HpcType">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.common.</span></code><code class="sig-name descname"><span class="pre">HpcType</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/common.html#HpcType"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.common.HpcType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>HPC types</p>
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcType.LOCAL">
+<code class="sig-name descname"><span class="pre">LOCAL</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'local'</span></em><a class="headerlink" href="#jade.hpc.common.HpcType.LOCAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcType.PBS">
+<code class="sig-name descname"><span class="pre">PBS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'pbs'</span></em><a class="headerlink" href="#jade.hpc.common.HpcType.PBS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcType.SLURM">
+<code class="sig-name descname"><span class="pre">SLURM</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'slurm'</span></em><a class="headerlink" href="#jade.hpc.common.HpcType.SLURM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.hpc.common.HpcType.FAKE">
+<code class="sig-name descname"><span class="pre">FAKE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'fake'</span></em><a class="headerlink" href="#jade.hpc.common.HpcType.FAKE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc.fake_manager">
+<span id="jade-hpc-fake-manager-module"></span><h2>jade.hpc.fake_manager module<a class="headerlink" href="#module-jade.hpc.fake_manager" title="Permalink to this headline">¶</a></h2>
+<p>SLURM management functionality</p>
+<dl class="py class">
+<dt id="jade.hpc.fake_manager.FakeManager">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.fake_manager.</span></code><code class="sig-name descname"><span class="pre">FakeManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface" title="jade.hpc.hpc_manager_interface.HpcManagerInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.hpc.hpc_manager_interface.HpcManagerInterface</span></code></a></p>
+<p>Simulates management of HPC jobs.</p>
+<dl class="py attribute">
+<dt id="jade.hpc.fake_manager.FakeManager.next_job_id">
+<code class="sig-name descname"><span class="pre">next_job_id</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.next_job_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.cancel_job">
+<code class="sig-name descname"><span class="pre">cancel_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.cancel_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.cancel_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.check_status">
+<code class="sig-name descname"><span class="pre">check_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.check_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the status of a job. Either name or job_id must be passed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>job_id</strong> (<em>str</em>) -- job ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.hpc.common.HpcJobInfo" title="jade.hpc.common.HpcJobInfo">HpcJobInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.check_statuses">
+<code class="sig-name descname"><span class="pre">check_statuses</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.check_statuses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.check_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the statuses of all user jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key is job_id, value is HpcJobStatus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.check_storage_configuration">
+<code class="sig-name descname"><span class="pre">check_storage_configuration</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.check_storage_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.check_storage_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the storage configuration is appropriate for execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="jade.html#jade.exceptions.InvalidConfiguration" title="jade.exceptions.InvalidConfiguration"><strong>InvalidConfiguration</strong></a> -- Raised if the configuration is not valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.create_cluster">
+<code class="sig-name descname"><span class="pre">create_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.create_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.create_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>SLURM: SLURMCluster</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dask cluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.create_local_cluster">
+<code class="sig-name descname"><span class="pre">create_local_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.create_local_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.create_local_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask local cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dask.distributed.LocalCluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.create_submission_script">
+<code class="sig-name descname"><span class="pre">create_submission_script</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.create_submission_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.create_submission_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the script to queue the jobs to the HPC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>script</strong> (<em>str</em>) -- script to execute on HPC</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- submission script filename</p></li>
+<li><p><strong>path</strong> (<em>str</em>) -- path for stdout and stderr files</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.get_config">
+<code class="sig-name descname"><span class="pre">get_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get HPC configuration parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.get_local_scratch">
+<code class="sig-name descname"><span class="pre">get_local_scratch</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.get_local_scratch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.get_local_scratch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to local storage space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.get_num_cpus">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_num_cpus</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.get_num_cpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.get_num_cpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of CPUs in the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.log_environment_variables">
+<code class="sig-name descname"><span class="pre">log_environment_variables</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.log_environment_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.log_environment_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs all relevant HPC environment variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.fake_manager.FakeManager.submit">
+<code class="sig-name descname"><span class="pre">submit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/fake_manager.html#FakeManager.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.fake_manager.FakeManager.submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit the work to the HPC queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- HPC script filename</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Status, job_id, stderr)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of Status, str, str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc.hpc_manager">
+<span id="jade-hpc-hpc-manager-module"></span><h2>jade.hpc.hpc_manager module<a class="headerlink" href="#module-jade.hpc.hpc_manager" title="Permalink to this headline">¶</a></h2>
+<p>HPC management functionality</p>
+<dl class="py class">
+<dt id="jade.hpc.hpc_manager.HpcManager">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.hpc_manager.</span></code><code class="sig-name descname"><span class="pre">HpcManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager.html#HpcManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages HPC job submission and monitoring.</p>
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager.HpcManager.cancel_job">
+<code class="sig-name descname"><span class="pre">cancel_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager.html#HpcManager.cancel_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager.cancel_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager.HpcManager.check_status">
+<code class="sig-name descname"><span class="pre">check_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager.html#HpcManager.check_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the status of a job by name or ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>job_id</strong> (<em>str</em>) -- job ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.hpc.common.HpcJobStatus" title="jade.hpc.common.HpcJobStatus">HpcJobStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager.HpcManager.check_statuses">
+<code class="sig-name descname"><span class="pre">check_statuses</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager.html#HpcManager.check_statuses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager.check_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the statuses of all user jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key is job_id, value is HpcJobStatus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager.HpcManager.get_hpc_config">
+<code class="sig-name descname"><span class="pre">get_hpc_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager.html#HpcManager.get_hpc_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager.get_hpc_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the HPC config parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>config parameters</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager.HpcManager.hpc_type">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hpc_type</span></code><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager.hpc_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the type of HPC management system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#jade.hpc.common.HpcType" title="jade.hpc.common.HpcType">HpcType</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager.HpcManager.submit">
+<code class="sig-name descname"><span class="pre">submit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_submission_script</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager.html#HpcManager.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager.submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submits scripts to the queue for execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- directory to contain the submission script</p></li>
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>script</strong> (<em>str</em>) -- Script to execute.</p></li>
+<li><p><strong>wait</strong> (<em>bool</em>) -- Wait for execution to complete.</p></li>
+<li><p><strong>keep_submission_script</strong> (<em>bool</em>) -- Do not delete the submission script.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(job_id, submission status)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager.HpcManager.create_hpc_interface">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">create_hpc_interface</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager.html#HpcManager.create_hpc_interface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager.HpcManager.create_hpc_interface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an HPC implementation instance appropriate for the current
+environment.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc.hpc_manager_interface">
+<span id="jade-hpc-hpc-manager-interface-module"></span><h2>jade.hpc.hpc_manager_interface module<a class="headerlink" href="#module-jade.hpc.hpc_manager_interface" title="Permalink to this headline">¶</a></h2>
+<p>HPC management implementation functionality</p>
+<dl class="py class">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.hpc_manager_interface.</span></code><code class="sig-name descname"><span class="pre">HpcManagerInterface</span></code><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Defines the implementation interface for managing an HPC.</p>
+<dl class="py attribute">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.USER">
+<code class="sig-name descname"><span class="pre">USER</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'dthom'</span></em><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.USER" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.cancel_job">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">cancel_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.cancel_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.cancel_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.check_status">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">check_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.check_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the status of a job. Either name or job_id must be passed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>job_id</strong> (<em>str</em>) -- job ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.hpc.common.HpcJobInfo" title="jade.hpc.common.HpcJobInfo">HpcJobInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.check_statuses">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">check_statuses</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.check_statuses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.check_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the statuses of all user jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key is job_id, value is HpcJobStatus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.check_storage_configuration">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">check_storage_configuration</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.check_storage_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.check_storage_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the storage configuration is appropriate for execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="jade.html#jade.exceptions.InvalidConfiguration" title="jade.exceptions.InvalidConfiguration"><strong>InvalidConfiguration</strong></a> -- Raised if the configuration is not valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.create_submission_script">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">create_submission_script</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.create_submission_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.create_submission_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the script to queue the jobs to the HPC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>script</strong> (<em>str</em>) -- script to execute on HPC</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- submission script filename</p></li>
+<li><p><strong>path</strong> (<em>str</em>) -- path for stdout and stderr files</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.create_cluster">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">create_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.create_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.create_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>SLURM: SLURMCluster</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dask cluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.create_local_cluster">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">create_local_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.create_local_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.create_local_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask local cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dask.distributed.LocalCluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.get_config">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">get_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get HPC configuration parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.get_local_scratch">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">get_local_scratch</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.get_local_scratch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.get_local_scratch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to local storage space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.get_num_cpus">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">get_num_cpus</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.get_num_cpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.get_num_cpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of CPUs in the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.log_environment_variables">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">log_environment_variables</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.log_environment_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.log_environment_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs all relevant HPC environment variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_manager_interface.HpcManagerInterface.submit">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">submit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_manager_interface.html#HpcManagerInterface.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface.submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit the work to the HPC queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- HPC script filename</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Status, job_id, stderr)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of Status, str, str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc.hpc_submitter">
+<span id="jade-hpc-hpc-submitter-module"></span><h2>jade.hpc.hpc_submitter module<a class="headerlink" href="#module-jade.hpc.hpc_submitter" title="Permalink to this headline">¶</a></h2>
+<p>Controls submission of jobs to HPC nodes.</p>
+<dl class="py class">
+<dt id="jade.hpc.hpc_submitter.HpcSubmitter">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.hpc_submitter.</span></code><code class="sig-name descname"><span class="pre">HpcSubmitter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#HpcSubmitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.HpcSubmitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Submits batches of jobs to HPC. Manages job ordering.</p>
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.HpcSubmitter.run">
+<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#HpcSubmitter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.HpcSubmitter.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to submit batches of jobs to the HPC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns True if all jobs are complete.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.hpc_submitter.</span></code><code class="sig-name descname"><span class="pre">AsyncHpcSubmitter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hpc_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_collector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="jade.jobs.html#jade.jobs.async_job_interface.AsyncJobInterface" title="jade.jobs.async_job_interface.AsyncJobInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.jobs.async_job_interface.AsyncJobInterface</span></code></a></p>
+<p>Used to submit batches of jobs to multiple nodes, one at a time.</p>
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel">
+<code class="sig-name descname"><span class="pre">cancel</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel the job.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel_on_blocking_job_failure">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">cancel_on_blocking_job_failure</span></code><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel_on_blocking_job_failure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel the job if a blocking job fails.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.create_from_id">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">create_from_id</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hpc_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_collector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.create_from_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.create_from_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an instance of a job_id in order to check status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.hpc_manager">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hpc_manager</span></code><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.hpc_manager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the HpcManager object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#jade.hpc.hpc_manager.HpcManager" title="jade.hpc.hpc_manager.HpcManager">HpcManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.is_complete">
+<code class="sig-name descname"><span class="pre">is_complete</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.is_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.is_complete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the job is complete.</p>
+<p>Note: this must be called until the job actually completes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.job_id">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">job_id</span></code><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.job_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.name">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the job name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.return_code">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">return_code</span></code><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.return_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the return code of the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>0 means success, otherwise failure</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.run">
+<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the job.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_blocking_jobs">
+<code class="sig-name descname"><span class="pre">get_blocking_jobs</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.get_blocking_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_blocking_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the job names blocking this job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Empty set means that the job is not blocked.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.remove_blocking_job">
+<code class="sig-name descname"><span class="pre">remove_blocking_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.remove_blocking_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.remove_blocking_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove the name from the job's blocking list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) -- name of job that is now finished</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.set_blocking_jobs">
+<code class="sig-name descname"><span class="pre">set_blocking_jobs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.set_blocking_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.set_blocking_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the blocking jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>jobs</strong> (<em>set</em>) -- names that are blocking</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.hpc.hpc_submitter.HpcStatusCollector">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.hpc_submitter.</span></code><code class="sig-name descname"><span class="pre">HpcStatusCollector</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hpc_mgr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#HpcStatusCollector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.HpcStatusCollector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Collects status for all user jobs.</p>
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.HpcStatusCollector.check_status">
+<code class="sig-name descname"><span class="pre">check_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#HpcStatusCollector.check_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.HpcStatusCollector.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the status for job_id.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.hpc.common.HpcJobStatus" title="jade.hpc.common.HpcJobStatus">HpcJobStatus</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.hpc_submitter.HpcStatusCollector.get_statuses">
+<code class="sig-name descname"><span class="pre">get_statuses</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#HpcStatusCollector.get_statuses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.HpcStatusCollector.get_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return outstanding statuses</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of HpcJobStatus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc.local_manager">
+<span id="jade-hpc-local-manager-module"></span><h2>jade.hpc.local_manager module<a class="headerlink" href="#module-jade.hpc.local_manager" title="Permalink to this headline">¶</a></h2>
+<p>SLURM management functionality</p>
+<dl class="py class">
+<dt id="jade.hpc.local_manager.LocalManager">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.local_manager.</span></code><code class="sig-name descname"><span class="pre">LocalManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface" title="jade.hpc.hpc_manager_interface.HpcManagerInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.hpc.hpc_manager_interface.HpcManagerInterface</span></code></a></p>
+<p>Manages local execution of jobs.</p>
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.cancel_job">
+<code class="sig-name descname"><span class="pre">cancel_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.cancel_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.cancel_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.check_status">
+<code class="sig-name descname"><span class="pre">check_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.check_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the status of a job. Either name or job_id must be passed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>job_id</strong> (<em>str</em>) -- job ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.hpc.common.HpcJobInfo" title="jade.hpc.common.HpcJobInfo">HpcJobInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.check_statuses">
+<code class="sig-name descname"><span class="pre">check_statuses</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.check_statuses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.check_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the statuses of all user jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key is job_id, value is HpcJobStatus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.check_storage_configuration">
+<code class="sig-name descname"><span class="pre">check_storage_configuration</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.check_storage_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.check_storage_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the storage configuration is appropriate for execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="jade.html#jade.exceptions.InvalidConfiguration" title="jade.exceptions.InvalidConfiguration"><strong>InvalidConfiguration</strong></a> -- Raised if the configuration is not valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.create_cluster">
+<code class="sig-name descname"><span class="pre">create_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.create_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.create_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>SLURM: SLURMCluster</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dask cluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.create_local_cluster">
+<code class="sig-name descname"><span class="pre">create_local_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.create_local_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.create_local_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask local cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dask.distributed.LocalCluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.create_submission_script">
+<code class="sig-name descname"><span class="pre">create_submission_script</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.create_submission_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.create_submission_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the script to queue the jobs to the HPC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>script</strong> (<em>str</em>) -- script to execute on HPC</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- submission script filename</p></li>
+<li><p><strong>path</strong> (<em>str</em>) -- path for stdout and stderr files</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.get_config">
+<code class="sig-name descname"><span class="pre">get_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get HPC configuration parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.get_local_scratch">
+<code class="sig-name descname"><span class="pre">get_local_scratch</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.get_local_scratch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.get_local_scratch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to local storage space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.get_num_cpus">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_num_cpus</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.get_num_cpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.get_num_cpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of CPUs in the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.log_environment_variables">
+<code class="sig-name descname"><span class="pre">log_environment_variables</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.log_environment_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.log_environment_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs all relevant HPC environment variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.local_manager.LocalManager.submit">
+<code class="sig-name descname"><span class="pre">submit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/local_manager.html#LocalManager.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.local_manager.LocalManager.submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit the work to the HPC queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- HPC script filename</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Status, job_id, stderr)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of Status, str, str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc.pbs_manager">
+<span id="jade-hpc-pbs-manager-module"></span><h2>jade.hpc.pbs_manager module<a class="headerlink" href="#module-jade.hpc.pbs_manager" title="Permalink to this headline">¶</a></h2>
+<p>Manages PBS jobs.</p>
+<dl class="py class">
+<dt id="jade.hpc.pbs_manager.PbsManager">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.pbs_manager.</span></code><code class="sig-name descname"><span class="pre">PbsManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface" title="jade.hpc.hpc_manager_interface.HpcManagerInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.hpc.hpc_manager_interface.HpcManagerInterface</span></code></a></p>
+<p>Manages PBS jobs.</p>
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.cancel_job">
+<code class="sig-name descname"><span class="pre">cancel_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.cancel_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.cancel_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.check_status">
+<code class="sig-name descname"><span class="pre">check_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.check_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the status of a job. Either name or job_id must be passed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>job_id</strong> (<em>str</em>) -- job ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.hpc.common.HpcJobInfo" title="jade.hpc.common.HpcJobInfo">HpcJobInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.check_statuses">
+<code class="sig-name descname"><span class="pre">check_statuses</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.check_statuses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.check_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the statuses of all user jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key is job_id, value is HpcJobStatus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.check_storage_configuration">
+<code class="sig-name descname"><span class="pre">check_storage_configuration</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.check_storage_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.check_storage_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the storage configuration is appropriate for execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="jade.html#jade.exceptions.InvalidConfiguration" title="jade.exceptions.InvalidConfiguration"><strong>InvalidConfiguration</strong></a> -- Raised if the configuration is not valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.create_cluster">
+<code class="sig-name descname"><span class="pre">create_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.create_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.create_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>SLURM: SLURMCluster</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dask cluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.create_local_cluster">
+<code class="sig-name descname"><span class="pre">create_local_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.create_local_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.create_local_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask local cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dask.distributed.LocalCluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.get_config">
+<code class="sig-name descname"><span class="pre">get_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get HPC configuration parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.get_local_scratch">
+<code class="sig-name descname"><span class="pre">get_local_scratch</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.get_local_scratch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.get_local_scratch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to local storage space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.get_num_cpus">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_num_cpus</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.get_num_cpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.get_num_cpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of CPUs in the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.create_submission_script">
+<code class="sig-name descname"><span class="pre">create_submission_script</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.create_submission_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.create_submission_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the script to queue the jobs to the HPC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>script</strong> (<em>str</em>) -- script to execute on HPC</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- submission script filename</p></li>
+<li><p><strong>path</strong> (<em>str</em>) -- path for stdout and stderr files</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.log_environment_variables">
+<code class="sig-name descname"><span class="pre">log_environment_variables</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.log_environment_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.log_environment_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs all relevant HPC environment variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.pbs_manager.PbsManager.submit">
+<code class="sig-name descname"><span class="pre">submit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/pbs_manager.html#PbsManager.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.pbs_manager.PbsManager.submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit the work to the HPC queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- HPC script filename</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Status, job_id, stderr)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of Status, str, str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc.slurm_manager">
+<span id="jade-hpc-slurm-manager-module"></span><h2>jade.hpc.slurm_manager module<a class="headerlink" href="#module-jade.hpc.slurm_manager" title="Permalink to this headline">¶</a></h2>
+<p>SLURM management functionality</p>
+<dl class="py class">
+<dt id="jade.hpc.slurm_manager.SlurmManager">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.hpc.slurm_manager.</span></code><code class="sig-name descname"><span class="pre">SlurmManager</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.hpc.hpc_manager_interface.HpcManagerInterface" title="jade.hpc.hpc_manager_interface.HpcManagerInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.hpc.hpc_manager_interface.HpcManagerInterface</span></code></a></p>
+<p>Manages Slurm jobs.</p>
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.cancel_job">
+<code class="sig-name descname"><span class="pre">cancel_job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.cancel_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.cancel_job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cancel job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>return code</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.check_status">
+<code class="sig-name descname"><span class="pre">check_status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.check_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.check_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the status of a job. Either name or job_id must be passed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>job_id</strong> (<em>str</em>) -- job ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.hpc.common.HpcJobInfo" title="jade.hpc.common.HpcJobInfo">HpcJobInfo</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.check_statuses">
+<code class="sig-name descname"><span class="pre">check_statuses</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.check_statuses"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.check_statuses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check the statuses of all user jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>key is job_id, value is HpcJobStatus</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.check_storage_configuration">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">check_storage_configuration</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.check_storage_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.check_storage_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the storage configuration is appropriate for execution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="jade.html#jade.exceptions.InvalidConfiguration" title="jade.exceptions.InvalidConfiguration"><strong>InvalidConfiguration</strong></a> -- Raised if the configuration is not valid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.get_config">
+<code class="sig-name descname"><span class="pre">get_config</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.get_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.get_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get HPC configuration parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.create_cluster">
+<code class="sig-name descname"><span class="pre">create_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.create_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.create_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>SLURM: SLURMCluster</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Dask cluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.create_local_cluster">
+<code class="sig-name descname"><span class="pre">create_local_cluster</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.create_local_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.create_local_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Dask local cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dask.distributed.LocalCluster</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.create_submission_script">
+<code class="sig-name descname"><span class="pre">create_submission_script</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.create_submission_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.create_submission_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the script to queue the jobs to the HPC.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- job name</p></li>
+<li><p><strong>script</strong> (<em>str</em>) -- script to execute on HPC</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- submission script filename</p></li>
+<li><p><strong>path</strong> (<em>str</em>) -- path for stdout and stderr files</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.get_local_scratch">
+<code class="sig-name descname"><span class="pre">get_local_scratch</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.get_local_scratch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.get_local_scratch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get path to local storage space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.get_num_cpus">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_num_cpus</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.get_num_cpus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.get_num_cpus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of CPUs in the system.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.log_environment_variables">
+<code class="sig-name descname"><span class="pre">log_environment_variables</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.log_environment_variables"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.log_environment_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs all relevant HPC environment variables.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.hpc.slurm_manager.SlurmManager.submit">
+<code class="sig-name descname"><span class="pre">submit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/slurm_manager.html#SlurmManager.submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.slurm_manager.SlurmManager.submit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Submit the work to the HPC queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- HPC script filename</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Status, job_id, stderr)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple of Status, str, str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.hpc">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jade.hpc" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="jade.jobs.html" class="btn btn-neutral float-right" title="jade.jobs package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="jade.extensions.generic_command.html" class="btn btn-neutral float-left" title="jade.extensions.generic_command package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

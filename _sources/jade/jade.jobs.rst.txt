@@ -1,0 +1,181 @@
+jade.jobs package
+=================
+
+Submodules
+----------
+
+jade.jobs.analysis\_execution\_base module
+------------------------------------------
+
+.. automodule:: jade.jobs.analysis_execution_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.async\_job\_interface module
+--------------------------------------
+
+.. automodule:: jade.jobs.async_job_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.cluster module
+------------------------
+
+.. automodule:: jade.jobs.cluster
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.dispatchable\_job module
+----------------------------------
+
+.. automodule:: jade.jobs.dispatchable_job
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.dispatchable\_job\_interface module
+---------------------------------------------
+
+.. automodule:: jade.jobs.dispatchable_job_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_analysis module
+------------------------------
+
+.. automodule:: jade.jobs.job_analysis
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_configuration module
+-----------------------------------
+
+.. automodule:: jade.jobs.job_configuration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_configuration\_factory module
+--------------------------------------------
+
+.. automodule:: jade.jobs.job_configuration_factory
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_container\_by\_key module
+----------------------------------------
+
+.. automodule:: jade.jobs.job_container_by_key
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_container\_by\_name module
+-----------------------------------------
+
+.. automodule:: jade.jobs.job_container_by_name
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_container\_interface module
+------------------------------------------
+
+.. automodule:: jade.jobs.job_container_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_execution\_interface module
+------------------------------------------
+
+.. automodule:: jade.jobs.job_execution_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_inputs\_interface module
+---------------------------------------
+
+.. automodule:: jade.jobs.job_inputs_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_manager\_base module
+-----------------------------------
+
+.. automodule:: jade.jobs.job_manager_base
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_parameters\_interface module
+-------------------------------------------
+
+.. automodule:: jade.jobs.job_parameters_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_post\_process module
+-----------------------------------
+
+.. automodule:: jade.jobs.job_post_process
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_queue module
+---------------------------
+
+.. automodule:: jade.jobs.job_queue
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_runner module
+----------------------------
+
+.. automodule:: jade.jobs.job_runner
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.job\_submitter module
+-------------------------------
+
+.. automodule:: jade.jobs.job_submitter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.pipeline\_manager module
+----------------------------------
+
+.. automodule:: jade.jobs.pipeline_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.jobs.results\_aggregator module
+------------------------------------
+
+.. automodule:: jade.jobs.results_aggregator
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.jobs
+   :members:
+   :undoc-members:
+   :show-inheritance:

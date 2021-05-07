@@ -1,0 +1,69 @@
+jade.extensions.demo package
+============================
+
+Submodules
+----------
+
+jade.extensions.demo.autoregression\_configuration module
+---------------------------------------------------------
+
+.. automodule:: jade.extensions.demo.autoregression_configuration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.demo.autoregression\_execution module
+-----------------------------------------------------
+
+.. automodule:: jade.extensions.demo.autoregression_execution
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.demo.autoregression\_inputs module
+--------------------------------------------------
+
+.. automodule:: jade.extensions.demo.autoregression_inputs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.demo.autoregression\_parameters module
+------------------------------------------------------
+
+.. automodule:: jade.extensions.demo.autoregression_parameters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.demo.cli module
+-------------------------------
+
+.. automodule:: jade.extensions.demo.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.demo.create\_merge\_pred\_gdp module
+----------------------------------------------------
+
+.. automodule:: jade.extensions.demo.create_merge_pred_gdp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.demo.merge\_pred\_gdp module
+--------------------------------------------
+
+.. automodule:: jade.extensions.demo.merge_pred_gdp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.extensions.demo
+   :members:
+   :undoc-members:
+   :show-inheritance:

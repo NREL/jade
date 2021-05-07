@@ -1,0 +1,30 @@
+jade.extensions package
+=======================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   jade.extensions.demo
+   jade.extensions.generic_command
+
+Submodules
+----------
+
+jade.extensions.registry module
+-------------------------------
+
+.. automodule:: jade.extensions.registry
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.extensions
+   :members:
+   :undoc-members:
+   :show-inheritance:

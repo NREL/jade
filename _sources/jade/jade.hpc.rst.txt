@@ -1,0 +1,77 @@
+jade.hpc package
+================
+
+Submodules
+----------
+
+jade.hpc.common module
+----------------------
+
+.. automodule:: jade.hpc.common
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.hpc.fake\_manager module
+-----------------------------
+
+.. automodule:: jade.hpc.fake_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.hpc.hpc\_manager module
+----------------------------
+
+.. automodule:: jade.hpc.hpc_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.hpc.hpc\_manager\_interface module
+---------------------------------------
+
+.. automodule:: jade.hpc.hpc_manager_interface
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.hpc.hpc\_submitter module
+------------------------------
+
+.. automodule:: jade.hpc.hpc_submitter
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.hpc.local\_manager module
+------------------------------
+
+.. automodule:: jade.hpc.local_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.hpc.pbs\_manager module
+----------------------------
+
+.. automodule:: jade.hpc.pbs_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.hpc.slurm\_manager module
+------------------------------
+
+.. automodule:: jade.hpc.slurm_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.hpc
+   :members:
+   :undoc-members:
+   :show-inheritance:

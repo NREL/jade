@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade.hpc.slurm_manager &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href="../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../jade.html">jade</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../jade/modules.html">jade</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../jade/jade.html">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>jade.hpc.slurm_manager</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for jade.hpc.slurm_manager</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;SLURM management functionality&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">jade.enums</span> <span class="kn">import</span> <span class="n">Status</span>
+<span class="kn">from</span> <span class="nn">jade.exceptions</span> <span class="kn">import</span> <span class="n">ExecutionError</span>  <span class="c1">#, InvalidConfiguration</span>
+<span class="kn">from</span> <span class="nn">jade.hpc.common</span> <span class="kn">import</span> <span class="n">HpcJobStatus</span><span class="p">,</span> <span class="n">HpcJobInfo</span>
+<span class="kn">from</span> <span class="nn">jade.hpc.hpc_manager_interface</span> <span class="kn">import</span> <span class="n">HpcManagerInterface</span>
+<span class="kn">from</span> <span class="nn">jade.utils.subprocess_manager</span> <span class="kn">import</span> <span class="n">run_command</span>
+<span class="kn">from</span> <span class="nn">jade.utils</span> <span class="kn">import</span> <span class="n">utils</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SlurmManager"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager">[docs]</a><span class="k">class</span> <span class="nc">SlurmManager</span><span class="p">(</span><span class="n">HpcManagerInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Manages Slurm jobs.&quot;&quot;&quot;</span>
+
+    <span class="n">_STATUSES</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;PENDING&quot;</span><span class="p">:</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">QUEUED</span><span class="p">,</span>
+        <span class="s2">&quot;CONFIGURING&quot;</span><span class="p">:</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">QUEUED</span><span class="p">,</span>
+        <span class="s2">&quot;RUNNING&quot;</span><span class="p">:</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">RUNNING</span><span class="p">,</span>
+        <span class="s2">&quot;COMPLETING&quot;</span><span class="p">:</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">_REGEX_SBATCH_OUTPUT</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Submitted batch job (\d+)&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+
+<div class="viewcode-block" id="SlurmManager.cancel_job"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.cancel_job">[docs]</a>    <span class="k">def</span> <span class="nf">cancel_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">run_command</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;scancel </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SlurmManager.check_status"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.check_status">[docs]</a>    <span class="k">def</span> <span class="nf">check_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;jobid&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;squeue -u </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">USER</span><span class="si">}</span><span class="s2"> --Format </span><span class="se">\&quot;</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">field_names</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> -h&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -n </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">elif</span> <span class="n">job_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cmd</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; -j </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Mutual exclusivity should be handled in HpcManager.</span>
+            <span class="k">assert</span> <span class="kc">False</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;Invalid job id specified&quot;</span> <span class="ow">in</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;stderr&quot;</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">HpcJobInfo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to run squeue command=[</span><span class="si">%s</span><span class="s2">] ret=</span><span class="si">%s</span><span class="s2"> err=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                         <span class="n">cmd</span><span class="p">,</span> <span class="n">ret</span><span class="p">,</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;stderr&quot;</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">ExecutionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;squeue command failed: </span><span class="si">{</span><span class="n">ret</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">stdout</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;stdout&quot;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;squeue output:  [</span><span class="si">%s</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">stdout</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="c1"># No jobs are currently running.</span>
+            <span class="k">return</span> <span class="n">HpcJobInfo</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">field_names</span><span class="p">)</span>
+        <span class="n">job_info</span> <span class="o">=</span> <span class="n">HpcJobInfo</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                              <span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                              <span class="bp">self</span><span class="o">.</span><span class="n">_STATUSES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fields</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+                                                 <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">job_info</span></div>
+
+<div class="viewcode-block" id="SlurmManager.check_statuses"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.check_statuses">[docs]</a>    <span class="k">def</span> <span class="nf">check_statuses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">field_names</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;jobid&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;squeue -u </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">USER</span><span class="si">}</span><span class="s2"> --Format </span><span class="se">\&quot;</span><span class="si">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">field_names</span><span class="p">)</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2"> -h&quot;</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to run squeue command=[</span><span class="si">%s</span><span class="s2">] ret=</span><span class="si">%s</span><span class="s2"> err=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                         <span class="n">cmd</span><span class="p">,</span> <span class="n">ret</span><span class="p">,</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;stderr&quot;</span><span class="p">])</span>
+            <span class="k">raise</span> <span class="n">ExecutionError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;squeue command failed: </span><span class="si">{</span><span class="n">ret</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_statuses_from_output</span><span class="p">(</span><span class="n">output</span><span class="p">[</span><span class="s2">&quot;stdout&quot;</span><span class="p">])</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_statuses_from_output</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;squeue output:  [</span><span class="si">%s</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="c1"># No jobs are currently running.</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+        <span class="n">statuses</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="n">job_id</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">statuses</span><span class="p">[</span><span class="n">job_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">SlurmManager</span><span class="o">.</span><span class="n">_STATUSES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">UNKNOWN</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">statuses</span>
+
+<div class="viewcode-block" id="SlurmManager.check_storage_configuration"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.check_storage_configuration">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">check_storage_configuration</span><span class="p">():</span>
+        <span class="k">pass</span></div>
+        <span class="c1"># Disabling this code because the Lustre documentation only recommends</span>
+        <span class="c1"># higher stripe counts when files are large or if many clients will be</span>
+        <span class="c1"># accessing the files concurrently.</span>
+        <span class="c1"># JADE shouldn&#39;t enforce a single rule for everyone.</span>
+        <span class="c1"># Leaving the code here in case we want to customize this in the</span>
+        <span class="c1"># future.</span>
+        <span class="c1">#</span>
+        <span class="c1"># References:</span>
+        <span class="c1"># - http://wiki.lustre.org/Configuring_Lustre_File_Striping</span>
+        <span class="c1"># - https://www.nics.tennessee.edu/computing-resources/file-systems/lustre-striping-guide</span>
+
+        <span class="c1">#output = {}</span>
+        <span class="c1">#cmd = &quot;lfs getstripe .&quot;</span>
+        <span class="c1">#ret = run_command(cmd, output)</span>
+        <span class="c1">#if ret != 0:</span>
+        <span class="c1">#    raise ExecutionError(f&quot;{cmd} failed: {output}&quot;)</span>
+
+        <span class="c1">#stripe_count = SlurmManager._get_stripe_count(output[&quot;stdout&quot;])</span>
+        <span class="c1">#logger.info(&quot;stripe_count is set to %s&quot;, stripe_count)</span>
+        <span class="c1">#if stripe_count &lt; 16:</span>
+        <span class="c1">#    raise InvalidConfiguration(</span>
+        <span class="c1">#        f&quot;stripe_count for {os.getcwd()} is set to {stripe_count}. &quot;</span>
+        <span class="c1">#        &quot;The runtime directory should be set with a stripe_count of &quot;</span>
+        <span class="c1">#        &quot;16 for optimal performance. Create a new directory, run &quot;</span>
+        <span class="c1">#        &quot;`lfs setstripe -c 16 &lt;dirname&gt;`, and then move all contents &quot;</span>
+        <span class="c1">#        &quot;to that directory.&quot;</span>
+        <span class="c1">#    )</span>
+
+<div class="viewcode-block" id="SlurmManager.get_config"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.get_config">[docs]</a>    <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_stripe_count</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;stripe_count:\s+(\d+)&quot;</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">match</span><span class="p">,</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;stdout&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+<div class="viewcode-block" id="SlurmManager.create_cluster"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.create_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">create_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;config=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;not supported&quot;</span></div>
+        <span class="c1">#cluster = SLURMCluster(</span>
+        <span class="c1">#    project=self._config[&quot;hpc&quot;][&quot;allocation&quot;],</span>
+        <span class="c1">#    walltime=self._config[&quot;hpc&quot;][&quot;walltime&quot;],</span>
+        <span class="c1">#    job_mem=str(self._config[&quot;hpc&quot;][&quot;mem&quot;]),</span>
+        <span class="c1">#    memory=str(self._config[&quot;hpc&quot;][&quot;mem&quot;]) + &quot;MB&quot;,</span>
+        <span class="c1">#    #job_cpu=config[&quot;cpu&quot;],</span>
+        <span class="c1">#    interface=self._config[&quot;dask&quot;][&quot;interface&quot;],</span>
+        <span class="c1">#    local_directory=self._config[&quot;dask&quot;][&quot;local_directory&quot;],</span>
+        <span class="c1">#    cores=self._config[&quot;dask&quot;][&quot;cores&quot;],</span>
+        <span class="c1">#    #processes=config[&quot;processes&quot;],</span>
+        <span class="c1">#)</span>
+
+        <span class="c1">#logger.debug(&quot;Created cluster. job script %s&quot;, cluster.job_script())</span>
+        <span class="c1">#return cluster</span>
+
+<div class="viewcode-block" id="SlurmManager.create_local_cluster"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.create_local_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">create_local_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="kc">False</span><span class="p">,</span> <span class="s2">&quot;not supported&quot;</span></div>
+        <span class="c1">#cluster = LocalCluster()</span>
+        <span class="c1">#logger.debug(&quot;Created local cluster.&quot;)</span>
+        <span class="c1">#return cluster</span>
+
+<div class="viewcode-block" id="SlurmManager.create_submission_script"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.create_submission_script">[docs]</a>    <span class="k">def</span> <span class="nf">create_submission_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_submission_script_text</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">create_script</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">_create_submission_script_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;#!/bin/bash&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --account=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">hpc</span><span class="o">.</span><span class="n">account</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --job-name=</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --time=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">hpc</span><span class="o">.</span><span class="n">walltime</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --output=</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/job_output_%j.o&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --error=</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">/job_output_%j.e&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;#SBATCH --nodes=1&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;memory&quot;</span><span class="p">,</span> <span class="s2">&quot;partition&quot;</span><span class="p">,</span> <span class="s2">&quot;ntasks&quot;</span><span class="p">,</span> <span class="s2">&quot;ntasks_per_node&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;qos&quot;</span><span class="p">):</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">hpc</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#SBATCH --</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;srun </span><span class="si">{</span><span class="n">script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lines</span>
+
+<div class="viewcode-block" id="SlurmManager.get_local_scratch"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.get_local_scratch">[docs]</a>    <span class="k">def</span> <span class="nf">get_local_scratch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;LOCAL_SCRATCH&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="SlurmManager.get_num_cpus"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.get_num_cpus">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_num_cpus</span><span class="p">():</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_CPUS_ON_NODE&quot;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SlurmManager.log_environment_variables"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.log_environment_variables">[docs]</a>    <span class="k">def</span> <span class="nf">log_environment_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;SLURM&quot;</span> <span class="ow">in</span> <span class="n">name</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;SLURM environment variables: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SlurmManager.submit"><a class="viewcode-back" href="../../../jade/jade.hpc.html#jade.hpc.slurm_manager.SlurmManager.submit">[docs]</a>    <span class="k">def</span> <span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="s2">&quot;sbatch </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span> <span class="n">output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ret</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">GOOD</span>
+            <span class="n">stdout</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;stdout&quot;</span><span class="p">]</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_REGEX_SBATCH_OUTPUT</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">job_id</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">GOOD</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to interpret sbatch output [</span><span class="si">%s</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="n">stdout</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">ERROR</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">Status</span><span class="o">.</span><span class="n">ERROR</span>
+
+        <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">output</span><span class="p">[</span><span class="s2">&quot;stderr&quot;</span><span class="p">]</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

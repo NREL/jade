@@ -1,0 +1,1087 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade.utils package &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="JADE Design" href="../design.html" />
+    <link rel="prev" title="jade.models package" href="jade.models.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../jade.html">jade</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">jade</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jade.html">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../jade.html">jade</a> &raquo;</li>
+        
+          <li><a href="modules.html">jade</a> &raquo;</li>
+        
+          <li><a href="jade.html">jade package</a> &raquo;</li>
+        
+      <li>jade.utils package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jade/jade.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jade-utils-package">
+<h1>jade.utils package<a class="headerlink" href="#jade-utils-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jade.utils.custom_click_options">
+<span id="jade-utils-custom-click-options-module"></span><h2>jade.utils.custom_click_options module<a class="headerlink" href="#module-jade.utils.custom_click_options" title="Permalink to this headline">¶</a></h2>
+<p>Defines custom click options for cli commands</p>
+<dl class="py class">
+<dt id="jade.utils.custom_click_options.CustomOptions">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.utils.custom_click_options.</span></code><code class="sig-name descname"><span class="pre">CustomOptions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/custom_click_options.html#CustomOptions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.custom_click_options.CustomOptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">click.core.Option</span></code></p>
+<p>Custom option class extending base click option</p>
+<dl class="py method">
+<dt id="jade.utils.custom_click_options.CustomOptions.handle_parse_result">
+<code class="sig-name descname"><span class="pre">handle_parse_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/custom_click_options.html#CustomOptions.handle_parse_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.custom_click_options.CustomOptions.handle_parse_result" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.custom_click_options.CustomOptions.handle_custom_options">
+<code class="sig-name descname"><span class="pre">handle_custom_options</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">opts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/custom_click_options.html#CustomOptions.handle_custom_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.custom_click_options.CustomOptions.handle_custom_options" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles custom options that have been created</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.utils.dataframe_utils">
+<span id="jade-utils-dataframe-utils-module"></span><h2>jade.utils.dataframe_utils module<a class="headerlink" href="#module-jade.utils.dataframe_utils" title="Permalink to this headline">¶</a></h2>
+<p>Contains pandas dataframe utility functions.</p>
+<dl class="py function">
+<dt id="jade.utils.dataframe_utils.read_dataframe">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.dataframe_utils.</span></code><code class="sig-name descname"><span class="pre">read_dataframe</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/dataframe_utils.html#read_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.dataframe_utils.read_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert filename to a dataframe. Supports .csv, .json, .feather, .h5.
+Handles compressed files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>index_col</strong> (<em>str | int | None</em>) -- Index column name or index</p></li>
+<li><p><strong>columns</strong> (<em>list</em><em> or </em><em>None</em>) -- Use these columns if the file is CSV and does not define them.</p></li>
+<li><p><strong>parse_dates</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>kwargs</strong> (<em>kwargs</em>) -- Passed to underlying library for dataframe conversion.
+Consider setting parse_dates=True if the index is a timestamp.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> -- Raised if the file does not exist.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.dataframe_utils.read_dataframe_handle_missing">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.dataframe_utils.</span></code><code class="sig-name descname"><span class="pre">read_dataframe_handle_missing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/dataframe_utils.html#read_dataframe_handle_missing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.dataframe_utils.read_dataframe_handle_missing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert filename to a dataframe. Returns None if the file is missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>index_col</strong> (<em>str | int | None</em>) -- Index column name or index</p></li>
+<li><p><strong>columns</strong> (<em>list</em><em> or </em><em>None</em>) -- Use these columns if the file is CSV and does not define them.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.dataframe_utils.read_dataframe_by_substring">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.dataframe_utils.</span></code><code class="sig-name descname"><span class="pre">read_dataframe_by_substring</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substring</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/dataframe_utils.html#read_dataframe_by_substring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.dataframe_utils.read_dataframe_by_substring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dataframe for the file containing substring.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>substring</strong> (<em>str</em>) -- identifier for output file, must be unique in directory</p></li>
+<li><p><strong>index_col</strong> (<em>str | int | None</em>) -- Index column name or index</p></li>
+<li><p><strong>kwargs</strong> (<em>kwargs</em>) -- Passed to underlying library for dataframe conversion.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.dataframe_utils.read_dataframes_by_substrings">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.dataframe_utils.</span></code><code class="sig-name descname"><span class="pre">read_dataframes_by_substrings</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">substrings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_col</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_dates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/dataframe_utils.html#read_dataframes_by_substrings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.dataframe_utils.read_dataframes_by_substrings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return dataframes for files in the directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>substrings</strong> (<em>tuple</em>) -- File substring (str) for output files</p></li>
+<li><p><strong>index_col</strong> (<em>str | int | None</em>) -- Index column name or index</p></li>
+<li><p><strong>kwargs</strong> (<em>kwargs</em>) -- Passed to underlying library for dataframe conversion.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary of substring to pd.DataFrame</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.dataframe_utils.write_dataframe">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.dataframe_utils.</span></code><code class="sig-name descname"><span class="pre">write_dataframe</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compress</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_original</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/dataframe_utils.html#write_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.dataframe_utils.write_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the dataframe to a file with in a format matching the extension.</p>
+<p>Note that the feather and h5 formats do not support row indices.
+Index columns will be lost for those formats. If the dataframe has an index
+then it should be converted to a column before calling this function.</p>
+<p>This function only supports storing a single dataframe inside an HDF5 file.
+It always uses the key 'data'.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) -- </p></li>
+<li><p><strong>file_path</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>compress</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>keep_original</strong> (<em>bool</em>) -- </p></li>
+<li><p><strong>kwargs</strong> (<em>pass keyword arguments to underlying library</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>InvalidParameter if the file extension is not supported.</strong> -- </p></li>
+<li><p><strong>InvalidParameter if the DataFrame index is set.</strong> -- </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.utils.repository_info">
+<span id="jade-utils-repository-info-module"></span><h2>jade.utils.repository_info module<a class="headerlink" href="#module-jade.utils.repository_info" title="Permalink to this headline">¶</a></h2>
+<p>Collects information about the source code repository.</p>
+<dl class="py class">
+<dt id="jade.utils.repository_info.RepositoryInfo">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.utils.repository_info.</span></code><code class="sig-name descname"><span class="pre">RepositoryInfo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">package</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/repository_info.html#RepositoryInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.repository_info.RepositoryInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Collects information about the source code repository for a package.</p>
+<dl class="py method">
+<dt id="jade.utils.repository_info.RepositoryInfo.current_branch">
+<code class="sig-name descname"><span class="pre">current_branch</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/repository_info.html#RepositoryInfo.current_branch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.repository_info.RepositoryInfo.current_branch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current branch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.repository_info.RepositoryInfo.last_commit">
+<code class="sig-name descname"><span class="pre">last_commit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/repository_info.html#RepositoryInfo.last_commit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.repository_info.RepositoryInfo.last_commit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the last commit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.repository_info.RepositoryInfo.status">
+<code class="sig-name descname"><span class="pre">status</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/repository_info.html#RepositoryInfo.status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.repository_info.RepositoryInfo.status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.repository_info.RepositoryInfo.write_diff_patch">
+<code class="sig-name descname"><span class="pre">write_diff_patch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/repository_info.html#RepositoryInfo.write_diff_patch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.repository_info.RepositoryInfo.write_diff_patch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write any repo diffs to filename.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.repository_info.RepositoryInfo.summary">
+<code class="sig-name descname"><span class="pre">summary</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/repository_info.html#RepositoryInfo.summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.repository_info.RepositoryInfo.summary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a summary of the repository status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.utils.subprocess_manager">
+<span id="jade-utils-subprocess-manager-module"></span><h2>jade.utils.subprocess_manager module<a class="headerlink" href="#module-jade.utils.subprocess_manager" title="Permalink to this headline">¶</a></h2>
+<p>Functionality to execute non-blocking commands in a subprocess.</p>
+<dl class="py class">
+<dt id="jade.utils.subprocess_manager.SubprocessManager">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.utils.subprocess_manager.</span></code><code class="sig-name descname"><span class="pre">SubprocessManager</span></code><a class="reference internal" href="../_modules/jade/utils/subprocess_manager.html#SubprocessManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.subprocess_manager.SubprocessManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Allows non-blocking execution of a command in a subprocess.</p>
+<dl class="py method">
+<dt id="jade.utils.subprocess_manager.SubprocessManager.in_progress">
+<code class="sig-name descname"><span class="pre">in_progress</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/subprocess_manager.html#SubprocessManager.in_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.subprocess_manager.SubprocessManager.in_progress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if commands are still running.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.subprocess_manager.SubprocessManager.return_code">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">return_code</span></code><a class="headerlink" href="#jade.utils.subprocess_manager.SubprocessManager.return_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the return coe of the last completed command.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Returns None if the command did not complete.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.subprocess_manager.SubprocessManager.run">
+<code class="sig-name descname"><span class="pre">run</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">command</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/subprocess_manager.html#SubprocessManager.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.subprocess_manager.SubprocessManager.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run a command without blocking. Call wait_for_completion() or
+in_progress() to monitor progress.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>command</strong> (<em>str</em>) -- Command to execute</p></li>
+<li><p><strong>timeout</strong> (<em>int</em><em> or </em><em>None</em>) -- Timeout in seconds for each command. None means no timeout.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="jade.html#jade.exceptions.JobAlreadyInProgress" title="jade.exceptions.JobAlreadyInProgress"><strong>JobAlreadyInProgress</strong></a> -- Raised if execution is already in progress.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.subprocess_manager.SubprocessManager.terminate">
+<code class="sig-name descname"><span class="pre">terminate</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/subprocess_manager.html#SubprocessManager.terminate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.subprocess_manager.SubprocessManager.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Terminates the command.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.subprocess_manager.SubprocessManager.wait_for_completion">
+<code class="sig-name descname"><span class="pre">wait_for_completion</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/subprocess_manager.html#SubprocessManager.wait_for_completion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.subprocess_manager.SubprocessManager.wait_for_completion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Waits until the command is complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>return code if the command completed, otherwise None</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.subprocess_manager.run_command">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.subprocess_manager.</span></code><code class="sig-name descname"><span class="pre">run_command</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cwd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/subprocess_manager.html#run_command"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.subprocess_manager.run_command" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a command as a subprocess.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cmd</strong> (<em>str</em>) -- command to run</p></li>
+<li><p><strong>output</strong> (<em>None | dict</em>) -- If a dict is passed then return stdout and stderr as keys.</p></li>
+<li><p><strong>cwd</strong> (<em>str</em><em>, </em><em>default None</em>) -- Change the working directory to cwd before executing the process.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>int</em> -- return code from system; usually zero is good, non-zero is error</p></li>
+<li><p><strong>Caution</strong> (<em>Capturing stdout and stderr in memory can be hazardous with</em>)</p></li>
+<li><p><em>long-running processes that output lots of text. In those cases consider</em></p></li>
+<li><p><em>running subprocess.Popen with stdout and/or stderr set to a pre-configured</em></p></li>
+<li><p><em>file descriptor.</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.utils.timing_utils">
+<span id="jade-utils-timing-utils-module"></span><h2>jade.utils.timing_utils module<a class="headerlink" href="#module-jade.utils.timing_utils" title="Permalink to this headline">¶</a></h2>
+<p>Utility functions for timing measurements.</p>
+<dl class="py function">
+<dt id="jade.utils.timing_utils.timed_info">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.timing_utils.</span></code><code class="sig-name descname"><span class="pre">timed_info</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#timed_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.timed_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to measure and logger.info a function's execution time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.timing_utils.timed_debug">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.timing_utils.</span></code><code class="sig-name descname"><span class="pre">timed_debug</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#timed_debug"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.timed_debug" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to measure and logger.debug a function's execution time.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.timing_utils.get_time_duration_string">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.timing_utils.</span></code><code class="sig-name descname"><span class="pre">get_time_duration_string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seconds</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#get_time_duration_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.get_time_duration_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string with the time converted to reasonable units.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.utils.timing_utils.TimerStats">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.utils.timing_utils.</span></code><code class="sig-name descname"><span class="pre">TimerStats</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Tracks timing stats for one code block.</p>
+<dl class="py method">
+<dt id="jade.utils.timing_utils.TimerStats.get_stats">
+<code class="sig-name descname"><span class="pre">get_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStats.get_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStats.get_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current stats summary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.timing_utils.TimerStats.log_stats">
+<code class="sig-name descname"><span class="pre">log_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStats.log_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStats.log_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log a summary of the stats.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.timing_utils.TimerStats.update">
+<code class="sig-name descname"><span class="pre">update</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStats.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStats.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the stats with a new timing.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.utils.timing_utils.Timer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.utils.timing_utils.</span></code><code class="sig-name descname"><span class="pre">Timer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timer_stats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#Timer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.Timer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Times a code block.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.utils.timing_utils.TimerStatsCollector">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.utils.timing_utils.</span></code><code class="sig-name descname"><span class="pre">TimerStatsCollector</span></code><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStatsCollector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStatsCollector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Collects statistics for timed code segments.</p>
+<dl class="py method">
+<dt id="jade.utils.timing_utils.TimerStatsCollector.clear">
+<code class="sig-name descname"><span class="pre">clear</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStatsCollector.clear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStatsCollector.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear all stats.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.timing_utils.TimerStatsCollector.get_stat">
+<code class="sig-name descname"><span class="pre">get_stat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStatsCollector.get_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStatsCollector.get_stat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a TimerStats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.utils.timing_utils.TimerStats" title="jade.utils.timing_utils.TimerStats">TimerStats</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.timing_utils.TimerStatsCollector.log_stats">
+<code class="sig-name descname"><span class="pre">log_stats</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">clear</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStatsCollector.log_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStatsCollector.log_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log statistics for all tracked stats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>clear</strong> (<em>bool</em>) -- If True, clear all stats.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.utils.timing_utils.TimerStatsCollector.register_stat">
+<code class="sig-name descname"><span class="pre">register_stat</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#TimerStatsCollector.register_stat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.TimerStatsCollector.register_stat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register tracking of a new stat.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.utils.timing_utils.TimerStats" title="jade.utils.timing_utils.TimerStats">TimerStats</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.timing_utils.track_timing">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.timing_utils.</span></code><code class="sig-name descname"><span class="pre">track_timing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timer_stats</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/timing_utils.html#track_timing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.timing_utils.track_timing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to track statistics on a function's execution time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timer_stats</strong> (<em>TimerStatsManager</em>) -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.utils.utils">
+<span id="jade-utils-utils-module"></span><h2>jade.utils.utils module<a class="headerlink" href="#module-jade.utils.utils" title="Permalink to this headline">¶</a></h2>
+<p>Utility functions for the jade package.</p>
+<dl class="py function">
+<dt id="jade.utils.utils.create_chunks">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">create_chunks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">items</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#create_chunks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.create_chunks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a generator dividing items into chunks.</p>
+<p>items : list
+batch_size : int</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.create_script">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">create_script</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">executable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#create_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.create_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a script with the given text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>text</strong> (<em>str</em>) -- body of script</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- file to create</p></li>
+<li><p><strong>executable</strong> (<em>bool</em>) -- if True, set as executable</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.make_directory_read_only">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">make_directory_read_only</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#make_directory_read_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.make_directory_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set all files in the directory to be read-only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>directory</strong> (<em>str</em>) -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.make_file_read_only">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">make_file_read_only</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#make_file_read_only"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.make_file_read_only" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the file to be read-only.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.dump_data">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">dump_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#dump_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.dump_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump data to the filename.
+Supports JSON, TOML, YAML, or custom via kwargs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>dict</em>) -- data to dump</p></li>
+<li><p><strong>filename</strong> (<em>str</em>) -- file to create or overwrite</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.load_data">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">load_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#load_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.load_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load data from the file.
+Supports JSON, TOML, YAML, or custom via kwargs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.aggregate_data_from_files">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">aggregate_data_from_files</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_substring</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#aggregate_data_from_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.aggregate_data_from_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Aggregate objects from files in directory matching end_substring.
+Refer to <a class="reference internal" href="#jade.utils.utils.load_data" title="jade.utils.utils.load_data"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_data()</span></code></a> for supported file formats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>substring</strong> (<em>str</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.rmtree">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">rmtree</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#rmtree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.rmtree" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the directory tree if it exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.modify_file">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">modify_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">line_func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#modify_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.modify_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modifies a file by running a function on each line.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>line_func</strong> (<em>callable</em>) -- Should return the line to write to the modified file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.get_cli_string">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">get_cli_string</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#get_cli_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.get_cli_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the command-line arguments issued.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.handle_file_not_found">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">handle_file_not_found</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#handle_file_not_found"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.handle_file_not_found" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to catch FileNotFoundError exceptions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.handle_key_error">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">handle_key_error</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#handle_key_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.handle_key_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to catch KeyError exceptions that happen because the user
+performs invalid actions.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.decompress_file">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">decompress_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#decompress_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.decompress_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decompress a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Returns the new filename.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.get_directory_size_bytes">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">get_directory_size_bytes</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recursive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#get_directory_size_bytes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.get_directory_size_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the total space consumed by all files in directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>recursive</strong> (<em>bool</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>size in bytes</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.get_filenames_in_path">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">get_filenames_in_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_regex</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#get_filenames_in_path"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.get_filenames_in_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all files in directory matching filename, searching recursively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>ext</strong> (<em>str</em>) -- file extension, ex: .log</p></li>
+<li><p><strong>is_regex</strong> (<em>bool</em>) -- Treat filename as regular expression.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.get_filenames_by_ext">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">get_filenames_by_ext</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#get_filenames_by_ext"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.get_filenames_by_ext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return filenames in directory, recursively, with file extension.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>ext</strong> (<em>str</em>) -- file extension, ex: .log</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>generator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.interpret_datetime">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">interpret_datetime</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#interpret_datetime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.interpret_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a datetime object from a timestamp string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>timestamp</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>datetime.datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.standardize_timestamp">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">standardize_timestamp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">datetime.datetime</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="reference internal" href="../_modules/jade/utils/utils.html#standardize_timestamp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.standardize_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate string timestamp and output standard format.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.rotate_filenames">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">rotate_filenames</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#rotate_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.rotate_filenames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rotates filenames in directory, recursively, to .1, .2, .etc.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directory</strong> (<em>str</em>) -- </p></li>
+<li><p><strong>ext</strong> (<em>str</em>) -- file extension, ex: .log</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.check_filename">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">check_filename</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#check_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.check_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validates that a name is valid for use as a filename or directory.
+Valid characters:  letters, numbers, underscore, hyphen, period</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em><em>,</em>) -- A given string.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="jade.html#jade.exceptions.InvalidParameter" title="jade.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> -- Raised if the name contains illegal characters or is too long.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.utils.utils.output_to_file">
+<code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">output_to_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">data</span></em>, <em class="sig-param"><span class="pre">filename=None</span></em>, <em class="sig-param"><span class="pre">stream=&lt;_io.TextIOWrapper</span> <span class="pre">name='&lt;stdout&gt;'</span> <span class="pre">mode='w'</span> <span class="pre">encoding='UTF-8'&gt;</span></em>, <em class="sig-param"><span class="pre">indent=2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#output_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.output_to_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="jade.utils.utils.ExtendedJSONEncoder">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.utils.utils.</span></code><code class="sig-name descname"><span class="pre">ExtendedJSONEncoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skipkeys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ensure_ascii</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_circular</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_nan</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">indent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#ExtendedJSONEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.ExtendedJSONEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">json.encoder.JSONEncoder</span></code></p>
+<p>Constructor for JSONEncoder, with sensible defaults.</p>
+<p>If skipkeys is false, then it is a TypeError to attempt
+encoding of keys that are not str, int, float or None.  If
+skipkeys is True, such items are simply skipped.</p>
+<p>If ensure_ascii is true, the output is guaranteed to be str
+objects with all incoming non-ASCII characters escaped.  If
+ensure_ascii is false, the output can contain non-ASCII characters.</p>
+<p>If check_circular is true, then lists, dicts, and custom encoded
+objects will be checked for circular references during encoding to
+prevent an infinite recursion (which would cause an OverflowError).
+Otherwise, no such check takes place.</p>
+<p>If allow_nan is true, then NaN, Infinity, and -Infinity will be
+encoded as such.  This behavior is not JSON specification compliant,
+but is consistent with most JavaScript based encoders and decoders.
+Otherwise, it will be a ValueError to encode such floats.</p>
+<p>If sort_keys is true, then the output of dictionaries will be
+sorted by key; this is useful for regression tests to ensure
+that JSON serializations can be compared on a day-to-day basis.</p>
+<p>If indent is a non-negative integer, then JSON array
+elements and object members will be pretty-printed with that
+indent level.  An indent level of 0 will only insert newlines.
+None is the most compact representation.</p>
+<p>If specified, separators should be an (item_separator, key_separator)
+tuple.  The default is (', ', ': ') if <em>indent</em> is <code class="docutils literal notranslate"><span class="pre">None</span></code> and
+(',', ': ') otherwise.  To get the most compact JSON representation,
+you should specify (',', ':') to eliminate whitespace.</p>
+<p>If specified, default is a function that gets called for objects
+that can't otherwise be serialized.  It should return a JSON encodable
+version of the object or raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p>
+<dl class="py method">
+<dt id="jade.utils.utils.ExtendedJSONEncoder.default">
+<code class="sig-name descname"><span class="pre">default</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/utils/utils.html#ExtendedJSONEncoder.default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.utils.utils.ExtendedJSONEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement this method in a subclass such that it returns
+a serializable object for <code class="docutils literal notranslate"><span class="pre">o</span></code>, or calls the base implementation
+(to raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>).</p>
+<p>For example, to support arbitrary iterators, you could
+implement default like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">iterable</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="c1"># Let the base class default method raise the TypeError</span>
+    <span class="k">return</span> <span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">o</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jade.utils" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="../design.html" class="btn btn-neutral float-right" title="JADE Design" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="jade.models.html" class="btn btn-neutral float-left" title="jade.models package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

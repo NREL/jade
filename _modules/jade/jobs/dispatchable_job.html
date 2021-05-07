@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade.jobs.dispatchable_job &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href="../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../jade.html">jade</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../jade/modules.html">jade</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../jade/jade.html">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>jade.jobs.dispatchable_job</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for jade.jobs.dispatchable_job</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Defines a dispatchable job.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shlex</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">jade.common</span> <span class="kn">import</span> <span class="n">JOBS_OUTPUT_DIR</span>
+<span class="kn">from</span> <span class="nn">jade.enums</span> <span class="kn">import</span> <span class="n">JobCompletionStatus</span>
+<span class="kn">from</span> <span class="nn">jade.events</span> <span class="kn">import</span> <span class="n">StructuredLogEvent</span><span class="p">,</span> <span class="n">EVENT_NAME_BYTES_CONSUMED</span><span class="p">,</span> \
+    <span class="n">EVENT_CATEGORY_RESOURCE_UTIL</span>
+<span class="kn">from</span> <span class="nn">jade.jobs.dispatchable_job_interface</span> <span class="kn">import</span> <span class="n">DispatchableJobInterface</span>
+<span class="kn">from</span> <span class="nn">jade.jobs.results_aggregator</span> <span class="kn">import</span> <span class="n">ResultsAggregator</span>
+<span class="kn">from</span> <span class="nn">jade.loggers</span> <span class="kn">import</span> <span class="n">log_event</span>
+<span class="kn">from</span> <span class="nn">jade.result</span> <span class="kn">import</span> <span class="n">Result</span>
+<span class="kn">from</span> <span class="nn">jade.utils.utils</span> <span class="kn">import</span> <span class="n">get_directory_size_bytes</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DispatchableJob"><a class="viewcode-back" href="../../../jade/jade.jobs.html#jade.jobs.dispatchable_job.DispatchableJob">[docs]</a><span class="k">class</span> <span class="nc">DispatchableJob</span><span class="p">(</span><span class="n">DispatchableJobInterface</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Defines a dispatchable job.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">cmd</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job</span> <span class="o">=</span> <span class="n">job</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cli_cmd</span> <span class="o">=</span> <span class="n">cmd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipe</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_pending</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pending</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;job </span><span class="si">%s</span><span class="s2"> destructed while pending&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cli_cmd</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipe</span><span class="o">.</span><span class="n">returncode</span>
+        <span class="n">exec_time_s</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="n">JobCompletionStatus</span><span class="o">.</span><span class="n">FINISHED</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="n">JOBS_OUTPUT_DIR</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">bytes_consumed</span> <span class="o">=</span> <span class="n">get_directory_size_bytes</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">StructuredLogEvent</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">EVENT_CATEGORY_RESOURCE_UTIL</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">EVENT_NAME_BYTES_CONSUMED</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;job output directory size&quot;</span><span class="p">,</span>
+            <span class="n">bytes_consumed</span><span class="o">=</span><span class="n">bytes_consumed</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">log_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span><span class="p">,</span> <span class="n">status</span><span class="p">,</span> <span class="n">exec_time_s</span><span class="p">)</span>
+        <span class="n">ResultsAggregator</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Job </span><span class="si">%s</span><span class="s2"> completed return_code=</span><span class="si">%s</span><span class="s2"> exec_time_s=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span><span class="p">,</span> <span class="n">exec_time_s</span><span class="p">)</span>
+
+<div class="viewcode-block" id="DispatchableJob.cancel"><a class="viewcode-back" href="../../../jade/jade.jobs.html#jade.jobs.dispatchable_job.DispatchableJob.cancel">[docs]</a>    <span class="k">def</span> <span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span><span class="p">,</span> <span class="n">JobCompletionStatus</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">ResultsAggregator</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Canceled job </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cancel_on_blocking_job_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">cancel_on_blocking_job_failure</span>
+
+<div class="viewcode-block" id="DispatchableJob.set_blocking_jobs"><a class="viewcode-back" href="../../../jade/jade.jobs.html#jade.jobs.dispatchable_job.DispatchableJob.set_blocking_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">set_blocking_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jobs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">set_blocking_jobs</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DispatchableJob.is_complete"><a class="viewcode-back" href="../../../jade/jade.jobs.html#jade.jobs.dispatchable_job.DispatchableJob.is_complete">[docs]</a>    <span class="k">def</span> <span class="nf">is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pending</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipe</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="n">ret</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ret</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">return</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipe</span><span class="o">.</span><span class="n">poll</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_pending</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_complete</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_pending</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">job</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span>
+
+<div class="viewcode-block" id="DispatchableJob.get_blocking_jobs"><a class="viewcode-back" href="../../../jade/jade.jobs.html#jade.jobs.dispatchable_job.DispatchableJob.get_blocking_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">get_blocking_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">get_blocking_jobs</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="DispatchableJob.remove_blocking_job"><a class="viewcode-back" href="../../../jade/jade.jobs.html#jade.jobs.dispatchable_job.DispatchableJob.remove_blocking_job">[docs]</a>    <span class="k">def</span> <span class="nf">remove_blocking_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">remove_blocking_job</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">return_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span>
+
+<div class="viewcode-block" id="DispatchableJob.run"><a class="viewcode-back" href="../../../jade/jade.jobs.html#jade.jobs.dispatchable_job.DispatchableJob.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the job. Writes results to file when complete.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pipe</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+        <span class="c1"># Disable posix if on Windows.</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">shlex</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cli_cmd</span><span class="p">,</span> <span class="n">posix</span><span class="o">=</span><span class="s2">&quot;win&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pipe</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_pending</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Submitted </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cli_cmd</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

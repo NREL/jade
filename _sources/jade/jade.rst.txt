@@ -1,0 +1,98 @@
+jade package
+============
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   jade.cli
+   jade.extensions
+   jade.hpc
+   jade.jobs
+   jade.models
+   jade.utils
+
+Submodules
+----------
+
+jade.common module
+------------------
+
+.. automodule:: jade.common
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.enums module
+-----------------
+
+.. automodule:: jade.enums
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.events module
+------------------
+
+.. automodule:: jade.events
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.exceptions module
+----------------------
+
+.. automodule:: jade.exceptions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.loggers module
+-------------------
+
+.. automodule:: jade.loggers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.resource\_monitor module
+-----------------------------
+
+.. automodule:: jade.resource_monitor
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.result module
+------------------
+
+.. automodule:: jade.result
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.test\_common module
+------------------------
+
+.. automodule:: jade.test_common
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.version module
+-------------------
+
+.. automodule:: jade.version
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade
+   :members:
+   :undoc-members:
+   :show-inheritance:

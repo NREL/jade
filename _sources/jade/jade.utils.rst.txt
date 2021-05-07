@@ -1,0 +1,61 @@
+jade.utils package
+==================
+
+Submodules
+----------
+
+jade.utils.custom\_click\_options module
+----------------------------------------
+
+.. automodule:: jade.utils.custom_click_options
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.utils.dataframe\_utils module
+----------------------------------
+
+.. automodule:: jade.utils.dataframe_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.utils.repository\_info module
+----------------------------------
+
+.. automodule:: jade.utils.repository_info
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.utils.subprocess\_manager module
+-------------------------------------
+
+.. automodule:: jade.utils.subprocess_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.utils.timing\_utils module
+-------------------------------
+
+.. automodule:: jade.utils.timing_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.utils.utils module
+-----------------------
+
+.. automodule:: jade.utils.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

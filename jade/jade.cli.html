@@ -1,0 +1,382 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade.cli package &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jade.extensions package" href="jade.extensions.html" />
+    <link rel="prev" title="jade package" href="jade.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../jade.html">jade</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">jade</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jade.html">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../jade.html">jade</a> &raquo;</li>
+        
+          <li><a href="modules.html">jade</a> &raquo;</li>
+        
+          <li><a href="jade.html">jade package</a> &raquo;</li>
+        
+      <li>jade.cli package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jade/jade.cli.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jade-cli-package">
+<h1>jade.cli package<a class="headerlink" href="#jade-cli-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jade.cli.auto_config">
+<span id="jade-cli-auto-config-module"></span><h2>jade.cli.auto_config module<a class="headerlink" href="#module-jade.cli.auto_config" title="Permalink to this headline">¶</a></h2>
+<p>CLI to automatically create a configuration.</p>
+</div>
+<div class="section" id="module-jade.cli.cancel_jobs">
+<span id="jade-cli-cancel-jobs-module"></span><h2>jade.cli.cancel_jobs module<a class="headerlink" href="#module-jade.cli.cancel_jobs" title="Permalink to this headline">¶</a></h2>
+<p>CLI to run jobs.</p>
+</div>
+<div class="section" id="module-jade.cli.collect_stats">
+<span id="jade-cli-collect-stats-module"></span><h2>jade.cli.collect_stats module<a class="headerlink" href="#module-jade.cli.collect_stats" title="Permalink to this headline">¶</a></h2>
+<p>CLI to run jobs.</p>
+</div>
+<div class="section" id="module-jade.cli.common">
+<span id="jade-cli-common-module"></span><h2>jade.cli.common module<a class="headerlink" href="#module-jade.cli.common" title="Permalink to this headline">¶</a></h2>
+<p>Common functions for CLI scripts</p>
+<dl class="py function">
+<dt id="jade.cli.common.handle_enum_input">
+<code class="sig-prename descclassname"><span class="pre">jade.cli.common.</span></code><code class="sig-name descname"><span class="pre">handle_enum_input</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">param</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/cli/common.html#handle_enum_input"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.cli.common.handle_enum_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts inputs to enums.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.cli.common.proceed_with_user_permission">
+<code class="sig-prename descclassname"><span class="pre">jade.cli.common.</span></code><code class="sig-name descname"><span class="pre">proceed_with_user_permission</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ctx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/cli/common.html#proceed_with_user_permission"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.cli.common.proceed_with_user_permission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pauses execution to prompt user for permission to proceed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.cli.common.add_options">
+<code class="sig-prename descclassname"><span class="pre">jade.cli.common.</span></code><code class="sig-name descname"><span class="pre">add_options</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">options</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/cli/common.html#add_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.cli.common.add_options" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="jade.cli.common.make_submitter_params">
+<code class="sig-prename descclassname"><span class="pre">jade.cli.common.</span></code><code class="sig-name descname"><span class="pre">make_submitter_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">per_node_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hpc_config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nodes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_monitor_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reports</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_add_blocked_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_based_batching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_setup_script</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_shutdown_script</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/cli/common.html#make_submitter_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.cli.common.make_submitter_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an instance of SubmitterParams for use in a job submission.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.cli.config">
+<span id="jade-cli-config-module"></span><h2>jade.cli.config module<a class="headerlink" href="#module-jade.cli.config" title="Permalink to this headline">¶</a></h2>
+<p>CLI to display and manage config files.</p>
+</div>
+<div class="section" id="module-jade.cli.extensions">
+<span id="jade-cli-extensions-module"></span><h2>jade.cli.extensions module<a class="headerlink" href="#module-jade.cli.extensions" title="Permalink to this headline">¶</a></h2>
+<p>CLI to show extensions.</p>
+</div>
+<div class="section" id="module-jade.cli.jade">
+<span id="jade-cli-jade-module"></span><h2>jade.cli.jade module<a class="headerlink" href="#module-jade.cli.jade" title="Permalink to this headline">¶</a></h2>
+<p>Main CLI command for jade.</p>
+</div>
+<div class="section" id="module-jade.cli.jade_internal">
+<span id="jade-cli-jade-internal-module"></span><h2>jade.cli.jade_internal module<a class="headerlink" href="#module-jade.cli.jade_internal" title="Permalink to this headline">¶</a></h2>
+<p>Main CLI command for jade.</p>
+</div>
+<div class="section" id="module-jade.cli.pipeline">
+<span id="jade-cli-pipeline-module"></span><h2>jade.cli.pipeline module<a class="headerlink" href="#module-jade.cli.pipeline" title="Permalink to this headline">¶</a></h2>
+<p>CLI to show extensions.</p>
+</div>
+<div class="section" id="module-jade.cli.resubmit_jobs">
+<span id="jade-cli-resubmit-jobs-module"></span><h2>jade.cli.resubmit_jobs module<a class="headerlink" href="#module-jade.cli.resubmit_jobs" title="Permalink to this headline">¶</a></h2>
+<p>CLI to resubmit failed and missing jobs.</p>
+</div>
+<div class="section" id="module-jade.cli.run">
+<span id="jade-cli-run-module"></span><h2>jade.cli.run module<a class="headerlink" href="#module-jade.cli.run" title="Permalink to this headline">¶</a></h2>
+<p>CLI to run hosting capacity analysis on results for a feeder.</p>
+</div>
+<div class="section" id="module-jade.cli.run_jobs">
+<span id="jade-cli-run-jobs-module"></span><h2>jade.cli.run_jobs module<a class="headerlink" href="#module-jade.cli.run_jobs" title="Permalink to this headline">¶</a></h2>
+<p>CLI to start a SLURM cluster.</p>
+</div>
+<div class="section" id="module-jade.cli.show_events">
+<span id="jade-cli-show-events-module"></span><h2>jade.cli.show_events module<a class="headerlink" href="#module-jade.cli.show_events" title="Permalink to this headline">¶</a></h2>
+<p>CLI to show events of a scenario.</p>
+</div>
+<div class="section" id="module-jade.cli.show_results">
+<span id="jade-cli-show-results-module"></span><h2>jade.cli.show_results module<a class="headerlink" href="#module-jade.cli.show_results" title="Permalink to this headline">¶</a></h2>
+<p>CLI to show results of a scenario.</p>
+</div>
+<div class="section" id="module-jade.cli.show_status">
+<span id="jade-cli-show-status-module"></span><h2>jade.cli.show_status module<a class="headerlink" href="#module-jade.cli.show_status" title="Permalink to this headline">¶</a></h2>
+<p>CLI to show job status.</p>
+</div>
+<div class="section" id="module-jade.cli.stats">
+<span id="jade-cli-stats-module"></span><h2>jade.cli.stats module<a class="headerlink" href="#module-jade.cli.stats" title="Permalink to this headline">¶</a></h2>
+<p>CLI to show events of a scenario.</p>
+</div>
+<div class="section" id="module-jade.cli.submit_jobs">
+<span id="jade-cli-submit-jobs-module"></span><h2>jade.cli.submit_jobs module<a class="headerlink" href="#module-jade.cli.submit_jobs" title="Permalink to this headline">¶</a></h2>
+<p>CLI to run jobs.</p>
+</div>
+<div class="section" id="module-jade.cli.try_submit_jobs">
+<span id="jade-cli-try-submit-jobs-module"></span><h2>jade.cli.try_submit_jobs module<a class="headerlink" href="#module-jade.cli.try_submit_jobs" title="Permalink to this headline">¶</a></h2>
+<p>CLI to try to submit new jobs for an existing submission.</p>
+</div>
+<div class="section" id="module-jade.cli.wait">
+<span id="jade-cli-wait-module"></span><h2>jade.cli.wait module<a class="headerlink" href="#module-jade.cli.wait" title="Permalink to this headline">¶</a></h2>
+<p>CLI to wait for completion of jobs.</p>
+</div>
+<div class="section" id="module-jade.cli">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jade.cli" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="jade.extensions.html" class="btn btn-neutral float-right" title="jade.extensions package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="jade.html" class="btn btn-neutral float-left" title="jade package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

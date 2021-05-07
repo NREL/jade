@@ -1,0 +1,410 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="jade" href="jade/modules.html" />
+    <link rel="prev" title="Advanced Usage" href="advanced_usage.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">jade</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade/modules.html">jade</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>jade</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/jade.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jade">
+<h1>jade<a class="headerlink" href="#jade" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade/modules.html">jade</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html">jade package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html">jade.cli package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.extensions.html">jade.extensions package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html">jade.hpc package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html">jade.jobs package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html">jade.models package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html">jade.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.common">jade.common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.enums">jade.enums module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.events">jade.events module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.exceptions">jade.exceptions module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.loggers">jade.loggers module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.resource_monitor">jade.resource_monitor module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.result">jade.result module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.test_common">jade.test_common module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade.version">jade.version module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.html#module-jade">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jade/jade.html">jade package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.cli.html">jade.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.auto_config">jade.cli.auto_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.cancel_jobs">jade.cli.cancel_jobs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.collect_stats">jade.cli.collect_stats module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.common">jade.cli.common module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.config">jade.cli.config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.extensions">jade.cli.extensions module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.jade">jade.cli.jade module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.jade_internal">jade.cli.jade_internal module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.pipeline">jade.cli.pipeline module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.resubmit_jobs">jade.cli.resubmit_jobs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.run">jade.cli.run module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.run_jobs">jade.cli.run_jobs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.show_events">jade.cli.show_events module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.show_results">jade.cli.show_results module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.show_status">jade.cli.show_status module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.stats">jade.cli.stats module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.submit_jobs">jade.cli.submit_jobs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.try_submit_jobs">jade.cli.try_submit_jobs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli.wait">jade.cli.wait module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.cli.html#module-jade.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.extensions.html">jade.extensions package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.extensions.html#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.extensions.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.extensions.html#module-jade.extensions.registry">jade.extensions.registry module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.extensions.html#module-jade.extensions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.hpc.html">jade.hpc package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.common">jade.hpc.common module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.fake_manager">jade.hpc.fake_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.hpc_manager">jade.hpc.hpc_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.hpc_manager_interface">jade.hpc.hpc_manager_interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.hpc_submitter">jade.hpc.hpc_submitter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.local_manager">jade.hpc.local_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.pbs_manager">jade.hpc.pbs_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc.slurm_manager">jade.hpc.slurm_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.hpc.html#module-jade.hpc">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.jobs.html">jade.jobs package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.analysis_execution_base">jade.jobs.analysis_execution_base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.async_job_interface">jade.jobs.async_job_interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.cluster">jade.jobs.cluster module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.dispatchable_job">jade.jobs.dispatchable_job module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.dispatchable_job_interface">jade.jobs.dispatchable_job_interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_analysis">jade.jobs.job_analysis module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_configuration">jade.jobs.job_configuration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_configuration_factory">jade.jobs.job_configuration_factory module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_container_by_key">jade.jobs.job_container_by_key module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_container_by_name">jade.jobs.job_container_by_name module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_container_interface">jade.jobs.job_container_interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_execution_interface">jade.jobs.job_execution_interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_inputs_interface">jade.jobs.job_inputs_interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_manager_base">jade.jobs.job_manager_base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_parameters_interface">jade.jobs.job_parameters_interface module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_post_process">jade.jobs.job_post_process module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_queue">jade.jobs.job_queue module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_runner">jade.jobs.job_runner module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.job_submitter">jade.jobs.job_submitter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.pipeline_manager">jade.jobs.pipeline_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs.results_aggregator">jade.jobs.results_aggregator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.jobs.html#module-jade.jobs">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.models.html">jade.models package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#module-jade.models.base">jade.models.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#module-jade.models.cluster_config">jade.models.cluster_config module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#module-jade.models.hpc">jade.models.hpc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#module-jade.models.jobs">jade.models.jobs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#module-jade.models.pipeline">jade.models.pipeline module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#module-jade.models.submitter_params">jade.models.submitter_params module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.models.html#module-jade.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jade/jade.utils.html">jade.utils package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#module-jade.utils.custom_click_options">jade.utils.custom_click_options module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#module-jade.utils.dataframe_utils">jade.utils.dataframe_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#module-jade.utils.repository_info">jade.utils.repository_info module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#module-jade.utils.subprocess_manager">jade.utils.subprocess_manager module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#module-jade.utils.timing_utils">jade.utils.timing_utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#module-jade.utils.utils">jade.utils.utils module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade/jade.utils.html#module-jade.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.common">jade.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.enums">jade.enums module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.events">jade.events module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.exceptions">jade.exceptions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.loggers">jade.loggers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.resource_monitor">jade.resource_monitor module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.result">jade.result module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.test_common">jade.test_common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade.version">jade.version module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade/jade.html#module-jade">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="jade/modules.html" class="btn btn-neutral float-right" title="jade" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="advanced_usage.html" class="btn btn-neutral float-left" title="Advanced Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

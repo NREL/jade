@@ -1,0 +1,1343 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade package &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jade.cli package" href="jade.cli.html" />
+    <link rel="prev" title="jade" href="modules.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../jade.html">jade</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">jade</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../jade.html">jade</a> &raquo;</li>
+        
+          <li><a href="modules.html">jade</a> &raquo;</li>
+        
+      <li>jade package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jade/jade.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jade-package">
+<h1>jade package<a class="headerlink" href="#jade-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.cli.html">jade.cli package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.auto_config">jade.cli.auto_config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.cancel_jobs">jade.cli.cancel_jobs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.collect_stats">jade.cli.collect_stats module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.common">jade.cli.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.config">jade.cli.config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.extensions">jade.cli.extensions module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.jade">jade.cli.jade module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.jade_internal">jade.cli.jade_internal module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.pipeline">jade.cli.pipeline module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.resubmit_jobs">jade.cli.resubmit_jobs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.run">jade.cli.run module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.run_jobs">jade.cli.run_jobs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.show_events">jade.cli.show_events module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.show_results">jade.cli.show_results module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.show_status">jade.cli.show_status module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.stats">jade.cli.stats module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.submit_jobs">jade.cli.submit_jobs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.try_submit_jobs">jade.cli.try_submit_jobs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli.wait">jade.cli.wait module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html#module-jade.cli">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jade.extensions.html">jade.extensions package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade.extensions.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="jade.extensions.demo.html">jade.extensions.demo package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo.autoregression_configuration">jade.extensions.demo.autoregression_configuration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo.autoregression_execution">jade.extensions.demo.autoregression_execution module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo.autoregression_inputs">jade.extensions.demo.autoregression_inputs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo.autoregression_parameters">jade.extensions.demo.autoregression_parameters module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo.cli">jade.extensions.demo.cli module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo.create_merge_pred_gdp">jade.extensions.demo.create_merge_pred_gdp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo.merge_pred_gdp">jade.extensions.demo.merge_pred_gdp module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.demo.html#module-jade.extensions.demo">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="jade.extensions.generic_command.html">jade.extensions.generic_command package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.generic_command.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.generic_command.html#module-jade.extensions.generic_command.cli">jade.extensions.generic_command.cli module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.generic_command.html#module-jade.extensions.generic_command.generic_command_configuration">jade.extensions.generic_command.generic_command_configuration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.generic_command.html#module-jade.extensions.generic_command.generic_command_execution">jade.extensions.generic_command.generic_command_execution module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.generic_command.html#module-jade.extensions.generic_command.generic_command_inputs">jade.extensions.generic_command.generic_command_inputs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.generic_command.html#module-jade.extensions.generic_command.generic_command_parameters">jade.extensions.generic_command.generic_command_parameters module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="jade.extensions.generic_command.html#module-jade.extensions.generic_command">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jade.extensions.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.extensions.html#module-jade.extensions.registry">jade.extensions.registry module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.extensions.html#module-jade.extensions">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jade.hpc.html">jade.hpc package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.common">jade.hpc.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.fake_manager">jade.hpc.fake_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.hpc_manager">jade.hpc.hpc_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.hpc_manager_interface">jade.hpc.hpc_manager_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.hpc_submitter">jade.hpc.hpc_submitter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.local_manager">jade.hpc.local_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.pbs_manager">jade.hpc.pbs_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc.slurm_manager">jade.hpc.slurm_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html#module-jade.hpc">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jade.jobs.html">jade.jobs package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.analysis_execution_base">jade.jobs.analysis_execution_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.async_job_interface">jade.jobs.async_job_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.cluster">jade.jobs.cluster module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.dispatchable_job">jade.jobs.dispatchable_job module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.dispatchable_job_interface">jade.jobs.dispatchable_job_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_analysis">jade.jobs.job_analysis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_configuration">jade.jobs.job_configuration module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_configuration_factory">jade.jobs.job_configuration_factory module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_container_by_key">jade.jobs.job_container_by_key module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_container_by_name">jade.jobs.job_container_by_name module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_container_interface">jade.jobs.job_container_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_execution_interface">jade.jobs.job_execution_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_inputs_interface">jade.jobs.job_inputs_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_manager_base">jade.jobs.job_manager_base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_parameters_interface">jade.jobs.job_parameters_interface module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_post_process">jade.jobs.job_post_process module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_queue">jade.jobs.job_queue module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_runner">jade.jobs.job_runner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.job_submitter">jade.jobs.job_submitter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.pipeline_manager">jade.jobs.pipeline_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs.results_aggregator">jade.jobs.results_aggregator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html#module-jade.jobs">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jade.models.html">jade.models package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#module-jade.models.base">jade.models.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#module-jade.models.cluster_config">jade.models.cluster_config module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#module-jade.models.hpc">jade.models.hpc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#module-jade.models.jobs">jade.models.jobs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#module-jade.models.pipeline">jade.models.pipeline module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#module-jade.models.submitter_params">jade.models.submitter_params module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html#module-jade.models">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="jade.utils.html">jade.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#module-jade.utils.custom_click_options">jade.utils.custom_click_options module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#module-jade.utils.dataframe_utils">jade.utils.dataframe_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#module-jade.utils.repository_info">jade.utils.repository_info module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#module-jade.utils.subprocess_manager">jade.utils.subprocess_manager module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#module-jade.utils.timing_utils">jade.utils.timing_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#module-jade.utils.utils">jade.utils.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html#module-jade.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jade.common">
+<span id="jade-common-module"></span><h2>jade.common module<a class="headerlink" href="#module-jade.common" title="Permalink to this headline">¶</a></h2>
+<p>Common definitions for the jade package.</p>
+<dl class="py function">
+<dt id="jade.common.get_results_filename">
+<code class="sig-prename descclassname"><span class="pre">jade.common.</span></code><code class="sig-name descname"><span class="pre">get_results_filename</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/common.html#get_results_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.common.get_results_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the temporary results filename for all jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output_dir</strong> (<em>str</em>) -- output directory for all jobs</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.common.get_temp_results_filename">
+<code class="sig-prename descclassname"><span class="pre">jade.common.</span></code><code class="sig-name descname"><span class="pre">get_temp_results_filename</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/common.html#get_temp_results_filename"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.common.get_temp_results_filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the temporary results filename for all jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>output_dir</strong> (<em>str</em>) -- output directory for all jobs</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.enums">
+<span id="jade-enums-module"></span><h2>jade.enums module<a class="headerlink" href="#module-jade.enums" title="Permalink to this headline">¶</a></h2>
+<p>Enums for the jade package.</p>
+<dl class="py class">
+<dt id="jade.enums.Status">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.enums.</span></code><code class="sig-name descname"><span class="pre">Status</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/enums.html#Status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.enums.Status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Return status.</p>
+<dl class="py attribute">
+<dt id="jade.enums.Status.GOOD">
+<code class="sig-name descname"><span class="pre">GOOD</span></code><em class="property"> <span class="pre">=</span> <span class="pre">0</span></em><a class="headerlink" href="#jade.enums.Status.GOOD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.enums.Status.ERROR">
+<code class="sig-name descname"><span class="pre">ERROR</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#jade.enums.Status.ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.enums.Status.IN_PROGRESS">
+<code class="sig-name descname"><span class="pre">IN_PROGRESS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#jade.enums.Status.IN_PROGRESS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.enums.Mode">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.enums.</span></code><code class="sig-name descname"><span class="pre">Mode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/enums.html#Mode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.enums.Mode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Possible values for computational sequencing mode</p>
+<dl class="py attribute">
+<dt id="jade.enums.Mode.PARALLEL">
+<code class="sig-name descname"><span class="pre">PARALLEL</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'parallel'</span></em><a class="headerlink" href="#jade.enums.Mode.PARALLEL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.enums.Mode.SEQUENTIAL">
+<code class="sig-name descname"><span class="pre">SEQUENTIAL</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'sequential'</span></em><a class="headerlink" href="#jade.enums.Mode.SEQUENTIAL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.enums.JobCompletionStatus">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.enums.</span></code><code class="sig-name descname"><span class="pre">JobCompletionStatus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/enums.html#JobCompletionStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.enums.JobCompletionStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Possible values for job completion status</p>
+<dl class="py attribute">
+<dt id="jade.enums.JobCompletionStatus.FINISHED">
+<code class="sig-name descname"><span class="pre">FINISHED</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'finished'</span></em><a class="headerlink" href="#jade.enums.JobCompletionStatus.FINISHED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.enums.JobCompletionStatus.CANCELED">
+<code class="sig-name descname"><span class="pre">CANCELED</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'canceled'</span></em><a class="headerlink" href="#jade.enums.JobCompletionStatus.CANCELED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.enums.JobCompletionStatus.MISSING">
+<code class="sig-name descname"><span class="pre">MISSING</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'missing'</span></em><a class="headerlink" href="#jade.enums.JobCompletionStatus.MISSING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.enums.get_enum_from_str">
+<code class="sig-prename descclassname"><span class="pre">jade.enums.</span></code><code class="sig-name descname"><span class="pre">get_enum_from_str</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/enums.html#get_enum_from_str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.enums.get_enum_from_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a enum that's been written as a string back to an enum.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) -- string to convert</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>converted, converted enum or original</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.enums.get_enum_from_value">
+<code class="sig-prename descclassname"><span class="pre">jade.enums.</span></code><code class="sig-name descname"><span class="pre">get_enum_from_value</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/enums.html#get_enum_from_value"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.enums.get_enum_from_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the enum for the given value.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.enums.EnumEncoder">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.enums.</span></code><code class="sig-name descname"><span class="pre">EnumEncoder</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">_dict=&lt;class</span> <span class="pre">'dict'&gt;</span></em>, <em class="sig-param"><span class="pre">preserve=False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/enums.html#EnumEncoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.enums.EnumEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">toml.encoder.TomlEncoder</span></code></p>
+<p>Custom encoder for enums.</p>
+<dl class="py method">
+<dt id="jade.enums.EnumEncoder.dump_enum">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">dump_enum</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/enums.html#EnumEncoder.dump_enum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.enums.EnumEncoder.dump_enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the enum value converted to string.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.events">
+<span id="jade-events-module"></span><h2>jade.events module<a class="headerlink" href="#module-jade.events" title="Permalink to this headline">¶</a></h2>
+<p>This module contains StructuredLogEvent and EventSummary classes.</p>
+<dl class="py class">
+<dt id="jade.events.StructuredLogEvent">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.events.</span></code><code class="sig-name descname"><span class="pre">StructuredLogEvent</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredLogEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredLogEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for recording structured log events.</p>
+<p>Initialize the class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>str</em><em>,</em>) -- The source of the event.</p></li>
+<li><p><strong>category</strong> (<em>str</em><em>,</em>) -- An event category given by the user.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>,</em>) -- An event name given by the user.</p></li>
+<li><p><strong>message</strong> -- An event message given the user.</p></li>
+<li><p><strong>kwargs</strong> -- Other information that the user needs to record into event.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="jade.events.StructuredLogEvent.base_field_names">
+<code class="sig-name descname"><span class="pre">base_field_names</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredLogEvent.base_field_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredLogEvent.base_field_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the base field names for the event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.StructuredLogEvent.field_names">
+<code class="sig-name descname"><span class="pre">field_names</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredLogEvent.field_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredLogEvent.field_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all field names for the event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.StructuredLogEvent.values">
+<code class="sig-name descname"><span class="pre">values</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredLogEvent.values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredLogEvent.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the values for all fields in the event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.StructuredLogEvent.deserialize">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">deserialize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredLogEvent.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredLogEvent.deserialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize event from JSON.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>record</strong> (<em>dict</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.events.StructuredLogEvent" title="jade.events.StructuredLogEvent">StructuredLogEvent</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.StructuredLogEvent.to_dict">
+<code class="sig-name descname"><span class="pre">to_dict</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredLogEvent.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredLogEvent.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert event object to dict</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.events.StructuredErrorLogEvent">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.events.</span></code><code class="sig-name descname"><span class="pre">StructuredErrorLogEvent</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredErrorLogEvent"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredErrorLogEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.events.StructuredLogEvent" title="jade.events.StructuredLogEvent"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.events.StructuredLogEvent</span></code></a></p>
+<p>Event specific to exceptions</p>
+<p>Must be called in an exception context.</p>
+<dl class="py method">
+<dt id="jade.events.StructuredErrorLogEvent.base_field_names">
+<code class="sig-name descname"><span class="pre">base_field_names</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#StructuredErrorLogEvent.base_field_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.StructuredErrorLogEvent.base_field_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the base field names for the event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.events.deserialize_event">
+<code class="sig-prename descclassname"><span class="pre">jade.events.</span></code><code class="sig-name descname"><span class="pre">deserialize_event</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#deserialize_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.deserialize_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct an event from raw  data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.events.StructuredLogEvent" title="jade.events.StructuredLogEvent">StructuredLogEvent</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.events.EventsSummary">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.events.</span></code><code class="sig-name descname"><span class="pre">EventsSummary</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">preload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Provides summary of all events.</p>
+<p>Initialize EventsSummary class</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output_dir</strong> (<em>str</em>) -- Path of jade output directory.</p></li>
+<li><p><strong>preload</strong> (<em>bool</em>) -- Load all events into memory; otherwise, load by name on demand.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="jade.events.EventsSummary.get_bytes_consumed">
+<code class="sig-name descname"><span class="pre">get_bytes_consumed</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.get_bytes_consumed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.get_bytes_consumed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a sum of all bytes_consumed events.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Size in bytes of files produced by all jobs</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.get_config_exec_time">
+<code class="sig-name descname"><span class="pre">get_config_exec_time</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.get_config_exec_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.get_config_exec_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the total number of seconds to run all jobs in the config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.iter_events">
+<code class="sig-name descname"><span class="pre">iter_events</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.iter_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.iter_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a generator over events with name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p><strong>event</strong> (<em>StructuredLogEvent</em>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.list_events">
+<code class="sig-name descname"><span class="pre">list_events</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.list_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.list_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the events of type name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of StructuredLogEvent</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.list_unique_categories">
+<code class="sig-name descname"><span class="pre">list_unique_categories</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.list_unique_categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.list_unique_categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the unique event categories in the log. Will cause all events
+to get loaded into memory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.list_unique_names">
+<code class="sig-name descname"><span class="pre">list_unique_names</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.list_unique_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.list_unique_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the unique event names in the log.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.show_events">
+<code class="sig-name descname"><span class="pre">show_events</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.show_events"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.show_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print tabular events in terminal</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.show_events_in_category">
+<code class="sig-name descname"><span class="pre">show_events_in_category</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">category</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.show_events_in_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.show_events_in_category" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print tabular events matching category in terminal. Will cause all
+events to get loaded into memory.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.show_event_categories">
+<code class="sig-name descname"><span class="pre">show_event_categories</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.show_event_categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.show_event_categories" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the unique event categories in the log.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.show_event_names">
+<code class="sig-name descname"><span class="pre">show_event_names</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.show_event_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.show_event_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the unique event names in the log.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.events.EventsSummary.to_json">
+<code class="sig-name descname"><span class="pre">to_json</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/events.html#EventsSummary.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.events.EventsSummary.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return all events in JSON format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.exceptions">
+<span id="jade-exceptions-module"></span><h2>jade.exceptions module<a class="headerlink" href="#module-jade.exceptions" title="Permalink to this headline">¶</a></h2>
+<p>Common exceptions for jade package</p>
+<dl class="py exception">
+<dt id="jade.exceptions.JadeBaseException">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">jade.exceptions.</span></code><code class="sig-name descname"><span class="pre">JadeBaseException</span></code><a class="reference internal" href="../_modules/jade/exceptions.html#JadeBaseException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.exceptions.JadeBaseException" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>All JADE exceptions should derive from this class.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="jade.exceptions.ExecutionError">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">jade.exceptions.</span></code><code class="sig-name descname"><span class="pre">ExecutionError</span></code><a class="reference internal" href="../_modules/jade/exceptions.html#ExecutionError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.exceptions.ExecutionError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.exceptions.JadeBaseException" title="jade.exceptions.JadeBaseException"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.exceptions.JadeBaseException</span></code></a></p>
+<p>Raised when execution fails.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="jade.exceptions.InvalidConfiguration">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">jade.exceptions.</span></code><code class="sig-name descname"><span class="pre">InvalidConfiguration</span></code><a class="reference internal" href="../_modules/jade/exceptions.html#InvalidConfiguration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.exceptions.InvalidConfiguration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.exceptions.JadeBaseException" title="jade.exceptions.JadeBaseException"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.exceptions.JadeBaseException</span></code></a></p>
+<p>Raised when the configuration is invalid.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="jade.exceptions.InvalidParameter">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">jade.exceptions.</span></code><code class="sig-name descname"><span class="pre">InvalidParameter</span></code><a class="reference internal" href="../_modules/jade/exceptions.html#InvalidParameter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.exceptions.InvalidParameter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.exceptions.JadeBaseException" title="jade.exceptions.JadeBaseException"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.exceptions.JadeBaseException</span></code></a></p>
+<p>Raised when bad user input is detected.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="jade.exceptions.JobAlreadyInProgress">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">jade.exceptions.</span></code><code class="sig-name descname"><span class="pre">JobAlreadyInProgress</span></code><a class="reference internal" href="../_modules/jade/exceptions.html#JobAlreadyInProgress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.exceptions.JobAlreadyInProgress" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.exceptions.JadeBaseException" title="jade.exceptions.JadeBaseException"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.exceptions.JadeBaseException</span></code></a></p>
+<p>Raised when a local job is started while another is in progress.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="jade.exceptions.UserAbort">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">jade.exceptions.</span></code><code class="sig-name descname"><span class="pre">UserAbort</span></code><a class="reference internal" href="../_modules/jade/exceptions.html#UserAbort"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.exceptions.UserAbort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.exceptions.JadeBaseException" title="jade.exceptions.JadeBaseException"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.exceptions.JadeBaseException</span></code></a></p>
+<p>Raised when the user has aborted the operation.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt id="jade.exceptions.InvalidExtension">
+<em class="property"><span class="pre">exception</span> </em><code class="sig-prename descclassname"><span class="pre">jade.exceptions.</span></code><code class="sig-name descname"><span class="pre">InvalidExtension</span></code><a class="reference internal" href="../_modules/jade/exceptions.html#InvalidExtension"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.exceptions.InvalidExtension" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.exceptions.JadeBaseException" title="jade.exceptions.JadeBaseException"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.exceptions.JadeBaseException</span></code></a></p>
+<p>Raise when extension does not exist in EXTENSIONS</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.loggers">
+<span id="jade-loggers-module"></span><h2>jade.loggers module<a class="headerlink" href="#module-jade.loggers" title="Permalink to this headline">¶</a></h2>
+<p>Contains logging configuration data.</p>
+<dl class="py function">
+<dt id="jade.loggers.setup_logging">
+<code class="sig-prename descclassname"><span class="pre">jade.loggers.</span></code><code class="sig-name descname"><span class="pre">setup_logging</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">console_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">packages</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/loggers.html#setup_logging"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.loggers.setup_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Configures logging to file and console.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) -- logger name</p></li>
+<li><p><strong>filename</strong> (<em>str | None</em>) -- log filename</p></li>
+<li><p><strong>console_level</strong> (<em>int</em><em>, </em><em>optional</em>) -- console log level</p></li>
+<li><p><strong>file_level</strong> (<em>int</em><em>, </em><em>optional</em>) -- file log level</p></li>
+<li><p><strong>packages</strong> (<em>list</em><em>, </em><em>optional</em>) -- enable logging for these package names</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.loggers.log_event">
+<code class="sig-prename descclassname"><span class="pre">jade.loggers.</span></code><code class="sig-name descname"><span class="pre">log_event</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/loggers.html#log_event"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.loggers.log_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Log a structured job event into log file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>event</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">StructuredLogEvent</span></code>) -- An instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">StructuredLogEvent</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.resource_monitor">
+<span id="jade-resource-monitor-module"></span><h2>jade.resource_monitor module<a class="headerlink" href="#module-jade.resource_monitor" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="jade.resource_monitor.ResourceMonitor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.resource_monitor.</span></code><code class="sig-name descname"><span class="pre">ResourceMonitor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#ResourceMonitor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Monitors resource utilization statistics</p>
+<dl class="py attribute">
+<dt id="jade.resource_monitor.ResourceMonitor.DISK_STATS">
+<code class="sig-name descname"><span class="pre">DISK_STATS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">('read_count',</span> <span class="pre">'write_count',</span> <span class="pre">'read_bytes',</span> <span class="pre">'write_bytes',</span> <span class="pre">'read_time',</span> <span class="pre">'write_time')</span></em><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor.DISK_STATS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.resource_monitor.ResourceMonitor.NET_STATS">
+<code class="sig-name descname"><span class="pre">NET_STATS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">('bytes_recv',</span> <span class="pre">'bytes_sent',</span> <span class="pre">'dropin',</span> <span class="pre">'dropout',</span> <span class="pre">'errin',</span> <span class="pre">'errout',</span> <span class="pre">'packets_recv',</span> <span class="pre">'packets_sent')</span></em><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor.NET_STATS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.ResourceMonitor.log_resource_stats">
+<code class="sig-name descname"><span class="pre">log_resource_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#ResourceMonitor.log_resource_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor.log_resource_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs resource stats information as structured job events.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.ResourceMonitor.log_cpu_stats">
+<code class="sig-name descname"><span class="pre">log_cpu_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#ResourceMonitor.log_cpu_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor.log_cpu_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs CPU resource stats information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.ResourceMonitor.log_disk_stats">
+<code class="sig-name descname"><span class="pre">log_disk_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#ResourceMonitor.log_disk_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor.log_disk_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs disk stats.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.ResourceMonitor.log_memory_stats">
+<code class="sig-name descname"><span class="pre">log_memory_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#ResourceMonitor.log_memory_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor.log_memory_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs memory resource stats information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.ResourceMonitor.log_network_stats">
+<code class="sig-name descname"><span class="pre">log_network_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#ResourceMonitor.log_network_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.ResourceMonitor.log_network_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs memory resource stats information.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.resource_monitor.StatsViewerBase">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.resource_monitor.</span></code><code class="sig-name descname"><span class="pre">StatsViewerBase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#StatsViewerBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.StatsViewerBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for viewing statistics</p>
+<dl class="py method">
+<dt id="jade.resource_monitor.StatsViewerBase.get_dataframe">
+<code class="sig-name descname"><span class="pre">get_dataframe</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#StatsViewerBase.get_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.StatsViewerBase.get_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a dataframe for the batch's stats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>str</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.StatsViewerBase.iter_batch_names">
+<code class="sig-name descname"><span class="pre">iter_batch_names</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#StatsViewerBase.iter_batch_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.StatsViewerBase.iter_batch_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an iterator over the batch names.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.StatsViewerBase.plot_to_file">
+<code class="sig-name descname"><span class="pre">plot_to_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#StatsViewerBase.plot_to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.StatsViewerBase.plot_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make plots of resource utilization for one node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>directory</strong> (<em>str</em>) -- output directory</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.StatsViewerBase.show_stats">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">show_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#StatsViewerBase.show_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.StatsViewerBase.show_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show statistics</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.resource_monitor.StatsViewerBase.show_stat_totals">
+<code class="sig-name descname"><span class="pre">show_stat_totals</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stats_to_total</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#StatsViewerBase.show_stat_totals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.StatsViewerBase.show_stat_totals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a table that shows statistic totals by batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stats_to_total</strong> (<em>list</em>) -- </p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.resource_monitor.CpuStatsViewer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.resource_monitor.</span></code><code class="sig-name descname"><span class="pre">CpuStatsViewer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#CpuStatsViewer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.CpuStatsViewer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.resource_monitor.StatsViewerBase" title="jade.resource_monitor.StatsViewerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.resource_monitor.StatsViewerBase</span></code></a></p>
+<p>Shows CPU statistics</p>
+<dl class="py method">
+<dt id="jade.resource_monitor.CpuStatsViewer.show_stats">
+<code class="sig-name descname"><span class="pre">show_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#CpuStatsViewer.show_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.CpuStatsViewer.show_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show statistics</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.resource_monitor.DiskStatsViewer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.resource_monitor.</span></code><code class="sig-name descname"><span class="pre">DiskStatsViewer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#DiskStatsViewer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.DiskStatsViewer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.resource_monitor.StatsViewerBase" title="jade.resource_monitor.StatsViewerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.resource_monitor.StatsViewerBase</span></code></a></p>
+<p>Shows disk statistics</p>
+<dl class="py method">
+<dt id="jade.resource_monitor.DiskStatsViewer.show_stats">
+<code class="sig-name descname"><span class="pre">show_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#DiskStatsViewer.show_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.DiskStatsViewer.show_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show statistics</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.resource_monitor.MemoryStatsViewer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.resource_monitor.</span></code><code class="sig-name descname"><span class="pre">MemoryStatsViewer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#MemoryStatsViewer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.MemoryStatsViewer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.resource_monitor.StatsViewerBase" title="jade.resource_monitor.StatsViewerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.resource_monitor.StatsViewerBase</span></code></a></p>
+<p>Shows Memory statistics</p>
+<dl class="py method">
+<dt id="jade.resource_monitor.MemoryStatsViewer.show_stats">
+<code class="sig-name descname"><span class="pre">show_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#MemoryStatsViewer.show_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.MemoryStatsViewer.show_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show statistics</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.resource_monitor.NetworkStatsViewer">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.resource_monitor.</span></code><code class="sig-name descname"><span class="pre">NetworkStatsViewer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#NetworkStatsViewer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.NetworkStatsViewer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.resource_monitor.StatsViewerBase" title="jade.resource_monitor.StatsViewerBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.resource_monitor.StatsViewerBase</span></code></a></p>
+<p>Shows Network statistics</p>
+<dl class="py method">
+<dt id="jade.resource_monitor.NetworkStatsViewer.show_stats">
+<code class="sig-name descname"><span class="pre">show_stats</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/resource_monitor.html#NetworkStatsViewer.show_stats"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.resource_monitor.NetworkStatsViewer.show_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show statistics</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.result">
+<span id="jade-result-module"></span><h2>jade.result module<a class="headerlink" href="#module-jade.result" title="Permalink to this headline">¶</a></h2>
+<p>Defines a Result object.</p>
+<dl class="py class">
+<dt id="jade.result.Result">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.result.</span></code><code class="sig-name descname"><span class="pre">Result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exec_time_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completion_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#Result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.Result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.result.Result" title="jade.result.Result"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.result.Result</span></code></a></p>
+<p>Result class containing data after jobs have finished. <cite>completion_time</cite>
+will be populated when result created and passed in when deserializing</p>
+<dl class="py attribute">
+<dt id="jade.result.Result.name">
+<code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#jade.result.Result.name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.result.Result.return_code">
+<code class="sig-name descname"><span class="pre">return_code</span></code><a class="headerlink" href="#jade.result.Result.return_code" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.result.Result.status">
+<code class="sig-name descname"><span class="pre">status</span></code><a class="headerlink" href="#jade.result.Result.status" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.result.Result.exec_time_s">
+<code class="sig-name descname"><span class="pre">exec_time_s</span></code><a class="headerlink" href="#jade.result.Result.exec_time_s" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.result.Result.completion_time">
+<code class="sig-name descname"><span class="pre">completion_time</span></code><a class="headerlink" href="#jade.result.Result.completion_time" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int (default current timestamp)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Create new instance of Result(name, return_code, status, exec_time_s, completion_time)</p>
+<dl class="py method">
+<dt id="jade.result.Result.is_canceled">
+<code class="sig-name descname"><span class="pre">is_canceled</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#Result.is_canceled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.Result.is_canceled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the result was canceled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.Result.is_failed">
+<code class="sig-name descname"><span class="pre">is_failed</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#Result.is_failed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.Result.is_failed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the result was failed.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.Result.is_successful">
+<code class="sig-name descname"><span class="pre">is_successful</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#Result.is_successful"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.Result.is_successful" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return True if the result was successful.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.result.serialize_result">
+<code class="sig-prename descclassname"><span class="pre">jade.result.</span></code><code class="sig-name descname"><span class="pre">serialize_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#serialize_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.serialize_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize a Result to a dict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>result</strong> (<a class="reference internal" href="#jade.result.Result" title="jade.result.Result"><em>Result</em></a>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.result.serialize_results">
+<code class="sig-prename descclassname"><span class="pre">jade.result.</span></code><code class="sig-name descname"><span class="pre">serialize_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#serialize_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.serialize_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Serialize a list of Result objects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>result</strong> (<a class="reference internal" href="#jade.result.Result" title="jade.result.Result"><em>Result</em></a>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.result.deserialize_result">
+<code class="sig-prename descclassname"><span class="pre">jade.result.</span></code><code class="sig-name descname"><span class="pre">deserialize_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#deserialize_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.deserialize_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize a Result from raw data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>dict</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#jade.result.Result" title="jade.result.Result">Result</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="jade.result.deserialize_results">
+<code class="sig-prename descclassname"><span class="pre">jade.result.</span></code><code class="sig-name descname"><span class="pre">deserialize_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#deserialize_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.deserialize_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deserialize a list of Result objects from raw data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>list of dict</em>) -- </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list of Result</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.result.ResultsSummary">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.result.</span></code><code class="sig-name descname"><span class="pre">ResultsSummary</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Provides summary of all job results.</p>
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.base_directory">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">base_directory</span></code><a class="headerlink" href="#jade.result.ResultsSummary.base_directory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the base directory for the job results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.results">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">results</span></code><a class="headerlink" href="#jade.result.ResultsSummary.results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list of Result objects</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.get_result">
+<code class="sig-name descname"><span class="pre">get_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.get_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.get_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the job result from the results
+:param job_name:
+:type job_name: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.get_successful_result">
+<code class="sig-name descname"><span class="pre">get_successful_result</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.get_successful_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.get_successful_result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the successful job result from the results
+:param job_name:
+:type job_name: str</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><a class="reference internal" href="#jade.exceptions.InvalidParameter" title="jade.exceptions.InvalidParameter"><strong>InvalidParameter</strong></a> -- Raised if job_name is not found.</p></li>
+<li><p><a class="reference internal" href="#jade.exceptions.ExecutionError" title="jade.exceptions.ExecutionError"><strong>ExecutionError</strong></a> -- Raised if the result was not successful.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.get_successful_results">
+<code class="sig-name descname"><span class="pre">get_successful_results</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.get_successful_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.get_successful_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the successful results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.get_missing_jobs">
+<code class="sig-name descname"><span class="pre">get_missing_jobs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">expected_jobs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.get_missing_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.get_missing_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the jobs for which there are no results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expected_jobs</strong> (<em>list</em>) -- </p></li>
+<li><p><strong>that are expected to be in results</strong> (<em>jobs</em>) -- </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.get_canceled_results">
+<code class="sig-name descname"><span class="pre">get_canceled_results</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.get_canceled_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.get_canceled_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the canceled results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.get_failed_results">
+<code class="sig-name descname"><span class="pre">get_failed_results</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.get_failed_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.get_failed_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the failed results.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.list_results">
+<code class="sig-name descname"><span class="pre">list_results</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.list_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.list_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p></p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="jade.result.ResultsSummary.show_results">
+<code class="sig-name descname"><span class="pre">show_results</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">only_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">only_successful</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/result.html#ResultsSummary.show_results"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.result.ResultsSummary.show_results" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the results in a table.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.test_common">
+<span id="jade-test-common-module"></span><h2>jade.test_common module<a class="headerlink" href="#module-jade.test_common" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jade.version">
+<span id="jade-version-module"></span><h2>jade.version module<a class="headerlink" href="#module-jade.version" title="Permalink to this headline">¶</a></h2>
+<p>jade version number</p>
+</div>
+<div class="section" id="module-jade">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jade" title="Permalink to this headline">¶</a></h2>
+<p>Jade package</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="jade.cli.html" class="btn btn-neutral float-right" title="jade.cli package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modules.html" class="btn btn-neutral float-left" title="jade" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

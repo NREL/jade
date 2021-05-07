@@ -1,0 +1,704 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="Python" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>jade.models package &mdash; jade 0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jade.utils package" href="jade.utils.html" />
+    <link rel="prev" title="jade.jobs package" href="jade.jobs.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> jade
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#configuring-jobs">Configuring Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#debugging">Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../jade.html">jade</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="modules.html">jade</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jade.html">jade package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jade</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../jade.html">jade</a> &raquo;</li>
+        
+          <li><a href="modules.html">jade</a> &raquo;</li>
+        
+          <li><a href="jade.html">jade package</a> &raquo;</li>
+        
+      <li>jade.models package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/jade/jade.models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="jade-models-package">
+<h1>jade.models package<a class="headerlink" href="#jade-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-jade.models.base">
+<span id="jade-models-base-module"></span><h2>jade.models.base module<a class="headerlink" href="#module-jade.models.base" title="Permalink to this headline">¶</a></h2>
+<p>Defines JADE base model</p>
+<dl class="py class">
+<dt id="jade.models.base.JadeBaseModel">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.base.</span></code><code class="sig-name descname"><span class="pre">JadeBaseModel</span></code><a class="reference internal" href="../_modules/jade/models/base.html#JadeBaseModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.base.JadeBaseModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">pydantic.main.BaseModel</span></code></p>
+<p>Base class for JADE models.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py class">
+<dt id="jade.models.base.JadeBaseModel.Config">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Config</span></code><a class="reference internal" href="../_modules/jade/models/base.html#JadeBaseModel.Config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.base.JadeBaseModel.Config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="jade.models.base.JadeBaseModel.Config.title">
+<code class="sig-name descname"><span class="pre">title</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'JadeBaseModel'</span></em><a class="headerlink" href="#jade.models.base.JadeBaseModel.Config.title" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.base.JadeBaseModel.Config.anystr_strip_whitespace">
+<code class="sig-name descname"><span class="pre">anystr_strip_whitespace</span></code><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#jade.models.base.JadeBaseModel.Config.anystr_strip_whitespace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.base.JadeBaseModel.Config.validate_assignment">
+<code class="sig-name descname"><span class="pre">validate_assignment</span></code><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#jade.models.base.JadeBaseModel.Config.validate_assignment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.base.JadeBaseModel.Config.validate_all">
+<code class="sig-name descname"><span class="pre">validate_all</span></code><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#jade.models.base.JadeBaseModel.Config.validate_all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.base.JadeBaseModel.Config.extra">
+<code class="sig-name descname"><span class="pre">extra</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'forbid'</span></em><a class="headerlink" href="#jade.models.base.JadeBaseModel.Config.extra" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.base.JadeBaseModel.Config.use_enum_values">
+<code class="sig-name descname"><span class="pre">use_enum_values</span></code><em class="property"> <span class="pre">=</span> <span class="pre">False</span></em><a class="headerlink" href="#jade.models.base.JadeBaseModel.Config.use_enum_values" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.models.cluster_config">
+<span id="jade-models-cluster-config-module"></span><h2>jade.models.cluster_config module<a class="headerlink" href="#module-jade.models.cluster_config" title="Permalink to this headline">¶</a></h2>
+<p>Defines the cluster configuration</p>
+<dl class="py class">
+<dt id="jade.models.cluster_config.ClusterConfig">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.cluster_config.</span></code><code class="sig-name descname"><span class="pre">ClusterConfig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submitter</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submitter_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jade.models.submitter_params.SubmitterParams" title="jade.models.submitter_params.SubmitterParams"><span class="pre">jade.models.submitter_params.SubmitterParams</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_stage_num</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_jobs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submitted_jobs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_jobs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_complete</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_canceled</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/cluster_config.html#ClusterConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Describes the roles of compute nodes participating in a JADE config.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.submitter">
+<code class="sig-name descname"><span class="pre">submitter</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.submitter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.submitter_params">
+<code class="sig-name descname"><span class="pre">submitter_params</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="#jade.models.submitter_params.SubmitterParams" title="jade.models.submitter_params.SubmitterParams"><span class="pre">jade.models.submitter_params.SubmitterParams</span></a></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.submitter_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.path">
+<code class="sig-name descname"><span class="pre">path</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.pipeline_stage_num">
+<code class="sig-name descname"><span class="pre">pipeline_stage_num</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.pipeline_stage_num" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.num_jobs">
+<code class="sig-name descname"><span class="pre">num_jobs</span></code><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.num_jobs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.submitted_jobs">
+<code class="sig-name descname"><span class="pre">submitted_jobs</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.submitted_jobs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.completed_jobs">
+<code class="sig-name descname"><span class="pre">completed_jobs</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.completed_jobs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.is_complete">
+<code class="sig-name descname"><span class="pre">is_complete</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.is_complete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.is_canceled">
+<code class="sig-name descname"><span class="pre">is_canceled</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.is_canceled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.cluster_config.ClusterConfig.version">
+<code class="sig-name descname"><span class="pre">version</span></code><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#jade.models.cluster_config.ClusterConfig.version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.models.hpc">
+<span id="jade-models-hpc-module"></span><h2>jade.models.hpc module<a class="headerlink" href="#module-jade.models.hpc" title="Permalink to this headline">¶</a></h2>
+<p>Models for HPC configurations</p>
+<dl class="py class">
+<dt id="jade.models.hpc.SlurmConfig">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.hpc.</span></code><code class="sig-name descname"><span class="pre">SlurmConfig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'short'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qos</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walltime</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'4:00:00'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/hpc.html#SlurmConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.hpc.SlurmConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Defines config options for the SLURM queueing system.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.hpc.SlurmConfig.account">
+<code class="sig-name descname"><span class="pre">account</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#jade.models.hpc.SlurmConfig.account" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.hpc.SlurmConfig.partition">
+<code class="sig-name descname"><span class="pre">partition</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.hpc.SlurmConfig.partition" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.hpc.SlurmConfig.qos">
+<code class="sig-name descname"><span class="pre">qos</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.hpc.SlurmConfig.qos" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.hpc.SlurmConfig.walltime">
+<code class="sig-name descname"><span class="pre">walltime</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.hpc.SlurmConfig.walltime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="jade.models.hpc.SlurmConfig.handle_allocation">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">handle_allocation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">dict</span><a class="reference internal" href="../_modules/jade/models/hpc.html#SlurmConfig.handle_allocation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.hpc.SlurmConfig.handle_allocation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.models.hpc.FakeHpcConfig">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.hpc.</span></code><code class="sig-name descname"><span class="pre">FakeHpcConfig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walltime</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/hpc.html#FakeHpcConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.hpc.FakeHpcConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Defines config options for the fake queueing system.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.hpc.FakeHpcConfig.walltime">
+<code class="sig-name descname"><span class="pre">walltime</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#jade.models.hpc.FakeHpcConfig.walltime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.models.hpc.LocalHpcConfig">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.hpc.</span></code><code class="sig-name descname"><span class="pre">LocalHpcConfig</span></code><a class="reference internal" href="../_modules/jade/models/hpc.html#LocalHpcConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.hpc.LocalHpcConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Defines config options when there is no HPC.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.models.hpc.HpcConfig">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.hpc.</span></code><code class="sig-name descname"><span class="pre">HpcConfig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hpc_type</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="jade.hpc.html#jade.hpc.common.HpcType" title="jade.hpc.common.HpcType"><span class="pre">jade.hpc.common.HpcType</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_prefix</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'job'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hpc</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jade.models.hpc.SlurmConfig" title="jade.models.hpc.SlurmConfig"><span class="pre">jade.models.hpc.SlurmConfig</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#jade.models.hpc.FakeHpcConfig" title="jade.models.hpc.FakeHpcConfig"><span class="pre">jade.models.hpc.FakeHpcConfig</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#jade.models.hpc.LocalHpcConfig" title="jade.models.hpc.LocalHpcConfig"><span class="pre">jade.models.hpc.LocalHpcConfig</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/hpc.html#HpcConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.hpc.HpcConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Defines config options for the HPC.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.hpc.HpcConfig.hpc_type">
+<code class="sig-name descname"><span class="pre">hpc_type</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="jade.hpc.html#jade.hpc.common.HpcType" title="jade.hpc.common.HpcType"><span class="pre">jade.hpc.common.HpcType</span></a></em><a class="headerlink" href="#jade.models.hpc.HpcConfig.hpc_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.hpc.HpcConfig.job_prefix">
+<code class="sig-name descname"><span class="pre">job_prefix</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.hpc.HpcConfig.job_prefix" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.hpc.HpcConfig.hpc">
+<code class="sig-name descname"><span class="pre">hpc</span></code><em class="property"><span class="pre">:</span> <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jade.models.hpc.SlurmConfig" title="jade.models.hpc.SlurmConfig"><span class="pre">jade.models.hpc.SlurmConfig</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#jade.models.hpc.FakeHpcConfig" title="jade.models.hpc.FakeHpcConfig"><span class="pre">jade.models.hpc.FakeHpcConfig</span></a><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="#jade.models.hpc.LocalHpcConfig" title="jade.models.hpc.LocalHpcConfig"><span class="pre">jade.models.hpc.LocalHpcConfig</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.hpc.HpcConfig.hpc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.models.jobs">
+<span id="jade-models-jobs-module"></span><h2>jade.models.jobs module<a class="headerlink" href="#module-jade.models.jobs" title="Permalink to this headline">¶</a></h2>
+<p>Models for jobs</p>
+<dl class="py class">
+<dt id="jade.models.jobs.JobState">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.jobs.</span></code><code class="sig-name descname"><span class="pre">JobState</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/jobs.html#JobState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.jobs.JobState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>Job states</p>
+<dl class="py attribute">
+<dt id="jade.models.jobs.JobState.NOT_SUBMITTED">
+<code class="sig-name descname"><span class="pre">NOT_SUBMITTED</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'not_submitted'</span></em><a class="headerlink" href="#jade.models.jobs.JobState.NOT_SUBMITTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.JobState.SUBMITTED">
+<code class="sig-name descname"><span class="pre">SUBMITTED</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'submitted'</span></em><a class="headerlink" href="#jade.models.jobs.JobState.SUBMITTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.JobState.DONE">
+<code class="sig-name descname"><span class="pre">DONE</span></code><em class="property"> <span class="pre">=</span> <span class="pre">'done'</span></em><a class="headerlink" href="#jade.models.jobs.JobState.DONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.models.jobs.Job">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.jobs.</span></code><code class="sig-name descname"><span class="pre">Job</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocked_by</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cancel_on_blocking_job_failure</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jade.models.jobs.JobState" title="jade.models.jobs.JobState"><span class="pre">jade.models.jobs.JobState</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/jobs.html#Job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.jobs.Job" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Describes the status of all jobs in the JADE config.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.jobs.Job.name">
+<code class="sig-name descname"><span class="pre">name</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#jade.models.jobs.Job.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.Job.blocked_by">
+<code class="sig-name descname"><span class="pre">blocked_by</span></code><em class="property"><span class="pre">:</span> <span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.jobs.Job.blocked_by" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.Job.cancel_on_blocking_job_failure">
+<code class="sig-name descname"><span class="pre">cancel_on_blocking_job_failure</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.jobs.Job.cancel_on_blocking_job_failure" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.Job.state">
+<code class="sig-name descname"><span class="pre">state</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="#jade.models.jobs.JobState" title="jade.models.jobs.JobState"><span class="pre">jade.models.jobs.JobState</span></a></em><a class="headerlink" href="#jade.models.jobs.Job.state" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.models.jobs.JobStatus">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.jobs.</span></code><code class="sig-name descname"><span class="pre">JobStatus</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jade.models.jobs.Job" title="jade.models.jobs.Job"><span class="pre">jade.models.jobs.Job</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hpc_job_ids</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_index</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">version</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/jobs.html#JobStatus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.jobs.JobStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Describes all jobs in the JADE config.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.jobs.JobStatus.jobs">
+<code class="sig-name descname"><span class="pre">jobs</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jade.models.jobs.Job" title="jade.models.jobs.Job"><span class="pre">jade.models.jobs.Job</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.jobs.JobStatus.jobs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.JobStatus.hpc_job_ids">
+<code class="sig-name descname"><span class="pre">hpc_job_ids</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.jobs.JobStatus.hpc_job_ids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.JobStatus.batch_index">
+<code class="sig-name descname"><span class="pre">batch_index</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.jobs.JobStatus.batch_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.jobs.JobStatus.version">
+<code class="sig-name descname"><span class="pre">version</span></code><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#jade.models.jobs.JobStatus.version" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.models.pipeline">
+<span id="jade-models-pipeline-module"></span><h2>jade.models.pipeline module<a class="headerlink" href="#module-jade.models.pipeline" title="Permalink to this headline">¶</a></h2>
+<p>Models for pipeline execution</p>
+<dl class="py class">
+<dt id="jade.models.pipeline.PipelineStage">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.pipeline.</span></code><code class="sig-name descname"><span class="pre">PipelineStage</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_config_cmd</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_num</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_code</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submitter_params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jade.models.submitter_params.SubmitterParams" title="jade.models.submitter_params.SubmitterParams"><span class="pre">jade.models.submitter_params.SubmitterParams</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/pipeline.html#PipelineStage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.pipeline.PipelineStage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Describes one stage of a pipeline.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineStage.auto_config_cmd">
+<code class="sig-name descname"><span class="pre">auto_config_cmd</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#jade.models.pipeline.PipelineStage.auto_config_cmd" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineStage.config_file">
+<code class="sig-name descname"><span class="pre">config_file</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#jade.models.pipeline.PipelineStage.config_file" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineStage.stage_num">
+<code class="sig-name descname"><span class="pre">stage_num</span></code><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#jade.models.pipeline.PipelineStage.stage_num" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineStage.path">
+<code class="sig-name descname"><span class="pre">path</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.pipeline.PipelineStage.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineStage.return_code">
+<code class="sig-name descname"><span class="pre">return_code</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.pipeline.PipelineStage.return_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineStage.submitter_params">
+<code class="sig-name descname"><span class="pre">submitter_params</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="#jade.models.submitter_params.SubmitterParams" title="jade.models.submitter_params.SubmitterParams"><span class="pre">jade.models.submitter_params.SubmitterParams</span></a></em><a class="headerlink" href="#jade.models.pipeline.PipelineStage.submitter_params" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="jade.models.pipeline.PipelineConfig">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.pipeline.</span></code><code class="sig-name descname"><span class="pre">PipelineConfig</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage_num</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stages</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jade.models.pipeline.PipelineStage" title="jade.models.pipeline.PipelineStage"><span class="pre">jade.models.pipeline.PipelineStage</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_complete</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/pipeline.html#PipelineConfig"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.pipeline.PipelineConfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Describes the configuration and status of a pipeline.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineConfig.path">
+<code class="sig-name descname"><span class="pre">path</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.pipeline.PipelineConfig.path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineConfig.stage_num">
+<code class="sig-name descname"><span class="pre">stage_num</span></code><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#jade.models.pipeline.PipelineConfig.stage_num" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineConfig.stages">
+<code class="sig-name descname"><span class="pre">stages</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#jade.models.pipeline.PipelineStage" title="jade.models.pipeline.PipelineStage"><span class="pre">jade.models.pipeline.PipelineStage</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.pipeline.PipelineConfig.stages" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.pipeline.PipelineConfig.is_complete">
+<code class="sig-name descname"><span class="pre">is_complete</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.pipeline.PipelineConfig.is_complete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.models.submitter_params">
+<span id="jade-models-submitter-params-module"></span><h2>jade.models.submitter_params module<a class="headerlink" href="#module-jade.models.submitter_params" title="Permalink to this headline">¶</a></h2>
+<p>Models for submitter options</p>
+<dl class="py class">
+<dt id="jade.models.submitter_params.SubmitterParams">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">jade.models.submitter_params.</span></code><code class="sig-name descname"><span class="pre">SubmitterParams</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">generate_reports</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hpc_config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="#jade.models.hpc.HpcConfig" title="jade.models.hpc.HpcConfig"><span class="pre">jade.models.hpc.HpcConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_nodes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">16</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">per_node_batch_size</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_setup_script</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_shutdown_script</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poll_interval</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">60</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource_monitor_interval</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_add_blocked_jobs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/models/submitter_params.html#SubmitterParams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#jade.models.base.JadeBaseModel" title="jade.models.base.JadeBaseModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">jade.models.base.JadeBaseModel</span></code></a></p>
+<p>Defines the submitter options selected by the user.</p>
+<p>Create a new model by parsing and validating input data from keyword arguments.</p>
+<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p>
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.generate_reports">
+<code class="sig-name descname"><span class="pre">generate_reports</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.generate_reports" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.hpc_config">
+<code class="sig-name descname"><span class="pre">hpc_config</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="#jade.models.hpc.HpcConfig" title="jade.models.hpc.HpcConfig"><span class="pre">jade.models.hpc.HpcConfig</span></a></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.hpc_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.max_nodes">
+<code class="sig-name descname"><span class="pre">max_nodes</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.max_nodes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.num_processes">
+<code class="sig-name descname"><span class="pre">num_processes</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.num_processes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.per_node_batch_size">
+<code class="sig-name descname"><span class="pre">per_node_batch_size</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.per_node_batch_size" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.node_setup_script">
+<code class="sig-name descname"><span class="pre">node_setup_script</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.node_setup_script" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.node_shutdown_script">
+<code class="sig-name descname"><span class="pre">node_shutdown_script</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.node_shutdown_script" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.poll_interval">
+<code class="sig-name descname"><span class="pre">poll_interval</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.poll_interval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.resource_monitor_interval">
+<code class="sig-name descname"><span class="pre">resource_monitor_interval</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.resource_monitor_interval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.try_add_blocked_jobs">
+<code class="sig-name descname"><span class="pre">try_add_blocked_jobs</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.try_add_blocked_jobs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="jade.models.submitter_params.SubmitterParams.verbose">
+<code class="sig-name descname"><span class="pre">verbose</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#jade.models.submitter_params.SubmitterParams.verbose" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-jade.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-jade.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="jade.utils.html" class="btn btn-neutral float-right" title="jade.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="jade.jobs.html" class="btn btn-neutral float-left" title="jade.jobs package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright 2019, NREL.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,53 @@
+jade.extensions.generic\_command package
+========================================
+
+Submodules
+----------
+
+jade.extensions.generic\_command.cli module
+-------------------------------------------
+
+.. automodule:: jade.extensions.generic_command.cli
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.generic\_command.generic\_command\_configuration module
+-----------------------------------------------------------------------
+
+.. automodule:: jade.extensions.generic_command.generic_command_configuration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.generic\_command.generic\_command\_execution module
+-------------------------------------------------------------------
+
+.. automodule:: jade.extensions.generic_command.generic_command_execution
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.generic\_command.generic\_command\_inputs module
+----------------------------------------------------------------
+
+.. automodule:: jade.extensions.generic_command.generic_command_inputs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+jade.extensions.generic\_command.generic\_command\_parameters module
+--------------------------------------------------------------------
+
+.. automodule:: jade.extensions.generic_command.generic_command_parameters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: jade.extensions.generic_command
+   :members:
+   :undoc-members:
+   :show-inheritance:
