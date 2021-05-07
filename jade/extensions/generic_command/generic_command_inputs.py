@@ -18,9 +18,11 @@ class GenericCommandInputs(JobInputsInterface):
         self._filename = filename
         self._parameters = []
         with open(filename) as f_in:
-            self._parameters = [
-                GenericCommandParameters(x.strip()) for x in f_in.readlines()
-            ]
+            self._parameters = []
+            for line in f_in.readlines():
+                line = line.strip()
+                if line:
+                    self._parameters.append(GenericCommandParameters(line))
 
     @property
     def base_directory(self):

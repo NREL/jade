@@ -1,6 +1,6 @@
 """Implement JobConfiguration for generic_command."""
 
-from jade.jobs.job_container_by_key import JobContainerByKey
+from jade.exceptions import InvalidConfiguration
 from jade.jobs.job_configuration import JobConfiguration
 from jade.extensions.generic_command.generic_command_inputs import \
     GenericCommandInputs
@@ -48,6 +48,8 @@ class GenericCommandConfiguration(JobConfiguration):
             job.job_id = self._cur_job_id
             self._cur_job_id += 1
 
+        if not job.command:
+            raise InvalidConfiguration(f"command cannot be emtpy: job_id={job.job_id}")
         self._jobs.add_job(job)
 
     def create_from_result(self, job, output_dir):
