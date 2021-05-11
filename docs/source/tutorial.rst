@@ -55,6 +55,10 @@ Create a text file with a list of commands, one per line.
     bash my_script.sh ARG1
     bash my_script.sh ARG2
 
+.. warning:: Commands are not run through a shell, so you cannot use special
+   shell characters. You can workaround this by putting your command in a
+   shell script.
+
 Job Commands
 ------------
 
