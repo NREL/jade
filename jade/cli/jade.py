@@ -25,7 +25,7 @@ from jade.cli.wait import wait
 logger = logging.getLogger(__name__)
 
 
-def _show_version(_, version):
+def _show_version(_, __, version):
     if version:
         print(f"JADE version {jade.version.__version__}")
         sys.exit(0)
