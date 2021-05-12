@@ -5,6 +5,19 @@ Tutorial
 This page describes how to use the JADE package to create, modify, and run
 jobs locally or on HPC.
 
+CLI Commands
+============
+All CLI commands documented in this page have a hierchical nature. There are
+group commands followed by subcommands. You can enter ``--help`` at any level.
+For example:
+
+.. code-block:: bash
+
+    $ jade --help
+    $ jade config --help
+    $ jade config hpc --help
+
+
 HPC Configuration
 =================
 This section only applies if you run your jobs on HPC.
