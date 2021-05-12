@@ -11,6 +11,8 @@ from jade.common import OUTPUT_DIR
 from jade.cli.common import COMMON_SUBMITTER_OPTIONS, add_options, make_submitter_params
 from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging
+from jade.hpc.common import HpcType
+from jade.models.hpc import SlurmConfig
 from jade.models.submitter_params import SubmitterParams
 from jade.jobs.cluster import Cluster
 from jade.utils.utils import get_cli_string, load_data
@@ -91,6 +93,13 @@ def submit_jobs(
             node_setup_script=node_setup_script,
             node_shutdown_script=node_shutdown_script,
         )
+
+    if params.hpc_config.hpc_type == HpcType.SLURM:
+        # TODO: we could pick this based on walltime if we hard-code for NREL HPC.
+        if not params.hpc_config.hpc.partition:
+            print("The SLURM partition/queue must be defined.")
+            sys.exit(1)
+
     os.makedirs(output)
 
     filename = os.path.join(output, "submit_jobs.log")
