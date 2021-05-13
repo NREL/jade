@@ -457,9 +457,42 @@ JADE will also log any unhandled exceptions here.
     $ jade show-events
     $ jade show-events -c Error
 
+Filtering jobs
+--------------
+You may want to debug a subset of the jobs.
+
+Filter the first job into a new config file:
+
+.. code-block:: bash
+
+    $ jade config filter config.json 0 -o new_config.json
+
+Filter ranges of indices of jobs into a new config file:
+
+.. code-block:: bash
+
+    $ jade config filter config.json :5 10:15 20 25 -o new_config.json
+
+Deadlocks
+---------
+While it should be very rare, it is possible that JADE gets deadlocked and
+stops submitting jobs. When a compute node finishes a batch of jobs it acquires
+a file lock in order to update status and attempt to submit new jobs. This
+should usually take less than one second. If a walltime timeout occurs while
+this lock is held and the JADE process is terminated then no other node will be
+able to promote itself to submitter and jobs will be stuck.
+
+We plan to add code to detect this condition and resolve it in the future. If
+this occurs you can fix it manually by deleting the lock file and restarting
+jobs.
+
+.. code-block:: bash
+
+    $ rm <output-dir>/cluster_config.json.lock
+    $ jade try-submit-jobs <output-dir>
 
 Resource Monitoring
--------------------
+===================
 JADE optionally monitors CPU, disk, memory, and network utilization
 statistics in structured log events. You can enable the feature by passing
 ``-rX`` or ``--resource-monitor-interval=X`` where ``X`` is an interval in
@@ -476,6 +509,10 @@ plots of the this data in ``<output-dir>/stats``.
     ├── DiskStatsViewer__resource_monitor_batch_0.html
     ├── MemoryStatsViewer__resource_monitor_batch_0.html
     └── NetworkStatsViewer__resource_monitor_batch_0.html
+
+.. figure::  images/cpu.png
+
+.. figure::  images/memory.png
 
 Use this CLI command to view textual tables after a run:
 
@@ -504,7 +541,7 @@ is how to view CPU stats for the node that ran the first batch:
        print(cpu_df.head())
 
 Standalone Resource Monitoring
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------
 The same resource monitoring functionality is available as a standalone script.
 This can be useful to debug your application on your own system or in an interactive
 session on a compute node. Here's how to do it:
@@ -521,21 +558,3 @@ session on a compute node. Here's how to do it:
     2021-05-12 16:59:48,629 - INFO [jade.resource_monitor resource_monitor.py:226] : Generated plot in job-stats/stats/NetworkStatsViewer__ResourceMonitor.html
 
 Open the interactive plots in a browser.
-
-Deadlocks
----------
-While it should be very rare, it is possible that JADE gets deadlocked and
-stops submitting jobs. When a compute node finishes a batch of jobs it acquires
-a file lock in order to update status and attempt to submit new jobs. This
-should usually take less than one second. If a walltime timeout occurs while
-this lock is held and the JADE process is terminated then no other node will be
-able to promote itself to submitter and jobs will be stuck.
-
-We plan to add code to detect this condition and resolve it in the future. If
-this occurs you can fix it manually by deleting the lock file and restarting
-jobs.
-
-.. code-block:: bash
-
-    $ rm <output-dir>/cluster_config.json.lock
-    $ jade try-submit-jobs <output-dir>
