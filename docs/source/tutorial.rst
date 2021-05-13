@@ -503,6 +503,25 @@ is how to view CPU stats for the node that ran the first batch:
        cpu_df =  viewer.get_dataframe(name)
        print(cpu_df.head())
 
+Standalone Resource Monitoring
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The same resource monitoring functionality is available as a standalone script.
+This can be useful to debug your application on your own system or in an interactive
+session on a compute node. Here's how to do it:
+
+.. code-block:: bash
+
+    $ jade stats collect --interval=1 --output=job-stats
+    # Run your application in a separate terminal.
+    # Press Ctrl-c when your application is finished.
+    $ jade stats plot --output=job-stats
+    2021-05-12 16:59:48,367 - INFO [jade.resource_monitor resource_monitor.py:226] : Generated plot in job-stats/stats/CpuStatsViewer__ResourceMonitor.html
+    2021-05-12 16:59:48,462 - INFO [jade.resource_monitor resource_monitor.py:226] : Generated plot in job-stats/stats/DiskStatsViewer__ResourceMonitor.html
+    2021-05-12 16:59:48,541 - INFO [jade.resource_monitor resource_monitor.py:226] : Generated plot in job-stats/stats/MemoryStatsViewer__ResourceMonitor.html
+    2021-05-12 16:59:48,629 - INFO [jade.resource_monitor resource_monitor.py:226] : Generated plot in job-stats/stats/NetworkStatsViewer__ResourceMonitor.html
+
+Open the interactive plots in a browser.
+
 Deadlocks
 ---------
 While it should be very rare, it is possible that JADE gets deadlocked and
