@@ -7,7 +7,7 @@ import sys
 import threading
 import time
 
-from jade.exceptions import JobAlreadyInProgress
+from jade.exceptions import JobAlreadyInProgress, ExecutionError
 from jade.utils.timing_utils import timed_debug
 
 
@@ -181,3 +181,17 @@ def run_command(cmd, output=None, cwd=None):
             logger.debug(output["stderr"])
 
     return ret
+
+
+def check_run_command(*args, **kwargs):
+    """Same as run_command except that it raises an exception on failure.
+
+    Raises
+    ------
+    ExecutionError
+        Raised if the command returns a non-zero return code.
+
+    """
+    ret = run_command(*args, **kwargs)
+    if ret != 0:
+        raise ExecutionError(f"command returned error code: {ret}")
