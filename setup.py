@@ -32,7 +32,7 @@ with open(os.path.join(here, "jade", "version.py"), encoding="utf-8") as f:
 
 version = version.split()[2].strip('"').strip("'")
 
-test_requires = ["pytest", ]
+test_requires = ["pytest", "mock"]
 
 setup(
     name="jade",
@@ -62,5 +62,9 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     test_suite="tests",
+    extras_require={
+        "test": test_requires,
+    },
+
     install_requires=read_lines("requirements.txt"),
 )
