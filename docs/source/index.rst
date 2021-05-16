@@ -45,14 +45,6 @@ JADE's default behavior is to treat each job with equal priority. Dependencies
 can be defined in the configuration to guarantee that a job won't start until
 one or more other jobs complete.
 
-A common use case is to define one data-upload job per batch that runs once all
-jobs in a single batch complete.
-
-Suppose you want to split 1000 jobs across 10 nodes. You want each job to write
-data to the compute node's local storage for performance reasons. You can
-define a 101st job for each batch that uploads that node's data to a permanent
-location.
-
 Batch Pipeline
 ==============
 JADE supports execution of a pipeline of job batches. The output of the first
