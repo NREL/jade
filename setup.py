@@ -32,6 +32,7 @@ with open(os.path.join(here, "jade", "version.py"), encoding="utf-8") as f:
 
 version = version.split()[2].strip('"').strip("'")
 
+dev_requires = ["black", "pre-commit"]
 test_requires = ["pytest", "mock"]
 
 setup(
@@ -63,8 +64,8 @@ setup(
     ],
     test_suite="tests",
     extras_require={
+        "dev": dev_requires,
         "test": test_requires,
     },
-
     install_requires=read_lines("requirements.txt"),
 )
