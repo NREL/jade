@@ -251,9 +251,9 @@ class ResultsSummary:
         print(f"JADE Version: {self._results['jade_version']}")
         print(f"{self._results['timestamp']}\n")
 
-        # if "repository_info" in self._results:
-        #    git_status = self._results["repository_info"]["status"]
-        #    print(f"git status:  {git_status}")
+        if not self._results["results"]:
+            print("There are no results.")
+            return
 
         num_successful = 0
         num_failed = 0
@@ -266,15 +266,8 @@ class ResultsSummary:
             "Execution Time (s)",
             "Completion Time",
         ]
-        min_exec = 0
-        max_exec = 0
-        if self._results["results"]:
-            min_exec = self._results["results"][0].exec_time_s
-            max_exec = self._results["results"][0].exec_time_s
-        else:
-            print("There are no results.")
-            return
-
+        min_exec = self._results["results"][0].exec_time_s
+        max_exec = self._results["results"][0].exec_time_s
         exec_times = []
         for result in self._results["results"]:
             if result.is_successful():
@@ -313,8 +306,7 @@ class ResultsSummary:
         print(f"Num failed: {num_failed}")
         print(f"Num canceled: {num_canceled}")
         print(f"Num missing: {num_missing}")
-        if self._missing_jobs:
-            print(f"Missing job names: {self._missing_jobs}")
+        print(f"Missing job names: {self._missing_jobs}")
         print(f"Total: {total}\n")
         print("Avg execution time (s): {:.2f}".format(avg_exec))
         print("Min execution time (s): {:.2f}".format(min_exec))
