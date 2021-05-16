@@ -9,8 +9,11 @@ from datetime import timedelta
 
 from jade.enums import JobCompletionStatus, Status
 from jade.events import (
-    StructuredLogEvent, EVENT_CATEGORY_HPC, EVENT_NAME_HPC_SUBMIT,
-    EVENT_NAME_HPC_JOB_ASSIGNED, EVENT_NAME_HPC_JOB_STATE_CHANGE
+    StructuredLogEvent,
+    EVENT_CATEGORY_HPC,
+    EVENT_NAME_HPC_SUBMIT,
+    EVENT_NAME_HPC_JOB_ASSIGNED,
+    EVENT_NAME_HPC_JOB_STATE_CHANGE,
 )
 from jade.exceptions import ExecutionError
 from jade.hpc.common import HpcJobStatus, HpcType
@@ -30,6 +33,7 @@ logger = logging.getLogger(__name__)
 
 class HpcSubmitter:
     """Submits batches of jobs to HPC. Manages job ordering."""
+
     def __init__(self, config, config_file, cluster, output):
         self._config = config
         self._config_file = config_file
@@ -43,8 +47,7 @@ class HpcSubmitter:
 
     def _create_run_script(self, config_file, filename):
         text = ["#!/bin/bash"]
-        command = f"jade-internal run-jobs {config_file} " \
-                  f"--output={self._output}"
+        command = f"jade-internal run-jobs {config_file} " f"--output={self._output}"
         if self._params.num_processes is not None:
             command += f" --num-processes={self._params.num_processes}"
         if self._params.verbose:
@@ -60,8 +63,9 @@ class HpcSubmitter:
         self._batch_index += 1
         new_config_file = self._config_file.replace(".json", f"{suffix}.json")
         dump_data(config, new_config_file, cls=ExtendedJSONEncoder)
-        logger.info("Created split config file %s with %s jobs",
-                    new_config_file, len(config["jobs"]))
+        logger.info(
+            "Created split config file %s with %s jobs", new_config_file, len(config["jobs"])
+        )
 
         run_script = os.path.join(self._output, f"run{suffix}.sh")
         self._create_run_script(new_config_file, run_script)
@@ -127,8 +131,13 @@ class HpcSubmitter:
             self._submit_batch(queue, batch, hpc_job_ids)
 
         num_submissions = self._batch_index - starting_batch_index
-        logger.info("num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
-                    num_submissions, len(submitted_jobs), len(blocked_jobs), len(completed_job_names))
+        logger.info(
+            "num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
+            num_submissions,
+            len(submitted_jobs),
+            len(blocked_jobs),
+            len(completed_job_names),
+        )
         if submitted_jobs:
             logger.debug("Submitted %s", ", ".join((x.name for x in submitted_jobs)))
 
@@ -144,14 +153,17 @@ class HpcSubmitter:
         if not is_complete and not self._cluster.job_status.hpc_job_ids:
             # TODO: need to implement persistent recording of fake status
             if self._hpc_mgr.hpc_type != HpcType.FAKE:
-                logger.error("Some jobs are not complete but there are no active HPC job IDs. "
-                             "Force completion.")
+                logger.error(
+                    "Some jobs are not complete but there are no active HPC job IDs. "
+                    "Force completion."
+                )
                 is_complete = True
 
         return is_complete
 
-    def _update_status(self, submitted_jobs, blocked_jobs, canceled_jobs, hpc_job_ids,
-                       completed_job_names):
+    def _update_status(
+        self, submitted_jobs, blocked_jobs, canceled_jobs, hpc_job_ids, completed_job_names
+    ):
         hpc_job_changes = self._cluster.job_status.hpc_job_ids != hpc_job_ids
         if completed_job_names or submitted_jobs or blocked_jobs or hpc_job_changes:
             self._cluster.update_job_status(
@@ -206,7 +218,9 @@ class HpcSubmitter:
             logger.debug("Detected failed jobs: %s", failed_jobs)
             for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
                 if job.blocked_by:
-                    if job.cancel_on_blocking_job_failure and job.blocked_by.intersection(failed_jobs):
+                    if job.cancel_on_blocking_job_failure and job.blocked_by.intersection(
+                        failed_jobs
+                    ):
                         self._cancel_job(job)
                         canceled_jobs.append(job)
                         need_to_rerun = True
@@ -218,6 +232,7 @@ class HpcSubmitter:
 
 class _BatchJobs:
     """Helper class to manage jobs in a batch."""
+
     def __init__(self, params):
         self._estimated_batch_time = timedelta(seconds=0)
         self._num_processes = params.num_processes
@@ -226,7 +241,9 @@ class _BatchJobs:
         self._jobs = []
         self._job_names = set()
         if self._per_node_batch_size == 0:
-            self._max_batch_time = _to_timedelta(params.hpc_config.hpc.walltime) * self._num_processes
+            self._max_batch_time = (
+                _to_timedelta(params.hpc_config.hpc.walltime) * self._num_processes
+            )
         else:
             self._max_batch_time = None
 
@@ -294,6 +311,7 @@ class _BatchJobs:
 
 class AsyncHpcSubmitter(AsyncJobInterface):
     """Used to submit batches of jobs to multiple nodes, one at a time."""
+
     def __init__(self, hpc_manager, status_collector, run_script, name, output, job_id=None):
         self._mgr = hpc_manager
         self._status_collector = status_collector
@@ -336,8 +354,13 @@ class AsyncHpcSubmitter(AsyncJobInterface):
     def is_complete(self):
         status = self._status_collector.check_status(self._job_id)
         if status != self._last_status:
-            logger.info("Submission %s %s changed status from %s to %s",
-                        self._name, self._job_id, self._last_status, status)
+            logger.info(
+                "Submission %s %s changed status from %s to %s",
+                self._name,
+                self._job_id,
+                self._last_status,
+                status,
+            )
             event = StructuredLogEvent(
                 source=self._name,
                 category=EVENT_CATEGORY_HPC,
@@ -367,9 +390,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         return 0
 
     def run(self):
-        job_id, result = self._mgr.submit(self._output,
-                                          self._name,
-                                          self._run_script)
+        job_id, result = self._mgr.submit(self._output, self._name, self._run_script)
         if result != Status.GOOD:
             raise ExecutionError("Failed to submit name={self._name}")
 
@@ -396,6 +417,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
 
 class HpcStatusCollector:
     """Collects status for all user jobs."""
+
     def __init__(self, hpc_mgr, poll_interval):
         self._hpc_mgr = hpc_mgr
         self._poll_interval = poll_interval
@@ -415,8 +437,7 @@ class HpcStatusCollector:
 
         """
         cur_time = time.time()
-        if self._last_poll_time is None or \
-                cur_time - self._last_poll_time > self._poll_interval:
+        if self._last_poll_time is None or cur_time - self._last_poll_time > self._poll_interval:
             logger.debug("Collect new statuses.")
             self._statuses = self._hpc_mgr.check_statuses()
             self._last_poll_time = cur_time

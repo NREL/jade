@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class GenericCommandExecution(JobExecutionInterface):
     """A class used for executing a generic_command."""
+
     def __init__(self, job, output):
         """Init generic_command execution class
 

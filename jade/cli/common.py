@@ -27,8 +27,7 @@ def handle_enum_input(_, param, value):
     """Converts inputs to enums."""
     try:
         tup = _ENUM_MAPPING.get(param.name)
-        assert tup is not None, "Must add {} to _ENUM_MAPPING".format(
-            param.name)
+        assert tup is not None, "Must add {} to _ENUM_MAPPING".format(param.name)
         # Force the correct type onto the value.
         return tup[0](tup[1](value))
     except ValueError as err:
@@ -75,69 +74,76 @@ def proceed_with_user_permission(ctx, message):
 
 COMMON_SUBMITTER_OPTIONS = (
     click.option(
-        "-b", "--per-node-batch-size",
+        "-b",
+        "--per-node-batch-size",
         default=DEFAULTS["per_node_batch_size"],
         show_default=True,
-        help="Number of jobs to run on one node in one batch."
+        help="Number of jobs to run on one node in one batch.",
     ),
     click.option(
-        "-h", "--hpc-config",
+        "-h",
+        "--hpc-config",
         type=click.Path(),
         default=DEFAULTS["hpc_config_file"],
         show_default=True,
-        help="HPC config file."
+        help="HPC config file.",
     ),
     click.option(
-        "-l", "--local",
+        "-l",
+        "--local",
         is_flag=True,
         default=False,
         show_default=True,
         envvar="LOCAL_SUBMITTER",
-        help="Run on local system. Optionally, set the environment variable "
-             "LOCAL_SUBMITTER=1."
+        help="Run on local system. Optionally, set the environment variable " "LOCAL_SUBMITTER=1.",
     ),
     click.option(
-        "-n", "--max-nodes",
+        "-n",
+        "--max-nodes",
         default=DEFAULTS["max_nodes"],
         show_default=True,
-        help="Max number of node submission requests to make in parallel."
+        help="Max number of node submission requests to make in parallel.",
     ),
     click.option(
-        "-p", "--poll-interval",
+        "-p",
+        "--poll-interval",
         default=DEFAULTS["poll_interval"],
         type=float,
         show_default=True,
-        help="Interval in seconds on which to poll jobs for status."
+        help="Interval in seconds on which to poll jobs for status.",
     ),
     click.option(
-        "-r", "--resource-monitor-interval",
+        "-r",
+        "--resource-monitor-interval",
         default=None,
         type=int,
         show_default=True,
-        help="Interval in seconds on which to collect resource stats. Default is None."
+        help="Interval in seconds on which to collect resource stats. Default is None.",
     ),
     click.option(
-        "-q", "--num-processes",
+        "-q",
+        "--num-processes",
         default=None,
         show_default=False,
         type=int,
         is_eager=True,
-        help="Number of processes to run in parallel; defaults to num CPUs."
+        help="Number of processes to run in parallel; defaults to num CPUs.",
     ),
     click.option(
         "--reports/--no-reports",
         is_flag=True,
         default=True,
         show_default=True,
-        help="Generate reports after execution."
+        help="Generate reports after execution.",
     ),
     click.option(
-        "-t", "--time-based-batching",
+        "-t",
+        "--time-based-batching",
         is_flag=True,
         default=False,
         show_default=True,
         help="Use estimated runtimes to create batches. Each job must have its estimated runtime "
-             "defined. Also requires --num-processes to be set. Overrides --per-node-batch-size."
+        "defined. Also requires --num-processes to be set. Overrides --per-node-batch-size.",
     ),
     click.option(
         "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
@@ -145,22 +151,24 @@ COMMON_SUBMITTER_OPTIONS = (
         default=True,
         show_default=True,
         help="Add blocked jobs to a node's batch if they are blocked by jobs "
-             "already in the batch."
+        "already in the batch.",
     ),
     click.option(
         "--verbose",
         is_flag=True,
         default=False,
         show_default=True,
-        help="Enable verbose log output."
+        help="Enable verbose log output.",
     ),
     click.option(
-        "-x", "--node-setup-script",
-        help="Script to run on each node before starting jobs (download input files)."
+        "-x",
+        "--node-setup-script",
+        help="Script to run on each node before starting jobs (download input files).",
     ),
     click.option(
-        "-y", "--node-shutdown-script",
-        help="Script to run on each after completing jobs (upload output files)."
+        "-y",
+        "--node-shutdown-script",
+        help="Script to run on each after completing jobs (upload output files).",
     ),
 )
 
@@ -170,6 +178,7 @@ def add_options(options):
         for option in reversed(options):
             func = option(func)
         return func
+
     return _add_options
 
 
@@ -193,8 +202,10 @@ def make_submitter_params(
         hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
     else:
         if not os.path.exists(hpc_config):
-            print(f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
-                   "or run in local mode with '-l'")
+            print(
+                f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
+                "or run in local mode with '-l'"
+            )
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 

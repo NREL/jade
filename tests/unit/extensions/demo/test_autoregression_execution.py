@@ -40,10 +40,7 @@ def test_results_directory():
     """Should returen the output directory"""
     job = MagicMock()
     output = os.path.join(tempfile.gettempdir(), "jade-unit-test-output")
-    are = AutoRegressionExecution(
-        job=job,
-        output=output
-    )
+    are = AutoRegressionExecution(job=job, output=output)
 
     assert are.results_directory == output
     assert os.path.exists(are.results_directory)
@@ -68,7 +65,9 @@ def test_generate_command():
     config_file = os.path.join(tempfile.gettempdir(), "config-file")
 
     cmd = AutoRegressionExecution.generate_command(job, output, config_file)
-    assert cmd == f"jade-internal run demo --name=Job1 --output={output} --config-file={config_file}"
+    assert (
+        cmd == f"jade-internal run demo --name=Job1 --output={output} --config-file={config_file}"
+    )
 
 
 def test_list_results_files():

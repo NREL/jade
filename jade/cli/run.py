@@ -7,8 +7,7 @@ import sys
 import click
 
 from jade.common import OUTPUT_DIR
-from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
-    EVENT_NAME_UNHANDLED_ERROR
+from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, EVENT_NAME_UNHANDLED_ERROR
 from jade.loggers import log_event, setup_logging
 from jade.jobs.job_post_process import JobPostProcess
 from jade.utils.utils import get_cli_string, load_data
@@ -18,34 +17,23 @@ from jade.extensions.registry import Registry, ExtensionClassType
 
 @click.argument("extension")
 @click.option(
-    "-n", "--name",
+    "-n",
+    "--name",
     required=True,
     type=str,
     help="The name of the job that needs to run.",
 )
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
+@click.option("--config-file", required=True, help="Job configuration file")
 @click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
-@click.option(
-    "--config-file",
-    required=True,
-    help="Job configuration file"
-)
-@click.option(
-    "-f", "--output-format",
+    "-f",
+    "--output-format",
     default="csv",
     show_default=True,
-    help="Output format for data (csv or json)."
+    help="Output format for data (csv or json).",
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 @click.command()
 def run(extension, **kwargs):
@@ -68,7 +56,10 @@ def run(extension, **kwargs):
     # General logging setup
     log_file = os.path.join(job_dir, "run.log")
     general_logger = setup_logging(
-        extension, log_file, console_level=logging.ERROR, file_level=level,
+        extension,
+        log_file,
+        console_level=logging.ERROR,
+        file_level=level,
     )
     general_logger.info(get_cli_string())
 
@@ -97,11 +88,11 @@ def run(extension, **kwargs):
             config = load_data(config_file)
             if "job_post_process_config" in config.keys():
                 post_process = JobPostProcess(
-                    module_name=config['job_post_process_config']['module'],
-                    class_name=config['job_post_process_config']['class'],
-                    data=config['job_post_process_config']['data'],
+                    module_name=config["job_post_process_config"]["module"],
+                    class_name=config["job_post_process_config"]["class"],
+                    data=config["job_post_process_config"]["data"],
                     job_name=name,
-                    output=output
+                    output=output,
                 )
                 post_process.run(config_file=config_file, output=output)
         except Exception as err:

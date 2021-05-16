@@ -6,8 +6,9 @@ import logging.config
 from jade.extensions.registry import Registry
 
 
-def setup_logging(name, filename, console_level=logging.INFO,
-                  file_level=logging.INFO, mode="w", packages=None):
+def setup_logging(
+    name, filename, console_level=logging.INFO, file_level=logging.INFO, mode="w", packages=None
+):
     """Configures logging to file and console.
 
     Parameters
@@ -28,16 +29,14 @@ def setup_logging(name, filename, console_level=logging.INFO,
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
-            "basic": {
-                "format": "%(message)s"
-            },
+            "basic": {"format": "%(message)s"},
             "short": {
                 "format": "%(asctime)s - %(levelname)s [%(name)s "
-                          "%(filename)s:%(lineno)d] : %(message)s",
+                "%(filename)s:%(lineno)d] : %(message)s",
             },
             "detailed": {
                 "format": "%(asctime)s - %(levelname)s [%(name)s "
-                          "%(filename)s:%(lineno)d] : %(message)s",
+                "%(filename)s:%(lineno)d] : %(message)s",
             },
         },
         "handlers": {
@@ -58,25 +57,21 @@ def setup_logging(name, filename, console_level=logging.INFO,
                 "level": file_level,
                 "filename": filename,
                 "mode": "a",
-                "formatter": "basic"
-            }
+                "formatter": "basic",
+            },
         },
         "loggers": {
-            name: {
-                "handlers": ["console", "file"],
-                "level": "DEBUG",
-                "propagate": False
-            },
+            name: {"handlers": ["console", "file"], "level": "DEBUG", "propagate": False},
             "event": {
                 "handlers": ["console", "structured_file"],
                 "level": "DEBUG",
-                "propagate": False
-            }
+                "propagate": False,
+            },
         },
-        #"root": {
+        # "root": {
         #    "handlers": ["console", "file"],
         #    "level": "WARN",
-        #},
+        # },
     }
 
     logging_packages = set(Registry().list_loggers())

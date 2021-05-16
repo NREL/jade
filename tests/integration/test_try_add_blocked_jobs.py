@@ -33,7 +33,7 @@ def cleanup():
 
 def test_try_add_blocked_jobs(cleanup):
     num_commands = 5
-    commands = ["echo \"hello world\""] * num_commands
+    commands = ['echo "hello world"'] * num_commands
     with open(TEST_FILENAME, "w") as f_out:
         for command in commands:
             f_out.write(command + "\n")

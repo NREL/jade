@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 class HpcManager:
     """Manages HPC job submission and monitoring."""
+
     def __init__(self, config, output):
         self._config = config
         self._intf = self.create_hpc_interface(config)
@@ -62,8 +63,7 @@ class HpcManager:
         HpcJobStatus
 
         """
-        if (name is None and job_id is None) or \
-           (name is not None and job_id is not None):
+        if (name is None and job_id is None) or (name is not None and job_id is not None):
             raise InvalidParameter("exactly one of name / job_id must be set")
 
         info = self._intf.check_status(name=name, job_id=job_id)
@@ -103,8 +103,7 @@ class HpcManager:
         """
         return self._config.hpc_type
 
-    def submit(self, directory, name, script, wait=False,
-               keep_submission_script=True):
+    def submit(self, directory, name, script, wait=False, keep_submission_script=True):
         """Submits scripts to the queue for execution.
 
         Parameters
@@ -129,27 +128,24 @@ class HpcManager:
         self._intf.check_storage_configuration()
 
         # TODO: enable this logic if batches have unique names.
-        #info = self._intf.check_status(name=name)
-        #if info.status in (HpcJobStatus.QUEUED, HpcJobStatus.RUNNING):
+        # info = self._intf.check_status(name=name)
+        # if info.status in (HpcJobStatus.QUEUED, HpcJobStatus.RUNNING):
         #    raise JobAlreadyInProgress(
         #        "Not submitting job '{}' because it is already active: "
         #        f"{info}"
         #    )
 
         filename = os.path.join(directory, name + ".sh")
-        self._intf.create_submission_script(name, script, filename,
-                                            self._output)
+        self._intf.create_submission_script(name, script, filename, self._output)
         logger.info("Created submission script %s", filename)
         result, job_id, err = self._intf.submit(filename)
 
         if result == Status.GOOD:
-            logger.info("job '%s' with ID=%s submitted successfully", name,
-                        job_id)
+            logger.info("job '%s' with ID=%s submitted successfully", name, job_id)
             if not keep_submission_script:
                 os.remove(filename)
         else:
-            logger.error("Failed to submit job '%s': result=%s: %s", name,
-                         result, err)
+            logger.error("Failed to submit job '%s': result=%s: %s", name, result, err)
 
         if wait:
             self._wait_for_completion(job_id)
@@ -182,8 +178,7 @@ class HpcManager:
             job_info = self._intf.check_status(job_id=job_id)
             logger.debug("job_info=%s", job_info)
             if job_info.status != status:
-                logger.info("Status of job ID %s changed to %s",
-                            job_id, job_info.status)
+                logger.info("Status of job ID %s changed to %s", job_id, job_info.status)
                 status = job_info.status
 
         logger.info("Job ID %s is complete", job_id)

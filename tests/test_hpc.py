@@ -66,13 +66,11 @@ def test_slurm_check_statuses():
 def test_create_submission_script():
     mgr = create_hpc_manager("slurm")
     script = "run.sh"
-    required = ["account", "time", "job-name", "output",
-                "error", "#SBATCH"]
+    required = ["account", "time", "job-name", "output", "error", "#SBATCH"]
     required += [script]
     try:
         submission_script = "submit.sh"
-        mgr._intf.create_submission_script("test", script,
-                                           submission_script, ".")
+        mgr._intf.create_submission_script("test", script, submission_script, ".")
         assert os.path.exists(submission_script)
         with open(submission_script) as fp_in:
             data = fp_in.read()

@@ -104,12 +104,14 @@ def test_job_order(generic_command_fixture):
     config.get_job("41").blocked_by.add("50")
     config.dump(CONFIG_FILE)
 
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} " \
-        "--per-node-batch-size=10 " \
-        "--max-nodes=4 " \
-        "--poll-interval=0.1 " \
-        f"--hpc-config {FAKE_HPC_CONFIG} " \
+    cmd = (
+        f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} "
+        "--per-node-batch-size=10 "
+        "--max-nodes=4 "
+        "--poll-interval=0.1 "
+        f"--hpc-config {FAKE_HPC_CONFIG} "
         "--num-processes=10"
+    )
     check_run_command(cmd)
     check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
 

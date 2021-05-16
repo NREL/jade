@@ -9,8 +9,7 @@ import time
 
 from jade.common import JOBS_OUTPUT_DIR
 from jade.enums import JobCompletionStatus
-from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, \
-    EVENT_CATEGORY_RESOURCE_UTIL
+from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, EVENT_CATEGORY_RESOURCE_UTIL
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.loggers import log_event
@@ -23,6 +22,7 @@ logger = logging.getLogger(__name__)
 
 class AsyncCliCommand(AsyncJobInterface):
     """Defines a a CLI command that can be submitted asynchronously."""
+
     def __init__(self, job, cmd, output):
         self._job = job
         self._cli_cmd = cmd
@@ -55,8 +55,12 @@ class AsyncCliCommand(AsyncJobInterface):
         result = Result(self._job.name, self._return_code, status, exec_time_s)
         ResultsAggregator.append(self._output, result)
 
-        logger.info("Job %s completed return_code=%s exec_time_s=%s",
-                    self._job.name, self._return_code, exec_time_s)
+        logger.info(
+            "Job %s completed return_code=%s exec_time_s=%s",
+            self._job.name,
+            self._return_code,
+            exec_time_s,
+        )
 
     def cancel(self):
         self._return_code = 1

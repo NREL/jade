@@ -1,4 +1,3 @@
-
 import os
 import shutil
 
@@ -12,6 +11,7 @@ from jade.models import SubmitterParams, HpcConfig, SlurmConfig
 
 
 OUTPUT = "test-output"
+
 
 @pytest.fixture
 def cluster():

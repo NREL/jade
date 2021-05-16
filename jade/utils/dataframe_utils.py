@@ -17,8 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 @timed_debug
-def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
-                   **kwargs):
+def read_dataframe(filename, index_col=None, columns=None, parse_dates=False, **kwargs):
     """Convert filename to a dataframe. Supports .csv, .json, .feather, .h5.
     Handles compressed files.
 
@@ -57,8 +56,9 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False,
         open_func = open
 
     if ext == ".csv":
-        df = pd.read_csv(filename, index_col=index_col, usecols=columns,
-                         parse_dates=parse_dates, **kwargs)
+        df = pd.read_csv(
+            filename, index_col=index_col, usecols=columns, parse_dates=parse_dates, **kwargs
+        )
     elif ext == ".json":
         df = pd.read_json(filename, **kwargs)
     elif ext == ".feather":
@@ -108,8 +108,7 @@ def read_dataframe_handle_missing(filename, index_col=None, columns=None):
     return read_dataframe(filename, index_col=index_col, columns=columns)
 
 
-def read_dataframe_by_substring(directory, substring, index_col=None,
-                                parse_dates=False, **kwargs):
+def read_dataframe_by_substring(directory, substring, index_col=None, parse_dates=False, **kwargs):
     """Return a dataframe for the file containing substring.
 
     Parameters
@@ -140,14 +139,14 @@ def read_dataframe_by_substring(directory, substring, index_col=None,
     assert len(files) == 1, f"found multiple {substring} files in {directory}"
 
     filename = files[0]
-    return read_dataframe(os.path.join(directory, filename),
-                          index_col=index_col,
-                          parse_dates=parse_dates,
-                          **kwargs)
+    return read_dataframe(
+        os.path.join(directory, filename), index_col=index_col, parse_dates=parse_dates, **kwargs
+    )
 
 
-def read_dataframes_by_substrings(directory, substrings, index_col=None,
-                                  parse_dates=False, **kwargs):
+def read_dataframes_by_substrings(
+    directory, substrings, index_col=None, parse_dates=False, **kwargs
+):
     """Return dataframes for files in the directory.
 
     Parameters
@@ -170,7 +169,10 @@ def read_dataframes_by_substrings(directory, substrings, index_col=None,
 
     for substring in substrings:
         df = read_dataframe_by_substring(
-            directory, substring, index_col=index_col, parse_dates=parse_dates,
+            directory,
+            substring,
+            index_col=index_col,
+            parse_dates=parse_dates,
             **kwargs,
         )
         if df is not None:
@@ -180,8 +182,7 @@ def read_dataframes_by_substrings(directory, substrings, index_col=None,
 
 
 @timed_debug
-def write_dataframe(df, file_path, compress=False, keep_original=False,
-                    **kwargs):
+def write_dataframe(df, file_path, compress=False, keep_original=False, **kwargs):
     """Write the dataframe to a file with in a format matching the extension.
 
     Note that the feather and h5 formats do not support row indices.
@@ -205,8 +206,9 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
     InvalidParameter if the DataFrame index is set.
 
     """
-    if not isinstance(df.index, pd.RangeIndex) and not \
-            isinstance(df.index, pd.core.indexes.base.Index):
+    if not isinstance(df.index, pd.RangeIndex) and not isinstance(
+        df.index, pd.core.indexes.base.Index
+    ):
         raise InvalidParameter("DataFrame index must not be set")
 
     ext = os.path.splitext(file_path)[1]
@@ -247,7 +249,7 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
 
 
 # TODO: broken with newer versions of pandas because of mishandling of indices
-#def convert_csvs_to_feather(directory, compress=False, column_map=None,
+# def convert_csvs_to_feather(directory, compress=False, column_map=None,
 #                            exclude_substrings=None, keep_original=False):
 #    """Load CSV files as dataframes and convert them to feather files.
 #
@@ -278,7 +280,7 @@ def write_dataframe(df, file_path, compress=False, keep_original=False,
 #                                   keep_original=keep_original)
 #
 #
-#def convert_csv_to_feather(file_path, compress=False, column_map=None,
+# def convert_csv_to_feather(file_path, compress=False, column_map=None,
 #                           keep_original=False):
 #    """Load CSV files as dataframes and convert them to feather files.
 #

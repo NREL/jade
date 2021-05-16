@@ -14,25 +14,30 @@ from jade.cli.collect_stats import collect
 from jade.common import OUTPUT_DIR
 from jade.loggers import setup_logging
 from jade.events import EventsSummary
-from jade.resource_monitor import CpuStatsViewer, DiskStatsViewer, \
-    MemoryStatsViewer, NetworkStatsViewer
-
-
-STATS = (
-    "cpu", "disk", "mem", "net"
+from jade.resource_monitor import (
+    CpuStatsViewer,
+    DiskStatsViewer,
+    MemoryStatsViewer,
+    NetworkStatsViewer,
 )
+
+
+STATS = ("cpu", "disk", "mem", "net")
+
 
 @click.group()
 def stats():
     """Collect new stats or view stats from an existing run."""
     setup_logging("stats", None)
 
+
 @click.argument("stats", nargs=-1)
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     default=OUTPUT_DIR,
     show_default=True,
-    help="JADE submission output directory."
+    help="JADE submission output directory.",
 )
 @click.command()
 def plot(stats, output):
@@ -68,13 +73,9 @@ def plot(stats, output):
             sys.exit(1)
         viewer.plot_to_file(plot_dir)
 
+
 @click.argument("stats", nargs=-1)
-@click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.command()
 def show(stats, output):
     """Shows stats from a run.
@@ -113,14 +114,9 @@ def show(stats, output):
     is_flag=True,
     default=True,
     show_default=True,
-    help="Output directory."
+    help="Output directory.",
 )
-@click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.command()
 def bytes_consumed(output, human_readable):
     events = EventsSummary(output)
@@ -136,14 +132,9 @@ def bytes_consumed(output, human_readable):
     is_flag=True,
     default=True,
     show_default=True,
-    help="Output directory."
+    help="Output directory.",
 )
-@click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.command()
 def exec_time(output, human_readable):
     events = EventsSummary(output)

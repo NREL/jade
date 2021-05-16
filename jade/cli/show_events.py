@@ -12,52 +12,56 @@ from jade.events import EventsSummary
 
 
 @click.argument("names", nargs=-1)
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
-@click.option(
-    "-c", "--categories",
+    "-c",
+    "--categories",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Treat the arguments as categories instead of names."
+    help="Treat the arguments as categories instead of names.",
 )
 @click.option(
-    "-j", "--json-fmt",
+    "-j",
+    "--json-fmt",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Print event in JSON format, instead of table"
+    help="Print event in JSON format, instead of table",
 )
 @click.option(
-    "-n", "--names-only",
+    "-n",
+    "--names-only",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Show event names in output."
+    help="Show event names in output.",
 )
 @click.option(
-    "-C", "--categories-only",
+    "-C",
+    "--categories-only",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Show event categories in output."
+    help="Show event categories in output.",
 )
 @click.option(
     "--verbose",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Enable verbose event outputs."
+    help="Enable verbose event outputs.",
 )
 @click.command()
 def show_events(
-        output, names, categories=False, json_fmt=False, names_only=False,
-        categories_only=False, verbose=False
-    ):
+    output,
+    names,
+    categories=False,
+    json_fmt=False,
+    names_only=False,
+    categories_only=False,
+    verbose=False,
+):
     """Shows the events after jobs run.
 
     \b

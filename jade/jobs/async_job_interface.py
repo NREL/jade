@@ -37,7 +37,6 @@ class AsyncJobInterface(abc.ABC):
 
         """
 
-
     @property
     @abc.abstractmethod
     def return_code(self):

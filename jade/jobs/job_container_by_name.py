@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 class JobContainerByName(JobContainerInterface):
     """Stores jobs by name, which must be unique."""
+
     def __init__(self):
         # name: JobParametersInterface
         self._jobs = {}

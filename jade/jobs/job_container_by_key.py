@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 class JobContainerByKey(JobContainerInterface):
     """Stores jobs by key which is a namedtuple."""
+
     def __init__(self):
         # collections.namedtuple: JobParametersInterface
         self._jobs = OrderedDict()
@@ -29,8 +30,7 @@ class JobContainerByKey(JobContainerInterface):
         if key is None and job is None:
             raise InvalidParameter("either key or job must be passed")
         if key is not None and job is not None:
-            raise InvalidParameter("only one of key and job can be "
-                                   "passed")
+            raise InvalidParameter("only one of key and job can be " "passed")
         if key is None:
             key = job.name
 

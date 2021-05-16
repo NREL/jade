@@ -18,32 +18,30 @@ logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option(
-    "-d", "--duration",
+    "-d",
+    "--duration",
     default=None,
     type=int,
     show_default=True,
-    help="Total time to collect resource stats. Default is infinite."
+    help="Total time to collect resource stats. Default is infinite.",
 )
 @click.option(
-    "-f", "--force",
+    "-f",
+    "--force",
     default=False,
     is_flag=True,
     show_default=True,
-    help="Delete output directory if it exists."
+    help="Delete output directory if it exists.",
 )
 @click.option(
-    "-i", "--interval",
+    "-i",
+    "--interval",
     default=1,
     type=int,
     show_default=True,
-    help="Interval in seconds on which to collect resource stats."
+    help="Interval in seconds on which to collect resource stats.",
 )
-@click.option(
-    "-o", "--output",
-    default="stats",
-    show_default=True,
-    help="Output directory."
-)
+@click.option("-o", "--output", default="stats", show_default=True, help="Output directory.")
 def collect(duration, force, interval, output):
     """Collect resource utilization stats."""
     if os.path.exists(output):
@@ -55,8 +53,7 @@ def collect(duration, force, interval, output):
 
     os.makedirs(output)
     event_file = os.path.join(output, "stats_events.log")
-    setup_logging("event", event_file, console_level=logging.ERROR,
-                  file_level=logging.INFO)
+    setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
     monitor = ResourceMonitor("ResourceMonitor")
     start_time = time.time()
 

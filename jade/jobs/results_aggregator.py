@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class ResultsAggregator:
     """Synchronizes updates to the results file across jobs on one system."""
+
     def __init__(self, path, timeout=60, delimiter=","):
         """
         Constructs ResultsAggregator.
@@ -82,8 +83,7 @@ class ResultsAggregator:
             # Picked a default value such that this should not trip. If it does
             # trip under normal circumstances then we need to reconsider this.
             logger.error(
-                "Failed to acquire file lock %s within %s seconds",
-                self._lock_file, self._timeout
+                "Failed to acquire file lock %s within %s seconds", self._lock_file, self._timeout
             )
             raise
 
@@ -121,9 +121,7 @@ class ResultsAggregator:
         result : Result
 
         """
-        text = self._delimiter.join(
-            [str(getattr(result, x)) for x in self._get_fields()]
-        )
+        text = self._delimiter.join([str(getattr(result, x)) for x in self._get_fields()])
         self._do_action_under_lock(self._append_result, text)
 
     def _append_result(self, text):
@@ -134,9 +132,7 @@ class ResultsAggregator:
     def _append_processed_results(self, results):
         with open(self._processed_filename, "a") as f_out:
             for result in results:
-                text = self._delimiter.join(
-                    [str(getattr(result, x)) for x in self._get_fields()]
-                )
+                text = self._delimiter.join([str(getattr(result, x)) for x in self._get_fields()])
                 f_out.write(text)
                 f_out.write("\n")
 
@@ -191,7 +187,9 @@ class ResultsAggregator:
 
     def _get_all_results(self):
         # Include unprocessed and processed results.
-        return self._get_results(processed_results=True) + self._get_results(processed_results=False)
+        return self._get_results(processed_results=True) + self._get_results(
+            processed_results=False
+        )
 
     def _get_results(self, processed_results=True):
         filename = self._processed_filename if processed_results else self._filename

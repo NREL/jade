@@ -190,8 +190,8 @@ def test_write_dataframe__invalid_parameter():
     assert "unsupported file extension .sql" in str(exc.value)
 
 
-#@mark.parametrize("compress", [False, True])
-#def test_convert_csv_to_feather(compress):
+# @mark.parametrize("compress", [False, True])
+# def test_convert_csv_to_feather(compress):
 #    """Should convert csv to feather file"""
 #    df1 = create_dataframe()
 #    df1.reset_index(inplace=True)
@@ -208,7 +208,7 @@ def test_write_dataframe__invalid_parameter():
 #        os.remove(expected_name)
 
 
-#def test_convert_csvs_to_feather():
+# def test_convert_csvs_to_feather():
 #    """Should convert many csv files to feather files"""
 #    directory = tempfile.gettempdir()
 #    exclude_substrings = ["test", "hello"]

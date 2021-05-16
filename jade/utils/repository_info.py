@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 class RepositoryInfo:
     """Collects information about the source code repository for a package."""
+
     def __init__(self, package):
         # This will be the directory containing the package.
         self._path = os.path.dirname(getattr(package, "__path__")[0])
@@ -30,9 +31,7 @@ class RepositoryInfo:
             output = {}
             ret = run_command(cmd, output=output)
             if ret != 0:
-                raise ExecutionError(
-                    f"[{cmd}] failed: {ret}: {output['stderr']}"
-                )
+                raise ExecutionError(f"[{cmd}] failed: {ret}: {output['stderr']}")
 
             return output["stdout"].strip()
         finally:
@@ -75,8 +74,7 @@ class RepositoryInfo:
         str
 
         """
-        cmd = "git status --porcelain=v2 --branch --verbose " \
-              "--untracked-files=no"
+        cmd = "git status --porcelain=v2 --branch --verbose " "--untracked-files=no"
         output = self._run_command(cmd)
         return output
 

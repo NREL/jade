@@ -44,6 +44,7 @@ DEFAULT_REGISTRY = {
 
 class ExtensionClassType(enum.Enum):
     """Possible values for computational sequencing mode"""
+
     CLI = "cli_module"
     CONFIGURATION = "config_class"
     EXECUTION = "exec_class"
@@ -55,6 +56,7 @@ logger = logging.getLogger(__name__)
 
 class Registry:
     """Manages extensions registered with JADE."""
+
     _REGISTRY_FILENAME = ".jade-registry.json"
     FORMAT_VERSION = "v0.2.0"
 
@@ -89,12 +91,9 @@ class Registry:
         cli_mod = importlib.import_module(extension["cli_module"])
 
         ext = copy.copy(extension)
-        ext[ExtensionClassType.CONFIGURATION] = getattr(
-            cmod, extension["job_configuration_class"])
-        ext[ExtensionClassType.EXECUTION] = getattr(
-            emod, extension["job_execution_class"])
-        ext[ExtensionClassType.PARAMETERS] = getattr(
-            pmod, extension["job_parameters_class"])
+        ext[ExtensionClassType.CONFIGURATION] = getattr(cmod, extension["job_configuration_class"])
+        ext[ExtensionClassType.EXECUTION] = getattr(emod, extension["job_execution_class"])
+        ext[ExtensionClassType.PARAMETERS] = getattr(pmod, extension["job_parameters_class"])
         ext[ExtensionClassType.CLI] = cli_mod
 
         self._extensions[extension["name"]] = ext
@@ -132,8 +131,7 @@ class Registry:
             "format_version": self.FORMAT_VERSION,
         }
         for _, extension in sorted(self._extensions.items()):
-            ext = {k: v for k, v in extension.items()
-                   if not isinstance(k, ExtensionClassType)}
+            ext = {k: v for k, v in extension.items() if not isinstance(k, ExtensionClassType)}
             data["extensions"].append(ext)
 
         filename = self.registry_filename
@@ -270,9 +268,7 @@ class Registry:
 
         """
         if extension_name not in self._extensions:
-            raise InvalidParameter(
-                f"extension {extension_name} isn't registered"
-            )
+            raise InvalidParameter(f"extension {extension_name} isn't registered")
 
         self._extensions.pop(extension_name)
         self._serialize_registry()

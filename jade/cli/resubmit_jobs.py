@@ -31,27 +31,23 @@ logger = logging.getLogger(__name__)
     is_flag=True,
     default=True,
     show_default=True,
-    help="Resubmit failed and canceled jobs."
+    help="Resubmit failed and canceled jobs.",
 )
 @click.option(
     "--missing/--no-missing",
     is_flag=True,
     default=True,
     show_default=True,
-    help="Resubmit missing jobs."
+    help="Resubmit missing jobs.",
 )
 @click.option(
     "--rotate-logs/--no-rotate-logs",
     default=True,
     show_default=True,
-    help="Rotate log files so that they aren't overwritten."
+    help="Rotate log files so that they aren't overwritten.",
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
     """Resubmit failed and missing jobs."""
@@ -64,8 +60,7 @@ def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
 
     event_file = os.path.join(output, "submit_jobs_events.log")
     # This effectively means no console logging.
-    setup_logging("event", event_file, console_level=logging.ERROR,
-                  file_level=logging.INFO)
+    setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
     cluster, promoted = Cluster.deserialize(
         output,

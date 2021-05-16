@@ -8,6 +8,7 @@ import toml
 
 class Status(enum.Enum):
     """Return status."""
+
     GOOD = 0
     ERROR = 1
     IN_PROGRESS = 2
@@ -15,15 +16,17 @@ class Status(enum.Enum):
 
 class Mode(enum.Enum):
     """Possible values for computational sequencing mode"""
+
     PARALLEL = "parallel"
     SEQUENTIAL = "sequential"
 
 
 class JobCompletionStatus(enum.Enum):
     """Possible values for job completion status"""
+
     FINISHED = "finished"  # Job ran. return code could be 0 or 1
     CANCELED = "canceled"  # Job never ran.
-    MISSING = "missing"    # No result recorded. Happens with walltime timeout.
+    MISSING = "missing"  # No result recorded. Happens with walltime timeout.
 
 
 PUBLIC_ENUMS = {
@@ -70,6 +73,7 @@ def get_enum_from_value(cls, value):
 
 class EnumEncoder(toml.TomlEncoder):
     """Custom encoder for enums."""
+
     def __init__(self, _dict=dict, preserve=False):
         super(EnumEncoder, self).__init__(_dict, preserve)
         self.dump_funcs[enum.Enum] = EnumEncoder.dump_enum

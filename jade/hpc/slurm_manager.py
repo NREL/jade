@@ -5,7 +5,7 @@ import os
 import re
 
 from jade.enums import Status
-from jade.exceptions import ExecutionError  #, InvalidConfiguration
+from jade.exceptions import ExecutionError  # , InvalidConfiguration
 from jade.hpc.common import HpcJobStatus, HpcJobInfo
 from jade.hpc.hpc_manager_interface import HpcManagerInterface
 from jade.utils.subprocess_manager import run_command
@@ -49,8 +49,9 @@ class SlurmManager(HpcManagerInterface):
             if "Invalid job id specified" in output["stderr"]:
                 return HpcJobInfo("", "", HpcJobStatus.NONE)
 
-            logger.error("Failed to run squeue command=[%s] ret=%s err=%s",
-                         cmd, ret, output["stderr"])
+            logger.error(
+                "Failed to run squeue command=[%s] ret=%s err=%s", cmd, ret, output["stderr"]
+            )
             raise ExecutionError(f"squeue command failed: {ret}")
 
         stdout = output["stdout"]
@@ -61,10 +62,9 @@ class SlurmManager(HpcManagerInterface):
             return HpcJobInfo("", "", HpcJobStatus.NONE)
 
         assert len(fields) == len(field_names)
-        job_info = HpcJobInfo(fields[0],
-                              fields[1],
-                              self._STATUSES.get(fields[2],
-                                                 HpcJobStatus.UNKNOWN))
+        job_info = HpcJobInfo(
+            fields[0], fields[1], self._STATUSES.get(fields[2], HpcJobStatus.UNKNOWN)
+        )
         return job_info
 
     def check_statuses(self):
@@ -74,8 +74,9 @@ class SlurmManager(HpcManagerInterface):
         output = {}
         ret = run_command(cmd, output)
         if ret != 0:
-            logger.error("Failed to run squeue command=[%s] ret=%s err=%s",
-                         cmd, ret, output["stderr"])
+            logger.error(
+                "Failed to run squeue command=[%s] ret=%s err=%s", cmd, ret, output["stderr"]
+            )
             raise ExecutionError(f"squeue command failed: {ret}")
 
         return self._get_statuses_from_output(output["stdout"])
@@ -114,15 +115,15 @@ class SlurmManager(HpcManagerInterface):
         # - http://wiki.lustre.org/Configuring_Lustre_File_Striping
         # - https://www.nics.tennessee.edu/computing-resources/file-systems/lustre-striping-guide
 
-        #output = {}
-        #cmd = "lfs getstripe ."
-        #ret = run_command(cmd, output)
-        #if ret != 0:
+        # output = {}
+        # cmd = "lfs getstripe ."
+        # ret = run_command(cmd, output)
+        # if ret != 0:
         #    raise ExecutionError(f"{cmd} failed: {output}")
 
-        #stripe_count = SlurmManager._get_stripe_count(output["stdout"])
-        #logger.info("stripe_count is set to %s", stripe_count)
-        #if stripe_count < 16:
+        # stripe_count = SlurmManager._get_stripe_count(output["stdout"])
+        # logger.info("stripe_count is set to %s", stripe_count)
+        # if stripe_count < 16:
         #    raise InvalidConfiguration(
         #        f"stripe_count for {os.getcwd()} is set to {stripe_count}. "
         #        "The runtime directory should be set with a stripe_count of "
@@ -144,7 +145,7 @@ class SlurmManager(HpcManagerInterface):
     def create_cluster(self):
         logger.debug("config=%s", self._config)
         assert False, "not supported"
-        #cluster = SLURMCluster(
+        # cluster = SLURMCluster(
         #    project=self._config["hpc"]["allocation"],
         #    walltime=self._config["hpc"]["walltime"],
         #    job_mem=str(self._config["hpc"]["mem"]),
@@ -154,16 +155,16 @@ class SlurmManager(HpcManagerInterface):
         #    local_directory=self._config["dask"]["local_directory"],
         #    cores=self._config["dask"]["cores"],
         #    #processes=config["processes"],
-        #)
+        # )
 
-        #logger.debug("Created cluster. job script %s", cluster.job_script())
-        #return cluster
+        # logger.debug("Created cluster. job script %s", cluster.job_script())
+        # return cluster
 
     def create_local_cluster(self):
         assert False, "not supported"
-        #cluster = LocalCluster()
-        #logger.debug("Created local cluster.")
-        #return cluster
+        # cluster = LocalCluster()
+        # logger.debug("Created local cluster.")
+        # return cluster
 
     def create_submission_script(self, name, script, filename, path):
         text = self._create_submission_script_text(name, script, path)
@@ -180,8 +181,7 @@ class SlurmManager(HpcManagerInterface):
             "#SBATCH --nodes=1",
         ]
 
-        for param in ("memory", "partition", "ntasks", "ntasks_per_node",
-                      "qos"):
+        for param in ("memory", "partition", "ntasks", "ntasks_per_node", "qos"):
             value = getattr(self._config.hpc, param, None)
             if value is not None:
                 lines.append(f"#SBATCH --{param}={value}")

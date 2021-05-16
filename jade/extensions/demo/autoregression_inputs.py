@@ -11,6 +11,7 @@ class AutoRegressionInputs(JobInputsInterface):
     """
     A class used for configuring auto-regression analysis jobs.
     """
+
     INPUTS_FILE = "inputs.json"
 
     def __init__(self, base_directory):
@@ -30,8 +31,7 @@ class AutoRegressionInputs(JobInputsInterface):
 
         for param in inputs:
             job = AutoRegressionParameters(
-                country=param["country"],
-                data=os.path.join(self._base_directory, param["data"])
+                country=param["country"], data=os.path.join(self._base_directory, param["data"])
             )
 
             self._parameters[job.name] = job

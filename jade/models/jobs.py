@@ -10,6 +10,7 @@ from jade.models.base import JadeBaseModel
 
 class JobState(enum.Enum):
     """Job states"""
+
     NOT_SUBMITTED = "not_submitted"
     SUBMITTED = "submitted"
     DONE = "done"

@@ -1,4 +1,3 @@
-
 import os
 
 import pytest
@@ -28,6 +27,7 @@ def cleanup(example_output):
             path = os.path.join(example_output, filename)
             if os.path.exists(path):
                 os.remove(path)
+
     delete_files()
     yield
     delete_files()

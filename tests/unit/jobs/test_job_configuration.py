@@ -1,4 +1,3 @@
-
 import os
 import shutil
 
@@ -49,8 +48,7 @@ def test_job_configuration__check_job_dependencies_blocking(job_fixture):
 
     # While we have this setup, verify that submit-jobs calls this function.
     config.dump(CONFIG_FILE)
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} " \
-        "--poll-interval=.1 "
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} " "--poll-interval=.1 "
     ret = run_command(cmd)
     assert ret != 0
 

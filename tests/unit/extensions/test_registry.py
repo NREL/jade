@@ -5,12 +5,9 @@ import tempfile
 
 import pytest
 
-from jade.extensions.registry import Registry, ExtensionClassType, \
-    DEFAULT_REGISTRY
-from jade.extensions.demo.autoregression_configuration import \
-    AutoRegressionConfiguration
-from jade.extensions.demo.autoregression_execution import \
-    AutoRegressionExecution
+from jade.extensions.registry import Registry, ExtensionClassType, DEFAULT_REGISTRY
+from jade.extensions.demo.autoregression_configuration import AutoRegressionConfiguration
+from jade.extensions.demo.autoregression_execution import AutoRegressionExecution
 import jade.extensions.demo.cli as cli
 
 
@@ -54,11 +51,9 @@ def test_registry__register_extensions(registry_fixture):
     ext = extensions[0]
 
     assert ext["name"] == extension["name"]
-    cfg_class = registry.get_extension_class(
-        ext["name"], ExtensionClassType.CONFIGURATION)
+    cfg_class = registry.get_extension_class(ext["name"], ExtensionClassType.CONFIGURATION)
     assert cfg_class == AutoRegressionConfiguration
-    exec_class = registry.get_extension_class(
-        ext["name"], ExtensionClassType.EXECUTION)
+    exec_class = registry.get_extension_class(ext["name"], ExtensionClassType.EXECUTION)
     assert exec_class == AutoRegressionExecution
     cli_mod = registry.get_extension_class(ext["name"], ExtensionClassType.CLI)
     assert cli_mod == cli

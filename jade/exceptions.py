@@ -1,7 +1,9 @@
 """Common exceptions for jade package"""
 
+
 class JadeBaseException(Exception):
     """All JADE exceptions should derive from this class."""
+
 
 class ExecutionError(JadeBaseException):
     """Raised when execution fails."""

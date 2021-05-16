@@ -29,75 +29,90 @@ def pipeline():
     nargs=-1,
 )
 @click.option(
-    "-b", "--per-node-batch-size",
+    "-b",
+    "--per-node-batch-size",
     default=DEFAULTS["per_node_batch_size"],
     show_default=True,
-    help="Number of jobs to run on one node in one batch."
+    help="Number of jobs to run on one node in one batch.",
 )
 @click.option(
-    "-c", "--config-file",
+    "-c",
+    "--config-file",
     type=click.Path(),
     default=PipelineManager.CONFIG_FILENAME,
     show_default=True,
-    help="pipeline config file."
+    help="pipeline config file.",
 )
 @click.option(
-    "-h", "--hpc-config",
+    "-h",
+    "--hpc-config",
     type=click.Path(),
     default=DEFAULTS["hpc_config_file"],
     show_default=True,
-    help="HPC config file."
+    help="HPC config file.",
 )
 @click.option(
-    "-l", "--local",
+    "-l",
+    "--local",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Run locally even if on HPC."
+    help="Run locally even if on HPC.",
 )
 @click.option(
-    "-n", "--max-nodes",
+    "-n",
+    "--max-nodes",
     default=DEFAULTS["max_nodes"],
     show_default=True,
-    help="Max number of node submission requests to make in parallel."
+    help="Max number of node submission requests to make in parallel.",
 )
 @click.option(
-    "-p", "--poll-interval",
+    "-p",
+    "--poll-interval",
     default=DEFAULTS["poll_interval"],
     type=float,
     show_default=True,
-    help="Interval in seconds on which to poll jobs for status."
+    help="Interval in seconds on which to poll jobs for status.",
 )
 @click.option(
-    "-q", "--num-processes",
+    "-q",
+    "--num-processes",
     default=None,
     show_default=False,
     type=int,
-    help="Number of processes to run in parallel; defaults to num CPUs."
+    help="Number of processes to run in parallel; defaults to num CPUs.",
 )
 @click.option(
     "--reports/--no-reports",
     is_flag=True,
     default=True,
     show_default=True,
-    help="Generate reports after execution."
+    help="Generate reports after execution.",
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
-def create(auto_config_cmds, per_node_batch_size, config_file, hpc_config,
-        local, max_nodes, poll_interval, num_processes, reports, verbose):
+def create(
+    auto_config_cmds,
+    per_node_batch_size,
+    config_file,
+    hpc_config,
+    local,
+    max_nodes,
+    poll_interval,
+    num_processes,
+    reports,
+    verbose,
+):
     """Create a pipeline with multiple Jade configurations."""
     if local:
         hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
     else:
         if not os.path.exists(hpc_config):
-            print(f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
-                   "or run in local mode with '-l'")
+            print(
+                f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
+                "or run in local mode with '-l'"
+            )
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 
@@ -115,26 +130,16 @@ def create(auto_config_cmds, per_node_batch_size, config_file, hpc_config,
 
 @click.command()
 @click.argument("config-file")
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
-@click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def submit(config_file, output, verbose=False):
     """Submit the pipeline for execution."""
     os.makedirs(output, exist_ok=True)
     filename = os.path.join(output, "pipeline_submit.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level,
-                  console_level=level)
+    setup_logging(__name__, filename, file_level=level, console_level=level)
     logger.info(get_cli_string())
 
     mgr = PipelineManager.create(config_file, output)
@@ -163,18 +168,13 @@ def submit(config_file, output, verbose=False):
     help="return code of stage index that just completed",
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def submit_next_stage(output, stage_num, return_code, verbose=False):
     """Internal command to submit the next stage of the pipeline for execution."""
     filename = os.path.join(output, "pipeline_submit.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level,
-                  console_level=level, mode="a")
+    setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
     logger.info(get_cli_string())
 
     mgr = PipelineManager.load(output)

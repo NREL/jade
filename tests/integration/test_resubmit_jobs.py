@@ -30,7 +30,7 @@ NUM_COMMANDS = 5
 @pytest.fixture
 def cleanup():
     _do_cleanup()
-    commands = ["echo \"hello world\""] * NUM_COMMANDS
+    commands = ['echo "hello world"'] * NUM_COMMANDS
     with open(TEST_FILENAME, "w") as f_out:
         for command in commands:
             f_out.write(command + "\n")
@@ -80,7 +80,7 @@ def test_resubmit_failed(cleanup):
     assert ret == 0
     ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
     assert ret == 0
-    
+
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_successful_results()) == NUM_COMMANDS
 
@@ -116,6 +116,6 @@ def test_resubmit_missing(cleanup):
     assert ret == 0
     ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
     assert ret == 0
-    
+
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_successful_results()) == NUM_COMMANDS

@@ -76,7 +76,7 @@ class PbsManager(HpcManagerInterface):
     @staticmethod
     def _get_status_from_output(qstat_rows, name):
         # column location of various job identifiers
-        col_loc = {'id': 0, 'name': 3}
+        col_loc = {"id": 0, "name": 3}
 
         # reverse the list so most recent jobs are first
         qstat_rows.reverse()
@@ -90,8 +90,7 @@ class PbsManager(HpcManagerInterface):
             if len(row) > 10:
                 if row[col_loc["name"]].strip() == name.strip():
                     # Job status is located at the -2 index
-                    status = PbsManager._STATUSES.get( row[-2],
-                                                      HpcJobStatus.UNKNOWN)
+                    status = PbsManager._STATUSES.get(row[-2], HpcJobStatus.UNKNOWN)
                     if status is HpcJobStatus.UNKNOWN:
                         logger.error("Unknown PBS job status: %s", row[-2])
                     break

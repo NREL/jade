@@ -24,11 +24,7 @@ logger = logging.getLogger(__name__)
     type=click.Path(exists=True),
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def try_submit_jobs(output, verbose):
     """Internal command to try to submit new jobs for an existing submission."""
@@ -38,8 +34,7 @@ def try_submit_jobs(output, verbose):
 
     event_file = os.path.join(output, "submit_jobs_events.log")
     # This effectively means no console logging.
-    setup_logging("event", event_file, console_level=logging.ERROR,
-                  file_level=logging.INFO)
+    setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
     cluster, promoted = Cluster.deserialize(
         output,

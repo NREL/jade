@@ -27,7 +27,7 @@ NUM_COMMANDS = 100
 @pytest.fixture
 def cleanup():
     _do_cleanup()
-    commands = ["echo \"hello world\""] * NUM_COMMANDS
+    commands = ['echo "hello world"'] * NUM_COMMANDS
     with open(TEST_FILENAME, "w") as f_out:
         for command in commands:
             f_out.write(command + "\n")

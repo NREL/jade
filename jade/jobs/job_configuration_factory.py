@@ -29,6 +29,7 @@ def create_config_from_file(filename, **kwargs):
 
     return deserialize_config(data, **kwargs)
 
+
 @timed_debug
 def create_config_from_previous_run(config_file, output, result_type="successful", **kwargs):
     """Create instance of a JobConfiguration from a previous config file,
@@ -97,9 +98,7 @@ def deserialize_config(data, **kwargs):
     config_class = data["configuration_class"]
     for ext in registry.iter_extensions():
         ext_cfg_class = ext[ExtensionClassType.CONFIGURATION]
-        if (ext_cfg_class.__module__ == config_module and
-            ext_cfg_class.__name__ == config_class
-        ):
+        if ext_cfg_class.__module__ == config_module and ext_cfg_class.__name__ == config_class:
             return ext_cfg_class.deserialize(data, **kwargs)
 
     raise InvalidParameter(f"Cannot deserialize {config_module}.{config_class}")

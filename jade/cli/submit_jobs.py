@@ -27,46 +27,43 @@ logger = logging.getLogger(__name__)
     type=str,
 )
 @click.option(
-    "-f", "--force",
+    "-f",
+    "--force",
     default=False,
     is_flag=True,
     show_default=True,
-    help="Delete output directory if it exists."
+    help="Delete output directory if it exists.",
 )
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
-@click.option(
-    "-s", "--submitter-params",
+    "-s",
+    "--submitter-params",
     default=None,
     show_default=False,
     type=str,
     help="Filename with submitter parameters. Supercedes other CLI parameters. Generate defaults "
-         "with 'jade config submitter-params'",
+    "with 'jade config submitter-params'",
 )
 @add_options(COMMON_SUBMITTER_OPTIONS)
 def submit_jobs(
-        config_file=None,
-        per_node_batch_size=None,
-        force=None,
-        hpc_config=None,
-        local=None,
-        max_nodes=None,
-        output=None,
-        poll_interval=None,
-        resource_monitor_interval=None,
-        num_processes=None,
-        verbose=None,
-        reports=None,
-        try_add_blocked_jobs=None,
-        time_based_batching=None,
-        node_setup_script=None,
-        node_shutdown_script=None,
-        submitter_params=None,
-    ):
+    config_file=None,
+    per_node_batch_size=None,
+    force=None,
+    hpc_config=None,
+    local=None,
+    max_nodes=None,
+    output=None,
+    poll_interval=None,
+    resource_monitor_interval=None,
+    num_processes=None,
+    verbose=None,
+    reports=None,
+    try_add_blocked_jobs=None,
+    time_based_batching=None,
+    node_setup_script=None,
+    node_shutdown_script=None,
+    submitter_params=None,
+):
     """Submits jobs for execution, locally or on HPC."""
     if os.path.exists(output):
         if force:
@@ -109,9 +106,7 @@ def submit_jobs(
 
     event_file = os.path.join(output, "submit_jobs_events.log")
     # This effectively means no console logging.
-    setup_logging("event", event_file, console_level=logging.ERROR,
-                  file_level=logging.INFO)
-
+    setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
     ret = JobSubmitter.run_submit_jobs(config_file, output, params)
     sys.exit(ret)

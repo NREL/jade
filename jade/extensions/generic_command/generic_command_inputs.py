@@ -7,6 +7,7 @@ from jade.extensions.generic_command import GenericCommandParameters
 
 class GenericCommandInputs(JobInputsInterface):
     """A class used for configuring generic_command jobs."""
+
     def __init__(self, filename):
         """
         Parameters

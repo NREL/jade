@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 class JobAnalysis:
     """Provides functionality to analyze job results."""
+
     def __init__(self, output_dir, config):
         self._output_dir = output_dir
         self._config = config
@@ -58,7 +59,8 @@ class JobAnalysis:
 
         job = self.get_job(job_name)
         simulation = self._config.create_from_result(
-            job, os.path.join(self._output_dir, JOBS_OUTPUT_DIR))
+            job, os.path.join(self._output_dir, JOBS_OUTPUT_DIR)
+        )
         return simulation
 
     def list_results(self):
@@ -71,8 +73,7 @@ class JobAnalysis:
 
     def show_results(self, only_failed=False, only_successful=False):
         """Show the results in terminal."""
-        return self._results.show_results(only_failed=only_failed,
-                                          only_successful=only_successful)
+        return self._results.show_results(only_failed=only_failed, only_successful=only_successful)
 
 
 def get_result(results_file, job_name):

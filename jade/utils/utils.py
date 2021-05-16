@@ -39,7 +39,7 @@ def create_chunks(items, size):
 
     """
     for i in range(0, len(items), size):
-        yield items[i: i + size]
+        yield items[i : i + size]
 
 
 def create_script(filename, text, executable=True):
@@ -231,6 +231,7 @@ def get_cli_string():
 
 def handle_file_not_found(func):
     """Decorator to catch FileNotFoundError exceptions."""
+
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         try:
@@ -248,6 +249,7 @@ def handle_file_not_found(func):
 def handle_key_error(func):
     """Decorator to catch KeyError exceptions that happen because the user
     performs invalid actions."""
+
     @functools.wraps(func)
     def wrapped(*args, **kwargs):
         try:
@@ -466,9 +468,8 @@ def check_filename(name):
         raise InvalidParameter(f"{name} contains illegal characters.")
 
     if len(name) > MAX_PATH_LENGTH:
-        raise InvalidParameter(
-            f"length of {name} is greater than the limit of {MAX_PATH_LENGTH}."
-        )
+        raise InvalidParameter(f"length of {name} is greater than the limit of {MAX_PATH_LENGTH}.")
+
 
 def output_to_file(data, filename=None, stream=sys.stdout, indent=2):
     if filename is None and stream is None:
@@ -485,6 +486,7 @@ def output_to_file(data, filename=None, stream=sys.stdout, indent=2):
         _write_file(data)
 
     logger.info("Dumped configuration to %s", filename)
+
 
 def _write_file(data, stream=sys.stdout, fmt=".json", indent=2):
     # Note: the default is JSON here because parsing 100 MB .toml files

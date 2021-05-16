@@ -23,25 +23,17 @@ logger = logging.getLogger(__name__)
     "config-file",
     type=str,
 )
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
-@click.option(
-    "-q", "--num-processes",
+    "-q",
+    "--num-processes",
     default=None,
     show_default=False,
     type=int,
-    help="Number of processes to run in parallel; defaults to num CPUs."
+    help="Number of processes to run in parallel; defaults to num CPUs.",
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 @click.command()
 def run_jobs(config_file, output, num_processes, verbose):
@@ -52,8 +44,7 @@ def run_jobs(config_file, output, num_processes, verbose):
     os.makedirs(output, exist_ok=True)
     filename = os.path.join(output, f"run_jobs_batch_{batch_id}.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level,
-                  console_level=logging.ERROR)
+    setup_logging(__name__, filename, file_level=level, console_level=logging.ERROR)
     logger.info(get_cli_string())
 
     # When running on compute nodes try to submit more jobs before and after

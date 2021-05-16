@@ -10,14 +10,22 @@ import shutil
 
 import jade
 from jade.common import (
-    CONFIG_FILE, JOBS_OUTPUT_DIR, OUTPUT_DIR, RESULTS_FILE, HPC_CONFIG_FILE,
+    CONFIG_FILE,
+    JOBS_OUTPUT_DIR,
+    OUTPUT_DIR,
+    RESULTS_FILE,
+    HPC_CONFIG_FILE,
 )
 from jade.enums import JobCompletionStatus, Status
 from jade.events import (
-    EVENTS_FILENAME, EVENT_NAME_ERROR_LOG,
-    StructuredLogEvent, EVENT_CATEGORY_ERROR, EVENT_CATEGORY_RESOURCE_UTIL,
-    EVENT_NAME_BYTES_CONSUMED, EVENT_NAME_SUBMIT_STARTED,
-    EVENT_NAME_SUBMIT_COMPLETED
+    EVENTS_FILENAME,
+    EVENT_NAME_ERROR_LOG,
+    StructuredLogEvent,
+    EVENT_CATEGORY_ERROR,
+    EVENT_CATEGORY_RESOURCE_UTIL,
+    EVENT_NAME_BYTES_CONSUMED,
+    EVENT_NAME_SUBMIT_STARTED,
+    EVENT_NAME_SUBMIT_COMPLETED,
 )
 from jade.exceptions import InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
@@ -43,6 +51,7 @@ logger = logging.getLogger(__name__)
 
 class JobSubmitter(JobManagerBase):
     """Submits jobs for execution locally or on an HPC."""
+
     def __init__(self, config_file, output, is_new):
         """Internal constructor. Callers should use create() or load()."""
         super().__init__(config_file, output)
@@ -98,8 +107,7 @@ results_summary={self.get_results_summmary_report()}"""
 
         """
         if self._is_new:
-            logger.info("Submit %s jobs for execution.",
-                        self._config.get_num_jobs())
+            logger.info("Submit %s jobs for execution.", self._config.get_num_jobs())
             logger.info("JADE version %s", jade.version.__version__)
             registry = Registry()
             loggers = registry.list_loggers()
@@ -149,8 +157,10 @@ results_summary={self.get_results_summmary_report()}"""
             finished_jobs = {x.name for x in self._results}
             all_jobs = {x.name for x in self._config.iter_jobs()}
             missing_jobs = sorted(all_jobs.difference(finished_jobs))
-            logger.error("These jobs did not finish: %s. Check for process crashes "
-                         "or HPC timeouts.", missing_jobs)
+            logger.error(
+                "These jobs did not finish: %s. Check for process crashes " "or HPC timeouts.",
+                missing_jobs,
+            )
             result = Status.ERROR
         else:
             missing_jobs = []
@@ -187,9 +197,11 @@ results_summary={self.get_results_summmary_report()}"""
             # The pipeline directory must be the one above this one.
             pipeline_dir = os.path.dirname(self._output)
             next_stage = cluster.config.pipeline_stage_num + 1
-            cmd = f"jade pipeline submit-next-stage {pipeline_dir} " \
-                f"--stage-num={next_stage} " \
+            cmd = (
+                f"jade pipeline submit-next-stage {pipeline_dir} "
+                f"--stage-num={next_stage} "
                 f"--return-code={result.value}"
+            )
             run_command(cmd)
 
         return result
@@ -216,12 +228,14 @@ results_summary={self.get_results_summmary_report()}"""
         num_missing = len(missing_jobs)
         total = num_successful + num_failed + num_missing
         log_func = logger.info if num_successful == total else logger.warning
-        log_func("Successful=%s Failed=%s Canceled=%s Missing=%s Total=%s",
-                 num_successful,
-                 num_failed,
-                 num_canceled,
-                 num_missing,
-                 total)
+        log_func(
+            "Successful=%s Failed=%s Canceled=%s Missing=%s Total=%s",
+            num_successful,
+            num_failed,
+            num_canceled,
+            num_missing,
+            total,
+        )
 
         return output_file
 
@@ -262,8 +276,7 @@ results_summary={self.get_results_summmary_report()}"""
                 repo_info = RepositoryInfo(package)
                 patch = os.path.join(self._output, f"{name}-diff.patch")
                 repo_info.write_diff_patch(patch)
-                logger.info("%s repository information: %s",
-                            name, repo_info.summary())
+                logger.info("%s repository information: %s", name, repo_info.summary())
             except InvalidParameter:
                 pass
 
@@ -289,10 +302,7 @@ results_summary={self.get_results_summmary_report()}"""
             "Traceback",
         )
 
-        filenames = [
-            os.path.join(directory, x) for x in os.listdir(directory)
-            if x.endswith(".e")
-        ]
+        filenames = [os.path.join(directory, x) for x in os.listdir(directory) if x.endswith(".e")]
 
         if not filenames:
             return
@@ -306,9 +316,9 @@ results_summary={self.get_results_summmary_report()}"""
                         name=EVENT_NAME_ERROR_LOG,
                         message="Detected error message in log.",
                         error=substring,
-                        filename = fileinput.filename(),
-                        line_number = fileinput.lineno(),
-                        text = line.strip(),
+                        filename=fileinput.filename(),
+                        line_number=fileinput.lineno(),
+                        text=line.strip(),
                     )
                     yield event
                     # Only find one match in a single line.
@@ -365,12 +375,7 @@ results_summary={self.get_results_summmary_report()}"""
         return False
 
     @staticmethod
-    def run_submit_jobs(
-        config_file,
-        output,
-        params,
-        pipeline_stage_num=None
-    ):
+    def run_submit_jobs(config_file, output, params, pipeline_stage_num=None):
         """Allows submission from an existing Python process."""
         os.makedirs(output, exist_ok=True)
 

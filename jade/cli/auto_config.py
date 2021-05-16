@@ -39,12 +39,7 @@ from jade.jobs.job_post_process import JobPostProcess
     show_default=True,
     help="Enable verbose log output.",
 )
-def auto_config(
-        extension,
-        inputs,
-        job_post_process_config_file,
-        config_file,
-        verbose):
+def auto_config(extension, inputs, job_post_process_config_file, config_file, verbose):
     """Automatically create a configuration."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("auto_config", None, console_level=level)
@@ -64,10 +59,7 @@ def auto_config(
         raise InvalidExtension(f"Extension '{extension}' is not registered.")
 
     cli = registry.get_extension_class(extension, ExtensionClassType.CLI)
-    config = cli.auto_config(
-        *inputs,
-        job_post_process_config=job_post_process_config
-    )
+    config = cli.auto_config(*inputs, job_post_process_config=job_post_process_config)
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
     config.dump(config_file)
     print(f"Dumped configuration to {config_file}.\n")

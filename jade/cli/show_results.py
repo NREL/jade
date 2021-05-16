@@ -11,47 +11,36 @@ from jade.result import ResultsSummary
 
 
 @click.option(
-    "-f", "--failed",
+    "-f",
+    "--failed",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Show failed results only."
+    help="Show failed results only.",
 )
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
-    "-o", "--output",
-    default=OUTPUT_DIR,
-    show_default=True,
-    help="Output directory."
-)
-@click.option(
-    "-s", "--successful",
+    "-s",
+    "--successful",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Show successful results only."
+    help="Show successful results only.",
 )
 @click.option(
-    "-p", "--post-process",
+    "-p",
+    "--post-process",
     is_flag=True,
     default=False,
     show_default=True,
-    help="Show post-process results."
+    help="Show post-process results.",
 )
+@click.option("-j", "--job-name", default=None, help="Specific job to show post-process results.")
 @click.option(
-    "-j", "--job-name",
-    default=None,
-    help="Specific job to show post-process results."
-)
-@click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 @click.command()
-def show_results(failed, output, successful, post_process,
-                 job_name, verbose):
+def show_results(failed, output, successful, post_process, job_name, verbose):
     """Shows the results of a batch of jobs."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("show_results", None, console_level=level)

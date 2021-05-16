@@ -178,8 +178,8 @@ def test_remove_job():
     assert arc.get_num_jobs() == 1
 
 
-#@patch("jade.extensions.demo.autoregression_configuration.AutoRegressionExecution")
-#def test_run_job(mock_job_execution_class):
+# @patch("jade.extensions.demo.autoregression_configuration.AutoRegressionExecution")
+# def test_run_job(mock_job_execution_class):
 #    """Should run job using run method defined in AutoRegression class"""
 #    arc = AutoRegressionConfiguration()
 #    job1 = MagicMock()

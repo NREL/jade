@@ -22,11 +22,7 @@ logger = logging.getLogger(__name__)
     type=click.Path(exists=True),
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def cancel_jobs(output, verbose):
     """Cancels jobs."""

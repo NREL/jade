@@ -23,11 +23,13 @@ logger = logging.getLogger(__name__)
 
 class JobRunner(JobManagerBase):
     """Manages execution of jobs on a node."""
-    def __init__(self,
-                 config_file,
-                 output,
-                 batch_id=0,
-                 ):
+
+    def __init__(
+        self,
+        config_file,
+        output,
+        batch_id=0,
+    ):
         super(JobRunner, self).__init__(config_file, output)
         cluster, _ = Cluster.deserialize(output)
         config = cluster.config.submitter_params.hpc_config
@@ -39,12 +41,10 @@ class JobRunner(JobManagerBase):
             f"run_jobs_batch_{batch_id}_events.log",
         )
         self._event_logger = setup_logging(
-            "event", self._event_file, console_level=logging.ERROR,
-            file_level=logging.INFO
+            "event", self._event_file, console_level=logging.ERROR, file_level=logging.INFO
         )
 
-        logger.debug("Constructed JobRunner output=%s batch=%s", output,
-                     batch_id)
+        logger.debug("Constructed JobRunner output=%s batch=%s", output, batch_id)
 
     @timed_info
     def run_jobs(self, verbose=False, num_processes=None):
@@ -67,8 +67,7 @@ class JobRunner(JobManagerBase):
         are_inputs_local = self._intf_type == HpcType.LOCAL
 
         try:
-            config_file = self._config.serialize_for_execution(
-                scratch_dir, are_inputs_local)
+            config_file = self._config.serialize_for_execution(scratch_dir, are_inputs_local)
 
             jobs = self._generate_jobs(config_file, verbose)
             result = self._run_jobs(jobs, num_processes=num_processes)
@@ -111,8 +110,12 @@ class JobRunner(JobManagerBase):
         else:
             max_num_workers = num_processes
         num_workers = min(num_jobs, max_num_workers)
-        logger.info("Generated %s jobs to execute on %s workers max=%s.",
-                    num_jobs, num_workers, max_num_workers)
+        logger.info(
+            "Generated %s jobs to execute on %s workers max=%s.",
+            num_jobs,
+            num_workers,
+            max_num_workers,
+        )
         self._intf.log_environment_variables()
 
         name = f"resource_monitor_batch_{self._batch_id}"
@@ -141,9 +144,7 @@ class JobRunner(JobManagerBase):
             handler.close()
         with open(self._event_file, "a") as f_out:
             for job in self._config.iter_jobs():
-                job_file = os.path.join(
-                    self._output, JOBS_OUTPUT_DIR, job.name, "events.log"
-                )
+                job_file = os.path.join(self._output, JOBS_OUTPUT_DIR, job.name, "events.log")
                 if not os.path.exists(job_file):
                     # Extensions aren't required to create these.
                     continue
@@ -151,5 +152,4 @@ class JobRunner(JobManagerBase):
                     for line in f_in:
                         f_out.write(line)
                 os.remove(job_file)
-                logger.debug("Moved contents of %s to %s", job_file,
-                             self._event_file)
+                logger.debug("Moved contents of %s to %s", job_file, self._event_file)

@@ -10,11 +10,19 @@ class GenericCommandParameters(JobParametersInterface):
     parameters_type = namedtuple("GenericCommand", "command")
     _EXTENSION = "generic_command"
 
-    def __init__(self, command, job_id=None, blocked_by=None, append_output_dir=False, ext=None,
-                 estimated_run_minutes=None, cancel_on_blocking_job_failure=False):
+    def __init__(
+        self,
+        command,
+        job_id=None,
+        blocked_by=None,
+        append_output_dir=False,
+        ext=None,
+        estimated_run_minutes=None,
+        cancel_on_blocking_job_failure=False,
+    ):
         self.command = command
         self.job_id = job_id  # Gets set when job is added to config.
-                              # Uniquely identifies the job.
+        # Uniquely identifies the job.
         self._cancel_on_blocking_job_failure = cancel_on_blocking_job_failure
         self._estimated_run_minutes = estimated_run_minutes
         self.ext = ext or {}  # user-defined data

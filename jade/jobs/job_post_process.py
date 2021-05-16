@@ -10,12 +10,15 @@ from jade.utils.utils import load_data, output_to_file
 
 logger = logging.getLogger(__name__)
 
+
 class JobPostProcess:
     """Class used to dynamically run post process scripts"""
+
     _results_file = "post-process-results.json"
 
-    def __init__(self, module_name, class_name, data=None,
-                 output=OUTPUT_DIR, job_name=None, *args, **kwargs):
+    def __init__(
+        self, module_name, class_name, data=None, output=OUTPUT_DIR, job_name=None, *args, **kwargs
+    ):
         """Constructs JobPostProcess
 
         Parameters
@@ -35,10 +38,7 @@ class JobPostProcess:
         try:
             process_module = __import__(module_name, fromlist=[class_name])
             process_class = getattr(process_module, class_name)
-            self._post_process = process_class(
-                overrides=self._data,
-                job_name=self._job_name
-            )
+            self._post_process = process_class(overrides=self._data, job_name=self._job_name)
         except ModuleNotFoundError:
             logger.exception("Could not import module %s", module_name)
             raise
@@ -55,16 +55,16 @@ class JobPostProcess:
         """Create data for serialization."""
         serialized_data = {
             "class": self._post_process.__class__.__name__,
-            "module": self._post_process.__module__
+            "module": self._post_process.__module__,
         }
 
         data = self._post_process.serialized_data
         if data is not None:
-            serialized_data['data'] = data
+            serialized_data["data"] = data
 
         return serialized_data
 
-    def dump_config(self, output_file='post-process-config.toml'):
+    def dump_config(self, output_file="post-process-config.toml"):
         """Outputs post process data to results file
 
         Parameters
@@ -78,12 +78,11 @@ class JobPostProcess:
 
     def _dump_results(self):
         results = self._post_process.get_results()
-        output_path = os.path.join(self._get_job_results_dir(),
-                                   self._results_file)
+        output_path = os.path.join(self._get_job_results_dir(), self._results_file)
         data = {
-            'job': self._job_name,
-            'post-process': type(self._post_process).__name__,
-            'results': results
+            "job": self._job_name,
+            "post-process": type(self._post_process).__name__,
+            "results": results,
         }
         logger.info("Dumping post-process results to %s", output_path)
         output_to_file(data, output_path)
@@ -112,15 +111,15 @@ class JobPostProcess:
         class_name = None
         data = {}
 
-        if 'module' in config.keys():
-            module_name = config['module']
+        if "module" in config.keys():
+            module_name = config["module"]
 
-        if 'class' in config.keys():
-            class_name = config['class']
+        if "class" in config.keys():
+            class_name = config["class"]
 
-        if 'data' in config.keys():
-            for data_index in config['data']:
-                data[data_index] = config['data'][data_index]
+        if "data" in config.keys():
+            for data_index in config["data"]:
+                data[data_index] = config["data"][data_index]
 
         return module_name, class_name, data
 
@@ -157,9 +156,9 @@ class JobPostProcess:
                 continue
 
             post_process_results = load_data(os.path.join(job_results_dir, job, input_file))
-            results = post_process_results['results']['outputs']
+            results = post_process_results["results"]["outputs"]
             if not table.field_names and results:
-                table.field_names = ['job'] + list(results[0].keys())
+                table.field_names = ["job"] + list(results[0].keys())
 
             for result in results:
                 row = [job]

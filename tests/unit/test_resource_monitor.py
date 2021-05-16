@@ -1,22 +1,30 @@
-
 import logging
 import os
 import shutil
 import tempfile
 
-from jade.events import EventsSummary, EVENT_NAME_CPU_STATS, \
-    EVENT_NAME_DISK_STATS, EVENT_NAME_MEMORY_STATS, EVENT_NAME_NETWORK_STATS
+from jade.events import (
+    EventsSummary,
+    EVENT_NAME_CPU_STATS,
+    EVENT_NAME_DISK_STATS,
+    EVENT_NAME_MEMORY_STATS,
+    EVENT_NAME_NETWORK_STATS,
+)
 from jade.loggers import setup_logging
-from jade.resource_monitor import ResourceMonitor, CpuStatsViewer, \
-    DiskStatsViewer, MemoryStatsViewer, NetworkStatsViewer
+from jade.resource_monitor import (
+    ResourceMonitor,
+    CpuStatsViewer,
+    DiskStatsViewer,
+    MemoryStatsViewer,
+    NetworkStatsViewer,
+)
 from jade.utils.subprocess_manager import run_command
 
 
 def test_resource_stats():
     with tempfile.TemporaryDirectory() as tmpdir:
         event_file = os.path.join(tmpdir, "events.log")
-        setup_logging("event", event_file, console_level=logging.ERROR,
-                      file_level=logging.INFO)
+        setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
         resource_monitor = ResourceMonitor("test")
         count = 2
@@ -43,7 +51,7 @@ def test_resource_stats():
             df = viewer.get_dataframe("test")
             assert len(df) == 2
             if isinstance(viewer, MemoryStatsViewer):
-                mem_df =  viewer.get_dataframe("test")
+                mem_df = viewer.get_dataframe("test")
                 averages = viewer._calc_batch_averages("test")
                 for field, val in averages.items():
                     assert val == df[field].mean()

@@ -8,8 +8,7 @@ import pandas as pd
 from statsmodels.tsa.ar_model import AR
 import matplotlib
 
-from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, \
-    EVENT_NAME_UNHANDLED_ERROR
+from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, EVENT_NAME_UNHANDLED_ERROR
 from jade.jobs.job_execution_interface import JobExecutionInterface
 from jade.loggers import log_event
 from jade.utils.utils import dump_data
@@ -53,6 +52,7 @@ def autoregression_analysis(country, data, output):
     # Save plot
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+
     df.plot()
     plt.grid(axis="y", linestyle="--")
     plt.title(country + "(current $)")
@@ -66,6 +66,7 @@ class AutoRegressionExecution(JobExecutionInterface):
     """
     A class used for auto-regression job execution on computer.
     """
+
     def __init__(self, job, output, output_format="csv"):
         """
         Init auto-regression execution class
@@ -130,10 +131,7 @@ class AutoRegressionExecution(JobExecutionInterface):
 
     def list_results_files(self):
         """Return a list of result filenames created by the simulation."""
-        return [
-            os.path.join(self._output, x)
-            for x in os.listdir(self._output)
-        ]
+        return [os.path.join(self._output, x) for x in os.listdir(self._output)]
 
     def post_process(self, **kwargs):
         """Run post-process operations on data."""
@@ -142,16 +140,14 @@ class AutoRegressionExecution(JobExecutionInterface):
         """Runs the autoregression, and return status code"""
         try:
             result_file, plot_file = autoregression_analysis(
-                country=self._job.country,
-                data=self._job.data,
-                output=self._job_dir
+                country=self._job.country, data=self._job.data, output=self._job_dir
             )
             summary_data = {
                 "name": self._job.name,
                 "country": self._job.country,
                 "output": self._output,
                 "result": result_file,
-                "plot": plot_file
+                "plot": plot_file,
             }
             summary_file = os.path.join(self._job_dir, "summary.toml")
             dump_data(summary_data, summary_file)

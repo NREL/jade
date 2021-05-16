@@ -16,7 +16,7 @@ COUNTRIES = [
     "Japan",
     "Russia",
     "United Kingdom",
-    "United States"
+    "United States",
 ]
 
 INPUTS_FILE = "inputs.json"
@@ -27,10 +27,7 @@ def main():
     inputs = []
     for country in COUNTRIES:
         filename = country.replace(" ", "_").lower() + ".csv"
-        parameter = {
-            "country": country,
-            "data": f"gdp/countries/{filename}"
-        }
+        parameter = {"country": country, "data": f"gdp/countries/{filename}"}
 
         # Generate wrong path for raising error while running job
         if country in ["Australia", "Canada"]:

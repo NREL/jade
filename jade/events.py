@@ -39,13 +39,14 @@ EVENT_NAME_SUBMIT_STARTED = "submit_started"
 EVENT_NAME_SUBMIT_COMPLETED = "submit_completed"
 EVENT_NAME_CONFIG_EXEC_SUMMARY = "config_exec_summary"
 
-logger  = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class StructuredLogEvent:
     """
     A class for recording structured log events.
     """
+
     def __init__(self, source, category, name, message, **kwargs):
         """
         Initialize the class
@@ -133,7 +134,7 @@ class StructuredLogEvent:
             name=record.get("name", ""),
             message=record.get("message", ""),
             timestamp=record.get("timestamp", ""),
-            **record["data"]
+            **record["data"],
         )
 
     def __str__(self):
@@ -248,7 +249,8 @@ class EventsSummary:
         """
         regex = re.compile(r"\w*events.log")
         return [
-            os.path.join(self._output_dir, x) for x in os.listdir(self._output_dir)
+            os.path.join(self._output_dir, x)
+            for x in os.listdir(self._output_dir)
             if regex.search(x)
         ]
 
@@ -448,6 +450,5 @@ class EventsSummary:
         """
         self._load_all_events()
         return json.dumps(
-            [x.to_dict() for events in self._events.values() for x in events],
-            indent=2
+            [x.to_dict() for events in self._events.values() for x in events], indent=2
         )

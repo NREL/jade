@@ -29,9 +29,14 @@ class JobQueue:
 
     """
 
-    def __init__(self, max_queue_depth, existing_jobs=None,
-                 poll_interval=DEFAULT_POLL_INTERVAL, monitor_func=None,
-                 monitor_interval=DEFAULTS["resource_monitor_interval"]):
+    def __init__(
+        self,
+        max_queue_depth,
+        existing_jobs=None,
+        poll_interval=DEFAULT_POLL_INTERVAL,
+        monitor_func=None,
+        monitor_interval=DEFAULTS["resource_monitor_interval"],
+    ):
         """
         Parameters
         ----------
@@ -63,9 +68,12 @@ class JobQueue:
         else:
             self._monitor_interval = monitor_interval
 
-        logger.debug("queue_depth=%s poll_interval=%s monitor_interval=%s",
-                     self._queue_depth, self._poll_interval,
-                     self._monitor_interval)
+        logger.debug(
+            "queue_depth=%s poll_interval=%s monitor_interval=%s",
+            self._queue_depth,
+            self._poll_interval,
+            self._monitor_interval,
+        )
 
     def _check_completions(self):
         logger.debug("check for completions")
@@ -92,7 +100,9 @@ class JobQueue:
                 for i, job in enumerate(self._queued_jobs):
                     blocking_jobs = job.get_blocking_jobs()
                     if blocking_jobs:
-                        if job.cancel_on_blocking_job_failure and blocking_jobs.intersection(failed_jobs):
+                        if job.cancel_on_blocking_job_failure and blocking_jobs.intersection(
+                            failed_jobs
+                        ):
                             job.set_blocking_jobs(set())
                             job.cancel()
                             canceled_indices.append(i)
@@ -100,8 +110,7 @@ class JobQueue:
                             self._outstanding_jobs[job.name] = job
                             need_to_rerun = True
                         elif name in blocking_jobs:
-                            logger.debug("Remove %s from job=%s blocked list",
-                                         name, job.name)
+                            logger.debug("Remove %s from job=%s blocked list", name, job.name)
                             job.remove_blocking_job(name)
 
                 for index in reversed(canceled_indices):
@@ -182,8 +191,9 @@ class JobQueue:
         for index in reversed(jobs_to_pop):
             self._queued_jobs.pop(index)
 
-        logger.debug("Started %s jobs in process_queue; num_blocked=%s",
-                     len(jobs_to_pop), num_blocked)
+        logger.debug(
+            "Started %s jobs in process_queue; num_blocked=%s", len(jobs_to_pop), num_blocked
+        )
 
     def run(self, jobs):
         """
@@ -227,15 +237,19 @@ class JobQueue:
             self.process_queue()
             time.sleep(self._poll_interval)
 
-        assert self._num_completed == self._num_jobs, \
-            f"{self._num_completed} {self._num_jobs}"
+        assert self._num_completed == self._num_jobs, f"{self._num_completed} {self._num_jobs}"
 
         self._handle_monitor_func(force=True)
 
     @classmethod
-    def run_jobs(cls, jobs, max_queue_depth,
-                 poll_interval=DEFAULT_POLL_INTERVAL,
-                 monitor_func=None, monitor_interval=DEFAULTS["resource_monitor_interval"]):
+    def run_jobs(
+        cls,
+        jobs,
+        max_queue_depth,
+        poll_interval=DEFAULT_POLL_INTERVAL,
+        monitor_func=None,
+        monitor_interval=DEFAULTS["resource_monitor_interval"],
+    ):
         """
         Run job queue synchronously. Blocks until all jobs are complete.
 

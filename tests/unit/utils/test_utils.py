@@ -26,10 +26,7 @@ def test_create_chunks():
     assert current == [3, 4, 5]
 
 
-@mark.parametrize(
-    "executable, expected",
-    [(True, 33252), (False, 33188)]
-)
+@mark.parametrize("executable, expected", [(True, 33252), (False, 33188)])
 def test_create_script(executable, expected):
     """Should create script with given text"""
     filename = os.path.join(tempfile.gettempdir(), "hello_world")
@@ -39,8 +36,8 @@ def test_create_script(executable, expected):
     assert os.path.exists(filename)
 
     # Disabling because it doesn't work on Windows.
-    #s = os.stat(filename)
-    #assert s.st_mode == expected
+    # s = os.stat(filename)
+    # assert s.st_mode == expected
 
     if os.path.exists(filename):
         os.remove(filename)
@@ -60,9 +57,9 @@ def test_make_file_read_only():
     prev_mode = os.stat(filename)
     make_file_read_only(filename)
     # Disabling because it doesn't work on Windows.
-    #s = os.stat(filename)
-    #assert s.st_mode != prev_mode
-    #assert s.st_mode == 33060
+    # s = os.stat(filename)
+    # assert s.st_mode != prev_mode
+    # assert s.st_mode == 33060
 
     if os.path.exists(filename):
         os.chmod(filename, stat.S_IWRITE)
@@ -185,6 +182,7 @@ def test_cli_string():
 
 def test_handle_key_error():
     """Test decorator to catch KeyError exception"""
+
     @handle_key_error
     def get_item(key):
         data = {"A": 1, "B": 2}

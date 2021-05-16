@@ -34,7 +34,5 @@ def run(config_file, name, output, output_format, verbose):
     config = create_config_from_file(config_file)
     job = config.get_job(name)
 
-    execution = AutoRegressionExecution(
-        job=job, output=output, output_format=output_format
-    )
+    execution = AutoRegressionExecution(job=job, output=output, output_format=output_format)
     execution.run()

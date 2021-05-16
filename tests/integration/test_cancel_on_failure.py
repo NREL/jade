@@ -30,14 +30,14 @@ NUM_COMMANDS = 5
 def cleanup():
     _do_cleanup()
     commands = [
-        "echo \"hello\"",
+        'echo "hello"',
         "ls invalid-path",
-        "echo \"hello\"",
-        "echo \"hello\"",
-        "echo \"hello\"",
-        "echo \"hello\"",
-        "echo \"hello\"",
-        "echo \"hello\"",
+        'echo "hello"',
+        'echo "hello"',
+        'echo "hello"',
+        'echo "hello"',
+        'echo "hello"',
+        'echo "hello"',
     ]
     with open(TEST_FILENAME, "w") as f_out:
         for command in commands:

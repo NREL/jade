@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 class SubprocessManager:
     """Allows non-blocking execution of a command in a subprocess."""
+
     def __init__(self):
         self._pipe = None
         self._return_code = None
@@ -37,9 +38,7 @@ class SubprocessManager:
         elapsed_time = 0
         sleep_interval = 1
 
-        while (not self._shutdown and
-               ret is None and
-               elapsed_time < timeout):
+        while not self._shutdown and ret is None and elapsed_time < timeout:
             time.sleep(sleep_interval)
             elapsed_time += sleep_interval
             ret = self._pipe.poll()
@@ -51,12 +50,15 @@ class SubprocessManager:
             logger.info("Exit job thread for shutdown")
             self._terminate()
         elif self._return_code is None:
-            logger.error("Command [%s] timed out, terminate it; timeout=%s",
-                         cmd, timeout)
+            logger.error("Command [%s] timed out, terminate it; timeout=%s", cmd, timeout)
             self._terminate()
         else:
-            logger.info("Command [%s] completed return_code=%s "
-                        "exec_time_s=%s", cmd, self._return_code, exec_time)
+            logger.info(
+                "Command [%s] completed return_code=%s " "exec_time_s=%s",
+                cmd,
+                self._return_code,
+                exec_time,
+            )
 
         self._pipe = None
 
@@ -102,14 +104,15 @@ class SubprocessManager:
 
         """
         if self.in_progress():
-            raise JobAlreadyInProgress("SubprocessManager only supports "
-                                       "execution of one job at a time.")
+            raise JobAlreadyInProgress(
+                "SubprocessManager only supports " "execution of one job at a time."
+            )
 
         logger.debug("Start command execution thread.")
 
-        self._thread = threading.Thread(target=self._run_worker,
-                                        args=(command, timeout),
-                                        name="run_command")
+        self._thread = threading.Thread(
+            target=self._run_worker, args=(command, timeout), name="run_command"
+        )
 
         # The thread (and subprocesses) will get killed if the main process
         # is killed.

@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 class JobManagerBase(abc.ABC):
     """Base class for managing jobs."""
+
     def __init__(self, config_file, output_dir):
         self._config = create_config_from_file(config_file)
         self._config_file = config_file

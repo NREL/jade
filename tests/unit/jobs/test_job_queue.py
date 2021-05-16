@@ -102,6 +102,7 @@ def test_job_queue__run_jobs_ordering():
 
 def test_job_queue__monitor_func():
     has_run = []
+
     def monitor():
         has_run.append(1)
 

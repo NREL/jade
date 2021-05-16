@@ -29,7 +29,9 @@ def test_demo_extension(test_data_dir):
         shutil.rmtree(output)
 
     try:
-        cmd = f"jade pipeline create {create_demo_config} {create_merge_config} -c {config_file} -l"
+        cmd = (
+            f"jade pipeline create {create_demo_config} {create_merge_config} -c {config_file} -l"
+        )
         returncode = run_command(cmd=cmd)
         assert returncode == 0
         assert os.path.exists(config_file)

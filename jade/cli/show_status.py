@@ -26,25 +26,23 @@ logger = logging.getLogger(__name__)
 
 @click.command()
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     default=OUTPUT_DIR,
     show_default=True,
     type=click.Path(exists=True),
     help="directory containing submission output",
 )
 @click.option(
-    "-j", "--job-status",
+    "-j",
+    "--job-status",
     is_flag=True,
     default=False,
     show_default=True,
     help="include individual job status",
 )
 @click.option(
-    "--verbose",
-    is_flag=True,
-    default=False,
-    show_default=True,
-    help="Enable verbose log output."
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def show_status(output, job_status, verbose):
     """Shows the status of active HPC jobs."""

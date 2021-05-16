@@ -1,4 +1,3 @@
-
 import abc
 import logging
 import time
@@ -10,9 +9,14 @@ from prettytable import PrettyTable
 import psutil
 from psutil._common import bytes2human
 
-from jade.events import EVENT_CATEGORY_RESOURCE_UTIL, EVENT_NAME_CPU_STATS, \
-    EVENT_NAME_DISK_STATS, EVENT_NAME_MEMORY_STATS, EVENT_NAME_NETWORK_STATS, \
-    StructuredLogEvent
+from jade.events import (
+    EVENT_CATEGORY_RESOURCE_UTIL,
+    EVENT_NAME_CPU_STATS,
+    EVENT_NAME_DISK_STATS,
+    EVENT_NAME_MEMORY_STATS,
+    EVENT_NAME_NETWORK_STATS,
+    StructuredLogEvent,
+)
 from jade.loggers import log_event
 
 
@@ -25,12 +29,22 @@ class ResourceMonitor:
     """Monitors resource utilization statistics"""
 
     DISK_STATS = (
-        "read_count", "write_count", "read_bytes", "write_bytes", "read_time",
+        "read_count",
+        "write_count",
+        "read_bytes",
+        "write_bytes",
+        "read_time",
         "write_time",
     )
     NET_STATS = (
-        "bytes_recv", "bytes_sent", "dropin", "dropout", "errin", "errout",
-        "packets_recv", "packets_sent"
+        "bytes_recv",
+        "bytes_sent",
+        "dropin",
+        "dropout",
+        "errin",
+        "errout",
+        "packets_recv",
+        "packets_sent",
     )
 
     def __init__(self, name):
@@ -138,6 +152,7 @@ class ResourceMonitor:
 
 class StatsViewerBase(abc.ABC):
     """Base class for viewing statistics"""
+
     def __init__(self, events, event_name):
         self._event_name = event_name
         self._events_by_batch = defaultdict(list)
@@ -148,16 +163,12 @@ class StatsViewerBase(abc.ABC):
         for event in events.iter_events(event_name):
             self._num_events += 1
             if not self._stat_totals:
-                self._stat_totals = {
-                    x: 0 for x in event.data.keys()
-                }
+                self._stat_totals = {x: 0 for x in event.data.keys()}
             batch = event.source
             self._events_by_batch[batch].append(event)
 
             if batch not in self._stat_sums_by_batch:
-                self._stat_sums_by_batch[batch] = {
-                    x: 0 for x in event.data.keys()
-                }
+                self._stat_sums_by_batch[batch] = {x: 0 for x in event.data.keys()}
             for field, val in event.data.items():
                 self._stat_sums_by_batch[batch][field] += val
                 self._stat_totals[field] += val
@@ -290,6 +301,7 @@ class StatsViewerBase(abc.ABC):
 
 class CpuStatsViewer(StatsViewerBase):
     """Shows CPU statistics"""
+
     def __init__(self, events):
         super(CpuStatsViewer, self).__init__(events, EVENT_NAME_CPU_STATS)
 
@@ -301,6 +313,7 @@ class CpuStatsViewer(StatsViewerBase):
 
 class DiskStatsViewer(StatsViewerBase):
     """Shows disk statistics"""
+
     def __init__(self, events):
         super(DiskStatsViewer, self).__init__(events, EVENT_NAME_DISK_STATS)
 
@@ -318,14 +331,19 @@ class DiskStatsViewer(StatsViewerBase):
         self._show_stats()
 
         stats_to_total = (
-            "read_bytes", "read_count", "write_bytes", "write_count",
-            "read_time", "write_time"
+            "read_bytes",
+            "read_count",
+            "write_bytes",
+            "write_count",
+            "read_time",
+            "write_time",
         )
         self.show_stat_totals(stats_to_total)
 
 
 class MemoryStatsViewer(StatsViewerBase):
     """Shows Memory statistics"""
+
     def __init__(self, events):
         super(MemoryStatsViewer, self).__init__(events, EVENT_NAME_MEMORY_STATS)
 
@@ -345,6 +363,7 @@ class MemoryStatsViewer(StatsViewerBase):
 
 class NetworkStatsViewer(StatsViewerBase):
     """Shows Network statistics"""
+
     def __init__(self, events):
         super(NetworkStatsViewer, self).__init__(events, EVENT_NAME_NETWORK_STATS)
 
@@ -365,7 +384,13 @@ class NetworkStatsViewer(StatsViewerBase):
 
         self._show_stats()
         stats_to_total = (
-            "bytes_recv", "bytes_sent", "dropin", "dropout", "errin", "errout",
-            "packets_recv", "packets_sent"
+            "bytes_recv",
+            "bytes_sent",
+            "dropin",
+            "dropout",
+            "errin",
+            "errout",
+            "packets_recv",
+            "packets_sent",
         )
         self.show_stat_totals(stats_to_total)

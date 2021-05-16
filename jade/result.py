@@ -12,6 +12,7 @@ from jade.enums import JobCompletionStatus
 from jade.exceptions import InvalidParameter, ExecutionError
 from jade.utils.utils import load_data
 
+
 class Result(namedtuple("Result", "name, return_code, status, exec_time_s, completion_time")):
     """
     Result class containing data after jobs have finished. `completion_time`
@@ -26,15 +27,16 @@ class Result(namedtuple("Result", "name, return_code, status, exec_time_s, compl
     completion_time : int (default current timestamp)
 
     """
-    def __new__(cls, name, return_code, status, exec_time_s,
-                completion_time=None):
+
+    def __new__(cls, name, return_code, status, exec_time_s, completion_time=None):
         # add default values
         if completion_time is None:
             completion_time = time()
         if isinstance(status, JobCompletionStatus):
             status = status.value
-        return super(Result, cls).__new__(cls, name, return_code, status,
-                                          exec_time_s, completion_time)
+        return super(Result, cls).__new__(
+            cls, name, return_code, status, exec_time_s, completion_time
+        )
 
     def is_canceled(self):
         """Return True if the result was canceled."""
@@ -64,6 +66,7 @@ def serialize_result(result):
     data = result._asdict()
     return data
 
+
 def serialize_results(results):
     """Serialize a list of Result objects.
 
@@ -92,11 +95,16 @@ def deserialize_result(data):
 
     """
     if "completion_time" in data.keys():
-        return Result(data["name"], data["return_code"], data["status"],
-                  data["exec_time_s"], data["completion_time"])
+        return Result(
+            data["name"],
+            data["return_code"],
+            data["status"],
+            data["exec_time_s"],
+            data["completion_time"],
+        )
 
-    return Result(data["name"], data["return_code"], data["status"],
-                data["exec_time_s"])
+    return Result(data["name"], data["return_code"], data["status"], data["exec_time_s"])
+
 
 def deserialize_results(data):
     """Deserialize a list of Result objects from raw data.
@@ -115,6 +123,7 @@ def deserialize_results(data):
 
 class ResultsSummary:
     """Provides summary of all job results."""
+
     def __init__(self, output_dir):
         self._output_dir = output_dir
         self._results_file = os.path.join(output_dir, RESULTS_FILE)
@@ -208,7 +217,7 @@ class ResultsSummary:
         list
 
         """
-        missing_jobs =  []
+        missing_jobs = []
         for job in expected_jobs:
             if self.get_result(job.name) is None:
                 missing_jobs.append(job)
@@ -236,15 +245,13 @@ class ResultsSummary:
     def show_results(self, only_failed=False, only_successful=False):
         """Show the results in a table."""
         if only_successful and only_failed:
-            raise InvalidParameter(
-                "only_failed and only_successful are mutually exclusive"
-            )
+            raise InvalidParameter("only_failed and only_successful are mutually exclusive")
 
         print(f"Results from directory: {self._output_dir}")
         print(f"JADE Version: {self._results['jade_version']}")
         print(f"{self._results['timestamp']}\n")
 
-        #if "repository_info" in self._results:
+        # if "repository_info" in self._results:
         #    git_status = self._results["repository_info"]["status"]
         #    print(f"git status:  {git_status}")
 
@@ -252,8 +259,13 @@ class ResultsSummary:
         num_failed = 0
         num_canceled = 0
         table = PrettyTable()
-        table.field_names = ["Job Name", "Return Code", "Status",
-                             "Execution Time (s)", "Completion Time"]
+        table.field_names = [
+            "Job Name",
+            "Return Code",
+            "Status",
+            "Execution Time (s)",
+            "Completion Time",
+        ]
         min_exec = 0
         max_exec = 0
         if self._results["results"]:
@@ -281,8 +293,15 @@ class ResultsSummary:
             if result.exec_time_s > max_exec:
                 max_exec = result.exec_time_s
             exec_times.append(result.exec_time_s)
-            table.add_row([result.name, result.return_code, result.status,
-                           result.exec_time_s, datetime.fromtimestamp(result.completion_time)])
+            table.add_row(
+                [
+                    result.name,
+                    result.return_code,
+                    result.status,
+                    result.exec_time_s,
+                    datetime.fromtimestamp(result.completion_time),
+                ]
+            )
 
         num_missing = len(self._missing_jobs)
         total = num_successful + num_failed + num_canceled + num_missing

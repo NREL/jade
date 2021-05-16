@@ -77,36 +77,42 @@ def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_jo
 
 @click.command()
 @click.option(
-    "-a", "--account",
+    "-a",
+    "--account",
     default="",
     help="HPC account/allocation",
 )
 @click.option(
-    "-c", "--config-file",
+    "-c",
+    "--config-file",
     default="hpc_config.toml",
     show_default=True,
     help="config file to create",
 )
 @click.option(
-    "-p", "--partition",
+    "-p",
+    "--partition",
     default="",
     help="HPC partition",
 )
 @click.option(
-    "-q", "--qos",
+    "-q",
+    "--qos",
     default=None,
     type=str,
     help="QoS value",
 )
 @click.option(
-    "-t", "--hpc-type",
+    "-t",
+    "--hpc-type",
     type=click.Choice(["slurm", "fake", "local"]),
     default="slurm",
     show_default=True,
     help="HPC queueing system",
 )
 @click.option(
-    "-w", "--walltime",
+    "-w",
+    "--walltime",
     default="4:00:00",
     help="HPC walltime",
 )
@@ -134,12 +140,14 @@ def hpc(account, config_file, partition, qos, hpc_type, walltime):
 @click.command()
 @click.argument("config_file", type=click.Path(exists=True))
 @click.option(
-    "-f", "--fields",
+    "-f",
+    "--fields",
     multiple=True,
     help="include in output table; can specify mulitple times",
 )
 @click.option(
-    "-n", "--no-blocked-by",
+    "-n",
+    "--no-blocked-by",
     is_flag=True,
     default=False,
     show_default=True,
@@ -186,18 +194,21 @@ def _show(config_file, fields=None, blocked_by=True):
 @click.argument("config_file", type=click.Path(exists=True))
 @click.argument("indices", nargs=-1)
 @click.option(
-        "-o", "--output-file",
-        help="Create new config file with filtered jobs.",
+    "-o",
+    "--output-file",
+    help="Create new config file with filtered jobs.",
 )
 @click.option(
-    "-f", "--fields",
+    "-f",
+    "--fields",
     type=str,
     multiple=True,
     nargs=2,
     help="Filter on field value. Multiple accepted.",
 )
 @click.option(
-    "-s", "--show-config",
+    "-s",
+    "--show-config",
     is_flag=True,
     show_default=True,
     default=False,
@@ -302,28 +313,29 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 
 @click.command()
 @click.option(
-    "-c", "--config-file",
+    "-c",
+    "--config-file",
     default="submitter_params.toml",
     show_default=True,
     help="config file to create",
 )
 @add_options(COMMON_SUBMITTER_OPTIONS)
 def submitter_params(
-        config_file=None,
-        per_node_batch_size=None,
-        hpc_config=None,
-        local=None,
-        max_nodes=None,
-        poll_interval=None,
-        resource_monitor_interval=None,
-        num_processes=None,
-        verbose=None,
-        reports=None,
-        try_add_blocked_jobs=None,
-        time_based_batching=None,
-        node_setup_script=None,
-        node_shutdown_script=None,
-    ):
+    config_file=None,
+    per_node_batch_size=None,
+    hpc_config=None,
+    local=None,
+    max_nodes=None,
+    poll_interval=None,
+    resource_monitor_interval=None,
+    num_processes=None,
+    verbose=None,
+    reports=None,
+    try_add_blocked_jobs=None,
+    time_based_batching=None,
+    node_setup_script=None,
+    node_shutdown_script=None,
+):
     """Create parameters for use in 'jade submit-jobs'."""
     params = make_submitter_params(
         per_node_batch_size=per_node_batch_size,

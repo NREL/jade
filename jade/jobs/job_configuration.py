@@ -22,6 +22,7 @@ logger = logging.getLogger()
 
 class ConfigSerializeOptions(enum.Enum):
     """Defines option for JobConfiguration serialization."""
+
     JOBS = enum.auto()
     JOB_NAMES = enum.auto()
     NO_JOB_INFO = enum.auto()
@@ -34,13 +35,13 @@ class JobConfiguration(abc.ABC):
     FORMAT_VERSION = "v0.2.0"
 
     def __init__(
-            self,
-            container=None,
-            job_global_config=None,
-            job_post_process_config=None,
-            user_data=None,
-            **kwargs
-        ):
+        self,
+        container=None,
+        job_global_config=None,
+        job_post_process_config=None,
+        user_data=None,
+        **kwargs,
+    ):
         """
         Constructs JobConfiguration.
 
@@ -478,8 +479,7 @@ class JobConfiguration(abc.ABC):
         class
 
         """
-        return self._registry.get_extension_class(extension_name,
-                                                  ExtensionClassType.EXECUTION)
+        return self._registry.get_extension_class(extension_name, ExtensionClassType.EXECUTION)
 
     def job_parameters_class(self, extension_name):
         """Return the class used for job parameters.
@@ -493,7 +493,4 @@ class JobConfiguration(abc.ABC):
         class
 
         """
-        return self._registry.get_extension_class(
-            extension_name,
-            ExtensionClassType.PARAMETERS
-        )
+        return self._registry.get_extension_class(extension_name, ExtensionClassType.PARAMETERS)

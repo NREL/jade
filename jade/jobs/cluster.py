@@ -1,4 +1,3 @@
-
 import enum
 import logging
 import os
@@ -66,7 +65,7 @@ class Cluster:
 
         """
         config = ClusterConfig(
-            path = path,
+            path=path,
             pipeline_stage_num=pipeline_stage_num,
             num_jobs=jade_config.get_num_jobs(),
             submitter=socket.gethostname(),
@@ -373,8 +372,13 @@ class Cluster:
 
         """
         self._do_action_under_lock(
-            self._update_job_status, submitted_jobs, blocked_jobs, canceled_jobs,
-            completed_job_names, hpc_job_ids, batch_index
+            self._update_job_status,
+            submitted_jobs,
+            blocked_jobs,
+            canceled_jobs,
+            completed_job_names,
+            hpc_job_ids,
+            batch_index,
         )
 
     def _are_all_jobs_complete(self):
@@ -423,7 +427,9 @@ class Cluster:
             # trip under normal circumstances then we need to reconsider this.
             logger.error(
                 "Failed to acquire file lock %s within %s seconds. hostname=%s",
-                lock_file, timeout, socket.gethostname()
+                lock_file,
+                timeout,
+                socket.gethostname(),
             )
             raise
 
@@ -471,8 +477,12 @@ class Cluster:
             text = self._config.json()
             self._config_hash = hash(text)
             self._serialize_file(self._config.json(), self._config_file)
-            logger.info("Wrote config version %s reason=%s hostname=%s",
-                self._config.version, reason, self._hostname)
+            logger.info(
+                "Wrote config version %s reason=%s hostname=%s",
+                self._config.version,
+                reason,
+                self._hostname,
+            )
 
     def _serialize_jobs(self, reason):
         current = self._get_job_status_version()
@@ -488,8 +498,12 @@ class Cluster:
             text = self._job_status.json()
             self._serialize_file(text, self._job_status_file)
             self._job_status_hash = hash(text)
-            logger.info("Wrote job_status version %s reason=%s hostname=%s",
-                self._job_status.version, reason, self._hostname)
+            logger.info(
+                "Wrote job_status version %s reason=%s hostname=%s",
+                self._job_status.version,
+                reason,
+                self._hostname,
+            )
 
     @staticmethod
     def _serialize_file(text, filename):
@@ -544,22 +558,25 @@ class Cluster:
             self._config.completed_jobs += 1
 
         for job in self.iter_jobs():
-            if job.blocked_by and job.state in \
-                    (JobState.SUBMITTED, JobState.DONE):
+            if job.blocked_by and job.state in (JobState.SUBMITTED, JobState.DONE):
                 job.blocked_by.clear()
 
         self._serialize("update_job_status")
         self._serialize_jobs("update_job_status")
 
         not_submitted = self._config.num_jobs - self._config.submitted_jobs
-        logger.info("Updated job status submitted=%s not_submitted=%s completed=%s hostname=%s",
-            self._config.submitted_jobs, not_submitted, self._config.completed_jobs,
-            self._hostname
+        logger.info(
+            "Updated job status submitted=%s not_submitted=%s completed=%s hostname=%s",
+            self._config.submitted_jobs,
+            not_submitted,
+            self._config.completed_jobs,
+            self._hostname,
         )
 
 
 class ConfigVersionMismatch(Exception):
     """Raised when user tries to perform an update with an old version."""
+
 
 class JobStatusVersionMismatch(Exception):
     """Raised when user tries to perform an update with an old version."""

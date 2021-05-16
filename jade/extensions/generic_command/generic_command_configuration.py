@@ -2,8 +2,7 @@
 
 from jade.exceptions import InvalidConfiguration
 from jade.jobs.job_configuration import JobConfiguration
-from jade.extensions.generic_command.generic_command_inputs import \
-    GenericCommandInputs
+from jade.extensions.generic_command.generic_command_inputs import GenericCommandInputs
 
 
 class GenericCommandConfiguration(JobConfiguration):
@@ -22,8 +21,9 @@ class GenericCommandConfiguration(JobConfiguration):
         super(GenericCommandConfiguration, self).__init__(**kwargs)
 
     @classmethod
-    def auto_config(cls, inputs, cancel_on_blocking_job_failure=False, minutes_per_job=None,
-                    **kwargs):
+    def auto_config(
+        cls, inputs, cancel_on_blocking_job_failure=False, minutes_per_job=None, **kwargs
+    ):
         """Create a configuration from all available inputs."""
         if isinstance(inputs, str):
             inputs = GenericCommandInputs(inputs)

@@ -12,13 +12,15 @@ from jade.jobs.cluster import Cluster
 
 @click.command()
 @click.option(
-    "-o", "--output",
+    "-o",
+    "--output",
     default=OUTPUT_DIR,
     show_default=True,
     help="directory containing submission output",
 )
 @click.option(
-    "-p", "--poll-interval",
+    "-p",
+    "--poll-interval",
     default=10.0,
     show_default=True,
     help="poll interval in minutes",

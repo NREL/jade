@@ -156,8 +156,7 @@ class PipelineManager:
             self._serialize()
             return
 
-        logger.info("Start execution pipeline stage %s/%s",
-                    stage_num, len(self._config.stages))
+        logger.info("Start execution pipeline stage %s/%s", stage_num, len(self._config.stages))
 
         self._serialize()
         stage = self._config.stages[self.stage_num - 1]
@@ -179,9 +178,7 @@ class PipelineManager:
 
         ret = run_command(stage.auto_config_cmd)
         if ret != 0:
-            raise ExecutionError(
-                f"Failed to auto-config stage {self.stage_num}: {ret}"
-            )
+            raise ExecutionError(f"Failed to auto-config stage {self.stage_num}: {ret}")
 
         if not os.path.exists(stage.config_file):
             raise ExecutionError(

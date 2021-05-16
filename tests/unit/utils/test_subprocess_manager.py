@@ -8,12 +8,7 @@ from jade.utils.subprocess_manager import SubprocessManager, run_command
 
 
 @mark.parametrize(
-    "command, timeout",
-    [
-        ("echo 'Hello'", None),
-        ("ls --invalidoption", None),
-        ("sleep 2", 0.1)
-    ]
+    "command, timeout", [("echo 'Hello'", None), ("ls --invalidoption", None), ("sleep 2", 0.1)]
 )
 def test_subprocess_manager__run(command, timeout):
     """Should run command one at a time with"""
