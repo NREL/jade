@@ -10,7 +10,7 @@ from jade.enums import Status
 from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.cluster import Cluster
-from jade.jobs.dispatchable_job import DispatchableJob
+from jade.jobs.async_cli_command import AsyncCliCommand
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
 from jade.loggers import setup_logging
@@ -90,7 +90,7 @@ class JobRunner(JobManagerBase):
         jobs = []
         for job in self._config.iter_jobs():
             job_exec_class = self._config.job_execution_class(job.extension)
-            djob = DispatchableJob(
+            djob = AsyncCliCommand(
                 job,
                 job_exec_class.generate_command(
                     job,

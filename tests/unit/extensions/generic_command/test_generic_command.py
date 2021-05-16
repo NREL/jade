@@ -13,7 +13,7 @@ from jade.extensions.generic_command import GenericCommandExecution
 from jade.extensions.generic_command import GenericCommandParameters
 from jade.result import ResultsSummary
 from jade.test_common import FAKE_HPC_CONFIG
-from jade.utils.subprocess_manager import run_command
+from jade.utils.run_command import check_run_command
 
 
 TEST_FILENAME = "inputs.txt"
@@ -63,8 +63,7 @@ def test_run_generic_commands(generic_command_fixture):
     )
 
     for cmd in cmds:
-        ret = run_command(cmd)
-        assert ret == 0
+        check_run_command(cmd)
 
 
 def test_sorted_order(generic_command_fixture):
@@ -111,11 +110,8 @@ def test_job_order(generic_command_fixture):
         "--poll-interval=0.1 " \
         f"--hpc-config {FAKE_HPC_CONFIG} " \
         "--num-processes=10"
-    ret = run_command(cmd)
-    assert ret == 0
-
-    ret = run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
-    assert ret == 0
+    check_run_command(cmd)
+    check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
 
     result_summary = ResultsSummary(OUTPUT)
     results = result_summary.list_results()

@@ -1,4 +1,4 @@
-"""Defines a dispatchable job."""
+"""Defines an async CLI command."""
 
 import logging
 import os
@@ -11,7 +11,7 @@ from jade.common import JOBS_OUTPUT_DIR
 from jade.enums import JobCompletionStatus
 from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, \
     EVENT_CATEGORY_RESOURCE_UTIL
-from jade.jobs.dispatchable_job_interface import DispatchableJobInterface
+from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.loggers import log_event
 from jade.result import Result
@@ -21,8 +21,8 @@ from jade.utils.utils import get_directory_size_bytes
 logger = logging.getLogger(__name__)
 
 
-class DispatchableJob(DispatchableJobInterface):
-    """Defines a dispatchable job."""
+class AsyncCliCommand(AsyncJobInterface):
+    """Defines a a CLI command that can be submitted asynchronously."""
     def __init__(self, job, cmd, output):
         self._job = job
         self._cli_cmd = cmd
@@ -89,6 +89,13 @@ class DispatchableJob(DispatchableJobInterface):
 
     @property
     def job(self):
+        """Get the job.
+
+        Parameters
+        ----------
+        job : JobParametersInterface
+
+        """
         return self._job
 
     @property

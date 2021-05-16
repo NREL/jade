@@ -11,7 +11,7 @@ from jade.events import EventsSummary, EVENT_NAME_HPC_SUBMIT
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.result import Result, ResultsSummary
 from jade.test_common import FAKE_HPC_CONFIG
-from jade.utils.subprocess_manager import run_command
+from jade.utils.run_command import check_run_command
 from jade.utils.utils import load_data, dump_data
 
 
@@ -53,10 +53,8 @@ def test_estimated_run_time(cleanup):
     # Each of 4 cores can each complete 24 jobs. 4 * 24 = 96 jobs
     # 100 jobs will take two batches.
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -t -n2 -q4"
-    ret = run_command(cmd)
-    assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
-    assert ret == 0
+    check_run_command(cmd)
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
 
     batch_config_1 = Path(OUTPUT) / "config_batch_1.json"
     assert os.path.exists(batch_config_1)
