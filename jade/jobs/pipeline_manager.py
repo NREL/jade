@@ -186,7 +186,7 @@ class PipelineManager:
             )
 
         final_file = self.get_stage_config_file_path(self._output, self.stage_num)
-        shutil.move(stage.config_file, final_file)
+        shutil.copyfile(stage.config_file, final_file)
         stage.config_file = final_file
 
     @property
