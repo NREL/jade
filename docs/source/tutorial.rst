@@ -537,7 +537,7 @@ is how to view CPU stats for the node that ran the first batch:
    summary = EventsSummary("output")
    viewer = CpuStatsViewer(summary)
    for name in viewer.iter_batch_names():
-       cpu_df =  viewer.get_dataframe(name)
+       cpu_df = viewer.get_dataframe(name)
        print(cpu_df.head())
 
 Standalone Resource Monitoring

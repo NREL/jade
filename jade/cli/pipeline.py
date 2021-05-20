@@ -2,6 +2,7 @@
 
 import logging
 import os
+import shutil
 import sys
 
 import click
@@ -130,13 +131,28 @@ def create(
 
 @click.command()
 @click.argument("config-file")
+@click.option(
+    "-f",
+    "--force",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Delete output directory if it exists.",
+)
 @click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
-def submit(config_file, output, verbose=False):
+def submit(config_file, output, force, verbose=False):
     """Submit the pipeline for execution."""
+    if os.path.exists(output):
+        if force:
+            shutil.rmtree(output)
+        else:
+            print(f"{output} already exists. Delete it or use '--force' to overwrite.")
+            sys.exit(1)
     os.makedirs(output, exist_ok=True)
+
     filename = os.path.join(output, "pipeline_submit.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level)
