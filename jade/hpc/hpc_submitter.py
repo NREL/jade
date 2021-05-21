@@ -103,7 +103,6 @@ class HpcSubmitter:
         )
         # Statuses may have changed since we last ran.
         queue.process_queue()
-        hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
         completed_job_names, canceled_jobs = self._update_completed_jobs()
 
         blocked_jobs = []
@@ -121,14 +120,14 @@ class HpcSubmitter:
                 submitted_jobs.append(job)
 
             if batch.ready_to_submit():
-                self._submit_batch(queue, batch, hpc_job_ids)
+                self._submit_batch(queue, batch)
                 batch = None
 
             if queue.is_full():
                 break
 
         if batch is not None and batch.num_jobs > 0:
-            self._submit_batch(queue, batch, hpc_job_ids)
+            self._submit_batch(queue, batch)
 
         num_submissions = self._batch_index - starting_batch_index
         logger.info(
@@ -141,6 +140,7 @@ class HpcSubmitter:
         if submitted_jobs:
             logger.debug("Submitted %s", ", ".join((x.name for x in submitted_jobs)))
 
+        hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
         self._update_status(
             submitted_jobs,
             blocked_jobs,
@@ -175,10 +175,9 @@ class HpcSubmitter:
                 self._batch_index,
             )
 
-    def _submit_batch(self, queue, batch, hpc_job_ids):
+    def _submit_batch(self, queue, batch):
         async_submitter = self._make_async_submitter(batch.serialize())
         queue.submit(async_submitter)
-        hpc_job_ids.append(async_submitter.job_id)
         self._log_submission_event(batch)
 
     def _log_submission_event(self, batch):
