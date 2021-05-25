@@ -3,7 +3,6 @@ import shutil
 
 import pytest
 
-import jade
 from jade.jobs.cluster import Cluster, ConfigVersionMismatch
 from jade.common import CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration
@@ -83,9 +82,15 @@ def test_cluster__version_mismatch(cluster):
     with open(cluster._job_status_version_file, "w") as f_out:
         f_out.write(str(cluster.job_status.version + 1) + "\n")
 
-    with pytest.raises(ConfigVersionMismatch):
-        cluster.promote_to_submitter()
+    try:
+        with pytest.raises(ConfigVersionMismatch):
+            cluster.promote_to_submitter()
+    finally:
+        os.remove(Cluster.get_lock_file(cluster.config.path))
 
-    with pytest.raises(ConfigVersionMismatch):
-        submitted_jobs = cluster.job_status.jobs
-        cluster.update_job_status(submitted_jobs, [], set(), [], [1], 1)
+    try:
+        with pytest.raises(ConfigVersionMismatch):
+            submitted_jobs = cluster.job_status.jobs
+            cluster.update_job_status(submitted_jobs, [], set(), [], [1], 1)
+    finally:
+        os.remove(Cluster.get_lock_file(cluster.config.path))

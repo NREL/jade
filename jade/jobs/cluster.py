@@ -434,9 +434,15 @@ class Cluster:
             raise
 
         try:
-            return func(*args, **kwargs)
-        finally:
+            val = func(*args, **kwargs)
             lock.release()
+            return val
+        except Exception:
+            logger.exception(
+                "An exception occurred while holding the Cluster lock. "
+                "The state of the cluster is unknown. A deadlock will occur."
+            )
+            raise
 
     def _get_config_version(self):
         with open(self._config_version_file, "r") as f_in:
