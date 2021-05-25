@@ -107,6 +107,45 @@ class HpcSubmitter:
 
         blocked_jobs = []
         submitted_jobs = []
+        num_submissions = 0
+        if not queue.is_full():
+            self._submit_batches(queue, blocked_jobs, submitted_jobs)
+            num_submissions = self._batch_index - starting_batch_index
+
+        logger.info(
+            "num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
+            num_submissions,
+            len(submitted_jobs),
+            len(blocked_jobs),
+            len(completed_job_names),
+        )
+
+        hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
+        self._update_status(
+            submitted_jobs,
+            blocked_jobs,
+            canceled_jobs,
+            hpc_job_ids,
+            completed_job_names,
+        )
+
+        return self._is_complete()
+
+    def _update_status(
+        self, submitted_jobs, blocked_jobs, canceled_jobs, hpc_job_ids, completed_job_names
+    ):
+        hpc_job_changes = self._cluster.job_status.hpc_job_ids != hpc_job_ids
+        if completed_job_names or submitted_jobs or blocked_jobs or hpc_job_changes:
+            self._cluster.update_job_status(
+                submitted_jobs,
+                blocked_jobs,
+                canceled_jobs,
+                completed_job_names,
+                hpc_job_ids,
+                self._batch_index,
+            )
+
+    def _submit_batches(self, queue, blocked_jobs, submitted_jobs):
         batch = None
         for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
             if batch is None:
@@ -126,30 +165,16 @@ class HpcSubmitter:
             if queue.is_full():
                 break
 
-        if batch is not None and batch.num_jobs > 0:
+        if not queue.is_full() and batch is not None and batch.num_jobs > 0:
             self._submit_batch(queue, batch)
 
-        num_submissions = self._batch_index - starting_batch_index
-        logger.info(
-            "num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
-            num_submissions,
-            len(submitted_jobs),
-            len(blocked_jobs),
-            len(completed_job_names),
-        )
-        if submitted_jobs:
-            logger.debug("Submitted %s", ", ".join((x.name for x in submitted_jobs)))
+    def _submit_batch(self, queue, batch):
+        async_submitter = self._make_async_submitter(batch.serialize())
+        queue.submit(async_submitter)
+        self._log_submission_event(batch)
 
-        hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
-        self._update_status(
-            submitted_jobs,
-            blocked_jobs,
-            canceled_jobs,
-            hpc_job_ids,
-            completed_job_names,
-        )
+    def _is_complete(self):
         is_complete = self._cluster.are_all_jobs_complete()
-
         if not is_complete and not self._cluster.job_status.hpc_job_ids:
             # TODO: need to implement persistent recording of fake status
             if self._hpc_mgr.hpc_type != HpcType.FAKE:
@@ -160,25 +185,6 @@ class HpcSubmitter:
                 is_complete = True
 
         return is_complete
-
-    def _update_status(
-        self, submitted_jobs, blocked_jobs, canceled_jobs, hpc_job_ids, completed_job_names
-    ):
-        hpc_job_changes = self._cluster.job_status.hpc_job_ids != hpc_job_ids
-        if completed_job_names or submitted_jobs or blocked_jobs or hpc_job_changes:
-            self._cluster.update_job_status(
-                submitted_jobs,
-                blocked_jobs,
-                canceled_jobs,
-                completed_job_names,
-                hpc_job_ids,
-                self._batch_index,
-            )
-
-    def _submit_batch(self, queue, batch):
-        async_submitter = self._make_async_submitter(batch.serialize())
-        queue.submit(async_submitter)
-        self._log_submission_event(batch)
 
     def _log_submission_event(self, batch):
         event = StructuredLogEvent(
