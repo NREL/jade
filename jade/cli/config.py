@@ -92,7 +92,7 @@ def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_jo
 @click.option(
     "-p",
     "--partition",
-    default="",
+    default=None,
     help="HPC partition",
 )
 @click.option(

@@ -1,6 +1,5 @@
 """Models for submitter options"""
 
-import enum
 from typing import List, Optional, Set, Union
 
 from pydantic import Field
@@ -11,7 +10,6 @@ from jade.models import JadeBaseModel, HpcConfig, SlurmConfig
 
 DEFAULTS = {
     "hpc_config_file": HPC_CONFIG_FILE,
-    "max_nodes": 16,
     "per_node_batch_size": 500,
     "poll_interval": 60,
     "resource_monitor_interval": 30,
@@ -32,8 +30,8 @@ class SubmitterParams(JadeBaseModel):
     )
     max_nodes: Optional[int] = Field(
         title="max_nodes",
-        description="max number of compute nodes to use simultaneously",
-        default=DEFAULTS["max_nodes"],
+        description="max number of compute nodes to use simultaneously, default is unbounded",
+        default=None,
     )
     num_processes: Optional[int] = Field(
         title="num_processes",

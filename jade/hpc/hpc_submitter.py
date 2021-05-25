@@ -4,6 +4,7 @@ import copy
 import logging
 import os
 import re
+import sys
 import time
 from datetime import timedelta
 
@@ -96,8 +97,9 @@ class HpcSubmitter:
             for x in self._cluster.iter_hpc_job_ids()
         ]
 
+        max_nodes = self._params.max_nodes or sys.maxsize
         queue = JobQueue(
-            self._params.max_nodes,
+            max_nodes,
             existing_jobs=hpc_submitters,
             poll_interval=self._params.poll_interval,
         )

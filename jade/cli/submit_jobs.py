@@ -91,14 +91,7 @@ def submit_jobs(
             node_shutdown_script=node_shutdown_script,
         )
 
-    if params.hpc_config.hpc_type == HpcType.SLURM:
-        # TODO: we could pick this based on walltime if we hard-code for NREL HPC.
-        if not params.hpc_config.hpc.partition:
-            print("The SLURM partition/queue must be defined.")
-            sys.exit(1)
-
     os.makedirs(output)
-
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
