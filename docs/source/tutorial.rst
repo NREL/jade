@@ -40,14 +40,14 @@ edit the file afterwards.
 
 The following parameters are optional when running on NREL's HPC (Eagle):
 - partition: If not specified then the HPC will decide the partition based on the
-  wall time value.
+wall time value.
 - mem: If specified then the HPC will only provide nodes that
-  have at least this amount of memory.  Refer to the HPC documentation for
-  supported formats. On Eagle: "80GB", "150GB".
+have at least this amount of memory.  Refer to the HPC documentation for
+supported formats. On Eagle: "80GB", "150GB".
 - tmp: If specified then the HPC
-  will only provide nodes that have at least this amount of storage space as
-  scratch space. Refer to the HPC documentation for supported formats. On Eagle:
-  "500GB", "2TB".
+will only provide nodes that have at least this amount of storage space as
+scratch space. Refer to the HPC documentation for supported formats. On Eagle:
+"500GB", "2TB".
 
 JADE was primarily designed to maximize use of compute node CPUs when running
 jobs that only require a single node. Given that objective, the default value
@@ -448,10 +448,6 @@ Here are the log files that JADE generates. Open these to dig deeper.
 - ``job_output_<HPC job ID>.e``: The HPC logs stdout and stderr from all
   processes to this file. Look here to debug unexpected crashes or hangs.
 
-  - Python crashes will print ``Traceback`` to stderr, so that is a good string
-    to search for.
-  - Search for SLURM errors:  ``srun``, ``slurmstepd``, ``DUE TO TIME LIMIT``
-
 .. code-block:: bash
 
     $ find output -name "*.log" -o -name "*.e"
@@ -459,6 +455,11 @@ Here are the log files that JADE generates. Open these to dig deeper.
     output/J1__3__1.15__1.0__deployment1.dss/pydss-project/Logs/pydss-project_deployment1.dss.log
     output/submit_jobs.log
     output/job_output_1151157.e
+
+Python crashes will print ``Traceback`` to stderr, so that is a good string
+to search for.
+
+SLURM error strings:  ``srun``, ``slurmstepd``, ``DUE TO TIME LIMIT``
 
 Useful grep commands
 
