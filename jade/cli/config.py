@@ -322,6 +322,7 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 @add_options(COMMON_SUBMITTER_OPTIONS)
 def submitter_params(
     config_file=None,
+    dry_run=None,
     per_node_batch_size=None,
     hpc_config=None,
     local=None,
@@ -339,6 +340,7 @@ def submitter_params(
     """Create parameters for use in 'jade submit-jobs'."""
     params = make_submitter_params(
         per_node_batch_size=per_node_batch_size,
+        dry_run=dry_run,
         hpc_config=hpc_config,
         local=local,
         max_nodes=max_nodes,

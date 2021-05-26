@@ -38,14 +38,16 @@ customized to your parameters.
 All parameters have defaults, and so you can run ``jade config hpc`` and then
 edit the file afterwards.
 
-The following parameters are optional when running on NREL's HPC (Eagle): -
-partition: If not specified then the HPC will decide the partition based on the
-wall time value.  - mem: If specified then the HPC will only provide nodes that
-have at least this amount of memory.  Refer to the HPC documentation for
-supported formats. On Eagle: "80GB", "150GB".  - tmp: If specified then the HPC
-will only provide nodes that have at least this amount of storage space as
-scratch space. Refer to the HPC documentation for supported formats. On Eagle:
-"500GB", "2TB".
+The following parameters are optional when running on NREL's HPC (Eagle):
+- partition: If not specified then the HPC will decide the partition based on the
+  wall time value.
+- mem: If specified then the HPC will only provide nodes that
+  have at least this amount of memory.  Refer to the HPC documentation for
+  supported formats. On Eagle: "80GB", "150GB".
+- tmp: If specified then the HPC
+  will only provide nodes that have at least this amount of storage space as
+  scratch space. Refer to the HPC documentation for supported formats. On Eagle:
+  "500GB", "2TB".
 
 JADE was primarily designed to maximize use of compute node CPUs when running
 jobs that only require a single node. Given that objective, the default value
@@ -192,6 +194,9 @@ order to run on more nodes in parallel.
 
 Refer to :ref:`submission_strategies` for a description of how to handle
 specific use cases.
+
+.. note:: You can enable ``--dry-run`` to check how the batches will be created
+   without actually submitting any jobs.
 
 Examples::
 

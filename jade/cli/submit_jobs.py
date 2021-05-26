@@ -48,6 +48,7 @@ logger = logging.getLogger(__name__)
 def submit_jobs(
     config_file=None,
     per_node_batch_size=None,
+    dry_run=None,
     force=None,
     hpc_config=None,
     local=None,
@@ -77,6 +78,7 @@ def submit_jobs(
     else:
         params = make_submitter_params(
             per_node_batch_size=per_node_batch_size,
+            dry_run=dry_run,
             hpc_config=hpc_config,
             local=local,
             max_nodes=max_nodes,
@@ -90,6 +92,10 @@ def submit_jobs(
             node_setup_script=node_setup_script,
             node_shutdown_script=node_shutdown_script,
         )
+
+    if params.time_based_batching and params.num_processes is None:
+        print("Error: num_processes must be set with time-based batching")
+        sys.exit(1)
 
     os.makedirs(output)
     filename = os.path.join(output, "submit_jobs.log")

@@ -103,7 +103,9 @@ class HpcManager:
         """
         return self._config.hpc_type
 
-    def submit(self, directory, name, script, wait=False, keep_submission_script=True):
+    def submit(
+        self, directory, name, script, wait=False, keep_submission_script=True, dry_run=False
+    ):
         """Submits scripts to the queue for execution.
 
         Parameters
@@ -118,6 +120,8 @@ class HpcManager:
             Wait for execution to complete.
         keep_submission_script : bool
             Do not delete the submission script.
+        dry_run : bool
+            Do not actually submit jobs. Just create the files.
 
         Returns
         -------
@@ -138,6 +142,11 @@ class HpcManager:
         filename = os.path.join(directory, name + ".sh")
         self._intf.create_submission_script(name, script, filename, self._output)
         logger.info("Created submission script %s", filename)
+
+        if dry_run:
+            logger.info("Dry run mode enabled. Return without submitting.")
+            return 0, Status.GOOD
+
         result, job_id, err = self._intf.submit(filename)
 
         if result == Status.GOOD:

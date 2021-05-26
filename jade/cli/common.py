@@ -81,6 +81,13 @@ COMMON_SUBMITTER_OPTIONS = (
         help="Number of jobs to run on one node in one batch.",
     ),
     click.option(
+        "--dry-run",
+        default=False,
+        is_flag=True,
+        show_default=True,
+        help="Dry run mode. Do not run any jobs. Not allowed in local mode.",
+    ),
+    click.option(
         "-h",
         "--hpc-config",
         type=click.Path(),
@@ -185,6 +192,7 @@ def add_options(options):
 
 def make_submitter_params(
     per_node_batch_size=None,
+    dry_run=None,
     hpc_config=None,
     local=None,
     max_nodes=None,
@@ -210,18 +218,19 @@ def make_submitter_params(
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 
+    if local and dry_run:
+        print("Dry run is not allowed in local mode.")
+        sys.exit(1)
+
     if time_based_batching and per_node_batch_size != DEFAULTS["per_node_batch_size"]:
         # This doesn't catch the case where the user passes --per-node-batch-size=default, but
         # I don't see that click provides a way to detect that condition.
         print("Error: --per-node-batch-size and --time-based-batching are mutually exclusive")
         sys.exit(1)
 
-    if time_based_batching:
-        if num_processes is None:
-            print("num_processes must be set with time-based batching")
-            sys.exit(1)
-        # From this point on, this parameter is overloaded. 0 means time-based-batching.
-        per_node_batch_size = 0
+    if time_based_batching and num_processes is None:
+        print("Error: num_processes must be set with time-based batching")
+        sys.exit(1)
 
     return SubmitterParams(
         generate_reports=reports,
@@ -229,10 +238,12 @@ def make_submitter_params(
         max_nodes=max_nodes,
         num_processes=num_processes,
         per_node_batch_size=per_node_batch_size,
+        dry_run=dry_run,
         node_setup_script=node_setup_script,
         node_shutdown_script=node_shutdown_script,
         poll_interval=poll_interval,
         resource_monitor_interval=resource_monitor_interval,
+        time_based_batching=time_based_batching,
         try_add_blocked_jobs=try_add_blocked_jobs,
         verbose=verbose,
     )

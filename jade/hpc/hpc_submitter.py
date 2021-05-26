@@ -57,7 +57,7 @@ class HpcSubmitter:
         text.append(command)
         create_script(filename, "\n".join(text))
 
-    def _make_async_submitter(self, jobs):
+    def _make_async_submitter(self, jobs, dry_run=False):
         config = copy.copy(self._base_config)
         config["jobs"] = jobs
         suffix = f"_batch_{self._batch_index}"
@@ -78,6 +78,7 @@ class HpcSubmitter:
             run_script,
             name,
             self._output,
+            dry_run=dry_run,
         )
 
     @timed_debug
@@ -148,30 +149,40 @@ class HpcSubmitter:
             )
 
     def _submit_batches(self, queue, blocked_jobs, submitted_jobs):
+        assert not queue.is_full()
+        num_submitted_jobs = 0
         batch = None
         for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
             if batch is None:
                 batch = _BatchJobs(self._params)
-            jade_job = self._config.get_job(job.name)
             if batch.is_job_blocked(job):
                 blocked_jobs.append(job)
             else:
+                jade_job = self._config.get_job(job.name)
                 jade_job.set_blocking_jobs(job.blocked_by)
                 batch.append(jade_job)
                 submitted_jobs.append(job)
 
             if batch.ready_to_submit():
                 self._submit_batch(queue, batch)
+                num_submitted_jobs += batch.num_jobs
                 batch = None
 
-            if queue.is_full():
-                break
+                if queue.is_full():
+                    break
 
         if not queue.is_full() and batch is not None and batch.num_jobs > 0:
             self._submit_batch(queue, batch)
+            num_submitted_jobs += batch.num_jobs
+
+        assert num_submitted_jobs == len(
+            submitted_jobs
+        ), f"{num_submitted_jobs} / {len(submitted_jobs)}"
 
     def _submit_batch(self, queue, batch):
-        async_submitter = self._make_async_submitter(batch.serialize())
+        async_submitter = self._make_async_submitter(
+            batch.serialize(), dry_run=self._params.dry_run
+        )
         queue.submit(async_submitter)
         self._log_submission_event(batch)
 
@@ -244,10 +255,11 @@ class _BatchJobs:
         self._estimated_batch_time = timedelta(seconds=0)
         self._num_processes = params.num_processes
         self._per_node_batch_size = params.per_node_batch_size
+        self._time_based_batching = params.time_based_batching
         self._try_add_blocked_jobs = params.try_add_blocked_jobs
         self._jobs = []
         self._job_names = set()
-        if self._per_node_batch_size == 0:
+        if self._time_based_batching:
             self._max_batch_time = (
                 _to_timedelta(params.hpc_config.hpc.walltime) * self._num_processes
             )
@@ -258,7 +270,7 @@ class _BatchJobs:
         """Append a job."""
         self._jobs.append(job)
         self._job_names.add(job.name)
-        if self._per_node_batch_size == 0:
+        if self._time_based_batching:
             self._estimated_batch_time += timedelta(minutes=job.estimated_run_minutes)
 
     def are_blocking_jobs_present(self, blocking_jobs):
@@ -273,7 +285,7 @@ class _BatchJobs:
 
     def ready_to_submit(self):
         """Return True if the batch has enough jobs to submit."""
-        if self._per_node_batch_size == 0:
+        if self._time_based_batching:
             if self._estimated_batch_time >= self._max_batch_time:
                 return True
         elif self.num_jobs >= self._per_node_batch_size:
@@ -319,7 +331,9 @@ class _BatchJobs:
 class AsyncHpcSubmitter(AsyncJobInterface):
     """Used to submit batches of jobs to multiple nodes, one at a time."""
 
-    def __init__(self, hpc_manager, status_collector, run_script, name, output, job_id=None):
+    def __init__(
+        self, hpc_manager, status_collector, run_script, name, output, job_id=None, dry_run=False
+    ):
         self._mgr = hpc_manager
         self._status_collector = status_collector
         self._run_script = run_script
@@ -328,6 +342,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         self._name = name
         self._last_status = HpcJobStatus.NONE
         self._is_complete = False
+        self._dry_run = dry_run
 
     def cancel(self):
         self._mgr.cancel_job(self._job_id)
@@ -397,7 +412,9 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         return 0
 
     def run(self):
-        job_id, result = self._mgr.submit(self._output, self._name, self._run_script)
+        job_id, result = self._mgr.submit(
+            self._output, self._name, self._run_script, dry_run=self._dry_run
+        )
         if result != Status.GOOD:
             raise ExecutionError("Failed to submit name={self._name}")
 
