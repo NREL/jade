@@ -158,7 +158,12 @@ results_summary={self.get_results_summmary_report()}"""
             all_jobs = {x.name for x in self._config.iter_jobs()}
             missing_jobs = sorted(all_jobs.difference(finished_jobs))
             logger.error(
-                "These jobs did not finish: %s. Check for process crashes " "or HPC timeouts.",
+                "Error in result totals. num_results=%s total_num_jobs=%s",
+                len(self._results),
+                self._config.get_num_jobs(),
+            )
+            logger.error(
+                "These jobs did not finish: %s. Check for process crashes or HPC timeouts.",
                 missing_jobs,
             )
             result = Status.ERROR
@@ -393,7 +398,8 @@ results_summary={self.get_results_summmary_report()}"""
             status = mgr.submit_jobs(cluster, force_local=local)
             if status == Status.IN_PROGRESS:
                 check_cmd = f"jade show-status -o {output}"
-                print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
+                if not params.dry_run:
+                    print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
                 ret = 0
             else:
                 ret = status.value

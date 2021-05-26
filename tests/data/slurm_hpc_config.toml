@@ -1,0 +1,7 @@
+hpc_type = "slurm"
+job_prefix = "job"
+
+[hpc]
+account = "account"
+walltime = "4:00:00"
+nodes = 1

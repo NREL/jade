@@ -40,11 +40,6 @@ class SubmitterParams(JadeBaseModel):
     )
     per_node_batch_size: Optional[int] = Field(
         title="per_node_batch_size",
-        description="how many jobs to assign to each node",
-        default=DEFAULTS["per_node_batch_size"],
-    )
-    per_node_batch_size: Optional[int] = Field(
-        title="per_node_batch_size",
         description="how many jobs to assign to each node. If 0, use time-based batching.",
         default=DEFAULTS["per_node_batch_size"],
     )
@@ -69,6 +64,16 @@ class SubmitterParams(JadeBaseModel):
     try_add_blocked_jobs: Optional[bool] = Field(
         title="try_add_blocked_jobs",
         description="add blocked jobs to a batch if all blocking jobs are in " "the batch",
+        default=False,
+    )
+    time_based_batching: Optional[bool] = Field(
+        title="time_based_batching",
+        description="use time-based batching instead of job-count-based batching",
+        default=False,
+    )
+    dry_run: Optional[bool] = Field(
+        title="dry_run",
+        description="dry run mode; don't start any jobs",
         default=False,
     )
     verbose: Optional[bool] = Field(
