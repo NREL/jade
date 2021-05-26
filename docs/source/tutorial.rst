@@ -7,7 +7,7 @@ jobs locally or on HPC.
 
 CLI Commands
 ============
-All CLI commands documented in this page have a hierchical nature. There are
+All CLI commands documented in this page have a hierarchical nature. There are
 group commands followed by subcommands. You can enter ``--help`` at any level.
 For example:
 
@@ -20,7 +20,7 @@ For example:
 
 HPC Configuration
 =================
-This section only applies if you run your jobs on HPC.
+This section only applies if you run your jobs on an HPC.
 
 Change to a directory on the shared filesystem (such as /scratch on Eagle).
 JADE uses the filesystem for internal synchronization.
@@ -37,6 +37,23 @@ customized to your parameters.
 
 All parameters have defaults, and so you can run ``jade config hpc`` and then
 edit the file afterwards.
+
+The following parameters are optional when running on NREL's HPC (Eagle): -
+partition: If not specified then the HPC will decide the partition based on the
+wall time value.  - mem: If specified then the HPC will only provide nodes that
+have at least this amount of memory.  Refer to the HPC documentation for
+supported formats. On Eagle: "80GB", "150GB".  - tmp: If specified then the HPC
+will only provide nodes that have at least this amount of storage space as
+scratch space. Refer to the HPC documentation for supported formats. On Eagle:
+"500GB", "2TB".
+
+JADE was primarily designed to maximize use of compute node CPUs when running
+jobs that only require a single node. Given that objective, the default value
+of ``nodes`` is ``1``.
+
+As an experimental feature, JADE supports setting ``nodes``, ``ntasks``, and
+``ntasks_per_node`` to allow users to run multi-node jobs. Refer to the HPC
+documentation and ensure each job is compatible with the settings.
 
 Lustre Filesystem
 -----------------
@@ -157,6 +174,7 @@ Parameters to keep in mind:
 
 - **Number of jobs**: Number of jobs created by the user.
 - **Max nodes**: Max number of job submissions (batches) to run in parallel.
+  Default is unbounded.
 - **Per-node batch size**: Number of jobs to run on one node in one batch.
 - **Allocation time**: How long it takes to acquire a node. Dependent on the
   HPC queue chosen and the priority given.
@@ -167,10 +185,10 @@ Parameters to keep in mind:
   ``--time-based-batching`` flag to let JADE create variable-sized batches.
   Mutually exclusive with --per-node-batch-size.
 
-If the jobs are very quick to execute and it takes a long time to acquire a
-node then you may be better off making per_node_batch_size higher and max_nodes
-lower. Conversely, if the jobs take a long time then you may want to do the
-opposite.
+If the jobs have a short duration and it takes a long time to acquire a
+node then you may want to maximize the value of per_node_batch_size. Conversely,
+if the time to acquire a node is short then you can lower per_node_batch_size in
+order to run on more nodes in parallel.
 
 Refer to :ref:`submission_strategies` for a description of how to handle
 specific use cases.
@@ -183,7 +201,6 @@ Examples::
     # Specify options.
     $ jade submit-jobs config.json \
         --output=output \
-        --max-nodes=20 \
         --per-node-batch-size=500 \
         --hpc-config=hpc_config.toml
 

@@ -100,9 +100,10 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-n",
         "--max-nodes",
-        default=DEFAULTS["max_nodes"],
+        default=None,
         show_default=True,
-        help="Max number of node submission requests to make in parallel.",
+        type=int,
+        help="Max number of node submission requests to make in parallel. Default is unbounded.",
     ),
     click.option(
         "-p",

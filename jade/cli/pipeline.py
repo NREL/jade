@@ -63,9 +63,10 @@ def pipeline():
 @click.option(
     "-n",
     "--max-nodes",
-    default=DEFAULTS["max_nodes"],
+    default=None,
+    type=int,
     show_default=True,
-    help="Max number of node submission requests to make in parallel.",
+    help="Max number of node submission requests to make in parallel. Default is unbounded.",
 )
 @click.option(
     "-p",
