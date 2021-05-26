@@ -56,8 +56,6 @@ setup(
     zip_safe=False,
     keywords="jade",
     classifiers=[
-        "Development Status :: Alpha",
-        "Intended Audience :: Modelers",
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",
         "Programming Language :: Python :: 3.7",
