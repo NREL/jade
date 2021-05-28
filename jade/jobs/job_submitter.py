@@ -68,6 +68,7 @@ class JobSubmitter(JobManagerBase):
         ----------
         config_file : JobConfiguration
             configuration for simulation
+        params: SubmitterParams
         output : str
             Output directory
 
@@ -133,10 +134,8 @@ results_summary={self.get_results_summmary_report()}"""
                 num_jobs=self.get_num_jobs(),
             )
             log_event(event)
-            logger.debug("submission groups after creation: %s", self._config.submission_groups)
         else:
             self._handle_submission_groups_after_deserialize(cluster)
-            logger.debug("submission groups after reload: %s", self._config.submission_groups)
 
         result = Status.IN_PROGRESS
         group = self._config.get_default_submission_group()

@@ -166,8 +166,6 @@ class HpcSubmitter:
         batch = None
         for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
             jade_job = self._config.get_job(job.name)
-            # TODO DT: remove checks
-            assert jade_job.submission_group is not None
             assert submission_group.name is not None
             if jade_job.submission_group != submission_group.name:
                 continue

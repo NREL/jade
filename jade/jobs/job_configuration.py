@@ -14,7 +14,7 @@ from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.jobs.job_container_by_name import JobContainerByName
-from jade.models.submission_group import SubmissionGroup
+from jade.models.submission_group import SubmissionGroup, SubmitterParams
 from jade.utils.utils import dump_data, load_data, ExtendedJSONEncoder
 from jade.utils.timing_utils import timed_debug
 
@@ -231,8 +231,19 @@ class JobConfiguration(abc.ABC):
             return
 
         first_group = next(iter(groups))
-        must_be_same = ("max_nodes", "poll_interval")
+        group_params = (
+            "try_add_blocked_jobs",
+            "time_based_batching",
+            "num_processes",
+            "hpc_config",
+            "per_node_batch_size",
+        )
         user_overrides = ("generate_reports", "resource_monitor_interval", "dry_run", "verbose")
+        user_override_if_not_set = ("node_setup_script", "node_shutdown_script")
+        must_be_same = ("max_nodes", "poll_interval")
+        all_params = (must_be_same, group_params, user_overrides, user_override_if_not_set)
+        fields = {item for params in all_params for item in params}
+        assert sorted(list(fields)) == sorted(SubmitterParams.__fields__)
         hpc_type = first_group.submitter_params.hpc_config.hpc_type
         group_names = set()
         for group in groups:
@@ -249,6 +260,11 @@ class JobConfiguration(abc.ABC):
             for param in user_overrides:
                 user_val = getattr(submitter_params, param)
                 setattr(group.submitter_params, param, user_val)
+            for param in user_override_if_not_set:
+                user_val = getattr(submitter_params, param)
+                group_val = getattr(group.submitter_params, param)
+                if group_val is None:
+                    setattr(group.submitter_params, param, user_val)
 
         jobs_by_group = defaultdict(list)
         for job in self.iter_jobs():

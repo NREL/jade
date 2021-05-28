@@ -230,3 +230,18 @@ parameters specified on the command line for ``jade submit-jobs``:
 - ``generate_reports``
 - ``resource_monitor_interval``
 - ``verbose``
+
+The following parameters in the submission groups will be overridden by the
+parameters specified on the command line for ``jade submit-jobs`` **only**
+if they are not set for the group:
+
+- ``node_setup_script``
+- ``node_shutdown_script``
+
+The following parameters are completely controlled by the group:
+
+- ``hpc_config``
+- ``num_processes``
+- ``per_node_batch_size``
+- ``time_based_batching``
+- ``try_add_blocked_jobs``
