@@ -91,6 +91,12 @@ def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_jo
     help="config file to create",
 )
 @click.option(
+    "-m",
+    "--mem",
+    default=None,
+    help="Amount of memory required by a single node.",
+)
+@click.option(
     "-p",
     "--partition",
     default=None,
@@ -112,18 +118,25 @@ def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_jo
     help="HPC queueing system",
 )
 @click.option(
+    "--tmp",
+    default=None,
+    help="Amount of local storage space required by a single node.",
+)
+@click.option(
     "-w",
     "--walltime",
     default="4:00:00",
     help="HPC walltime",
 )
-def hpc(account, config_file, partition, qos, hpc_type, walltime):
+def hpc(account, config_file, mem, partition, qos, hpc_type, tmp, walltime):
     """Create an HPC config file."""
     if hpc_type == "slurm":
         hpc = SlurmConfig(
             account=account,
+            mem=mem,
             partition=partition,
             qos=qos,
+            tmp=tmp,
             walltime=walltime,
         )
     elif hpc_type == "fake":
