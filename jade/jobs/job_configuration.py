@@ -6,6 +6,7 @@ import json
 import logging
 import os
 import sys
+from collections import defaultdict
 
 import toml
 
@@ -13,6 +14,7 @@ from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.jobs.job_container_by_name import JobContainerByName
+from jade.models.submission_group import SubmissionGroup
 from jade.utils.utils import dump_data, load_data, ExtendedJSONEncoder
 from jade.utils.timing_utils import timed_debug
 
@@ -40,6 +42,7 @@ class JobConfiguration(abc.ABC):
         job_global_config=None,
         job_post_process_config=None,
         user_data=None,
+        submission_groups=None,
         **kwargs,
     ):
         """
@@ -58,6 +61,7 @@ class JobConfiguration(abc.ABC):
         self._job_global_config = job_global_config
         self._job_post_process_config = job_post_process_config
         self._user_data = user_data or {}
+        self._submission_groups = [SubmissionGroup(**x) for x in submission_groups or []]
 
         if kwargs.get("do_not_deserialize_jobs", False):
             assert "job_names" in kwargs, str(kwargs)
@@ -206,6 +210,73 @@ class JobConfiguration(abc.ABC):
             raise InvalidConfiguration(
                 "Submitting batches by time requires that each job define estimated_run_minutes"
             )
+
+    def check_submission_groups(self, submitter_params):
+        """Check for invalid job submission group assignments.
+        Make a default group if none are defined and assign it to each job.
+
+        Parameters
+        ----------
+        submitter_params : SubmitterParams
+
+        Raises
+        ------
+        InvalidConfiguration
+            Raised if submission group assignments are invalid.
+
+        """
+        groups = self.submission_groups
+        if not groups:
+            self._assign_default_submission_group(submitter_params)
+            return
+
+        first_group = next(iter(groups))
+        must_be_same = ("max_nodes", "poll_interval")
+        user_overrides = ("generate_reports", "resource_monitor_interval", "dry_run", "verbose")
+        hpc_type = first_group.submitter_params.hpc_config.hpc_type
+        group_names = set()
+        for group in groups:
+            if group.name in group_names:
+                raise InvalidConfiguration(f"submission group {group.name} is listed twice")
+            group_names.add(group.name)
+            if group.submitter_params.hpc_config.hpc_type != hpc_type:
+                raise InvalidConfiguration(f"hpc_type values must be the same in all groups")
+            for param in must_be_same:
+                first_val = getattr(first_group.submitter_params, param)
+                this_val = getattr(group.submitter_params, param)
+                if this_val != first_val:
+                    raise InvalidConfiguration(f"{param} must be the same in all groups")
+            for param in user_overrides:
+                user_val = getattr(submitter_params, param)
+                setattr(group.submitter_params, param, user_val)
+
+        jobs_by_group = defaultdict(list)
+        for job in self.iter_jobs():
+            if job.submission_group is None:
+                raise InvalidConfiguration(
+                    f"Job {job.name} does not have a submission group assigned"
+                )
+            if job.submission_group not in group_names:
+                raise InvalidConfiguration(
+                    f"Job {job.name} has an invalid submission group: {job.submission_group}"
+                )
+            jobs_by_group[job.submission_group].append(job.name)
+
+        group_counts = {}
+        for name, jobs in jobs_by_group.items():
+            if not jobs:
+                logger.warning("Submission group %s does not have any jobs defined", name)
+            group_counts[name] = len(jobs)
+
+        for name, count in sorted(group_counts.items()):
+            logger.info("Submission group %s has %s jobs", name, count)
+
+    def _assign_default_submission_group(self, submitter_params):
+        default_name = "default"
+        group = SubmissionGroup(name=default_name, submitter_params=submitter_params)
+        for job in self.iter_jobs():
+            job.submission_group = group.name
+        self.append_submission_group(group)
 
     @abc.abstractmethod
     def create_from_result(self, job, output_dir):
@@ -357,6 +428,60 @@ class JobConfiguration(abc.ABC):
         """
         return list(self.iter_jobs())
 
+    def append_submission_group(self, submission_group):
+        """Append a submission group.
+
+        Parameters
+        ----------
+        submission_group : SubmissionGroup
+
+        """
+        self._submission_groups.append(submission_group)
+        logger.info("Added submission group %s", submission_group.name)
+
+    def get_default_submission_group(self):
+        """Return the default submission group.
+        If all the jobs in the config have the same group, return that one.
+        If the jobs have different groups, return an arbitrary one.
+
+        Returns
+        -------
+        SubmissionGroup
+
+        """
+        group_names = {x.submission_group for x in self.iter_jobs()}
+        logger.debug(f"submission groups: {group_names}")
+        return self.get_submission_group(next(iter(group_names)))
+
+    def get_submission_group(self, name):
+        """Return the submission group matching name.
+
+        Parameters
+        ----------
+        name : str
+
+        Returns
+        -------
+        SubmissionGroup
+
+        """
+        for group in self.submission_groups:
+            if group.name == name:
+                return group
+
+        raise InvalidParameter(f"submission group {name} is not stored")
+
+    @property
+    def submission_groups(self):
+        """Return the submission groups.
+
+        Returns
+        -------
+        list
+
+        """
+        return self._submission_groups
+
     @timed_debug
     def reconfigure_jobs(self, jobs):
         """Reconfigure with a list of jobs.
@@ -391,6 +516,7 @@ class JobConfiguration(abc.ABC):
             "configuration_class": self.__class__.__name__,
             "format_version": self.FORMAT_VERSION,
             "user_data": self._user_data,
+            "submission_groups": [x.dict() for x in self.submission_groups],
         }
         if self._job_global_config:
             data["job_global_config"] = self._job_global_config
@@ -412,7 +538,7 @@ class JobConfiguration(abc.ABC):
 
         Parameters
         ----------
-        output_dir : str
+        directory : str
 
         """
         for job in self.iter_jobs():
@@ -451,7 +577,7 @@ class JobConfiguration(abc.ABC):
         self.serialize_jobs(scratch_dir)
         data = self.serialize(ConfigSerializeOptions.JOB_NAMES)
         config_file = os.path.join(scratch_dir, CONFIG_FILE)
-        dump_data(data, config_file)
+        dump_data(data, config_file, cls=ExtendedJSONEncoder)
         logger.info("Dumped config file locally to %s", config_file)
 
         return config_file

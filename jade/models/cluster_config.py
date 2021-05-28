@@ -1,10 +1,10 @@
 """Defines the cluster configuration"""
 
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import Field
 
-from jade.models import JadeBaseModel, SubmitterParams
+from jade.models import JadeBaseModel, SubmissionGroup
 
 
 class ClusterConfig(JadeBaseModel):
@@ -15,8 +15,8 @@ class ClusterConfig(JadeBaseModel):
         description="defines the current submitter, hostname or None",
         default=None,
     )
-    submitter_params: SubmitterParams = Field(
-        title="submitter_params",
+    submission_groups: List[SubmissionGroup] = Field(
+        title="submission_groups",
         description="defines the submitter options selected by the user",
     )
     path: str = Field(

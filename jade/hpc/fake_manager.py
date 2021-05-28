@@ -67,6 +67,9 @@ class FakeManager(HpcManagerInterface):
         ]
         create_script(filename, "\n".join(lines))
 
+    def get_active_nodes(self, job_id):
+        assert False
+
     def get_config(self):
         return {"hpc": {}}
 

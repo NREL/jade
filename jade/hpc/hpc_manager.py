@@ -20,12 +20,28 @@ logger = logging.getLogger(__name__)
 class HpcManager:
     """Manages HPC job submission and monitoring."""
 
-    def __init__(self, config, output):
-        self._config = config
-        self._intf = self.create_hpc_interface(config)
+    def __init__(self, submission_groups, output):
         self._output = output
+        self._configs = {}
+        self._intfs = {}
+        self._hpc_type = None
+        assert submission_groups
+        for name, group in submission_groups.items():
+            self._configs[name] = group.submitter_params.hpc_config
+            self._intfs[name] = self.create_hpc_interface(group.submitter_params.hpc_config)
+            if self._hpc_type is None:
+                self._hpc_type = group.submitter_params.hpc_config.hpc_type
 
         logger.debug("Constructed HpcManager with output=%s", output)
+
+    def _get_interface(self, submission_group_name=None):
+        if submission_group_name is None:
+            # In many cases we don't care which interface is used.
+            # We could store job IDs by group if we need to perform actions by group
+            # in the future.
+            # As of now we don't track IDs at all in this class.
+            return next(iter(self._intfs.values()))
+        return self._intfs[submission_group_name]
 
     def cancel_job(self, job_id):
         """Cancel job.
@@ -40,7 +56,8 @@ class HpcManager:
             return code
 
         """
-        ret = self._intf.cancel_job(job_id)
+        intf = self._get_interface()
+        ret = intf.cancel_job(job_id)
         if ret == 0:
             logger.info("Successfully cancelled job ID %s", job_id)
         else:
@@ -66,7 +83,8 @@ class HpcManager:
         if (name is None and job_id is None) or (name is not None and job_id is not None):
             raise InvalidParameter("exactly one of name / job_id must be set")
 
-        info = self._intf.check_status(name=name, job_id=job_id)
+        intf = self._get_interface()
+        info = intf.check_status(name=name, job_id=job_id)
         logger.debug("info=%s", info)
         return info.status
 
@@ -79,10 +97,31 @@ class HpcManager:
             key is job_id, value is HpcJobStatus
 
         """
-        return self._intf.check_statuses()
+        intf = self._get_interface()
+        return intf.check_statuses()
 
-    def get_hpc_config(self):
+    def get_active_nodes(self, job_id):
+        """Return the nodes currently participating in the job.
+
+        Parameters
+        ----------
+        job_id : str
+
+        Returns
+        -------
+        list
+            list of node hostnames
+
+        """
+        intf = self._get_interface()
+        return intf.get_active_nodes(job_id)
+
+    def get_hpc_config(self, submission_group_name):
         """Returns the HPC config parameters.
+
+        Parameters
+        ----------
+        submission_group_name : str
 
         Returns
         -------
@@ -90,7 +129,7 @@ class HpcManager:
             config parameters
 
         """
-        return self._intf.get_config()
+        return self._get_interface(submission_group_name=submission_group_name)
 
     @property
     def hpc_type(self):
@@ -101,10 +140,17 @@ class HpcManager:
         HpcType
 
         """
-        return self._config.hpc_type
+        return self._hpc_type
 
     def submit(
-        self, directory, name, script, wait=False, keep_submission_script=True, dry_run=False
+        self,
+        directory,
+        name,
+        script,
+        submission_group_name,
+        wait=False,
+        keep_submission_script=True,
+        dry_run=False,
     ):
         """Submits scripts to the queue for execution.
 
@@ -116,6 +162,7 @@ class HpcManager:
             job name
         script : str
             Script to execute.
+        submission_group_name : str
         wait : bool
             Wait for execution to complete.
         keep_submission_script : bool
@@ -129,10 +176,11 @@ class HpcManager:
             (job_id, submission status)
 
         """
-        self._intf.check_storage_configuration()
+        intf = self._get_interface(submission_group_name)
+        intf.check_storage_configuration()
 
         # TODO: enable this logic if batches have unique names.
-        # info = self._intf.check_status(name=name)
+        # info = intf.check_status(name=name)
         # if info.status in (HpcJobStatus.QUEUED, HpcJobStatus.RUNNING):
         #    raise JobAlreadyInProgress(
         #        "Not submitting job '{}' because it is already active: "
@@ -140,14 +188,14 @@ class HpcManager:
         #    )
 
         filename = os.path.join(directory, name + ".sh")
-        self._intf.create_submission_script(name, script, filename, self._output)
+        intf.create_submission_script(name, script, filename, self._output)
         logger.info("Created submission script %s", filename)
 
         if dry_run:
             logger.info("Dry run mode enabled. Return without submitting.")
             return 0, Status.GOOD
 
-        result, job_id, err = self._intf.submit(filename)
+        result, job_id, err = intf.submit(filename)
 
         if result == Status.GOOD:
             logger.info("job '%s' with ID=%s submitted successfully", name, job_id)
@@ -181,10 +229,11 @@ class HpcManager:
 
     def _wait_for_completion(self, job_id):
         status = HpcJobStatus.UNKNOWN
+        intf = self._get_interface()
 
         while status not in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE):
             time.sleep(5)
-            job_info = self._intf.check_status(job_id=job_id)
+            job_info = intf.check_status(job_id=job_id)
             logger.debug("job_info=%s", job_info)
             if job_info.status != status:
                 logger.info("Status of job ID %s changed to %s", job_id, job_info.status)

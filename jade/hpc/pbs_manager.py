@@ -63,6 +63,9 @@ class PbsManager(HpcManagerInterface):
     def create_local_cluster(self):
         pass
 
+    def get_active_nodes(self, job_id):
+        assert False
+
     def get_config(self):
         return self._config
 

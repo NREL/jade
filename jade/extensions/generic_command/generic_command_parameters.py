@@ -1,6 +1,8 @@
 """Implements the JobParametersInterface for generic_command."""
 
 from collections import namedtuple
+
+from jade.common import DEFAULT_SUBMISSION_GROUP
 from jade.jobs.job_parameters_interface import JobParametersInterface
 
 
@@ -19,6 +21,7 @@ class GenericCommandParameters(JobParametersInterface):
         ext=None,
         estimated_run_minutes=None,
         cancel_on_blocking_job_failure=False,
+        submission_group=None,
     ):
         self.command = command
         self.job_id = job_id  # Gets set when job is added to config.
@@ -26,6 +29,7 @@ class GenericCommandParameters(JobParametersInterface):
         self._cancel_on_blocking_job_failure = cancel_on_blocking_job_failure
         self._estimated_run_minutes = estimated_run_minutes
         self.ext = ext or {}  # user-defined data
+        self._submission_group = submission_group
         self.blocked_by = set()
         if blocked_by is not None:
             for _job_id in blocked_by:
@@ -69,6 +73,7 @@ class GenericCommandParameters(JobParametersInterface):
             "cancel_on_blocking_job_failure": self.cancel_on_blocking_job_failure,
             "estimated_run_minutes": self.estimated_run_minutes,
             "ext": self.ext,
+            "submission_group": self.submission_group,
         }
 
     @classmethod
@@ -81,6 +86,7 @@ class GenericCommandParameters(JobParametersInterface):
             cancel_on_blocking_job_failure=data.get("cancel_on_blocking_job_failure", False),
             estimated_run_minutes=data.get("estimated_run_minutes"),
             ext=data.get("ext", {}),
+            submission_group=data.get("submission_group") or DEFAULT_SUBMISSION_GROUP,
         )
 
     @property
@@ -99,3 +105,11 @@ class GenericCommandParameters(JobParametersInterface):
 
     def set_blocking_jobs(self, blocking_jobs):
         self.blocked_by = blocking_jobs
+
+    @property
+    def submission_group(self):
+        return self._submission_group
+
+    @submission_group.setter
+    def submission_group(self, group):
+        self._submission_group = group

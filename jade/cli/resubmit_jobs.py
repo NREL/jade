@@ -6,13 +6,10 @@ import sys
 
 import click
 
-from jade.common import CONFIG_FILE
 from jade.enums import Status
 from jade.jobs.cluster import Cluster
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.jobs.job_submitter import JobSubmitter
-from jade.jobs.job_configuration_factory import create_config_from_previous_run
-from jade.models.jobs import JobState
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
 from jade.utils.utils import rotate_filenames

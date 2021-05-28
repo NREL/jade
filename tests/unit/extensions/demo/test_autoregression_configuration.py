@@ -206,6 +206,7 @@ def test_serialize():
         "jobs_directory": None,
         "jobs": [],
         "user_data": {},
+        "submission_groups": [],
     }
     assert data == expected
 

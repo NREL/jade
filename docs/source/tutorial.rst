@@ -57,6 +57,12 @@ As an experimental feature, JADE supports setting ``nodes``, ``ntasks``, and
 ``ntasks_per_node`` to allow users to run multi-node jobs. Refer to the HPC
 documentation and ensure each job is compatible with the settings.
 
+Submission Groups
+-----------------
+If you need different parameters for different jobs then you can separately
+define submission groups in the configuration. Refer to
+:ref:`submission_group_strategy` for more information.
+
 Lustre Filesystem
 -----------------
 If you are running on a Lustre filesystem then you should consider whether to
@@ -194,6 +200,10 @@ order to run on more nodes in parallel.
 
 Refer to :ref:`submission_strategies` for a description of how to handle
 specific use cases.
+
+Note that you can set different parameters for different batches if you define
+submission groups. Refer to :ref:`submission_group_strategy` for more
+information.
 
 .. note:: You can enable ``--dry-run`` to check how the batches will be created
    without actually submitting any jobs.

@@ -3,8 +3,7 @@
 import enum
 from typing import Optional, Union, List
 
-from pydantic import Field
-from pydantic.class_validators import root_validator
+from pydantic import Field, validator, root_validator
 
 from jade.hpc.common import HpcType
 from jade.models.base import JadeBaseModel
@@ -78,6 +77,7 @@ class SlurmConfig(JadeBaseModel):
 class FakeHpcConfig(JadeBaseModel):
     """Defines config options for the fake queueing system."""
 
+    # Keep this required so that Pydantic can differentiate the models.
     walltime: str = Field(
         title="walltime",
         description="maximum time allocated to each node",
@@ -104,3 +104,16 @@ class HpcConfig(JadeBaseModel):
         title="hpc",
         description="interface-specific config options",
     )
+
+    @validator("hpc", pre=True)
+    def assign_hpc(cls, value, values):
+        if isinstance(value, JadeBaseModel):
+            return value
+
+        if values["hpc_type"] == HpcType.SLURM:
+            return SlurmConfig(**value)
+        elif values["hpc_type"] == HpcType.FAKE:
+            return FakeHpcConfig(**value)
+        elif values["hpc_type"] == HpcType.LOCAL:
+            return LocalHpcConfig()
+        raise ValueError(f"Unsupported: {values['hpc_type']}")

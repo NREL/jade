@@ -16,7 +16,7 @@ from jade.hpc.common import HpcJobStatus
 from jade.hpc.hpc_manager import HpcManager
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
-from jade.models import HpcConfig
+from jade.models.submission_group import make_submission_group_lookup
 from jade.utils.subprocess_manager import run_command
 from jade.utils.utils import rotate_filenames, get_cli_string, load_data
 
@@ -83,7 +83,8 @@ def show_status(output, job_status, verbose):
         # Check if the last job got killed or timed-out and try to restart.
         run_new_submitter = False
         if cluster.job_status.hpc_job_ids:
-            hpc_mgr = HpcManager(cluster.config.submitter_params.hpc_config, output)
+            groups = make_submission_group_lookup([cluster.config.submission_groups[0]])
+            hpc_mgr = HpcManager(groups, output)
             all_jobs_are_none = True
             for job_id in cluster.job_status.hpc_job_ids:
                 status = hpc_mgr.check_status(job_id=job_id)

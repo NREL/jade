@@ -132,6 +132,9 @@ class SlurmManager(HpcManagerInterface):
         #        "to that directory."
         #    )
 
+    def get_active_nodes(self, job_id):
+        assert False
+
     def get_config(self):
         return self._config
 

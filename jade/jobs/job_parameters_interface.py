@@ -109,3 +109,19 @@ class JobParametersInterface(abc.ABC):
         bool
 
         """
+
+    @property
+    @abc.abstractmethod
+    def submission_group(self):
+        """Return the submission group for the job."""
+
+    @submission_group.setter
+    @abc.abstractmethod
+    def submission_group(self, group):
+        """Set the submission group for the job.
+
+        Parameters
+        ----------
+        group : SubmissionGroup
+
+        """

@@ -2,14 +2,13 @@ import enum
 import logging
 import os
 import socket
-from typing import List, Optional, Set, Union
 
 from filelock import SoftFileLock, Timeout
 
-from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration
+from jade.jobs.job_configuration import JobConfiguration
 from jade.models import ClusterConfig, Job, JobState, JobStatus
-from jade.utils.utils import load_data, dump_data
+from jade.utils.utils import load_data
 
 
 logger = logging.getLogger(__name__)
@@ -51,14 +50,13 @@ class Cluster:
         )
 
     @classmethod
-    def create(cls, path, submitter_params, jade_config, pipeline_stage_num=None):
+    def create(cls, path, jade_config: JobConfiguration, pipeline_stage_num=None):
         """Create a new instance of a Cluster. Promotes itself to submitter.
 
         Parameters
         ----------
         path : str
             Base directory for a JADE submission
-        submitter_params : SubmitterParams
         jade_config : JobConfiguration
         pipeline_stage_num : None | int
             True if the config is one stage of a pipeline
@@ -69,7 +67,7 @@ class Cluster:
             pipeline_stage_num=pipeline_stage_num,
             num_jobs=jade_config.get_num_jobs(),
             submitter=socket.gethostname(),
-            submitter_params=submitter_params,
+            submission_groups=jade_config.submission_groups,
             version=0,
         )
         job_status = JobStatus(

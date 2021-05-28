@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import tempfile
+from pathlib import Path
 
 import click
 from prettytable import PrettyTable
@@ -315,9 +316,10 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 @click.option(
     "-c",
     "--config-file",
-    default="submitter_params.toml",
+    default="submitter_params.json",
     show_default=True,
-    help="config file to create",
+    type=Path,
+    help="config file to create; can be .toml or .json",
 )
 @add_options(COMMON_SUBMITTER_OPTIONS)
 def submitter_params(
@@ -356,7 +358,10 @@ def submitter_params(
     )
     # This converts enums to values.
     data = json.loads(params.json())
-    dump_data(data, config_file)
+    if config_file.suffix == ".json":
+        dump_data(data, config_file, indent=2)
+    else:
+        dump_data(data, config_file)
     print(f"Created submitter parameter file {config_file}")
 
 
