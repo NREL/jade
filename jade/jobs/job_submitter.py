@@ -90,7 +90,8 @@ results_summary={self.get_results_summmary_report()}"""
 
     def cancel_jobs(self, cluster):
         """Cancel running and pending jobs."""
-        hpc = HpcManager(self._config.submission_group_lookup(), self._output)
+        groups = make_submission_group_lookup(cluster.config.submission_groups)
+        hpc = HpcManager(groups, self._output)
         for job_id in cluster.job_status.hpc_job_ids:
             hpc.cancel_job(job_id)
 
