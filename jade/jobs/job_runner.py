@@ -32,7 +32,10 @@ class JobRunner(JobManagerBase):
     ):
         super(JobRunner, self).__init__(config_file, output)
         cluster, _ = Cluster.deserialize(output)
-        config = cluster.config.submitter_params.hpc_config
+        self._handle_submission_groups_after_deserialize(cluster)
+
+        group = self.config.get_default_submission_group()
+        config = group.submitter_params.hpc_config
         self._intf = HpcManager.create_hpc_interface(config)
         self._intf_type = config.hpc_type
         self._batch_id = batch_id
@@ -121,7 +124,8 @@ class JobRunner(JobManagerBase):
         name = f"resource_monitor_batch_{self._batch_id}"
         cluster, _ = Cluster.deserialize(self._output)
         resource_monitor = ResourceMonitor(name)
-        if cluster.config.submitter_params.resource_monitor_interval is None:
+        group = self._config.get_default_submission_group()
+        if group.submitter_params.resource_monitor_interval is None:
             monitor_func = None
         else:
             monitor_func = resource_monitor.log_resource_stats
@@ -129,7 +133,7 @@ class JobRunner(JobManagerBase):
             jobs,
             max_queue_depth=num_workers,
             monitor_func=monitor_func,
-            monitor_interval=cluster.config.submitter_params.resource_monitor_interval,
+            monitor_interval=group.submitter_params.resource_monitor_interval,
         )
 
         logger.info("Jobs are complete. count=%s", num_jobs)

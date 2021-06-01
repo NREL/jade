@@ -8,6 +8,7 @@ import sys
 import click
 
 from jade.common import OUTPUT_DIR
+from jade.hpc.common import HpcType
 from jade.loggers import setup_logging
 from jade.jobs.pipeline_manager import PipelineManager
 from jade.models import HpcConfig, LocalHpcConfig
@@ -108,7 +109,7 @@ def create(
 ):
     """Create a pipeline with multiple Jade configurations."""
     if local:
-        hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
+        hpc_config = HpcConfig(hpc_type=HpcType.LOCAL, hpc=LocalHpcConfig())
     else:
         if not os.path.exists(hpc_config):
             print(

@@ -11,6 +11,7 @@ RESULTS_FILE = "results.json"
 ANALYSIS_DIR = "analysis"
 POST_PROCESSING_CONFIG_FILE = "post-config.json"
 HPC_CONFIG_FILE = "hpc_config.toml"
+DEFAULT_SUBMISSION_GROUP = "default"
 
 
 def get_results_filename(output_dir):

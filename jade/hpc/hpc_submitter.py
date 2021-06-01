@@ -20,11 +20,13 @@ from jade.exceptions import ExecutionError
 from jade.hpc.common import HpcJobStatus, HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
+from jade.jobs.cluster import Cluster
+from jade.jobs.job_configuration import JobConfiguration
 from jade.jobs.job_queue import JobQueue
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.loggers import log_event
 from jade.models import JobState
-from jade.jobs.results_aggregator import ResultsAggregator
+from jade.models.submission_group import make_submission_group_lookup
 from jade.result import Result
 from jade.utils.timing_utils import timed_debug
 from jade.utils.utils import dump_data, create_script, ExtendedJSONEncoder
@@ -35,29 +37,37 @@ logger = logging.getLogger(__name__)
 class HpcSubmitter:
     """Submits batches of jobs to HPC. Manages job ordering."""
 
-    def __init__(self, config, config_file, cluster, output):
+    def __init__(self, config: JobConfiguration, config_file, cluster: Cluster, output):
         self._config = config
+        self._submission_groups = make_submission_group_lookup(cluster.config.submission_groups)
         self._config_file = config_file
         self._base_config = config.serialize()
         self._batch_index = cluster.job_status.batch_index
         self._cluster = cluster
-        self._params = self._cluster.config.submitter_params
-        self._hpc_mgr = HpcManager(self._params.hpc_config, output)
-        self._status_collector = HpcStatusCollector(self._hpc_mgr, self._params.poll_interval)
+        self._hpc_mgr = HpcManager(self._submission_groups, output)
         self._output = output
 
-    def _create_run_script(self, config_file, filename):
+        # Limitation: these settings apply to all groups in aggregate.
+        # This could be made more flexible if needed.
+        group = next(iter(self._submission_groups.values()))
+        self._max_nodes = group.submitter_params.max_nodes
+        if self._max_nodes is None:
+            self._max_nodes = sys.maxsize
+        self._poll_interval = group.submitter_params.poll_interval
+        self._status_collector = HpcStatusCollector(self._hpc_mgr, self._poll_interval)
+
+    def _create_run_script(self, config_file, filename, submission_group):
         text = ["#!/bin/bash"]
         command = f"jade-internal run-jobs {config_file} " f"--output={self._output}"
-        if self._params.num_processes is not None:
-            command += f" --num-processes={self._params.num_processes}"
-        if self._params.verbose:
+        if submission_group.submitter_params.num_processes is not None:
+            command += f" --num-processes={submission_group.submitter_params.num_processes}"
+        if submission_group.submitter_params.verbose:
             command += " --verbose"
 
         text.append(command)
         create_script(filename, "\n".join(text))
 
-    def _make_async_submitter(self, jobs, dry_run=False):
+    def _make_async_submitter(self, jobs, submission_group, dry_run=False):
         config = copy.copy(self._base_config)
         config["jobs"] = jobs
         suffix = f"_batch_{self._batch_index}"
@@ -69,14 +79,15 @@ class HpcSubmitter:
         )
 
         run_script = os.path.join(self._output, f"run{suffix}.sh")
-        self._create_run_script(new_config_file, run_script)
+        self._create_run_script(new_config_file, run_script, submission_group)
 
-        name = self._params.hpc_config.job_prefix + suffix
+        name = submission_group.submitter_params.hpc_config.job_prefix + suffix
         return AsyncHpcSubmitter(
             self._hpc_mgr,
             self._status_collector,
             run_script,
             name,
+            submission_group,
             self._output,
             dry_run=dry_run,
         )
@@ -98,11 +109,10 @@ class HpcSubmitter:
             for x in self._cluster.iter_hpc_job_ids()
         ]
 
-        max_nodes = self._params.max_nodes or sys.maxsize
         queue = JobQueue(
-            max_nodes,
+            self._max_nodes,
             existing_jobs=hpc_submitters,
-            poll_interval=self._params.poll_interval,
+            poll_interval=self._poll_interval,
         )
         # Statuses may have changed since we last ran.
         queue.process_queue()
@@ -110,11 +120,11 @@ class HpcSubmitter:
 
         blocked_jobs = []
         submitted_jobs = []
-        num_submissions = 0
-        if not queue.is_full():
-            self._submit_batches(queue, blocked_jobs, submitted_jobs)
-            num_submissions = self._batch_index - starting_batch_index
+        for group in self._cluster.config.submission_groups:
+            if not queue.is_full():
+                self._submit_batches(queue, group, blocked_jobs, submitted_jobs)
 
+        num_submissions = self._batch_index - starting_batch_index
         logger.info(
             "num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
             num_submissions,
@@ -148,23 +158,26 @@ class HpcSubmitter:
                 self._batch_index,
             )
 
-    def _submit_batches(self, queue, blocked_jobs, submitted_jobs):
+    def _submit_batches(self, queue, submission_group, blocked_jobs, submitted_jobs):
         assert not queue.is_full()
         num_submitted_jobs = 0
+        _submitted_jobs = []  # only exists for the check at the end
         batch = None
         for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
+            jade_job = self._config.get_job(job.name)
+            if jade_job.submission_group != submission_group.name:
+                continue
             if batch is None:
-                batch = _BatchJobs(self._params)
+                batch = _BatchJobs(submission_group.submitter_params)
             if batch.is_job_blocked(job):
                 blocked_jobs.append(job)
             else:
-                jade_job = self._config.get_job(job.name)
                 jade_job.set_blocking_jobs(job.blocked_by)
                 batch.append(jade_job)
-                submitted_jobs.append(job)
+                _submitted_jobs.append(job)
 
             if batch.ready_to_submit():
-                self._submit_batch(queue, batch)
+                self._submit_batch(queue, submission_group, batch)
                 num_submitted_jobs += batch.num_jobs
                 batch = None
 
@@ -172,19 +185,20 @@ class HpcSubmitter:
                     break
 
         if not queue.is_full() and batch is not None and batch.num_jobs > 0:
-            self._submit_batch(queue, batch)
+            self._submit_batch(queue, submission_group, batch)
             num_submitted_jobs += batch.num_jobs
 
         assert num_submitted_jobs == len(
-            submitted_jobs
-        ), f"{num_submitted_jobs} / {len(submitted_jobs)}"
+            _submitted_jobs
+        ), f"{num_submitted_jobs} / {len(_submitted_jobs)}"
+        submitted_jobs.extend(_submitted_jobs)
 
-    def _submit_batch(self, queue, batch):
+    def _submit_batch(self, queue, submission_group, batch):
         async_submitter = self._make_async_submitter(
-            batch.serialize(), dry_run=self._params.dry_run
+            batch.serialize(), submission_group, dry_run=submission_group.submitter_params.dry_run
         )
         queue.submit(async_submitter)
-        self._log_submission_event(batch)
+        self._log_submission_event(submission_group, batch)
 
     def _is_complete(self):
         is_complete = self._cluster.are_all_jobs_complete()
@@ -199,14 +213,14 @@ class HpcSubmitter:
 
         return is_complete
 
-    def _log_submission_event(self, batch):
+    def _log_submission_event(self, submission_group, batch):
         event = StructuredLogEvent(
-            source=self._params.hpc_config.job_prefix,
+            source=submission_group.submitter_params.hpc_config.job_prefix,
             category=EVENT_CATEGORY_HPC,
             name=EVENT_NAME_HPC_SUBMIT,
             message="Submitted HPC batch",
             batch_size=batch.num_jobs,
-            per_node_batch_size=self._params.per_node_batch_size,
+            per_node_batch_size=submission_group.submitter_params.per_node_batch_size,
         )
         log_event(event)
 
@@ -332,11 +346,20 @@ class AsyncHpcSubmitter(AsyncJobInterface):
     """Used to submit batches of jobs to multiple nodes, one at a time."""
 
     def __init__(
-        self, hpc_manager, status_collector, run_script, name, output, job_id=None, dry_run=False
+        self,
+        hpc_manager,
+        status_collector,
+        run_script,
+        name,
+        submission_group,
+        output,
+        job_id=None,
+        dry_run=False,
     ):
         self._mgr = hpc_manager
         self._status_collector = status_collector
         self._run_script = run_script
+        self._submission_group = submission_group
         self._job_id = job_id
         self._output = output
         self._name = name
@@ -360,7 +383,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         job_id : str
 
         """
-        return cls(hpc_manager, status_collector, None, job_id, None, job_id=job_id)
+        return cls(hpc_manager, status_collector, None, job_id, None, None, job_id=job_id)
 
     @property
     def hpc_manager(self):
@@ -412,8 +435,13 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         return 0
 
     def run(self):
+        assert self._submission_group is not None
         job_id, result = self._mgr.submit(
-            self._output, self._name, self._run_script, dry_run=self._dry_run
+            self._output,
+            self._name,
+            self._run_script,
+            self._submission_group.name,
+            dry_run=self._dry_run,
         )
         if result != Status.GOOD:
             raise ExecutionError("Failed to submit name={self._name}")

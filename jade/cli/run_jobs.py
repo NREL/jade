@@ -52,19 +52,21 @@ def run_jobs(config_file, output, num_processes, verbose):
     cluster, _ = Cluster.deserialize(output)
     _try_submit_jobs(output, verbose)
 
-    if cluster.config.submitter_params.node_setup_script:
-        cmd = f"{cluster.config.submitter_params.node_setup_script} {config_file} {output}"
+    mgr = JobRunner(config_file, output=output, batch_id=batch_id)
+
+    group = mgr.config.get_default_submission_group()
+    if group.submitter_params.node_setup_script:
+        cmd = f"{group.submitter_params.node_setup_script} {config_file} {output}"
         ret = run_command(cmd)
         if ret != 0:
             logger.error("Failed to run node setup script %s: %s", cmd, ret)
             sys.exit(ret)
 
-    mgr = JobRunner(config_file, output=output, batch_id=batch_id)
     status = mgr.run_jobs(verbose=verbose, num_processes=num_processes)
     ret = status.value
 
-    if cluster.config.submitter_params.node_shutdown_script:
-        cmd = f"{cluster.config.submitter_params.node_shutdown_script} {config_file} {output}"
+    if group.submitter_params.node_shutdown_script:
+        cmd = f"{group.submitter_params.node_shutdown_script} {config_file} {output}"
         ret2 = run_command(cmd)
         if ret2 != 0:
             logger.error("Failed to run node shutdown script %s: %s", cmd, ret2)

@@ -88,3 +88,10 @@ class JobManagerBase(abc.ABC):
     def get_batch_post_process_config(self):
         """Get the batch post-process config data"""
         return self._config.batch_post_process_config
+
+    def _handle_submission_groups_after_deserialize(self, cluster):
+        # The JobConfiguration will not have any groups if the user didn't define any.
+        # Reload from the cluster config.
+        if not self._config.submission_groups:
+            assert len(cluster.config.submission_groups) == 1
+            self._config.append_submission_group(cluster.config.submission_groups[0])

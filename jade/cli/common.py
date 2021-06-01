@@ -210,6 +210,7 @@ def make_submitter_params(
     if local:
         hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
     else:
+        # TODO: If the config file contains submission groups then this should not be required.
         if not os.path.exists(hpc_config):
             print(
                 f"{hpc_config} does not exist. Generate it with 'jade config hpc' "

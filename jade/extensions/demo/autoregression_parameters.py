@@ -1,7 +1,10 @@
 """
 Implement the JobParametersInterface for auto-regression analysis.
 """
+
 from collections import namedtuple
+
+from jade.common import DEFAULT_SUBMISSION_GROUP
 from jade.jobs.job_parameters_interface import JobParametersInterface
 
 
@@ -69,3 +72,11 @@ class AutoRegressionParameters(JobParametersInterface):
 
     def set_blocking_jobs(self, blocking_jobs):
         pass
+
+    @property
+    def submission_group(self):
+        return DEFAULT_SUBMISSION_GROUP
+
+    @submission_group.setter
+    def submission_group(self, group):
+        return

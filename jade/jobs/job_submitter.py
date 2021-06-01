@@ -37,7 +37,8 @@ from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_runner import JobRunner
 from jade.jobs.results_aggregator import ResultsAggregator
-from jade.models import LocalHpcConfig
+from jade.models import SubmitterParams
+from jade.models.submission_group import make_submission_group_lookup
 from jade.loggers import log_event
 from jade.result import serialize_results, ResultsSummary
 from jade.utils.repository_info import RepositoryInfo
@@ -60,20 +61,23 @@ class JobSubmitter(JobManagerBase):
         self._is_new = is_new
 
     @classmethod
-    def create(cls, config_file, output=OUTPUT_DIR):
+    def create(cls, config_file, params: SubmitterParams, output=OUTPUT_DIR):
         """Creates a new instance.
 
         Parameters
         ----------
         config_file : JobConfiguration
             configuration for simulation
+        params: SubmitterParams
         output : str
             Output directory
 
         """
         master_file = os.path.join(output, CONFIG_FILE)
         shutil.copyfile(config_file, master_file)
-        return cls(master_file, output, True)
+        mgr = cls(master_file, output, True)
+        mgr.run_checks(params)
+        return mgr
 
     @classmethod
     def load(cls, output):
@@ -86,7 +90,8 @@ results_summary={self.get_results_summmary_report()}"""
 
     def cancel_jobs(self, cluster):
         """Cancel running and pending jobs."""
-        hpc = HpcManager(cluster.config.submitter_params.hpc_config, self._output)
+        groups = make_submission_group_lookup(cluster.config.submission_groups)
+        hpc = HpcManager(groups, self._output)
         for job_id in cluster.job_status.hpc_job_ids:
             hpc.cancel_job(job_id)
 
@@ -98,6 +103,7 @@ results_summary={self.get_results_summmary_report()}"""
 
         Parameters
         ----------
+        cluster : Cluster
         force_local : bool
             If on HPC, run jobs through subprocess as if local.
 
@@ -113,7 +119,6 @@ results_summary={self.get_results_summmary_report()}"""
             loggers = registry.list_loggers()
             logger.info("Registered modules for logging: %s", ", ".join(loggers))
             self._save_repository_info(registry)
-            self._config.check_job_dependencies(cluster.config.submitter_params)
 
             ResultsAggregator.create(self._output)
 
@@ -130,14 +135,18 @@ results_summary={self.get_results_summmary_report()}"""
                 num_jobs=self.get_num_jobs(),
             )
             log_event(event)
+        else:
+            self._handle_submission_groups_after_deserialize(cluster)
 
         result = Status.IN_PROGRESS
-        self._hpc = HpcManager(cluster.config.submitter_params.hpc_config, self._output)
+        group = self._config.get_default_submission_group()
+        groups = make_submission_group_lookup(cluster.config.submission_groups)
+        self._hpc = HpcManager(groups, self._output)
 
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)
-            num_processes = cluster.config.submitter_params.num_processes
-            verbose = cluster.config.submitter_params.verbose
+            num_processes = group.submitter_params.num_processes
+            verbose = group.submitter_params.verbose
             result = runner.run_jobs(verbose=verbose, num_processes=num_processes)
             agg = ResultsAggregator.load(self._output)
             agg.process_results()
@@ -192,8 +201,9 @@ results_summary={self.get_results_summmary_report()}"""
         )
         log_event(event)
 
-        if cluster.config.submitter_params.generate_reports:
-            include_stats = bool(cluster.config.submitter_params.resource_monitor_interval)
+        group = self._config.get_default_submission_group()
+        if group.submitter_params.generate_reports:
+            include_stats = bool(group.submitter_params.resource_monitor_interval)
             self.generate_reports(self._output, include_stats=include_stats)
 
         cluster.mark_complete()
@@ -379,15 +389,19 @@ results_summary={self.get_results_summmary_report()}"""
         logger.debug("jobs are still pending")
         return False
 
+    def run_checks(self, params: SubmitterParams):
+        """Checks the configuration for errors. May mutate the config."""
+        self._config.check_job_dependencies(params)
+        self._config.check_submission_groups(params)
+
     @staticmethod
     def run_submit_jobs(config_file, output, params, pipeline_stage_num=None):
         """Allows submission from an existing Python process."""
         os.makedirs(output, exist_ok=True)
 
-        mgr = JobSubmitter.create(config_file, output=output)
+        mgr = JobSubmitter.create(config_file, params, output=output)
         cluster = Cluster.create(
             output,
-            params,
             mgr.config,
             pipeline_stage_num=pipeline_stage_num,
         )

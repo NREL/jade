@@ -116,7 +116,6 @@ def test_create_config_from_previous_run_missing_results(
         assert job.name in ["united_states"]
 
 
-@pytest.mark.noautofixt
 def test_create_config_from_previous_run_invalid_type_results(
     config_file, output_dir, results_summary
 ):

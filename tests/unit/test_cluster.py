@@ -25,8 +25,7 @@ def cluster():
     config_file = os.path.join(OUTPUT, CONFIG_FILE)
     jade_config.dump(config_file)
     hpc_config = HpcConfig(hpc_type="slurm", hpc=SlurmConfig(account="abc"))
-    params = SubmitterParams(hpc_config=hpc_config)
-    cluster = Cluster.create(OUTPUT, params, jade_config)
+    cluster = Cluster.create(OUTPUT, jade_config)
 
     yield cluster
 

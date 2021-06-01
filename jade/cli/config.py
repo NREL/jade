@@ -6,6 +6,7 @@ import os
 import re
 import sys
 import tempfile
+from pathlib import Path
 
 import click
 from prettytable import PrettyTable
@@ -90,6 +91,12 @@ def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_jo
     help="config file to create",
 )
 @click.option(
+    "-m",
+    "--mem",
+    default=None,
+    help="Amount of memory required by a single node.",
+)
+@click.option(
     "-p",
     "--partition",
     default=None,
@@ -111,18 +118,25 @@ def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_jo
     help="HPC queueing system",
 )
 @click.option(
+    "--tmp",
+    default=None,
+    help="Amount of local storage space required by a single node.",
+)
+@click.option(
     "-w",
     "--walltime",
     default="4:00:00",
     help="HPC walltime",
 )
-def hpc(account, config_file, partition, qos, hpc_type, walltime):
+def hpc(account, config_file, mem, partition, qos, hpc_type, tmp, walltime):
     """Create an HPC config file."""
     if hpc_type == "slurm":
         hpc = SlurmConfig(
             account=account,
+            mem=mem,
             partition=partition,
             qos=qos,
+            tmp=tmp,
             walltime=walltime,
         )
     elif hpc_type == "fake":
@@ -315,9 +329,10 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 @click.option(
     "-c",
     "--config-file",
-    default="submitter_params.toml",
+    default="submitter_params.json",
     show_default=True,
-    help="config file to create",
+    type=Path,
+    help="config file to create; can be .toml or .json",
 )
 @add_options(COMMON_SUBMITTER_OPTIONS)
 def submitter_params(
@@ -356,7 +371,10 @@ def submitter_params(
     )
     # This converts enums to values.
     data = json.loads(params.json())
-    dump_data(data, config_file)
+    if config_file.suffix == ".json":
+        dump_data(data, config_file, indent=2)
+    else:
+        dump_data(data, config_file)
     print(f"Created submitter parameter file {config_file}")
 
 
