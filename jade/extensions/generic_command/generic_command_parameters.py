@@ -1,115 +1,135 @@
 """Implements the JobParametersInterface for generic_command."""
 
+import logging
 from collections import namedtuple
+from typing import Dict, List, Optional, Set
 
+from pydantic import Field, validator
+
+from jade.models import JadeBaseModel
 from jade.common import DEFAULT_SUBMISSION_GROUP
 from jade.jobs.job_parameters_interface import JobParametersInterface
+
+
+logger = logging.getLogger(__name__)
+
+_EXTENSION = "generic_command"
 
 
 class GenericCommandParameters(JobParametersInterface):
     """A class used for creating a job for a generic command."""
 
     parameters_type = namedtuple("GenericCommand", "command")
-    _EXTENSION = "generic_command"
 
-    def __init__(
-        self,
-        command,
-        job_id=None,
-        blocked_by=None,
-        append_output_dir=False,
-        ext=None,
-        estimated_run_minutes=None,
-        cancel_on_blocking_job_failure=False,
-        submission_group=None,
-    ):
-        self.command = command
-        self.job_id = job_id  # Gets set when job is added to config.
-        # Uniquely identifies the job.
-        self._cancel_on_blocking_job_failure = cancel_on_blocking_job_failure
-        self._estimated_run_minutes = estimated_run_minutes
-        self.ext = ext or {}  # user-defined data
-        self._submission_group = submission_group
-        self.blocked_by = set()
-        if blocked_by is not None:
-            for _job_id in blocked_by:
-                self.blocked_by.add(str(_job_id))
-
-        # Indicates whether the output directory should be appended to the
-        # command at runtime.
-        self.append_output_dir = append_output_dir
+    def __init__(self, **kwargs):
+        self._model = GenericCommandParametersModel(**kwargs)
 
     def __str__(self):
         return "<GenericCommandParameters: {}>".format(self.name)
 
+    def __getattr__(self, name):
+        if name in GenericCommandParametersModel.__fields__:
+            return getattr(self._model, name)
+        raise AttributeError(f"'GenericCommandParameters' object has no attribute '{name}'")
+
+    def __setattr__(self, name, value):
+        if name == "extension":
+            raise AttributeError(f"'GenericCommandParameters' does not allow setting 'extension'")
+        if name in GenericCommandParametersModel.__fields__:
+            setattr(self._model, name, value)
+        self.__dict__[name] = value
+
     @property
     def estimated_run_minutes(self):
-        return self._estimated_run_minutes
-
-    @estimated_run_minutes.setter
-    def estimated_run_minutes(self, val):
-        self._estimated_run_minutes = val
+        return self._model.estimated_run_minutes
 
     @property
     def extension(self):
-        return self._EXTENSION
+        return _EXTENSION
 
     @property
     def name(self):
         return self._create_name()
 
     def _create_name(self):
-        return str(self.job_id)
+        return str(self._model.job_id)
 
     def serialize(self):
-        assert self.job_id is not None
+        assert self._model.job_id is not None
         # If job sizes get huge then we should exclude parameters with default values.
-        return {
-            "command": self.command,
-            "job_id": self.job_id,
-            "blocked_by": list(self.blocked_by),
-            "extension": self.extension,
-            "append_output_dir": self.append_output_dir,
-            "cancel_on_blocking_job_failure": self.cancel_on_blocking_job_failure,
-            "estimated_run_minutes": self.estimated_run_minutes,
-            "ext": self.ext,
-            "submission_group": self.submission_group,
-        }
+        return self._model.dict()
 
     @classmethod
     def deserialize(cls, data):
-        return cls(
-            data["command"],
-            job_id=data["job_id"],
-            blocked_by={str(x) for x in data.get("blocked_by", [])},
-            append_output_dir=data.get("append_output_dir", False),
-            cancel_on_blocking_job_failure=data.get("cancel_on_blocking_job_failure", False),
-            estimated_run_minutes=data.get("estimated_run_minutes"),
-            ext=data.get("ext", {}),
-            submission_group=data.get("submission_group") or DEFAULT_SUBMISSION_GROUP,
-        )
+        return cls(**data)
 
     @property
     def cancel_on_blocking_job_failure(self):
-        return self._cancel_on_blocking_job_failure
-
-    @cancel_on_blocking_job_failure.setter
-    def cancel_on_blocking_job_failure(self, val):
-        self._cancel_on_blocking_job_failure = val
+        return self._model.cancel_on_blocking_job_failure
 
     def get_blocking_jobs(self):
-        return self.blocked_by
+        return self._model.blocked_by
 
     def remove_blocking_job(self, name):
-        self.blocked_by.remove(name)
+        self._model.blocked_by.remove(name)
 
     def set_blocking_jobs(self, blocking_jobs):
-        self.blocked_by = blocking_jobs
+        self._model.blocked_by = blocking_jobs
 
     @property
     def submission_group(self):
-        return self._submission_group
+        return self._model.submission_group
 
-    @submission_group.setter
-    def submission_group(self, group):
-        self._submission_group = group
+
+class GenericCommandParametersModel(JadeBaseModel):
+    """Model definition for generic command parameters"""
+
+    command: str = Field(
+        title="command",
+        description="Command that can be invoked in a terminal (shell characters not allowed)",
+    )
+    blocked_by: Optional[Set[str]] = Field(
+        title="blocked_by",
+        description="Array of job names that must complete before this one can start.",
+        default=set(),
+    )
+    cancel_on_blocking_job_failure: Optional[bool] = Field(
+        title="cancel_on_blocking_job_failure",
+        description="If true JADE will cancel this job if any of its blocking jobs fail.",
+        default=False,
+    )
+    estimated_run_minutes: Optional[int] = Field(
+        title="estimated_run_minutes",
+        description="JADE will use this value along with num-processes and walltime to "
+        "build per-node batches of jobs if time-based-batching is enabled.",
+    )
+    submission_group: Optional[str] = Field(
+        title="submission_group",
+        description="Optional name of a submission group",
+        default=DEFAULT_SUBMISSION_GROUP,
+    )
+    append_output_dir: Optional[bool] = Field(
+        title="append_output_dir",
+        description="If true JADE will append --jade-runtime-output=X where X is the output "
+        "directory specified in jade submit-jobs.",
+        default=False,
+    )
+    ext: Optional[Dict] = Field(
+        title="ext",
+        description="User-defined extension data to be used at runtime. Must be serializable in "
+        "JSON format.",
+        default={},
+    )
+    job_id: Optional[int] = Field(
+        title="job_id",
+        description="Unique job identifier, generated by JADE",
+    )
+    extension: Optional[str] = Field(
+        title="extension",
+        description="job extension type, generated by JADE",
+        default=_EXTENSION,
+    )
+
+    @validator("blocked_by")
+    def handle_blocked_by(cls, value):
+        return {str(x) for x in value}

@@ -12,11 +12,11 @@ class SubmissionGroup(JadeBaseModel):
 
     name: str = Field(
         title="name",
-        description="user-defined name of the group",
+        description="User-defined name of the group",
     )
     submitter_params: SubmitterParams = Field(
         title="submitter_params",
-        description="submission parameters for the group",
+        description="Submission parameters for the group",
     )
 
 

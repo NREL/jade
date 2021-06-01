@@ -14,7 +14,7 @@ class SlurmConfig(JadeBaseModel):
 
     account: str = Field(
         title="account",
-        description="project account to use",
+        description="Project account to use",
     )
     partition: Optional[str] = Field(
         title="partition",
@@ -23,37 +23,37 @@ class SlurmConfig(JadeBaseModel):
     )
     qos: Optional[str] = Field(
         title="qos",
-        description="set to high to get faster node allocations at twice the cost",
+        description="Set to high to get faster node allocations at twice the cost",
         default=None,
     )
     walltime: Optional[str] = Field(
         title="walltime",
-        description="maximum time allocated to each node",
+        description="Maximum time allocated to each node",
         default="4:00:00",
     )
     mem: Optional[str] = Field(
-        title="memory",
-        description="request nodes that have at least this amount of memory",
+        title="mem",
+        description="Request nodes that have at least this amount of memory",
         default=None,
     )
     tmp: Optional[str] = Field(
         title="tmp",
-        description="request nodes that have at least this amount of storage scratch space",
+        description="Request nodes that have at least this amount of storage scratch space",
         default=None,
     )
     nodes: Optional[int] = Field(
         title="nodes",
-        description="number of nodes to use for each job",
+        description="Number of nodes to use for each job",
         default=None,
     )
     ntasks: Optional[int] = Field(
         title="ntasks",
-        description="number of tasks per job (nodes is not required if this is provided)",
+        description="Number of tasks per job (nodes is not required if this is provided)",
         default=None,
     )
     ntasks_per_node: Optional[int] = Field(
         title="ntasks_per_node",
-        description="number of tasks per job (max in number of CPUs)",
+        description="Number of tasks per job (max in number of CPUs)",
         default=None,
     )
 
@@ -80,7 +80,7 @@ class FakeHpcConfig(JadeBaseModel):
     # Keep this required so that Pydantic can differentiate the models.
     walltime: str = Field(
         title="walltime",
-        description="maximum time allocated to each node",
+        description="Maximum time allocated to each node",
     )
 
 
@@ -93,16 +93,16 @@ class HpcConfig(JadeBaseModel):
 
     hpc_type: HpcType = Field(
         title="hpc_type",
-        description="type of HPC queueing system (such as 'slurm')",
+        description="Type of HPC queueing system (such as 'slurm')",
     )
     job_prefix: Optional[str] = Field(
         title="job_prefix",
-        description="prefix added to each HPC job name",
+        description="Prefix added to each HPC job name",
         default="job",
     )
     hpc: Union[SlurmConfig, FakeHpcConfig, LocalHpcConfig] = Field(
         title="hpc",
-        description="interface-specific config options",
+        description="Interface-specific config options",
     )
 
     @validator("hpc", pre=True)

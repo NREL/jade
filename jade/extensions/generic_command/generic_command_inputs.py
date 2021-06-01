@@ -23,7 +23,7 @@ class GenericCommandInputs(JobInputsInterface):
             for line in f_in.readlines():
                 line = line.strip()
                 if line:
-                    self._parameters.append(GenericCommandParameters(line))
+                    self._parameters.append(GenericCommandParameters(command=line))
 
     @property
     def base_directory(self):

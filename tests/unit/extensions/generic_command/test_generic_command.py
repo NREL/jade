@@ -9,7 +9,6 @@ import pytest
 
 from jade.extensions.generic_command import GenericCommandInputs
 from jade.extensions.generic_command import GenericCommandConfiguration
-from jade.extensions.generic_command import GenericCommandExecution
 from jade.extensions.generic_command import GenericCommandParameters
 from jade.result import ResultsSummary
 from jade.test_common import FAKE_HPC_CONFIG
@@ -52,6 +51,7 @@ def test_run_generic_commands(generic_command_fixture):
     for job_param in inputs.iter_jobs():
         config.add_job(job_param)
     assert config.get_num_jobs() == 2
+
     config.dump(CONFIG_FILE)
 
     cmds = (
@@ -66,6 +66,21 @@ def test_run_generic_commands(generic_command_fixture):
         check_run_command(cmd)
 
 
+def test_generic_command_parameters():
+    cmd = "bash myscript.sh"
+    job = GenericCommandParameters(command=cmd)
+    with pytest.raises(AttributeError):
+        job.extension = "invalid"
+
+    assert not job.append_output_dir
+    job.append_output_dir = True
+    assert job.append_output_dir
+
+    job = GenericCommandParameters(command=cmd, blocked_by=[1])
+    assert isinstance(job.blocked_by, set)
+    assert next(iter(job.blocked_by)) == "1"
+
+
 def test_sorted_order(generic_command_fixture):
     with open(TEST_FILENAME, "w") as f_out:
         pass
@@ -73,7 +88,7 @@ def test_sorted_order(generic_command_fixture):
     config = GenericCommandConfiguration()
     num_jobs = 20
     for i in range(num_jobs):
-        job = GenericCommandParameters("echo hello")
+        job = GenericCommandParameters(command="echo hello")
         config.add_job(job)
 
     assert config.get_num_jobs() == num_jobs

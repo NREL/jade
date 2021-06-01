@@ -21,7 +21,7 @@ class SubmitterParams(JadeBaseModel):
 
     generate_reports: Optional[bool] = Field(
         title="generate_reports",
-        description="controls whether to generate reports after completion",
+        description="Controls whether to generate reports after completion",
         default=True,
     )
     hpc_config: HpcConfig = Field(
@@ -30,54 +30,54 @@ class SubmitterParams(JadeBaseModel):
     )
     max_nodes: Optional[int] = Field(
         title="max_nodes",
-        description="max number of compute nodes to use simultaneously, default is unbounded",
+        description="Max number of compute nodes to use simultaneously, default is unbounded",
         default=None,
     )
     num_processes: Optional[int] = Field(
         title="num_processes",
-        description="number of processes to run in parallel on each node",
+        description="Number of processes to run in parallel on each node",
         default=None,
     )
     per_node_batch_size: Optional[int] = Field(
         title="per_node_batch_size",
-        description="how many jobs to assign to each node. If 0, use time-based batching.",
+        description="How many jobs to assign to each node. If 0, use time-based batching.",
         default=DEFAULTS["per_node_batch_size"],
     )
     node_setup_script: Optional[str] = Field(
         title="node_setup_script",
-        description="script to run on each node before starting jobs",
+        description="Script to run on each node before starting jobs",
     )
     node_shutdown_script: Optional[str] = Field(
         title="node_shutdown_script",
-        description="script to run on each node after completing jobs",
+        description="Script to run on each node after completing jobs",
     )
     poll_interval: Optional[int] = Field(
         title="poll_interval",
-        description="interval in seconds on which to poll jobs for status",
+        description="Interval in seconds on which to poll jobs for status",
         default=DEFAULTS["poll_interval"],
     )
     resource_monitor_interval: Optional[int] = Field(
         title="resource_monitor_interval",
-        description="interval in seconds on which to collect resource stats",
+        description="Interval in seconds on which to collect resource stats",
         default=DEFAULTS["resource_monitor_interval"],
     )
     try_add_blocked_jobs: Optional[bool] = Field(
         title="try_add_blocked_jobs",
-        description="add blocked jobs to a batch if all blocking jobs are in " "the batch",
+        description="Add blocked jobs to a batch if all blocking jobs are in " "the batch",
         default=False,
     )
     time_based_batching: Optional[bool] = Field(
         title="time_based_batching",
-        description="use time-based batching instead of job-count-based batching",
+        description="Use time-based batching instead of job-count-based batching",
         default=False,
     )
     dry_run: Optional[bool] = Field(
         title="dry_run",
-        description="dry run mode; don't start any jobs",
+        description="Dry run mode; don't start any jobs",
         default=False,
     )
     verbose: Optional[bool] = Field(
         title="verbose",
-        description="enable debug logging",
+        description="Enable debug logging",
         default=False,
     )

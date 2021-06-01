@@ -1,37 +1,39 @@
 
 @startuml
 
-class ConfigurationInputs {
-    {abstract} string base_directory()
-    {abstract} namedtuple create_key()
-    {abstract} dict get_available_parameters()
-}
-
 AutoRegressionInputs <|-- ConfigurationInputsInterface
+GenericCommandInputs <|-- ConfigurationInputsInterface
 
 class JobParametersInterface {
     {abstract} serialize()
     {abstract} deserialize(data)
+    {abstract} name(data)
+    {abstract} add_blocking_jobs(data)
+    {abstract} get_blocking_jobs(data)
+    {abstract} remove_blocking_jobs(data)
+    {abstract} cancel_on_blocking_job_failure(data)
+    {abstract} estimated_run_minutes(data)
+    {abstract} submission_groups(data)
 }
 
 AutoRegressionParameters <|-- JobParametersInterface
+GenericCommandParameters <|-- JobParametersInterface
 
 class JobExecutionInterface {
+    {abstract} int generate_command()
     {abstract} int run()
-    {abstract} list list_results_files()
 }
 
 AutoRegressionExecution <|-- JobExecutionInterface
+GenericCommandExecution <|-- JobExecutionInterface
 
 class JobConfiguration {
     {static} JobConfiguration auto_config()
     {static} JobConfiguration deserialize(string filename)
     {abstract} void clear()
     {abstract} void dump(string filename)
-    {abstract} void dumps()
     {abstract} int get_num_jobs()
     {abstract} iter iter_jobs()
-    {abstract} void reconfigure_jobs(list parameters)
 }
 
 JobConfiguration o-- ConfigurationInputsInterface
@@ -45,8 +47,6 @@ class JobManagerBase {
 class JobSubmitter {
     void cancel_jobs(list names)
     int submit_jobs()
-    list get_failed_parameters(string output_directory)
-    void create_config_from_failed_jobs(string output_directory, string filename)
 }
 
 class JobRunner {
