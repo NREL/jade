@@ -53,9 +53,6 @@ class LocalManager(HpcManagerInterface):
     def create_submission_script(self, name, script, filename, path):
         pass
 
-    def get_active_nodes(self, job_id):
-        assert False
-
     def get_config(self):
         return {"hpc": {}}
 

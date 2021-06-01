@@ -100,22 +100,6 @@ class HpcManager:
         intf = self._get_interface()
         return intf.check_statuses()
 
-    def get_active_nodes(self, job_id):
-        """Return the nodes currently participating in the job.
-
-        Parameters
-        ----------
-        job_id : str
-
-        Returns
-        -------
-        list
-            list of node hostnames
-
-        """
-        intf = self._get_interface()
-        return intf.get_active_nodes(job_id)
-
     def get_hpc_config(self, submission_group_name):
         """Returns the HPC config parameters.
 

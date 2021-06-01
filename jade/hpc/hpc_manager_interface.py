@@ -106,22 +106,6 @@ class HpcManagerInterface(abc.ABC):
         """
 
     @abc.abstractmethod
-    def get_active_nodes(self, job_id):
-        """Return the nodes currently participating in the job.
-
-        Parameters
-        ----------
-        job_id : str
-
-        Returns
-        -------
-        list
-            list of node hostnames
-
-        """
-        # TODO DT: should this accept list of job_ids instead?
-
-    @abc.abstractmethod
     def get_config(self):
         """Get HPC configuration parameters.
 
