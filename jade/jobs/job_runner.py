@@ -125,7 +125,6 @@ class JobRunner(JobManagerBase):
         cluster, _ = Cluster.deserialize(self._output)
         resource_monitor = ResourceMonitor(name)
         group = self._config.get_default_submission_group()
-        # group = cluster.config.submission_groups[0]
         if group.submitter_params.resource_monitor_interval is None:
             monitor_func = None
         else:
