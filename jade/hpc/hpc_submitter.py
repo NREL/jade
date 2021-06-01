@@ -120,12 +120,11 @@ class HpcSubmitter:
 
         blocked_jobs = []
         submitted_jobs = []
-        num_submissions = 0
         for group in self._cluster.config.submission_groups:
             if not queue.is_full():
                 self._submit_batches(queue, group, blocked_jobs, submitted_jobs)
-                num_submissions += self._batch_index - starting_batch_index
 
+        num_submissions = self._batch_index - starting_batch_index
         logger.info(
             "num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
             num_submissions,
@@ -166,7 +165,6 @@ class HpcSubmitter:
         batch = None
         for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
             jade_job = self._config.get_job(job.name)
-            assert submission_group.name is not None
             if jade_job.submission_group != submission_group.name:
                 continue
             if batch is None:
