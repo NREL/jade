@@ -42,7 +42,7 @@ class GenericCommandParameters(JobParametersInterface):
     @property
     def command(self):
         if self._model.use_multi_node_manager:
-            return f"jade-internal run-multi-node-job {self._model.command}"
+            return f"jade-internal run-multi-node-job {self.name} {self._model.command}"
         return self._model.command
 
     @property
