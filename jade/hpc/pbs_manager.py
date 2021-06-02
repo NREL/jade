@@ -39,6 +39,9 @@ class PbsManager(HpcManagerInterface):
     def __init__(self, config):
         self._config = config
 
+    def am_i_manager(self):
+        assert False
+
     def cancel_job(self, job_id):
         return 0
 
@@ -134,6 +137,9 @@ class PbsManager(HpcManagerInterface):
         )
 
         utils.create_script(filename, script)
+
+    def list_active_nodes(self, job_id):
+        assert False
 
     def log_environment_variables(self):
         pass

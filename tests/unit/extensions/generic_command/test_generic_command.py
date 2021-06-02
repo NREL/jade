@@ -76,7 +76,8 @@ def test_generic_command_parameters():
     job.append_output_dir = True
     assert job.append_output_dir
 
-    job = GenericCommandParameters(command=cmd, blocked_by=[1])
+    job = GenericCommandParameters(command=cmd, use_multi_node_manager=True, blocked_by=[1])
+    assert job.append_output_dir
     assert isinstance(job.blocked_by, set)
     assert next(iter(job.blocked_by)) == "1"
 

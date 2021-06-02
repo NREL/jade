@@ -10,6 +10,7 @@ import jade.version
 from jade.cli.auto_config import auto_config
 from jade.cli.cancel_jobs import cancel_jobs
 from jade.cli.config import config
+from jade.cli.cluster import cluster
 from jade.cli.extensions import extensions
 from jade.cli.pipeline import pipeline
 from jade.cli.resubmit_jobs import resubmit_jobs
@@ -47,6 +48,7 @@ def cli(version):
 cli.add_command(extensions)
 cli.add_command(auto_config)
 cli.add_command(cancel_jobs)
+cli.add_command(cluster)
 cli.add_command(config)
 cli.add_command(pipeline)
 cli.add_command(resubmit_jobs)

@@ -14,6 +14,16 @@ class HpcManagerInterface(abc.ABC):
     USER = getpass.getuser()
 
     @abc.abstractmethod
+    def am_i_manager(self):
+        """Return True if the current node is the manager node.
+
+        Returns
+        -------
+        bool
+
+        """
+
+    @abc.abstractmethod
     def cancel_job(self, job_id):
         """Cancel job.
 
@@ -126,12 +136,37 @@ class HpcManagerInterface(abc.ABC):
         """
 
     @abc.abstractmethod
+    def get_node_id(self):
+        """Return the node ID of the current system.
+
+        Returns
+        -------
+        str
+
+        """
+
+    @abc.abstractmethod
     def get_num_cpus(self):
         """Return the number of CPUs in the system.
 
         Returns
         -------
         int
+
+        """
+
+    @abc.abstractmethod
+    def list_active_nodes(self, job_id):
+        """Return the nodes currently participating in the job.
+
+        Parameters
+        ----------
+        job_id : str
+
+        Returns
+        -------
+        list
+            list of node hostnames
 
         """
 

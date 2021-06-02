@@ -220,3 +220,97 @@ Here is an example of part of a ``config.json`` file:
 
 Refer to :ref:`submission_group_behaviors` for additional information.
 
+.. _multi_node_job_strategy:
+
+Jobs that require multiple nodes
+================================
+
+.. note:: This is an experimental feature. Please let us know your feedback.
+
+**Constraints**:
+
+- A job needs 5 nodes.
+- One node should become a manager that starts worker processes on all nodes.
+- You have a script/program that can use all nodes.
+
+**Strategy**:
+
+Use JADE's multi-node manager to run your script.
+
+- Set ``nodes = 5`` in the ``hpc_config.toml`` file.
+- Set ``use_multi_node_manager = true`` for the job in the ``config.json``.
+- The HPC will start JADE's manager script. JADE will assign the ``manager``
+  role to the first node in the HPC node list. It will invoke your script,
+  passing the runtime output directory and all node hostnames through
+  environment variables.
+- Your script uses all nodes to complete your work.
+
+.. warning:: Be careful if you add more jobs to the config, such as for
+   post-processing. Put them in a different submission group if they are
+   single-node jobs.
+
+Here is an example using a ``Julia`` script that uses the ``Distributed``
+module to perform work on multiple nodes.
+
+Contents of a script called ``run_jobs.jl``:
+
+.. code-block:: julia
+
+    using Distributed
+    using Random
+
+    function run_jobs(output_dir, hostnames)
+        machines = [(x, i) for (i, x) in enumerate(hostnames)]
+        addprocs(machines)
+        @everywhere println("hello from $(gethostname())")
+
+        results = [@spawnat i rand(10) for i in 1:length(hostnames)]
+        for (i, result) in enumerate(results)
+            res = maximum(fetch(result))
+            println("Largest value from $(hostnames[i]) = $res")
+        end
+    end
+
+    output = ENV["JADE_OUTPUT_DIR"]
+    workers = split(ENV["JADE_COMPUTE_NODE_NAMES"], " ")
+    isempty(workers) && error("no compute node names were set in JADE_COMPUTE_NODE_NAMES")
+
+    run_jobs(output, workers)
+
+
+**JADE job definition**:
+
+.. code-block:: json
+
+    {
+      "command": "julia run_jobs.jl arg1 arg2",
+      "job_id": 1,
+      "blocked_by": [],
+      "extension": "generic_command",
+      "append_output_dir": true,
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "use_multi_node_manager": true
+    }
+
+**HPC parameters**::
+
+    hpc_type = "slurm"
+    job_prefix = "job"
+
+    [hpc]
+    account = "my_account"
+    walltime = "4:00:00"
+    nodes = 5
+
+JADE will set these environment variables:
+
+- ``JADE_OUTPUT_DIR``: output directory passed to ``jade submit-jobs``
+- ``JADE_COMPUTE_NODE_NAMES``: all compute node names allocated by the HPC
+
+JADE will run the user command on the manager node when the HPC allocates the
+nodes.
+
+.. code-block:: bash
+
+    $ julia run_jobs.jl arg1 arg2

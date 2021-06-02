@@ -8,7 +8,7 @@ from jade.enums import Status
 from jade.exceptions import ExecutionError  # , InvalidConfiguration
 from jade.hpc.common import HpcJobStatus, HpcJobInfo
 from jade.hpc.hpc_manager_interface import HpcManagerInterface
-from jade.utils.subprocess_manager import run_command
+from jade.utils.run_command import check_run_command, run_command
 from jade.utils import utils
 
 
@@ -28,6 +28,9 @@ class SlurmManager(HpcManagerInterface):
 
     def __init__(self, config):
         self._config = config
+
+    def am_i_manager(self):
+        return os.environ.get("SLURM_NODEID", 1) == "0"
 
     def cancel_job(self, job_id):
         return run_command(f"scancel {job_id}")
@@ -192,9 +195,20 @@ class SlurmManager(HpcManagerInterface):
     def get_local_scratch(self):
         return os.environ["LOCAL_SCRATCH"]
 
+    def get_node_id(self):
+        return os.environ["SLURM_NODEID"]
+
     @staticmethod
     def get_num_cpus():
         return int(os.environ["SLURM_CPUS_ON_NODE"])
+
+    def list_active_nodes(self, job_id):
+        out1 = {}
+        check_run_command(f'squeue -j {job_id} --format="%500N" -h', out1)
+        nodes_compact = out1["stdout"].strip()
+        out2 = {}
+        check_run_command(f'scontrol show hostnames "{nodes_compact}"', out2)
+        return [x for x in out2["stdout"].split("\n") if x != ""]
 
     def log_environment_variables(self):
         data = {}
