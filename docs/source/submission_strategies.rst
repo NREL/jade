@@ -9,16 +9,16 @@ cases.
 Independent, short, multi-core jobs
 ===================================
 
-Constraints:
+**Constraints**:
 
 - Each job process consumes all cores of the compute node.
 - Each job takes no more than 30 minutes.
 - There are 1000 jobs.
 - There are no job dependencies.
 - Nodes on the short queue (4-hour max walltime) have a short acquisition time.
-- Nodes on the standard queue have a long acquistion time.
+- Nodes on the standard queue have a long acquisition time.
 
-Strategy:
+**Strategy**:
 
 - Define the walltime as 4 hours (for NREL/Eagle HPC) so that it will pick the
   ``short`` partition.
@@ -27,7 +27,7 @@ Strategy:
   the max walltime.
 - Try to use as many nodes as possible in parallel.
 
-Command:
+**Command**:
 
 .. code-block:: bash
 
@@ -42,17 +42,17 @@ Same as above except that each job consumes only one core.
 Case 1
 ------
 
-Constraints:
+**Constraints**:
 
 - A compute node has 36 cores.
 
-Strategy:
+**Strategy**:
 
 - One compute node can complete 36 jobs every 30 minutes or 288 jobs in 4
   hours.
 - 4 compute nodes are needed.
 
-Command:
+**Command**:
 
 .. code-block:: bash
 
@@ -62,13 +62,13 @@ JADE will submit 4 single-node jobs to the HPC.
 
 Case 2
 ------
-Same as case 1 but acquistion time is long on all queues.
+Same as case 1 but acquisition time is long on all queues.
 
-Strategy:
+**Strategy**:
 
 - Acquire one node on the standard queue and then run all jobs on it.
 
-Command:
+**Command**:
 
 .. code-block:: bash
 
@@ -81,17 +81,17 @@ Some jobs complete in 10 minutes, some take 2 hours.
 Case 1
 ------
 
-Constraints:
+**Constraints**:
 
 - A compute node has 36 cores.
 
-Strategy:
+**Strategy**:
 
 - One compute node can complete 36 jobs every 30 minutes or 288 jobs in 4
   hours.
 - 4 compute nodes are needed.
 
-Command:
+**Command**:
 
 .. code-block:: bash
 
@@ -102,15 +102,15 @@ JADE will submit 4 single-node jobs to the HPC.
 Case 2
 ------
 
-Constraints:
+**Constraints**:
 
 - Each job process consumes one core of the compute node.
 - Some jobs take 10 minutes, some take 2 hours.
 - There are no job dependencies.
 - Nodes on the short queue (4-hour max walltime) have a short acquisition time.
-- Nodes on the standard queue have a long acquistion time.
+- Nodes on the standard queue have a long acquisition time.
 
-Strategy:
+**Strategy**:
 
 - Define ``estimated_run_minutes`` for each job.
 - Run ``jade submit-jobs`` with ``--time-based-batching`` and
@@ -119,7 +119,7 @@ Strategy:
 - JADE will build variable-sized batches based how many jobs can complete in 4
   hours on each node.
 
-Command:
+**Command**:
 
 .. code-block:: bash
 
@@ -132,25 +132,27 @@ Jobs that require different submission parameters
 Some jobs will take less than 4 hours, and so can run on the short queue. Other
 jobs take longer and so need to run on the standard queue.
 
-Strategy:
+**Strategy**:
 
-- Define two submission groups.
+- Define two instances of a :ref:`model_submission_group`.
 - Set the submission group for each job appropriately.
 
-The ``SubmissionGroup`` object contains a name as well as a
-``SubmitterParameters`` object. The latter contains batch parameters like
+A submission group allows you to define batch parameters like
 ``per-node-batch-size`` as well as HPC parameters. You can customize most of
 these parameters for each submission group.
 
 Here's how to create the JSON object that you will need to add to the
 ``config.json`` file.
 
-1. Create default submission parameters with ``jade config submitter-params -c submitter_params.json``.
-2. Edit that file and make the single object an array of objects (enclose it with `[]`).
+1. Create default submission parameters with ``jade config submitter-params -c
+   submitter_params.json``.
+2. Edit that file and make the single object an array of objects (enclose it
+   with `[]`).
 3. Make a copy of the object for each group.
 4. Customize each group.
 5. Add the group to the ``config.json`` file at the root level.
-6. Add a ``submission_group`` entry to each job where the value is the group name.
+6. Add a ``submission_group`` entry to each job where the value is the group
+   name.
 
 Here is an example of part of a ``config.json`` file:
 
@@ -159,7 +161,7 @@ Here is an example of part of a ``config.json`` file:
     {
       "jobs": [
         {
-          "command": "bash myscript.sh 1",
+          "command": "bash my_script.sh 1",
           "job_id": 1,
           "blocked_by": [],
           "extension": "generic_command",
@@ -170,7 +172,7 @@ Here is an example of part of a ``config.json`` file:
           "submission_group": "short_jobs"
         },
         {
-          "command": "bash myscript.sh 2",
+          "command": "bash my_script.sh 2",
           "job_id": 2,
           "blocked_by": [],
           "extension": "generic_command",
@@ -216,32 +218,5 @@ Here is an example of part of a ``config.json`` file:
       ]
     }
 
-Restrictions
-------------
-The following parameters must be the same across all submission groups:
+Refer to :ref:`submission_group_behaviors` for additional information.
 
-- ``max_nodes``
-- ``poll_interal``
-
-The following parameters in the submission groups will be overridden by the
-parameters specified on the command line for ``jade submit-jobs``:
-
-- ``dry_run``
-- ``generate_reports``
-- ``resource_monitor_interval``
-- ``verbose``
-
-The following parameters in the submission groups will be overridden by the
-parameters specified on the command line for ``jade submit-jobs`` **only**
-if they are not set for the group:
-
-- ``node_setup_script``
-- ``node_shutdown_script``
-
-The following parameters are completely controlled by the group:
-
-- ``hpc_config``
-- ``num_processes``
-- ``per_node_batch_size``
-- ``time_based_batching``
-- ``try_add_blocked_jobs``

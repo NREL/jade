@@ -79,6 +79,7 @@ Refer to :ref:`advanced_guide_label` for more information.
    installation
    quickstart
    tutorial
+   job_configuration
    submission_strategies
    pipeline
    distributed_submission
@@ -91,7 +92,6 @@ Refer to :ref:`advanced_guide_label` for more information.
    jade
    design
    build_docs
-
 
 Indices and tables
 ==================

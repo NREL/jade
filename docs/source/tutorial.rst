@@ -3,7 +3,7 @@ Tutorial
 ********
 
 This page describes how to use the JADE package to create, modify, and run
-jobs locally or on HPC.
+jobs locally or on an HPC.
 
 CLI Commands
 ============
@@ -27,7 +27,7 @@ JADE uses the filesystem for internal synchronization.
 
 HPC Parameters
 --------------
-You must define your HPC configuration in settings file. Run this command
+You must define your HPC configuration in a settings file. Run this command
 customized to your parameters.
 
 .. code-block:: bash
@@ -41,7 +41,8 @@ edit the file afterwards.
 The following parameters are optional when running on NREL's HPC (Eagle):
 
 - ``partition``: If not specified then the HPC will decide the partition based
-  on the wall time value.
+  on the wall time value (recommended unless you are using the `debug`
+  partition).
 - ``mem``: If specified then the HPC will only
   provide nodes that have at least this amount of memory.  Refer to the HPC
   documentation for supported formats. On Eagle: "80GB", "150GB".
@@ -53,9 +54,13 @@ JADE was primarily designed to maximize use of compute node CPUs when running
 jobs that only require a single node. Given that objective, the default value
 of ``nodes`` is ``1``.
 
-As an experimental feature, JADE supports setting ``nodes``, ``ntasks``, and
-``ntasks_per_node`` to allow users to run multi-node jobs. Refer to the HPC
-documentation and ensure each job is compatible with the settings.
+JADE also supports setting ``nodes``, ``ntasks``, and ``ntasks_per_node`` to
+allow users to run multi-node jobs. Refer to the HPC documentation and ensure
+each job is compatible with the settings. Note that each job will be run on
+every node simultaneously.
+
+Refer to :ref:`model_slurm_config` for a full list of parameters available
+on NREL's Eagle HPC with SLURM.
 
 Submission Groups
 -----------------
@@ -108,6 +113,9 @@ Job Commands
 
 JADE created ``config.json`` with one definition per job. You can edit this
 file to customize execution behavior.
+
+Refer to :ref:`model_generic_command_parameters` for a full list of
+configurable parameters.
 
 Job Ordering
 ------------
@@ -294,7 +302,8 @@ In this example JADE will invoke these commands on each compute node.
 
 Note the arguments:
 
-1. JADE config file for that node's batch. It contains only the jobs in the batch.
+1. JADE config file for that node's batch. It contains only the jobs in the
+   batch.
 2. the output directory passed to ``jade submit-jobs``
 
 You can use this information to decide what files to copy. Here is an example
@@ -333,6 +342,9 @@ Here is what you can do in the setup script.
     for filename in required_files:
         shutil.copyfile(filename, Path(work_dir) / os.path.basename(filename))
 
+
+.. note:: You can define different setup/shutdown scripts for different jobs if
+   you define submission groups.
 
 Job Execution
 =============
