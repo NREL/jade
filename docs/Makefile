@@ -16,7 +16,7 @@ help:
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-# TODO: define table dependencies for make rather than build every time.
+# TODO: define table dependencies on the Python Pydantic model files.
 
 %: Makefile
 	python make_model_tables.py -o $(BUILDDIR)/model_tables

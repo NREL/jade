@@ -37,17 +37,27 @@ class JobRunner(JobManagerBase):
         group = self.config.get_default_submission_group()
         config = group.submitter_params.hpc_config
         self._intf = HpcManager.create_hpc_interface(config)
+        self._node_id = self._intf.get_node_id()
         self._intf_type = config.hpc_type
         self._batch_id = batch_id
         self._event_file = os.path.join(
             output,
-            f"run_jobs_batch_{batch_id}_events.log",
+            f"run_jobs_batch_{batch_id}_{self._node_id}_events.log",
         )
-        self._event_logger = setup_logging(
-            "event", self._event_file, console_level=logging.ERROR, file_level=logging.INFO
-        )
+        self._event_logger = None
 
         logger.debug("Constructed JobRunner output=%s batch=%s", output, batch_id)
+
+    @property
+    def node_id(self):
+        """Return the node ID of the current system.
+
+        Returns
+        -------
+        str
+
+        """
+        return self._node_id
 
     @timed_info
     def run_jobs(self, verbose=False, num_processes=None):
@@ -68,6 +78,11 @@ class JobRunner(JobManagerBase):
         logger.info("Run jobs.")
         scratch_dir = self._create_local_scratch()
         are_inputs_local = self._intf_type == HpcType.LOCAL
+
+        # Not sure exactly why, but this needs to come after run_jobs.py has initialized logging.
+        self._event_logger = setup_logging(
+            "event", self._event_file, console_level=logging.ERROR, file_level=logging.INFO
+        )
 
         try:
             config_file = self._config.serialize_for_execution(scratch_dir, are_inputs_local)
@@ -121,7 +136,7 @@ class JobRunner(JobManagerBase):
         )
         self._intf.log_environment_variables()
 
-        name = f"resource_monitor_batch_{self._batch_id}"
+        name = f"resource_monitor_batch_{self._batch_id}_{self._node_id}"
         cluster, _ = Cluster.deserialize(self._output)
         resource_monitor = ResourceMonitor(name)
         group = self._config.get_default_submission_group()

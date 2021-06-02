@@ -33,6 +33,9 @@ class FakeManager(HpcManagerInterface):
         self._job_id = None
         self._config = config
 
+    def am_i_manager(self):
+        assert False
+
     def cancel_job(self, job_id):
         return 0
 
@@ -73,9 +76,16 @@ class FakeManager(HpcManagerInterface):
     def get_local_scratch(self):
         return tempfile.gettempdir()
 
+    def get_node_id(self):
+        # If we try to use multi-node jobs in fake mode, this will cause a problem.
+        return "0"
+
     @staticmethod
     def get_num_cpus():
         return multiprocessing.cpu_count()
+
+    def list_active_nodes(self, job_id):
+        assert False
 
     def log_environment_variables(self):
         pass

@@ -32,6 +32,9 @@ class LocalManager(HpcManagerInterface):
     def __init__(self, _):
         pass
 
+    def am_i_manager(self):
+        return True
+
     def cancel_job(self, job_id):
         return 0
 
@@ -59,9 +62,15 @@ class LocalManager(HpcManagerInterface):
     def get_local_scratch(self):
         return tempfile.gettempdir()
 
+    def get_node_id(self):
+        return "0"
+
     @staticmethod
     def get_num_cpus():
         return multiprocessing.cpu_count()
+
+    def list_active_nodes(self, job_id):
+        assert False
 
     def log_environment_variables(self):
         pass

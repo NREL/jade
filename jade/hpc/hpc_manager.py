@@ -43,6 +43,17 @@ class HpcManager:
             return next(iter(self._intfs.values()))
         return self._intfs[submission_group_name]
 
+    def am_i_manager(self):
+        """Return True if the current node is the master node.
+
+        Returns
+        -------
+        bool
+
+        """
+        intf = self._get_interface()
+        return intf.am_i_manager()
+
     def cancel_job(self, job_id):
         """Cancel job.
 
@@ -125,6 +136,22 @@ class HpcManager:
 
         """
         return self._hpc_type
+
+    def list_active_nodes(self, job_id):
+        """Return the nodes currently participating in the job.
+
+        Parameters
+        ----------
+        job_id : str
+
+        Returns
+        -------
+        list
+            list of node hostnames
+
+        """
+        intf = self._get_interface()
+        return intf.list_active_nodes(job_id)
 
     def submit(
         self,

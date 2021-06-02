@@ -59,6 +59,9 @@ allow users to run multi-node jobs. Refer to the HPC documentation and ensure
 each job is compatible with the settings. Note that each job will be run on
 every node simultaneously.
 
+Refer to :ref:`multi_node_job_strategy` for an example of how to use JADE's
+multi-node feature.
+
 Refer to :ref:`model_slurm_config` for a full list of parameters available
 on NREL's Eagle HPC with SLURM.
 

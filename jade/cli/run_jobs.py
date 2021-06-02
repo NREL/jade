@@ -42,10 +42,6 @@ def run_jobs(config_file, output, num_processes, verbose):
     assert match
     batch_id = match.group(1)
     os.makedirs(output, exist_ok=True)
-    filename = os.path.join(output, f"run_jobs_batch_{batch_id}.log")
-    level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level, console_level=logging.ERROR)
-    logger.info(get_cli_string())
 
     # When running on compute nodes try to submit more jobs before and after
     # running this batch's jobs.
@@ -53,6 +49,13 @@ def run_jobs(config_file, output, num_processes, verbose):
     _try_submit_jobs(output, verbose)
 
     mgr = JobRunner(config_file, output=output, batch_id=batch_id)
+
+    # Logging has to get enabled after the JobRunner is created because we need the node ID
+    # is what makes the file unique.
+    filename = os.path.join(output, f"run_jobs_batch_{batch_id}_{mgr.node_id}.log")
+    level = logging.DEBUG if verbose else logging.INFO
+    setup_logging(__name__, filename, file_level=level, console_level=logging.ERROR)
+    logger.info(get_cli_string())
 
     group = mgr.config.get_default_submission_group()
     if group.submitter_params.node_setup_script:
