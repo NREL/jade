@@ -38,7 +38,7 @@ dataframe_utils_requires = ["tables", "pyarrow"]
 test_requires = ["pytest", "mock"] + demo_requires + dataframe_utils_requires
 
 setup(
-    name="jade",
+    name="NREL-jade",
     version=version,
     description="Provides HPC workflow automation services",
     long_description=readme,
