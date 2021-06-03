@@ -14,17 +14,6 @@ from jade.utils.utils import dump_data, load_data
 DEFAULT_REGISTRY = {
     "extensions": [
         {
-            "name": "demo",
-            "description": "Country based GDP auto-regression analysis",
-            "job_execution_module": "jade.extensions.demo.autoregression_execution",
-            "job_execution_class": "AutoRegressionExecution",
-            "job_configuration_module": "jade.extensions.demo.autoregression_configuration",
-            "job_configuration_class": "AutoRegressionConfiguration",
-            "job_parameters_module": "jade.extensions.demo.autoregression_parameters",
-            "job_parameters_class": "AutoRegressionParameters",
-            "cli_module": "jade.extensions.demo.cli",
-        },
-        {
             "name": "generic_command",
             "description": "Allows batching of a list of CLI commands.",
             "job_execution_module": "jade.extensions.generic_command.generic_command_execution",
@@ -272,3 +261,18 @@ class Registry:
 
         self._extensions.pop(extension_name)
         self._serialize_registry()
+
+    def register_demo_extension(self):
+        self.register_extension(
+            {
+                "name": "demo",
+                "description": "Country based GDP auto-regression analysis",
+                "job_execution_module": "jade.extensions.demo.autoregression_execution",
+                "job_execution_class": "AutoRegressionExecution",
+                "job_configuration_module": "jade.extensions.demo.autoregression_configuration",
+                "job_configuration_class": "AutoRegressionConfiguration",
+                "job_parameters_module": "jade.extensions.demo.autoregression_parameters",
+                "job_parameters_class": "AutoRegressionParameters",
+                "cli_module": "jade.extensions.demo.cli",
+            },
+        )

@@ -33,12 +33,14 @@ with open(os.path.join(here, "jade", "version.py"), encoding="utf-8") as f:
 version = version.split()[2].strip('"').strip("'")
 
 dev_requires = ["black", "pre-commit"]
-test_requires = ["pytest", "mock"]
+demo_requires = ["matplotlib", "statsmodels>=0.10.1"]
+dataframe_utils_requires = ["tables", "pyarrow"]
+test_requires = ["pytest", "mock"] + demo_requires + dataframe_utils_requires
 
 setup(
     name="jade",
     version=version,
-    description="JADE",
+    description="Provides HPC workflow automation services",
     long_description=readme,
     author="NREL",
     maintainer_email="daniel.thom@nrel.gov",
@@ -64,6 +66,8 @@ setup(
     extras_require={
         "dev": dev_requires,
         "test": test_requires,
+        "demo": demo_requires,
+        "dataframe_utils": dataframe_utils_requires,
     },
     install_requires=read_lines("requirements.txt"),
 )

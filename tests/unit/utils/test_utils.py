@@ -112,17 +112,18 @@ def test_data_dump_and_load():
     if os.path.exists(toml_file):
         os.remove(toml_file)
 
+    # Re-enable if we add support again.
     # Dump yaml
-    yaml_file = os.path.join(tempfile.gettempdir(), "jade-unit-test-file.yaml")
-    dump_data(raw_data, yaml_file)
-    assert os.path.exists(yaml_file)
+    # yaml_file = os.path.join(tempfile.gettempdir(), "jade-unit-test-file.yaml")
+    # dump_data(raw_data, yaml_file)
+    # assert os.path.exists(yaml_file)
 
-    # Load yaml
-    yaml_data = load_data(yaml_file)
-    assert yaml_data == raw_data
+    ## Load yaml
+    # yaml_data = load_data(yaml_file)
+    # assert yaml_data == raw_data
 
-    if os.path.exists(yaml_file):
-        os.remove(yaml_file)
+    # if os.path.exists(yaml_file):
+    #    os.remove(yaml_file)
 
 
 def test_aggregate_data_from_files():

@@ -6,7 +6,6 @@ import os
 import re
 import shutil
 
-import feather
 import pandas as pd
 
 from jade.exceptions import InvalidParameter
@@ -64,7 +63,7 @@ def read_dataframe(filename, index_col=None, columns=None, parse_dates=False, **
     elif ext == ".feather":
         needs_new_index = True
         with open_func(filename, "rb") as f_in:
-            df = feather.read_dataframe(f_in, **kwargs)
+            df = pd.read_feather(f_in, **kwargs)
     elif ext == ".h5":
         # This assumes that the file has a single dataframe, and so the
         # key name is not relevant.

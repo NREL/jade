@@ -3,10 +3,17 @@ import sys
 
 import pytest
 
+from jade.extensions.registry import Registry
+
 
 if os.environ.get("LOCAL_SUBMITTER") is not None:
     print("You must unset the environment variable LOCAL_SUBMITTER.")
     sys.exit(1)
+
+
+registry = Registry()
+if not registry.is_registered("demo"):
+    registry.register_demo_extension()
 
 
 @pytest.fixture

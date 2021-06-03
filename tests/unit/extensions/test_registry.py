@@ -6,9 +6,11 @@ import tempfile
 import pytest
 
 from jade.extensions.registry import Registry, ExtensionClassType, DEFAULT_REGISTRY
-from jade.extensions.demo.autoregression_configuration import AutoRegressionConfiguration
-from jade.extensions.demo.autoregression_execution import AutoRegressionExecution
-import jade.extensions.demo.cli as cli
+from jade.extensions.generic_command.generic_command_configuration import (
+    GenericCommandConfiguration,
+)
+from jade.extensions.generic_command.generic_command_execution import GenericCommandExecution
+import jade.extensions.generic_command.cli as cli
 
 
 # Don't change the user's registry.
@@ -52,9 +54,9 @@ def test_registry__register_extensions(registry_fixture):
 
     assert ext["name"] == extension["name"]
     cfg_class = registry.get_extension_class(ext["name"], ExtensionClassType.CONFIGURATION)
-    assert cfg_class == AutoRegressionConfiguration
+    assert cfg_class == GenericCommandConfiguration
     exec_class = registry.get_extension_class(ext["name"], ExtensionClassType.EXECUTION)
-    assert exec_class == AutoRegressionExecution
+    assert exec_class == GenericCommandExecution
     cli_mod = registry.get_extension_class(ext["name"], ExtensionClassType.CLI)
     assert cli_mod == cli
 
