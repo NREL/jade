@@ -32,10 +32,9 @@ with open(os.path.join(here, "jade", "version.py"), encoding="utf-8") as f:
 
 version = version.split()[2].strip('"').strip("'")
 
-dev_requires = ["black", "pre-commit"]
 demo_requires = ["matplotlib", "statsmodels>=0.10.1"]
 dataframe_utils_requires = ["tables", "pyarrow"]
-test_requires = ["pytest", "mock"] + demo_requires + dataframe_utils_requires
+dev_requires = ["black", "pre-commit", "pytest", "mock"] + demo_requires + dataframe_utils_requires
 
 setup(
     name="NREL-jade",
@@ -65,7 +64,6 @@ setup(
     test_suite="tests",
     extras_require={
         "dev": dev_requires,
-        "test": test_requires,
         "demo": demo_requires,
         "dataframe_utils": dataframe_utils_requires,
     },

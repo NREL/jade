@@ -44,6 +44,12 @@ The dev packages require that pandoc and plantuml be installed.
 
 
 ### Unit & Integration Test
+
+Installation:
+```
+pip install -e '.[dev]'
+```
+
 This project uses [pytest](https://docs.pytest.org/en/latest/) as the framework to run unit tests
 and integration tests, and generate HTML reports of coverage with the plugin
 [pytest-cov](https://github.com/pytest-dev/pytest-cov). The following are some basic commands
