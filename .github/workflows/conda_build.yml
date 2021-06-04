@@ -1,0 +1,24 @@
+name: Conda Build and Upload
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Conda
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        auto-update-conda: true
+        python-version: 3.9
+    - name: Build and upload conda package
+      shell: bash -l {0}
+      env:
+        ANACONDA_TOKEN: ${{ secrets.CONDA_TOKEN }}
+      run: |
+        conda install --yes --quiet conda-build conda-verify anaconda-client
+        conda build conda.recipe/ --channel=conda-forge
+        anaconda -t $ANACONDA_TOKEN upload -u nrel $(conda build conda.recipe/ --channel=conda-forge --output)

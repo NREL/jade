@@ -5,9 +5,6 @@ import os
 import logging
 from codecs import open
 from setuptools import setup, find_packages
-from setuptools.command.develop import develop
-from subprocess import check_call
-import shlex
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +53,7 @@ setup(
     license="BSD license",
     zip_safe=False,
     keywords="jade",
+    python_requires='>=3.7',
     classifiers=[
         "License :: OSI Approved :: BSD License",
         "Natural Language :: English",

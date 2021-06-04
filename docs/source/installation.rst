@@ -26,9 +26,8 @@ Computer or HPC with conda
 
 2. Install JADE.
 
-.. code-block:: bash
-
-    $ pip install git+https://github.com/NREL/jade.git@v0.4.0
+    1) ``pip install NREL-jade`` or
+    2) ``conda install nrel-jade --channel=conda-forge``
 
 
 Computer with docker
