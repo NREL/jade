@@ -27,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        python -m pip install pytest statsmodels matplotlib
+        python -m pip install pytest statsmodels matplotlib mock
         python -m pip install .
     - name: Run pytests
       run: |
