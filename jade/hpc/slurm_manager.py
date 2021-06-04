@@ -204,11 +204,20 @@ class SlurmManager(HpcManagerInterface):
 
     def list_active_nodes(self, job_id):
         out1 = {}
-        check_run_command(f'squeue -j {job_id} --format="%500N" -h', out1)
-        nodes_compact = out1["stdout"].strip()
+        # It's possible that 500 characters won't be enough, even with the compact format.
+        # Compare the node count against the result to make sure we got all nodes.
+        # There should be a better way to get this.
+        check_run_command(f'squeue -j {job_id} --format="%5D %500N" -h', out1)
+        result = out1["stdout"].strip().split()
+        assert len(result) == 2, str(result)
+        num_nodes = int(result[0])
+        nodes_compact = result[1]
         out2 = {}
         check_run_command(f'scontrol show hostnames "{nodes_compact}"', out2)
-        return [x for x in out2["stdout"].split("\n") if x != ""]
+        nodes = [x for x in out2["stdout"].split("\n") if x != ""]
+        if len(nodes) != num_nodes:
+            raise Exception(f"Bug in parsing node names. Found={len(nodes)} Actual={num_nodes}")
+        return nodes
 
     def log_environment_variables(self):
         data = {}
