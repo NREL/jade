@@ -1,14 +1,9 @@
 click
-feather-format
 filelock
-matplotlib
 numpy
 pandas
 plotly
 prettytable
 psutil
 pydantic
-pyyaml
-statsmodels>=0.10.1
-tables
 toml>=0.10.0

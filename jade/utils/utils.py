@@ -13,7 +13,6 @@ import re
 import shutil
 import stat
 import sys
-import yaml
 from dateutil.parser import parse
 
 import toml
@@ -102,8 +101,8 @@ def _get_module_from_extension(filename, **kwargs):
         mod = json
     elif ext == ".toml":
         mod = toml
-    elif ext in (".yml", ".yaml"):
-        mod = yaml
+    # elif ext in (".yml", ".yaml"):
+    #    mod = yaml
     elif "mod" in kwargs:
         mod = kwargs["mod"]
     else:
@@ -135,7 +134,8 @@ def dump_data(data, filename, **kwargs):
 @timed_debug
 def load_data(filename, **kwargs):
     """Load data from the file.
-    Supports JSON, TOML, YAML, or custom via kwargs.
+    Supports JSON, TOML, or custom via kwargs.
+    YAML support could easily be added.
 
     Parameters
     ----------
