@@ -17,7 +17,7 @@ jobs:
     - name: Build and upload conda package
       shell: bash -l {0}
       env:
-        ANACONDA_TOKEN: ${{ secrets.ANACONDA_TOKEN }}
+        ANACONDA_TOKEN: ${{ secrets.CONDA_TOKEN }}
       run: |
         conda install --yes --quiet conda-build conda-verify anaconda-client
         conda build conda.recipe/ --channel=conda-forge
