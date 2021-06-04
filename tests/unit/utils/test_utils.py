@@ -175,6 +175,7 @@ def test_modify_file():
         os.remove(txt_file)
 
 
+@mark.skip
 def test_cli_string():
     """Should return command-line arguments issued"""
     cmd = get_cli_string()
