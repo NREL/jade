@@ -1,0 +1,51 @@
+package:
+    name: nrel-jade
+    version: {{ environ.get('GIT_DESCRIBE_TAG','').replace('v', '', 1) }}
+
+source:
+    git_url: ../
+
+build:
+  number: 0
+  noarch: python
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  host:
+    - python
+    - pip
+    - setuptools
+    - click
+    - filelock
+    - numpy
+    - pandas
+    - plotly
+    - psutil
+    - pydantic
+    - pyyaml
+    - pytables
+    - toml>=0.10.0
+  run:
+    - python
+    - pip
+    - click
+    - filelock
+    - {{ pin_compatible('numpy') }}
+    - pandas
+    - plotly
+    - psutil
+    - pydantic
+    - pyyaml
+    - pytables
+    - toml>=0.10.0
+  run-constrained:
+    - feather-format
+    - prettytable
+    - tables
+
+about:
+  home: "https://github.com/NREL/jade"
+  license: BSD 3-Clause
+  summary: "Job Automation and Deployment Engine (JADE)"
+  doc_url: "https://nrel.github.io/jade"
+  dev_url: "https://github.com/NREL/jade"
