@@ -20,10 +20,9 @@ requirements:
     - numpy
     - pandas
     - plotly
+    - prettytable
     - psutil
     - pydantic
-    - pyyaml
-    - pytables
     - toml>=0.10.0
   run:
     - python
@@ -33,15 +32,10 @@ requirements:
     - {{ pin_compatible('numpy') }}
     - pandas
     - plotly
+    - prettytable
     - psutil
     - pydantic
-    - pyyaml
-    - pytables
     - toml>=0.10.0
-  run-constrained:
-    - feather-format
-    - prettytable
-    - tables
 
 about:
   home: "https://github.com/NREL/jade"
