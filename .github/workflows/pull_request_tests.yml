@@ -28,5 +28,4 @@ jobs:
         python -m pip install '.[dev]'
     - name: Run pytests
       run: |
-        #python -m pytest -v --disable-warnings
-        python -m pytest -v --disable-warnings tests/integration/test_resubmit_jobs.py
+        python -m pytest -v --disable-warnings
