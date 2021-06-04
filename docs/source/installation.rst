@@ -27,7 +27,7 @@ Computer or HPC with conda
 2. Install JADE.
 
     1) ``pip install NREL-jade`` or
-    2) ``conda install nrel-jade --channel=conda-forge``
+    2) ``conda install nrel-jade --channel=nrel --channel=conda-forge``
 
 
 Computer with docker
