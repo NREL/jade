@@ -3,8 +3,6 @@ JADE source code repository
 
 [![Documentation](https://img.shields.io/badge/docs-ready-blue.svg)](https://nrel.github.io/jade/)
 
-[![Python Package using Conda](https://github.com/NREL/jade/actions/workflows/python-package-conda.yml/badge.svg?event=push)](https://github.com/NREL/jade/actions/workflows/python-package-conda.yml)
-
 Documentation: https://nrel.github.io/jade/
 
 Tutorial: https://nrel.github.io/jade/tutorial.html
