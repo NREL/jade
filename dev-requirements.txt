@@ -1,6 +1,8 @@
+black
 flake8
 ghp-import
 mock>=3.0.0
+pre-commit
 pycodestyle
 pylint
 pypandoc

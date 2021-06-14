@@ -40,6 +40,6 @@ requirements:
 about:
   home: "https://github.com/NREL/jade"
   license: BSD 3-Clause
-  summary: "Job Automation and Deployment Engine (JADE)"
+  summary: "Provides HPC workflow automation services"
   doc_url: "https://nrel.github.io/jade"
   dev_url: "https://github.com/NREL/jade"
