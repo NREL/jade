@@ -3,11 +3,14 @@
 import logging
 import os
 import sys
+from pathlib import Path
 
 import click
 
+from jade.common import CONFIG_FILE
 from jade.enums import Status
 from jade.jobs.cluster import Cluster
+from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging
@@ -70,20 +73,10 @@ def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
         sys.exit(1)
     assert promoted
 
-    results = ResultsSummary(output)
-    jobs_to_resubmit = []
-    if failed:
-        jobs_to_resubmit += results.get_canceled_results()
-        jobs_to_resubmit += results.get_failed_results()
-        # Clear these results.
-        aggregator = ResultsAggregator.load(output)
-        aggregator.clear_unsuccessful_results()
-    if missing:
-        jobs_to_resubmit += results.get_missing_jobs(cluster.iter_jobs())
-
-    # Note: both jobs and results have `.name`
-    jobs_to_resubmit = {x.name for x in jobs_to_resubmit}
-    cluster.prepare_for_resubmission(jobs_to_resubmit)
+    jobs_to_resubmit = _get_jobs_to_resubmit(cluster, output, failed, missing)
+    updated_blocking_jobs_by_name = _update_with_blocking_jobs(jobs_to_resubmit, output)
+    _reset_results(output, jobs_to_resubmit)
+    cluster.prepare_for_resubmission(jobs_to_resubmit, updated_blocking_jobs_by_name)
 
     ret = 1
     try:
@@ -98,3 +91,43 @@ def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
         cluster.demote_from_submitter()
 
     sys.exit(ret)
+
+
+def _get_jobs_to_resubmit(cluster, output, failed, missing):
+    results = ResultsSummary(output)
+    jobs_to_resubmit = []
+    if failed:
+        jobs_to_resubmit += results.get_canceled_results()
+        jobs_to_resubmit += results.get_failed_results()
+    if missing:
+        jobs_to_resubmit += results.get_missing_jobs(cluster.iter_jobs())
+
+    return {x.name for x in jobs_to_resubmit}
+
+
+def _update_with_blocking_jobs(jobs_to_resubmit, output):
+    config = create_config_from_file(Path(output) / CONFIG_FILE)
+
+    # Any job that was blocked by any of these jobs must also be resubmitted.
+    # Same for any job blocked by one of those.
+    # Account for abnormal ordering where a lower-ID'd job is blocked by a later one.
+    updated_blocking_jobs_by_name = {}
+    max_iter = config.get_num_jobs()
+    for i in range(max_iter):
+        first = len(jobs_to_resubmit)
+        for job in config.iter_jobs():
+            blocking_jobs = job.get_blocking_jobs().intersection(jobs_to_resubmit)
+            updated_blocking_jobs_by_name[job.name] = blocking_jobs
+            if blocking_jobs:
+                jobs_to_resubmit.add(job.name)
+        num_added = len(jobs_to_resubmit) - first
+        if num_added == 0:
+            break
+        assert i < max_iter - 1, f"max_iter={max_iter} num_added={num_added} first={first}"
+
+    return updated_blocking_jobs_by_name
+
+
+def _reset_results(output, jobs_to_resubmit):
+    aggregator = ResultsAggregator.load(output)
+    aggregator.clear_results_for_resubmission(jobs_to_resubmit)

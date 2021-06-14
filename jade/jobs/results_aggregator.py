@@ -142,14 +142,21 @@ class ResultsAggregator:
             f_out.write(self._delimiter.join(self._get_fields()))
             f_out.write("\n")
 
-    def clear_unsuccessful_results(self):
-        """Remove failed and canceled results from the results file.
+    def clear_results_for_resubmission(self, jobs_to_resubmit):
+        """Remove jobs that will be resubmitted from the results file.
 
         Parameters
         ----------
-        output_dir : str
+        jobs_to_resubmit : set
+            Job names that will be resubmitted.
 
         """
+        results = [x for x in self.get_results() if x.name not in jobs_to_resubmit]
+        self._write_results(results)
+        logger.info("Cleared %s results from %s", len(results), self._filename)
+
+    def clear_unsuccessful_results(self):
+        """Remove failed and canceled results from the results file."""
         results = [x for x in self.get_results() if x.return_code == 0]
         self._write_results(results)
         logger.info("Cleared failed results from %s", self._filename)

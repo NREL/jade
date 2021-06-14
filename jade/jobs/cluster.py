@@ -300,13 +300,15 @@ class Cluster:
         """
         return self._do_action_under_lock(self._mark_complete, canceled)
 
-    def prepare_for_resubmission(self, jobs_to_resubmit):
+    def prepare_for_resubmission(self, jobs_to_resubmit, updated_blocking_jobs_by_name):
         """Reset the state of the cluster for resubmission of jobs.
 
         Parameters
         ----------
         jobs_to_resubmit : set
             job names that will be resubmitted
+        updated_blocking_jobs_by_name : dict
+            contains the blocking jobs for each job to be resubmitted
 
         """
         # Locking is not required for this function.
@@ -318,6 +320,7 @@ class Cluster:
         for job in self.iter_jobs():
             if job.name in jobs_to_resubmit:
                 job.state = JobState.NOT_SUBMITTED
+                job.blocked_by = updated_blocking_jobs_by_name[job.name]
             elif job.state == JobState.DONE:
                 self._config.completed_jobs += 1
 

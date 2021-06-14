@@ -4,13 +4,13 @@ Unit tests for resubmitting failed and missing jobs
 
 import os
 import shutil
+from pathlib import Path
 
 import pytest
 
 from jade.common import RESULTS_FILE
 from jade.extensions.generic_command import GenericCommandInputs
 from jade.extensions.generic_command import GenericCommandConfiguration
-from jade.events import EventsSummary, EVENT_NAME_HPC_SUBMIT
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.result import Result, ResultsSummary
 from jade.test_common import FAKE_HPC_CONFIG
@@ -38,6 +38,13 @@ def cleanup():
     inputs = GenericCommandInputs(TEST_FILENAME)
     config = GenericCommandConfiguration.auto_config(inputs)
     config.dump(CONFIG_FILE)
+    yield
+    _do_cleanup()
+
+
+@pytest.fixture
+def basic_setup():
+    _do_cleanup()
     yield
     _do_cleanup()
 
@@ -119,3 +126,93 @@ def test_resubmit_missing(cleanup):
 
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_successful_results()) == NUM_COMMANDS
+
+
+def test_resubmit_with_blocking_jobs(basic_setup):
+    num_commands = 7
+    commands = ['echo "hello world"'] * num_commands
+    with open(TEST_FILENAME, "w") as f_out:
+        for command in commands:
+            f_out.write(command + "\n")
+
+    inputs = GenericCommandInputs(TEST_FILENAME)
+    config = GenericCommandConfiguration(job_inputs=inputs)
+    jobs = list(inputs.iter_jobs())
+    # Set an inefficient ordering to make sure the resubmit algorithm is recursive.
+    for i, job_param in enumerate(jobs):
+        if i == 3:
+            job_param.blocked_by = set([5])
+        elif i == 4:
+            job_param.blocked_by = set([7])
+        elif i == 6:
+            job_param.blocked_by = set([6])
+        config.add_job(job_param)
+    config.dump(CONFIG_FILE)
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT}"
+    ret = run_command(cmd)
+    assert ret == 0
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    assert ret == 0
+
+    agg = ResultsAggregator.load(OUTPUT)
+    results = agg.get_results_unsafe()
+    assert results
+    for result in results:
+        assert result.return_code == 0
+    found = False
+    for i, result in enumerate(results):
+        if result.name == "7":
+            results.pop(i)
+            found = True
+            break
+    assert found
+    agg._write_results(results)
+
+    results_filename = os.path.join(OUTPUT, RESULTS_FILE)
+    final_results = load_data(results_filename)
+    missing = None
+    for i, result in enumerate(final_results["results"]):
+        if result["name"] == "7":
+            missing = result
+            final_results["results"].pop(i)
+            break
+    assert missing is not None
+    final_results["results_summary"]["num_missing"] = 1
+    final_results["results_summary"]["num_successful"] -= 1
+    final_results["missing_jobs"] = [missing["name"]]
+    dump_data(final_results, results_filename)
+
+    summary = ResultsSummary(OUTPUT)
+    assert len(summary.get_failed_results()) == 0
+    assert len(summary.get_successful_results()) == num_commands - 1
+    last_batch = load_data(Path(OUTPUT) / "config_batch_3.json")
+    assert len(last_batch["jobs"]) == 1
+    assert last_batch["jobs"][0]["job_id"] == 4
+
+    ret = run_command(f"{RESUBMIT_JOBS} {OUTPUT}")
+    assert ret == 0
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    assert ret == 0
+
+    summary = ResultsSummary(OUTPUT)
+    assert len(summary.get_successful_results()) == num_commands
+
+    # Jobs 7, 5, and 4 should have been resbumitted in single batches.
+    first_file = Path(OUTPUT) / "config_batch_4.json"
+    second_file = Path(OUTPUT) / "config_batch_5.json"
+    third_file = Path(OUTPUT) / "config_batch_6.json"
+    assert first_file.exists()
+    assert second_file.exists()
+    assert third_file.exists()
+
+    first_batch = load_data(first_file)["jobs"]
+    assert len(first_batch) == 1
+    assert first_batch[0]["job_id"] == 7
+
+    second_batch = load_data(second_file)["jobs"]
+    assert len(second_batch) == 1
+    assert second_batch[0]["job_id"] == 5
+
+    third_batch = load_data(third_file)["jobs"]
+    assert len(third_batch) == 1
+    assert third_batch[0]["job_id"] == 4
