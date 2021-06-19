@@ -5,6 +5,7 @@ import logging
 import os
 import time
 
+from jade.enums import Status
 from jade.models.submitter_params import DEFAULTS
 
 logger = logging.getLogger(__name__)
@@ -118,9 +119,9 @@ class JobQueue:
 
     def _run_job(self, job):
         logger.debug("Run job %s", job.name)
-        job.run()
-        self._num_jobs += 1
-        self._outstanding_jobs[job.name] = job
+        if job.run() == Status.GOOD:
+            self._num_jobs += 1
+            self._outstanding_jobs[job.name] = job
 
     def is_full(self):
         """Return True if the max number of jobs is outstanding.

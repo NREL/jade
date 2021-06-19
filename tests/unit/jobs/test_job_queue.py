@@ -8,6 +8,7 @@ import time
 
 import pytest
 
+from jade.enums import Status
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.job_queue import JobQueue
 
@@ -45,6 +46,7 @@ class FakeJob(AsyncJobInterface):
     def run(self):
         self.start_time = time.time()
         self.end_time = self.start_time + self._duration
+        return Status.GOOD
 
     def get_blocking_jobs(self):
         return self._blocking_jobs

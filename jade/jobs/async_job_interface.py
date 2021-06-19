@@ -27,7 +27,8 @@ class AsyncJobInterface(abc.ABC):
 
         """
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def name(self):
         """Return the job name.
 
@@ -51,7 +52,14 @@ class AsyncJobInterface(abc.ABC):
 
     @abc.abstractmethod
     def run(self):
-        """Run the job."""
+        """Run the job.
+
+        Returns
+        -------
+        Status
+            Returns GOOD if the job was successfully started.
+
+        """
 
     @abc.abstractmethod
     def get_blocking_jobs(self):

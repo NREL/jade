@@ -8,7 +8,7 @@ import sys
 import time
 
 from jade.common import JOBS_OUTPUT_DIR
-from jade.enums import JobCompletionStatus
+from jade.enums import JobCompletionStatus, Status
 from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, EVENT_CATEGORY_RESOURCE_UTIL
 from jade.jobs.async_job_interface import AsyncJobInterface
 from jade.jobs.results_aggregator import ResultsAggregator
@@ -126,3 +126,4 @@ class AsyncCliCommand(AsyncJobInterface):
         self._pipe = subprocess.Popen(cmd)
         self._is_pending = True
         logger.debug("Submitted %s", self._cli_cmd)
+        return Status.GOOD

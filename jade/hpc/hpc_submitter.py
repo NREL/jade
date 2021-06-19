@@ -366,6 +366,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         self._last_status = HpcJobStatus.NONE
         self._is_complete = False
         self._dry_run = dry_run
+        self._return_code = None
 
     def cancel(self):
         self._mgr.cancel_job(self._job_id)
@@ -397,6 +398,8 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         return self._mgr
 
     def is_complete(self):
+        if self._is_complete:
+            return self._is_complete
         status = self._status_collector.check_status(self._job_id)
         if status != self._last_status:
             logger.info(
@@ -432,7 +435,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
     @property
     def return_code(self):
         assert self._is_complete
-        return 0
+        return self._return_code
 
     def run(self):
         assert self._submission_group is not None
@@ -444,7 +447,11 @@ class AsyncHpcSubmitter(AsyncJobInterface):
             dry_run=self._dry_run,
         )
         if result != Status.GOOD:
-            raise ExecutionError("Failed to submit name={self._name}")
+            # TODO: cancel or fail all jobs in the batch
+            logger.error("Failed to submit name=%s", self._name)
+            self._return_code = 1
+            self._is_complete = True
+            return Status.ERROR
 
         self._job_id = job_id
         event = StructuredLogEvent(
@@ -456,6 +463,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         )
         log_event(event)
         logger.info("Assigned job_ID=%s name=%s", self._job_id, self._name)
+        return Status.GOOD
 
     def get_blocking_jobs(self):
         return set()
