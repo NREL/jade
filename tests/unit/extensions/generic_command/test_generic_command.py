@@ -2,6 +2,7 @@
 Unit tests for auto-regression execution class methods and properties.
 """
 
+import logging
 import os
 import shutil
 
@@ -64,6 +65,7 @@ def test_run_generic_commands(generic_command_fixture):
 
     for cmd in cmds:
         check_run_command(cmd)
+        check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
 
 
 def test_generic_command_parameters():
