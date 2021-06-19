@@ -7,6 +7,7 @@ import re
 import sys
 import time
 from datetime import timedelta
+from pathlib import Path
 
 from jade.enums import JobCompletionStatus, Status
 from jade.events import (
@@ -16,7 +17,6 @@ from jade.events import (
     EVENT_NAME_HPC_JOB_ASSIGNED,
     EVENT_NAME_HPC_JOB_STATE_CHANGE,
 )
-from jade.exceptions import ExecutionError
 from jade.hpc.common import HpcJobStatus, HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
@@ -36,6 +36,8 @@ logger = logging.getLogger(__name__)
 
 class HpcSubmitter:
     """Submits batches of jobs to HPC. Manages job ordering."""
+
+    LOCK_FILENAME = "submitter.lock"
 
     def __init__(self, config: JobConfiguration, config_file, cluster: Cluster, output):
         self._config = config
@@ -115,34 +117,52 @@ class HpcSubmitter:
             poll_interval=self._poll_interval,
         )
         # Statuses may have changed since we last ran.
+        # Spurious exceptions (like network errors during an squeue call) here will cause this
+        # submitter to fail. Another submitter will try again later
+        # (unless this is the last submitter).
         queue.process_queue()
         completed_job_names, canceled_jobs = self._update_completed_jobs()
 
-        blocked_jobs = []
-        submitted_jobs = []
-        for group in self._cluster.config.submission_groups:
-            if not queue.is_full():
-                self._submit_batches(queue, group, blocked_jobs, submitted_jobs)
+        lock_file = Path(self._output) / self.LOCK_FILENAME
+        assert not lock_file.exists(), lock_file
+        lock_file.touch()
 
-        num_submissions = self._batch_index - starting_batch_index
-        logger.info(
-            "num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
-            num_submissions,
-            len(submitted_jobs),
-            len(blocked_jobs),
-            len(completed_job_names),
-        )
+        # Start submitting jobs. If any unexpected exception prevents us from updating the
+        # status file, leave the lock_file in place and intentionally cause a deadlock.
+        try:
+            blocked_jobs = []
+            submitted_jobs = []
+            for group in self._cluster.config.submission_groups:
+                if not queue.is_full():
+                    self._submit_batches(queue, group, blocked_jobs, submitted_jobs)
 
-        hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
-        self._update_status(
-            submitted_jobs,
-            blocked_jobs,
-            canceled_jobs,
-            hpc_job_ids,
-            completed_job_names,
-        )
+            num_submissions = self._batch_index - starting_batch_index
+            logger.info(
+                "num_batches=%s num_submitted=%s num_blocked=%s new_completions=%s",
+                num_submissions,
+                len(submitted_jobs),
+                len(blocked_jobs),
+                len(completed_job_names),
+            )
 
-        return self._is_complete()
+            hpc_job_ids = sorted([x.job_id for x in queue.outstanding_jobs])
+            self._update_status(
+                submitted_jobs,
+                blocked_jobs,
+                canceled_jobs,
+                hpc_job_ids,
+                completed_job_names,
+            )
+
+            is_complete = self._is_complete()
+            os.remove(lock_file)
+            return is_complete
+        except Exception:
+            logger.exception(
+                "An exception occurred while the submitter was active. "
+                "The state of the cluster is unknown. A deadlock will occur."
+            )
+            raise
 
     def _update_status(
         self, submitted_jobs, blocked_jobs, canceled_jobs, hpc_job_ids, completed_job_names

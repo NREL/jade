@@ -1,7 +1,7 @@
-import enum
 import logging
 import os
 import socket
+from pathlib import Path
 
 from filelock import SoftFileLock, Timeout
 
@@ -439,6 +439,9 @@ class Cluster:
             lock.release()
             return val
         except Exception:
+            lock.release()
+            # SoftFileLock always deletes the file, so create it again.
+            Path(lock_file).touch()
             logger.exception(
                 "An exception occurred while holding the Cluster lock. "
                 "The state of the cluster is unknown. A deadlock will occur."
