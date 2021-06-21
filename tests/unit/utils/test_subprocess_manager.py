@@ -1,10 +1,16 @@
 """
 Unit tests for subprocess management methods in SubprocessManager class
 """
+import tempfile
 import time
+from pathlib import Path
+
+import pytest
 from pytest import mark
-from jade.enums import Status
-from jade.utils.subprocess_manager import SubprocessManager, run_command
+
+from jade.exceptions import ExecutionError
+from jade.utils.run_command import check_run_command, run_command
+from jade.utils.subprocess_manager import SubprocessManager
 
 
 @mark.parametrize(
@@ -91,9 +97,41 @@ def test_run_command__stdout():
 
 def test_run_command():
     """Should run a command as a subprocess"""
-    command = "ls -l /dirnotexit"
+    command = "ls -l /dirnotexist"
     output = {}
     ret = run_command(command, output)
     assert ret != 0
     assert "stderr" in output
     assert "No such file or directory" in output["stderr"]
+
+
+def test_run_command_with_retries():
+    """Test that a retry works."""
+    with tempfile.TemporaryDirectory() as tmpdir:
+        script = Path(tmpdir) / "read_input.py"
+        input_file = Path(tmpdir) / "inputs.txt"
+        input_file.write_text("2")
+        content = f"""import sys
+from pathlib import Path
+input_file = Path("{input_file}")
+cur_val = int(input_file.read_text())
+input_file.write_text(str(cur_val - 1))
+sys.exit(cur_val)
+"""
+        script.write_text(content)
+        command = f"python {script}"
+        ret = run_command(command, num_retries=2, retry_delay_s=0.1)
+        assert ret == 0
+
+
+def test_run_command_retries_exhausted():
+    """Test retries that never work."""
+    command = "ls invalid_test_file"
+    ret = run_command(command, num_retries=3, retry_delay_s=0.1)
+    assert ret != 0
+
+
+def test_check_run_command():
+    """Test that check_run_command raises an exception."""
+    with pytest.raises(ExecutionError):
+        check_run_command("ls invalid_test_file")

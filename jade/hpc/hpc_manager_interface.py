@@ -41,6 +41,7 @@ class HpcManagerInterface(abc.ABC):
     @abc.abstractmethod
     def check_status(self, name=None, job_id=None):
         """Check the status of a job. Either name or job_id must be passed.
+        Handles transient errors for up to one minute.
 
         Parameters
         ----------
@@ -53,16 +54,27 @@ class HpcManagerInterface(abc.ABC):
         -------
         HpcJobInfo
 
+        Raises
+        ------
+        ExecutionError
+            Raised if statuses cannot be retrieved.
+
         """
 
     @abc.abstractmethod
     def check_statuses(self):
         """Check the statuses of all user jobs.
+        Handles transient errors for up to one minute.
 
         Returns
         -------
         dict
             key is job_id, value is HpcJobStatus
+
+        Raises
+        ------
+        ExecutionError
+            Raised if statuses cannot be retrieved.
 
         """
 
@@ -177,6 +189,7 @@ class HpcManagerInterface(abc.ABC):
     @abc.abstractmethod
     def submit(self, filename):
         """Submit the work to the HPC queue.
+        Handles transient errors for up to one minute.
 
         Parameters
         ----------

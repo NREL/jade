@@ -117,9 +117,8 @@ class HpcSubmitter:
             poll_interval=self._poll_interval,
         )
         # Statuses may have changed since we last ran.
-        # Spurious exceptions (like network errors during an squeue call) here will cause this
-        # submitter to fail. Another submitter will try again later
-        # (unless this is the last submitter).
+        # Persistent network errors could cause this submitter to fail.
+        # Another submitter will try again later (unless this is the last submitter).
         queue.process_queue()
         completed_job_names, canceled_jobs = self._update_completed_jobs()
 
@@ -514,6 +513,11 @@ class HpcStatusCollector:
         Returns
         -------
         HpcJobStatus
+
+        Raises
+        ------
+        ExecutionError
+            Raised if statuses cannot be retrieved.
 
         """
         cur_time = time.time()

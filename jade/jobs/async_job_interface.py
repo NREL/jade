@@ -25,6 +25,11 @@ class AsyncJobInterface(abc.ABC):
         -------
         bool
 
+        Raises
+        ------
+        ExecutionError
+            Raised if statuses cannot be retrieved.
+
         """
 
     @property

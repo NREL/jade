@@ -47,7 +47,8 @@ class SlurmManager(HpcManagerInterface):
             assert False
 
         output = {}
-        ret = run_command(cmd, output)
+        # Transient failures could be costly. Retry for up to one minute.
+        ret = run_command(cmd, output, num_retries=6, retry_delay_s=10)
         if ret != 0:
             if "Invalid job id specified" in output["stderr"]:
                 return HpcJobInfo("", "", HpcJobStatus.NONE)
@@ -75,7 +76,8 @@ class SlurmManager(HpcManagerInterface):
         cmd = f"squeue -u {self.USER} --Format \"{','.join(field_names)}\" -h"
 
         output = {}
-        ret = run_command(cmd, output)
+        # Transient failures could be costly. Retry for up to one minute.
+        ret = run_command(cmd, output, num_retries=6, retry_delay_s=10)
         if ret != 0:
             logger.error(
                 "Failed to run squeue command=[%s] ret=%s err=%s", cmd, ret, output["stderr"]
@@ -230,7 +232,9 @@ class SlurmManager(HpcManagerInterface):
     def submit(self, filename):
         job_id = None
         output = {}
-        ret = run_command("sbatch {}".format(filename), output)
+        # Transient failures could be costly. Retry for up to one minute.
+        # TODO: Some errors are not transient. We could detect those and skip the retries.
+        ret = run_command("sbatch {}".format(filename), output, num_retries=6, retry_delay_s=10)
         if ret == 0:
             result = Status.GOOD
             stdout = output["stdout"]
