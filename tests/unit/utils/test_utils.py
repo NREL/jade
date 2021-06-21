@@ -285,11 +285,22 @@ def test_get_filenames_by_ext():
 
 def test_interpret_datetime():
     """Should return formatted datetime string"""
-    timestamp = "2019-01-01_01-01-01-000001"
+    timestamps = [
+        "2019-01-01 01:01:01",
+        "2019-01-01 01:01:01.000001",
+        "2019-01-01T01:01:01Z",
+        "2019-01-01T01:01:01.000001Z",
+        "2019-01-01_01:01:01.000001",
+        "2019-01-01_01-01-01-000000",
+    ]
 
-    dt = interpret_datetime(timestamp)
-    assert isinstance(dt, datetime)
-    assert dt == datetime(2019, 1, 1, 1, 1, 1, 1)
+    for timestamp in timestamps:
+        dt = interpret_datetime(timestamp)
+        assert isinstance(dt, datetime)
+        if "." in timestamp:
+            assert dt == datetime(2019, 1, 1, 1, 1, 1, 1)
+        else:
+            assert dt == datetime(2019, 1, 1, 1, 1, 1)
 
 
 def test_rotate_filenames():
