@@ -87,6 +87,9 @@ def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
             ret = 0
         else:
             ret = status.value
+    except Exception:
+        logger.exception("Failed to resubmit jobs")
+        raise
     finally:
         cluster.demote_from_submitter()
 

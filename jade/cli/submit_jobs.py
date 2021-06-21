@@ -107,5 +107,9 @@ def submit_jobs(
     # This effectively means no console logging.
     setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
-    ret = JobSubmitter.run_submit_jobs(config_file, output, params)
-    sys.exit(ret)
+    try:
+        ret = JobSubmitter.run_submit_jobs(config_file, output, params)
+        sys.exit(ret)
+    except Exception:
+        logger.exception("Failed to run submit_jobs")
+        raise

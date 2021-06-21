@@ -59,6 +59,9 @@ def try_submit_jobs(output, verbose):
             ret = 0
         else:
             ret = status.value
+    except Exception:
+        logger.exception("Failed to try-submit-jobs")
+        raise
     finally:
         cluster.demote_from_submitter()
 
