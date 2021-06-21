@@ -13,6 +13,7 @@ from jade.jobs.cluster import Cluster
 from jade.jobs.async_cli_command import AsyncCliCommand
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
+from jade.models import JobState
 from jade.loggers import setup_logging
 from jade.resource_monitor import ResourceMonitor
 from jade.utils.timing_utils import timed_info
@@ -32,8 +33,8 @@ class JobRunner(JobManagerBase):
     ):
         super(JobRunner, self).__init__(config_file, output)
         cluster, _ = Cluster.deserialize(output)
+        self._check_jobs(cluster)
         self._handle_submission_groups_after_deserialize(cluster)
-
         group = self.config.get_default_submission_group()
         config = group.submitter_params.hpc_config
         self._intf = HpcManager.create_hpc_interface(config)
@@ -47,6 +48,21 @@ class JobRunner(JobManagerBase):
         self._event_logger = None
 
         logger.debug("Constructed JobRunner output=%s batch=%s", output, batch_id)
+
+    def _check_jobs(self, cluster: Cluster):
+        if cluster.job_status is None:
+            # This is true in local mode and these checks are not relevant.
+            return
+
+        # Perform a sanity check. If all jobs aren't "submitted" then something went wrong.
+        submitted_jobs = {job.name for job in cluster.iter_jobs(state=JobState.SUBMITTED)}
+        error_jobs = []
+        for job in self._config.iter_jobs():
+            if job.name not in submitted_jobs:
+                error_jobs.append(job.name)
+        if error_jobs:
+            logger.error("Jobs were not in the submitted state: %s", " ".join(error_jobs))
+            assert not error_jobs, f"number of jobs not in submitted state = {len(error_jobs)}"
 
     @property
     def node_id(self):

@@ -383,7 +383,17 @@ class Cluster:
         )
 
     def _are_all_jobs_complete(self):
-        return self._config.completed_jobs == self._config.num_jobs
+        for job in self.iter_jobs():
+            if job.state != JobState.DONE:
+                assert (
+                    self._config.completed_jobs != self._config.num_jobs
+                ), "completed={self._config.completed_jobs}"
+                return False
+
+        assert (
+            self._config.completed_jobs == self._config.num_jobs
+        ), "completed={self._config.completed_jobs}"
+        return True
 
     def _demote_from_submitter(self, serialize=True):
         assert self.am_i_submitter(), self._config.submitter
@@ -549,6 +559,7 @@ class Cluster:
 
         processed = set()
         for job in submitted_jobs:
+            assert status_lookup[job.name].state != JobState.SUBMITTED, job.name
             status_lookup[job.name].state = JobState.SUBMITTED
             processed.add(job.name)
             self._config.submitted_jobs += 1
