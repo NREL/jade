@@ -109,7 +109,9 @@ COMMON_SUBMITTER_OPTIONS = (
         "--max-nodes",
         default=None,
         show_default=True,
-        type=int,
+        type=click.IntRange(
+            2,
+        ),
         help="Max number of node submission requests to make in parallel. Default is unbounded.",
     ),
     click.option(

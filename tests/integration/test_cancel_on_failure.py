@@ -66,7 +66,7 @@ def _do_cleanup():
 
 def test_cancel_on_failure_detect_by_submitter(cleanup):
     # HpcSubmitter handles the cancellation because the blocked job will be in the 2nd batch.
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -n1 -b2"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -n2 -b2"
     ret = run_command(cmd)
     assert ret == 0
     ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
@@ -81,7 +81,7 @@ def test_cancel_on_failure_detect_by_submitter(cleanup):
 def test_cancel_on_failure_detect_by_runner(cleanup):
     # JobRunner handles the cancellation in JobQueue because the blocked job is in the batch
     # along with the blocking job.
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -n1 -b8"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -n2 -b8"
     ret = run_command(cmd)
     assert ret == 0
     ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
