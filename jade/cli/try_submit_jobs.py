@@ -6,13 +6,11 @@ import sys
 
 import click
 
-from jade.common import CONFIG_FILE
 from jade.enums import Status
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_submitter import JobSubmitter
-from jade.jobs.job_configuration_factory import create_config_from_previous_run
 from jade.loggers import setup_logging
-from jade.result import ResultsSummary
+from jade.utils.utils import get_cli_string
 
 
 logger = logging.getLogger(__name__)
@@ -31,6 +29,7 @@ def try_submit_jobs(output, verbose):
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
+    logger.info(get_cli_string())
 
     event_file = os.path.join(output, "submit_jobs_events.log")
     # This effectively means no console logging.
