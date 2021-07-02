@@ -51,6 +51,8 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0):
         ret = _run_command(command, _output, cwd)
         if ret != 0 and num_retries > 0:
             logger.warning("Command [%s] failed on iteration %s: %s", cmd, i + 1, ret)
+            if _output:
+                logger.debug(_output["stderr"])
         if ret == 0 or i == max_tries - 1:
             if isinstance(output, dict):
                 output.update(_output)
