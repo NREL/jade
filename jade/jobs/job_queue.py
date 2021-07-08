@@ -6,12 +6,12 @@ import os
 import time
 
 from jade.enums import Status
-from jade.models.submitter_params import DEFAULTS
 
 logger = logging.getLogger(__name__)
 
 
 DEFAULT_POLL_INTERVAL = 1
+DEFAULT_MONITOR_INTERVAL = 30
 
 
 class JobQueue:
@@ -23,7 +23,7 @@ class JobQueue:
        It will run to completion.
     2. Call :meth:`JobQueue.submit` as jobs become ready to run. JobQueue will
        either run it immediately or queue it if too many commands are
-       oustanding.  In this mode it is up to the caller to call
+       outstanding.  In this mode it is up to the caller to call
        :meth:`JobQueue.process_queue` periodically. That will look for job
        completions pull new jobs off the queue. JobQueue does not start a
        background thread to do this automatically.
@@ -36,7 +36,7 @@ class JobQueue:
         existing_jobs=None,
         poll_interval=DEFAULT_POLL_INTERVAL,
         monitor_func=None,
-        monitor_interval=DEFAULTS["resource_monitor_interval"],
+        monitor_interval=DEFAULT_MONITOR_INTERVAL,
     ):
         """
         Parameters
@@ -249,7 +249,7 @@ class JobQueue:
         max_queue_depth,
         poll_interval=DEFAULT_POLL_INTERVAL,
         monitor_func=None,
-        monitor_interval=DEFAULTS["resource_monitor_interval"],
+        monitor_interval=DEFAULT_MONITOR_INTERVAL,
     ):
         """
         Run job queue synchronously. Blocks until all jobs are complete.

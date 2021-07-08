@@ -37,7 +37,7 @@ def make_tables(output):
         title = cls.__name__ + ": " + schema["description"]
         output_file = output / (cls.__name__ + ".csv")
         with open(output_file, "w") as f_out:
-            header = ("Property", "Type", "Description", "Required")
+            header = ("Property", "Type", "Description", "Required", "Default")
             f_out.write("\t".join(header) + "\n")
             required_props = set(schema["required"])
             for prop, vals in schema["properties"].items():
@@ -59,6 +59,7 @@ def make_tables(output):
                     type_str,
                     vals["description"],
                     str(prop in required_props),
+                    str(vals.get("default", "")),
                 )
                 f_out.write("\t".join(row))
                 f_out.write("\n")

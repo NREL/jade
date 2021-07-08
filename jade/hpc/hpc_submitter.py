@@ -181,36 +181,68 @@ class HpcSubmitter:
         assert not queue.is_full()
         num_submitted_jobs = 0
         _submitted_jobs = []  # only exists for the check at the end
-        batch = None
-        for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
-            jade_job = self._config.get_job(job.name)
-            if jade_job.submission_group != submission_group.name:
-                continue
-            if batch is None:
-                batch = _BatchJobs(submission_group.submitter_params)
-            if batch.is_job_blocked(job):
-                blocked_jobs.append(job)
-            else:
-                jade_job.set_blocking_jobs(job.blocked_by)
-                batch.append(jade_job)
-                _submitted_jobs.append(job)
-
-            if batch.ready_to_submit():
+        available_jobs = self._get_available_jobs(submission_group)
+        while not queue.is_full() and available_jobs:
+            batch, available_jobs = self._make_batch(
+                available_jobs, submission_group, _submitted_jobs, blocked_jobs
+            )
+            if batch.num_jobs > 0:
                 self._submit_batch(queue, submission_group, batch)
                 num_submitted_jobs += batch.num_jobs
-                batch = None
-
-                if queue.is_full():
-                    break
-
-        if not queue.is_full() and batch is not None and batch.num_jobs > 0:
-            self._submit_batch(queue, submission_group, batch)
-            num_submitted_jobs += batch.num_jobs
 
         assert num_submitted_jobs == len(
             _submitted_jobs
         ), f"{num_submitted_jobs} / {len(_submitted_jobs)}"
         submitted_jobs.extend(_submitted_jobs)
+
+    def _get_available_jobs(self, submission_group):
+        available_jobs = []
+        for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
+            jade_job = self._config.get_job(job.name)
+            if jade_job.submission_group == submission_group.name:
+                available_jobs.append(job)
+        return available_jobs
+
+    def _make_batch(self, available_jobs, submission_group, submitted_jobs, blocked_jobs):
+        blocked_jobs_by_name = {}
+        submitted_jobs_by_name = {}
+        batch = _BatchJobs(submission_group.submitter_params)
+        if submission_group.submitter_params.try_add_blocked_jobs:
+            # Allow multiple rounds in case the user listed blocked jobs before
+            # their blocking jobs in the config file.
+            max_iterations = len(available_jobs)
+        else:
+            max_iterations = 1
+        highest_index = -1
+        done = False
+        for _ in range(max_iterations):
+            for i, job in enumerate(available_jobs):
+                if i > highest_index:
+                    highest_index = i
+                if job.name in submitted_jobs_by_name:
+                    continue
+                jade_job = self._config.get_job(job.name)
+                if batch.is_job_blocked(job):
+                    blocked_jobs_by_name[job.name] = job
+                else:
+                    jade_job.set_blocking_jobs(job.blocked_by)
+                    batch.append(jade_job)
+                    submitted_jobs.append(job)
+                    submitted_jobs_by_name[job.name] = job
+                    blocked_jobs_by_name.pop(job.name, None)
+                if batch.ready_to_submit() or len(submitted_jobs_by_name) == len(available_jobs):
+                    done = True
+                    break
+            if done:
+                break
+
+        for job in blocked_jobs_by_name.values():
+            blocked_jobs.append(job)
+        if highest_index == len(available_jobs) - 1:
+            not_checked = []
+        else:
+            not_checked = available_jobs[highest_index + 1 :]
+        return batch, not_checked
 
     def _submit_batch(self, queue, submission_group, batch):
         async_submitter = self._make_async_submitter(
@@ -382,7 +414,8 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         self._job_id = job_id
         self._output = output
         self._name = name
-        self._last_status = HpcJobStatus.NONE
+        # Re-enable this if we ever keep a submitter active and polling again.
+        # self._last_status = HpcJobStatus.NONE
         self._is_complete = False
         self._dry_run = dry_run
         self._return_code = None
@@ -420,25 +453,19 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         if self._is_complete:
             return self._is_complete
         status = self._status_collector.check_status(self._job_id)
-        if status != self._last_status:
-            logger.info(
-                "Submission %s %s changed status from %s to %s",
-                self._name,
-                self._job_id,
-                self._last_status,
-                status,
-            )
-            event = StructuredLogEvent(
-                source=self._name,
-                category=EVENT_CATEGORY_HPC,
-                name=EVENT_NAME_HPC_JOB_STATE_CHANGE,
-                message="HPC job state change",
-                job_id=self._job_id,
-                old_state=self._last_status.value,
-                new_state=status.value,
-            )
-            log_event(event)
-            self._last_status = status
+        # if status != self._last_status:
+        logger.info("HPC job ID %s status=%s", self._job_id, status)
+        #    event = StructuredLogEvent(
+        #        source=self._name,
+        #        category=EVENT_CATEGORY_HPC,
+        #        name=EVENT_NAME_HPC_JOB_STATE_CHANGE,
+        #        message="HPC job state change",
+        #        job_id=self._job_id,
+        #        old_state=self._last_status.value,
+        #        new_state=status.value,
+        #    )
+        #    log_event(event)
+        #    self._last_status = status
 
         self._is_complete = status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
         return self._is_complete

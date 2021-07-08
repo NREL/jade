@@ -4,16 +4,7 @@ from typing import List, Optional, Set, Union
 
 from pydantic import Field
 
-from jade.common import HPC_CONFIG_FILE
-from jade.models import JadeBaseModel, HpcConfig, SlurmConfig
-
-
-DEFAULTS = {
-    "hpc_config_file": HPC_CONFIG_FILE,
-    "per_node_batch_size": 500,
-    "poll_interval": 60,
-    "resource_monitor_interval": 30,
-}
+from jade.models import JadeBaseModel, HpcConfig
 
 
 class SubmitterParams(JadeBaseModel):
@@ -41,25 +32,27 @@ class SubmitterParams(JadeBaseModel):
     per_node_batch_size: Optional[int] = Field(
         title="per_node_batch_size",
         description="How many jobs to assign to each node",
-        default=DEFAULTS["per_node_batch_size"],
+        default=500,
     )
     node_setup_script: Optional[str] = Field(
         title="node_setup_script",
         description="Script to run on each node before starting jobs",
+        default=None,
     )
     node_shutdown_script: Optional[str] = Field(
         title="node_shutdown_script",
         description="Script to run on each node after completing jobs",
+        default=None,
     )
     poll_interval: Optional[int] = Field(
         title="poll_interval",
         description="Interval in seconds on which to poll jobs for status",
-        default=DEFAULTS["poll_interval"],
+        default=60,
     )
     resource_monitor_interval: Optional[int] = Field(
         title="resource_monitor_interval",
         description="Interval in seconds on which to collect resource stats",
-        default=DEFAULTS["resource_monitor_interval"],
+        default=None,
     )
     try_add_blocked_jobs: Optional[bool] = Field(
         title="try_add_blocked_jobs",

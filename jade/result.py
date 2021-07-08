@@ -9,7 +9,7 @@ from prettytable import PrettyTable
 
 from jade.common import RESULTS_FILE
 from jade.enums import JobCompletionStatus
-from jade.exceptions import InvalidParameter, ExecutionError
+from jade.exceptions import InvalidConfiguration, InvalidParameter, ExecutionError
 from jade.utils.utils import load_data
 
 
@@ -127,6 +127,8 @@ class ResultsSummary:
     def __init__(self, output_dir):
         self._output_dir = output_dir
         self._results_file = os.path.join(output_dir, RESULTS_FILE)
+        if not os.path.exists(self._results_file):
+            raise InvalidConfiguration(f"There is no results file in {output_dir}")
 
         data = self._parse(self._results_file)
         data["results"] = deserialize_results(data["results"])

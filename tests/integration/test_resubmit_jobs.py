@@ -185,9 +185,8 @@ def test_resubmit_with_blocking_jobs(basic_setup):
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_failed_results()) == 0
     assert len(summary.get_successful_results()) == num_commands - 1
-    last_batch = load_data(Path(OUTPUT) / "config_batch_3.json")
-    assert len(last_batch["jobs"]) == 1
-    assert last_batch["jobs"][0]["job_id"] == 4
+    first_batch = load_data(Path(OUTPUT) / "config_batch_1.json")
+    assert len(first_batch["jobs"]) == num_commands
 
     ret = run_command(f"{RESUBMIT_JOBS} {OUTPUT}")
     assert ret == 0
@@ -197,22 +196,7 @@ def test_resubmit_with_blocking_jobs(basic_setup):
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_successful_results()) == num_commands
 
-    # Jobs 7, 5, and 4 should have been resbumitted in single batches.
-    first_file = Path(OUTPUT) / "config_batch_4.json"
-    second_file = Path(OUTPUT) / "config_batch_5.json"
-    third_file = Path(OUTPUT) / "config_batch_6.json"
-    assert first_file.exists()
-    assert second_file.exists()
-    assert third_file.exists()
-
-    first_batch = load_data(first_file)["jobs"]
-    assert len(first_batch) == 1
-    assert first_batch[0]["job_id"] == 7
-
-    second_batch = load_data(second_file)["jobs"]
-    assert len(second_batch) == 1
-    assert second_batch[0]["job_id"] == 5
-
-    third_batch = load_data(third_file)["jobs"]
-    assert len(third_batch) == 1
-    assert third_batch[0]["job_id"] == 4
+    second_batch_file = Path(OUTPUT) / "config_batch_2.json"
+    assert second_batch_file.exists()
+    second_batch = load_data(second_batch_file)["jobs"]
+    assert len(second_batch) == 3

@@ -5,6 +5,7 @@ import sys
 import click
 
 from jade.common import OUTPUT_DIR
+from jade.exceptions import InvalidConfiguration
 from jade.jobs.job_post_process import JobPostProcess
 from jade.loggers import setup_logging
 from jade.result import ResultsSummary
@@ -49,5 +50,13 @@ def show_results(failed, output, successful, post_process, job_name, verbose):
         JobPostProcess.show_results(output, job_name)
         sys.exit(0)
 
-    results = ResultsSummary(output)
+    try:
+        results = ResultsSummary(output)
+    except InvalidConfiguration:
+        print(
+            f"No results are available in {output}. To check status of in-progress jobs run "
+            f"'jade show-status -o {output}'"
+        )
+        sys.exit(1)
+
     results.show_results(only_failed=failed, only_successful=successful)
