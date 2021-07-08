@@ -8,7 +8,7 @@ import time
 from jade.exceptions import ExecutionError, InvalidParameter
 from jade.jobs.job_submitter import JobSubmitter
 from jade.models.pipeline import PipelineStage, PipelineConfig
-from jade.models.submitter_params import DEFAULTS, SubmitterParams
+from jade.models.submitter_params import SubmitterParams
 from jade.result import Result, serialize_result
 from jade.utils.subprocess_manager import run_command
 from jade.utils.timing_utils import timed_info

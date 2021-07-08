@@ -7,10 +7,10 @@ import sys
 
 import click
 
+from jade.common import HPC_CONFIG_FILE
 from jade.enums import Mode
 from jade.exceptions import UserAbort
-from jade.models import HpcConfig, LocalHpcConfig
-from jade.models.submitter_params import DEFAULTS, SubmitterParams
+from jade.models import HpcConfig, LocalHpcConfig, SubmitterParams, get_model_defaults
 from jade.utils.utils import load_data
 
 
@@ -72,11 +72,13 @@ def proceed_with_user_permission(ctx, message):
         raise UserAbort
 
 
+SUBMITTER_PARAMS_DEFAULTS = get_model_defaults(SubmitterParams)
+
 COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-b",
         "--per-node-batch-size",
-        default=DEFAULTS["per_node_batch_size"],
+        default=SUBMITTER_PARAMS_DEFAULTS["per_node_batch_size"],
         show_default=True,
         help="Number of jobs to run on one node in one batch.",
     ),
@@ -91,7 +93,7 @@ COMMON_SUBMITTER_OPTIONS = (
         "-h",
         "--hpc-config",
         type=click.Path(),
-        default=DEFAULTS["hpc_config_file"],
+        default=HPC_CONFIG_FILE,
         show_default=True,
         help="HPC config file.",
     ),
@@ -107,7 +109,7 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-n",
         "--max-nodes",
-        default=None,
+        default=SUBMITTER_PARAMS_DEFAULTS["max_nodes"],
         show_default=True,
         type=click.IntRange(
             2,
@@ -117,7 +119,7 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-p",
         "--poll-interval",
-        default=DEFAULTS["poll_interval"],
+        default=SUBMITTER_PARAMS_DEFAULTS["poll_interval"],
         type=float,
         show_default=True,
         help="Interval in seconds on which to poll jobs for status.",
@@ -125,7 +127,7 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-r",
         "--resource-monitor-interval",
-        default=None,
+        default=SUBMITTER_PARAMS_DEFAULTS["resource_monitor_interval"],
         type=int,
         show_default=True,
         help="Interval in seconds on which to collect resource stats. Default is None.",
@@ -133,7 +135,7 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-q",
         "--num-processes",
-        default=None,
+        default=SUBMITTER_PARAMS_DEFAULTS["num_processes"],
         show_default=False,
         type=int,
         is_eager=True,
@@ -142,7 +144,7 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "--reports/--no-reports",
         is_flag=True,
-        default=True,
+        default=SUBMITTER_PARAMS_DEFAULTS["generate_reports"],
         show_default=True,
         help="Generate reports after execution.",
     ),
@@ -150,7 +152,7 @@ COMMON_SUBMITTER_OPTIONS = (
         "-t",
         "--time-based-batching",
         is_flag=True,
-        default=False,
+        default=SUBMITTER_PARAMS_DEFAULTS["time_based_batching"],
         show_default=True,
         help="Use estimated runtimes to create batches. Each job must have its estimated runtime "
         "defined. Also requires --num-processes to be set. Overrides --per-node-batch-size.",
@@ -159,25 +161,27 @@ COMMON_SUBMITTER_OPTIONS = (
         "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
         is_flag=True,
         default=True,
-        show_default=True,
+        show_default=SUBMITTER_PARAMS_DEFAULTS["try_add_blocked_jobs"],
         help="Add blocked jobs to a node's batch if they are blocked by jobs "
         "already in the batch.",
     ),
     click.option(
         "--verbose",
         is_flag=True,
-        default=False,
+        default=SUBMITTER_PARAMS_DEFAULTS["verbose"],
         show_default=True,
         help="Enable verbose log output.",
     ),
     click.option(
         "-x",
         "--node-setup-script",
+        default=SUBMITTER_PARAMS_DEFAULTS["node_setup_script"],
         help="Script to run on each node before starting jobs (download input files).",
     ),
     click.option(
         "-y",
         "--node-shutdown-script",
+        default=SUBMITTER_PARAMS_DEFAULTS["node_shutdown_script"],
         help="Script to run on each after completing jobs (upload output files).",
     ),
 )
@@ -225,7 +229,10 @@ def make_submitter_params(
         print("Dry run is not allowed in local mode.")
         sys.exit(1)
 
-    if time_based_batching and per_node_batch_size != DEFAULTS["per_node_batch_size"]:
+    if (
+        time_based_batching
+        and per_node_batch_size != SUBMITTER_PARAMS_DEFAULTS["per_node_batch_size"]
+    ):
         # This doesn't catch the case where the user passes --per-node-batch-size=default, but
         # I don't see that click provides a way to detect that condition.
         print("Error: --per-node-batch-size and --time-based-batching are mutually exclusive")

@@ -7,16 +7,17 @@ import sys
 
 import click
 
-from jade.common import OUTPUT_DIR
+from jade.common import HPC_CONFIG_FILE, OUTPUT_DIR
 from jade.hpc.common import HpcType
 from jade.loggers import setup_logging
 from jade.jobs.pipeline_manager import PipelineManager
-from jade.models import HpcConfig, LocalHpcConfig
-from jade.models.submitter_params import DEFAULTS, SubmitterParams
+from jade.models import HpcConfig, LocalHpcConfig, SubmitterParams, get_model_defaults
 from jade.utils.utils import get_cli_string, load_data
 
 
 logger = logging.getLogger(__name__)
+
+SUBMITTER_PARAMS_DEFAULTS = get_model_defaults(SubmitterParams)
 
 
 @click.group()
@@ -33,7 +34,7 @@ def pipeline():
 @click.option(
     "-b",
     "--per-node-batch-size",
-    default=DEFAULTS["per_node_batch_size"],
+    default=SUBMITTER_PARAMS_DEFAULTS["per_node_batch_size"],
     show_default=True,
     help="Number of jobs to run on one node in one batch.",
 )
@@ -49,7 +50,7 @@ def pipeline():
     "-h",
     "--hpc-config",
     type=click.Path(),
-    default=DEFAULTS["hpc_config_file"],
+    default=HPC_CONFIG_FILE,
     show_default=True,
     help="HPC config file.",
 )
@@ -72,7 +73,7 @@ def pipeline():
 @click.option(
     "-p",
     "--poll-interval",
-    default=DEFAULTS["poll_interval"],
+    default=SUBMITTER_PARAMS_DEFAULTS["poll_interval"],
     type=float,
     show_default=True,
     help="Interval in seconds on which to poll jobs for status.",

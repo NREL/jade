@@ -196,6 +196,7 @@ Here is an example of part of a ``config.json`` file:
               }
             },
             "per_node_batch_size": 500,
+            "try_add_blocked_jobs": true,
             "time_based_batching": false
           }
         },
