@@ -16,6 +16,8 @@
 
 import sphinx_rtd_theme
 
+import jade.version
+
 # -- Project information -----------------------------------------------------
 
 project = "jade"
@@ -23,7 +25,7 @@ copyright = "2021, NREL"
 author = "NREL"
 
 # The full version, including alpha/beta/rc tags
-release = "0.4.4"
+release = jade.version.__version__
 
 
 # -- General configuration ---------------------------------------------------
