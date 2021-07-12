@@ -356,6 +356,7 @@ results_summary={self.get_results_summmary_report()}"""
         if include_stats:
             commands.append((f"jade stats plot -o {directory}", None))
             commands.append((f"jade stats show -o {directory}", "stats.txt"))
+            commands.append((f"jade stats show -o {directory} -j", "stats_summary.json"))
 
         reports = []
         for cmd in commands:
@@ -367,11 +368,13 @@ results_summary={self.get_results_summmary_report()}"""
             if cmd[1] is not None:
                 filename = os.path.join(directory, cmd[1])
                 with open(filename, "w") as f_out:
-                    f_out.write(cmd[0] + "\n\n")
+                    if "json" not in cmd[1]:
+                        f_out.write(cmd[0] + "\n\n")
                     f_out.write(output["stdout"])
                     reports.append(filename)
 
         logger.info("Generated reports %s.", " ".join(reports))
+
         return 0
 
     def _submit_to_hpc(self, cluster):

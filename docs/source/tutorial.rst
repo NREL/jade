@@ -164,14 +164,14 @@ In order to view a summary of your jobs in a table:
     $ jade config show config.json
 
     Num jobs: 4
-    +-------+------+------------+
-    | index | name | blocked_by |
-    +-------+------+------------+
-    |   0   |  1   |            |
-    |   1   |  2   |     1      |
-    |   2   |  3   |     1      |
-    |   3   |  4   |    2, 3    |
-    +-------+------+------------+
+    +-------+------+----------------+---------------------------+
+    | index | name |    command     |   blocked_by (job names)  |
+    +-------+------+----------------+---------------------------+
+    |   0   |  1   | julia run.jl 1 |                           |
+    |   1   |  2   | julia run.jl 2 |            1              |
+    |   2   |  3   | julia run.jl 3 |            1              |
+    |   3   |  4   | julia run.jl 4 |           2, 3            |
+    +-------+------+----------------+---------------------------+
 
 CLI Execution
 =============
@@ -462,9 +462,10 @@ Jobs that timeout will be reported as missing.
 Debugging
 =========
 By default JADE generates report files that summarize what happened. Refer to
-``results.txt``, ``errors.txt``, and ``stats.txt``. The results file shows
-whether each job passed or failed.  The errors file shows unhandled errors
-that JADE detected as well as known errors that it parsed from log files.
+``results.txt``, ``errors.txt``, ``stats.txt``, and ``stats_summary.json``.
+The results file shows whether each job passed or failed.  The errors file
+shows unhandled errors that JADE detected as well as known errors that it
+parsed from log files.
 
 Here are the log files that JADE generates. Open these to dig deeper.
 
@@ -562,6 +563,7 @@ plots of the this data in ``<output-dir>/stats``.
 
 .. figure::  images/memory.png
 
+
 Use this CLI command to view textual tables after a run:
 
 .. code-block:: bash
@@ -571,8 +573,14 @@ Use this CLI command to view textual tables after a run:
     $ jade stats show disk
     $ jade stats show mem
     $ jade stats show net
+    $ jade stats show --summary-only
+    $ jade stats show --json-summary
 
 .. note:: Reads and writes to the Lustre filesystem on the HPC are not tracked.
+
+Use the ``--json-summary`` option if you want to programmatically analyze the
+average/minimum/maximum stats for each metric type. Note that these are
+auto-generated in the file ``<output-dir>/stats_summary.json``.
 
 The stats can also be provided as pandas.DataFrame objects. For example, here
 is how to view CPU stats for the node that ran the first batch:
