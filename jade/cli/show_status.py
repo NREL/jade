@@ -88,10 +88,12 @@ def show_status(output, job_status, verbose):
                     all_jobs_are_none = False
                     break
             if all_jobs_are_none:
-                logger.warn("HPC job statuses may be out-of-date.")
+                logger.warn("HPC job statuses may be out-of-date. Jobs may have timed-out.")
                 run_new_submitter = True
         else:
-            logger.error("Jobs are not complete but there no active HPC jobs.")
+            logger.error(
+                "Jobs are not complete but there no active HPC jobs. Jobs may have timed-out."
+            )
             run_new_submitter = True
         if run_new_submitter:
             try_submit_cmd = f"jade try-submit-jobs {output}"
