@@ -1,5 +1,6 @@
 import abc
 import logging
+import sys
 import time
 from collections import defaultdict
 from pathlib import Path
@@ -156,6 +157,8 @@ class StatsViewerBase(abc.ABC):
     def __init__(self, events, event_name):
         self._event_name = event_name
         self._events_by_batch = defaultdict(list)
+        self._stat_min_by_batch = {}
+        self._stat_max_by_batch = {}
         self._stat_sums_by_batch = {}
         self._stat_totals = {}
         self._num_events = 0
@@ -169,8 +172,14 @@ class StatsViewerBase(abc.ABC):
 
             if batch not in self._stat_sums_by_batch:
                 self._stat_sums_by_batch[batch] = {x: 0 for x in event.data.keys()}
+                self._stat_min_by_batch[batch] = {x: sys.maxsize for x in event.data.keys()}
+                self._stat_max_by_batch[batch] = {x: -1 for x in event.data.keys()}
             for field, val in event.data.items():
                 self._stat_sums_by_batch[batch][field] += val
+                if val < self._stat_min_by_batch[batch][field]:
+                    self._stat_min_by_batch[batch][field] = val
+                if val > self._stat_max_by_batch[batch][field]:
+                    self._stat_max_by_batch[batch][field] = val
                 self._stat_totals[field] += val
 
     def _calc_batch_averages(self, batch):
@@ -184,6 +193,12 @@ class StatsViewerBase(abc.ABC):
         for field, val in self._stat_totals.items():
             averages[field] = float(val) / self._num_events
         return averages
+
+    def _get_batch_minimums(self, batch):
+        return self._stat_min_by_batch[batch]
+
+    def _get_batch_maximums(self, batch):
+        return self._stat_max_by_batch[batch]
 
     @staticmethod
     def _get_printable_value(field, val):
@@ -205,9 +220,8 @@ class StatsViewerBase(abc.ABC):
         """
         records = []
         for event in self._events_by_batch[batch]:
-            data = {}
+            data = {"timestamp": event.timestamp}
             data.update(event.data)
-            data["timestamp"] = event.timestamp
             records.append(data)
 
         return pd.DataFrame.from_records(records, index="timestamp")
@@ -236,33 +250,80 @@ class StatsViewerBase(abc.ABC):
             fig.write_html(str(filename))
             logger.info("Generated plot in %s", filename)
 
+    @staticmethod
     @abc.abstractmethod
-    def show_stats(self):
-        """Show statistics"""
+    def metric():
+        """Return the metric."""
 
-    def _show_stats(self):
+    def show_stats(self, show_all_timestamps=True):
+        """Show statistics"""
+        text = f"{self.metric()} statistics for each batch"
+        print(f"\n{text}")
+        print("=" * len(text) + "\n")
+        self._show_stats(show_all_timestamps=show_all_timestamps)
+
+    def get_stats_summary(self):
+        """Return a list of objects describing summaries of all stats.
+
+        Returns
+        -------
+        list
+            list of dicts
+
+        """
+        stats = []
         for batch, events in self._events_by_batch.items():
-            print(batch)
-            print("-" * len(batch))
             if not events:
                 continue
-            table = PrettyTable()
-            table.field_names = ["timestamp"] + list(events[0].data.keys())
-            for event in events:
-                row = [event.timestamp]
-                for field, val in event.data.items():
-                    row.append(self._get_printable_value(field, val))
-                table.add_row(row)
+            entry = {
+                "type": self.metric(),
+                "batch": batch,
+                "average": {},
+                "minimum": {},
+                "maximum": {},
+            }
+            for field, val in self._calc_batch_averages(batch).items():
+                entry["average"][field] = val
+            for field, val in self._get_batch_minimums(batch).items():
+                entry["minimum"][field] = val
+            for field, val in self._get_batch_maximums(batch).items():
+                entry["maximum"][field] = val
+            stats.append(entry)
+
+        return stats
+
+    def _show_stats(self, show_all_timestamps=True):
+        for batch, events in self._events_by_batch.items():
+            if not events:
+                continue
+            if show_all_timestamps:
+                table = PrettyTable(title=f"{self.metric()} {batch}")
+                table.field_names = ["timestamp"] + list(events[0].data.keys())
+                for event in events:
+                    row = [event.timestamp]
+                    for field, val in event.data.items():
+                        row.append(self._get_printable_value(field, val))
+                    table.add_row(row)
+                print(table)
+                print("\n", end="")
+            table = PrettyTable(title=f"{self.metric()} {batch} summary")
+            table.field_names = ["stat"] + list(events[0].data.keys())
             row = ["Average"]
             for field, val in self._calc_batch_averages(batch).items():
+                row.append(self._get_printable_value(field, val))
+            table.add_row(row)
+            row = ["Minimum"]
+            for field, val in self._get_batch_minimums(batch).items():
+                row.append(self._get_printable_value(field, val))
+            table.add_row(row)
+            row = ["Maximum"]
+            for field, val in self._get_batch_maximums(batch).items():
                 row.append(self._get_printable_value(field, val))
             table.add_row(row)
             print(table)
             print("\n", end="")
 
-        print("Averages per interval across batches")
-        print("------------------------------------")
-        table = PrettyTable()
+        table = PrettyTable(title=f"{self.metric()} averages per interval across batches")
         averages = self._calc_total_averages()
         table.field_names = list(averages.keys())
         row = [self._get_printable_value(k, v) for k, v in averages.items()]
@@ -278,7 +339,7 @@ class StatsViewerBase(abc.ABC):
         stats_to_total : list
 
         """
-        table = PrettyTable()
+        table = PrettyTable(title=f"{self.metric()} Totals")
         table.field_names = ["source"] + list(stats_to_total)
         for batch, totals in self._stat_sums_by_batch.items():
             row = [batch]
@@ -293,9 +354,6 @@ class StatsViewerBase(abc.ABC):
                 val = self._get_printable_value(stat, self._stat_totals[stat])
                 total_row.append(val)
             table.add_row(total_row)
-
-            print("Totals")
-            print("------")
             print(table)
 
 
@@ -305,10 +363,9 @@ class CpuStatsViewer(StatsViewerBase):
     def __init__(self, events):
         super(CpuStatsViewer, self).__init__(events, EVENT_NAME_CPU_STATS)
 
-    def show_stats(self):
-        print("\nCPU statistics for each batch")
-        print("=============================\n")
-        self._show_stats()
+    @staticmethod
+    def metric():
+        return "CPU"
 
 
 class DiskStatsViewer(StatsViewerBase):
@@ -318,6 +375,10 @@ class DiskStatsViewer(StatsViewerBase):
         super(DiskStatsViewer, self).__init__(events, EVENT_NAME_DISK_STATS)
 
     @staticmethod
+    def metric():
+        return "Disk"
+
+    @staticmethod
     def _get_printable_value(field, val):
         if field in ("read_bytes", "write_bytes"):
             val = bytes2human(val)
@@ -325,10 +386,10 @@ class DiskStatsViewer(StatsViewerBase):
             val = "{:.3f}".format(val)
         return val
 
-    def show_stats(self):
+    def show_stats(self, show_all_timestamps=True):
         print("\nDisk statistics for each batch")
         print("==============================\n")
-        self._show_stats()
+        self._show_stats(show_all_timestamps=show_all_timestamps)
 
         stats_to_total = (
             "read_bytes",
@@ -348,17 +409,16 @@ class MemoryStatsViewer(StatsViewerBase):
         super(MemoryStatsViewer, self).__init__(events, EVENT_NAME_MEMORY_STATS)
 
     @staticmethod
+    def metric():
+        return "Memory"
+
+    @staticmethod
     def _get_printable_value(field, val):
         if field == "percent":
             val = "{:.3f}".format(val)
         else:
             val = bytes2human(val)
         return val
-
-    def show_stats(self):
-        print("\nMemory statistics for each batch")
-        print("================================\n")
-        self._show_stats()
 
 
 class NetworkStatsViewer(StatsViewerBase):
@@ -368,6 +428,10 @@ class NetworkStatsViewer(StatsViewerBase):
         super(NetworkStatsViewer, self).__init__(events, EVENT_NAME_NETWORK_STATS)
 
     @staticmethod
+    def metric():
+        return "Network"
+
+    @staticmethod
     def _get_printable_value(field, val):
         if field in ("bytes_recv", "bytes_sent"):
             val = bytes2human(val)
@@ -375,14 +439,14 @@ class NetworkStatsViewer(StatsViewerBase):
             val = "{:.3f}".format(val)
         return val
 
-    def show_stats(self):
+    def show_stats(self, show_all_timestamps=True):
         print("\nNetwork statistics for each batch")
         print("=================================\n")
         if not self._events_by_batch:
             print("No events are stored")
             return
 
-        self._show_stats()
+        self._show_stats(show_all_timestamps=show_all_timestamps)
         stats_to_total = (
             "bytes_recv",
             "bytes_sent",

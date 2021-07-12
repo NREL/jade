@@ -3,6 +3,7 @@ CLI to show events of a scenario.
 """
 
 import datetime
+import json
 import os
 import sys
 from pathlib import Path
@@ -75,9 +76,25 @@ def plot(stats, output):
 
 
 @click.argument("stats", nargs=-1)
+@click.option(
+    "-j",
+    "--json-summary",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Only show the summary stats per node in JSON format.",
+)
 @click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
+@click.option(
+    "-s",
+    "--summary-only",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Only show the summary stats per node.",
+)
 @click.command()
-def show(stats, output):
+def show(stats, json_summary, output, summary_only):
     """Shows stats from a run.
 
     \b
@@ -88,12 +105,15 @@ def show(stats, output):
     jade stats show mem
     jade stats show net
     jade stats show cpu disk mem
+    jade stats show --summary cpu disk mem
+    jade stats show --json-summary cpu disk mem
     """
     events = EventsSummary(output)
 
     if not stats:
         stats = STATS
 
+    summaries_as_dicts = []
     for stat in stats:
         if stat == "cpu":
             viewer = CpuStatsViewer(events)
@@ -106,7 +126,13 @@ def show(stats, output):
         else:
             print(f"Invalid stat={stat}")
             sys.exit(1)
-        viewer.show_stats()
+        if json_summary:
+            summaries_as_dicts += viewer.get_stats_summary()
+        else:
+            viewer.show_stats(show_all_timestamps=not summary_only)
+
+    if json_summary:
+        print(json.dumps(summaries_as_dicts, indent=2))
 
 
 @click.option(
