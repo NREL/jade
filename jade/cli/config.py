@@ -13,12 +13,11 @@ from prettytable import PrettyTable
 
 from jade.cli.common import COMMON_SUBMITTER_OPTIONS, add_options, make_submitter_params
 from jade.common import CONFIG_FILE, HPC_CONFIG_FILE
-from jade.extensions.generic_command import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandConfiguration, GenericCommandParameters
 from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
 from jade.utils.utils import dump_data, load_data
 from jade.models import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig
-from jade.models.submitter_params import SubmitterParams
 
 
 logger = logging.getLogger(__name__)
@@ -180,7 +179,17 @@ def _show(config_file, fields=None, blocked_by=True):
     if num_jobs == 0:
         return
 
+    # generic_command jobs have a command field which is very useful.
+    # Other extensions do not.
+    has_command = False
+    for job in config.iter_jobs():
+        if isinstance(job, GenericCommandParameters):
+            has_command = True
+            break
+
     field_names = ["index", "name"]
+    if has_command:
+        field_names.append("command")
     if blocked_by:
         field_names.append("blocked_by (job names)")
     if fields is not None:
@@ -189,7 +198,10 @@ def _show(config_file, fields=None, blocked_by=True):
     table = PrettyTable()
     table.field_names = field_names
     for i, job in enumerate(config.iter_jobs()):
+        job_dict = job.serialize()
         row = [i, job.name]
+        if has_command:
+            row.append(job_dict.get("command", ""))
         if blocked_by:
             blocking_jobs = sorted(list(job.get_blocking_jobs()))
             text = ", ".join(blocking_jobs)
@@ -197,7 +209,6 @@ def _show(config_file, fields=None, blocked_by=True):
                 text = f"truncated...blocked by {len(blocking_jobs)} jobs"
             row.append(text)
         if fields is not None:
-            job_dict = job.serialize()
             for field in fields:
                 row.append(job_dict.get(field, ""))
         table.add_row(row)
