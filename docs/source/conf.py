@@ -35,6 +35,7 @@ release = jade.version.__version__
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
     "sphinx.ext.doctest",
     "sphinx.ext.githubpages",
@@ -93,6 +94,7 @@ html_static_path = ["_static"]
 
 # -- Extension configuration -------------------------------------------------
 
+autosummary_generate = True  # Turn on sphinx.ext.autosummary
 autoclass_content = "both"
 autodoc_member_order = "bysource"
 numpy_show_class_member = True

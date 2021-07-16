@@ -20,11 +20,11 @@ help:
 
 %: Makefile
 	python make_model_tables.py -o $(BUILDDIR)/model_tables
+	rm -rf build
+	rm -rf source/_autosummary
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 github: html
-	rm -rf source/jade
-	sphinx-apidoc -o source/jade ../jade
 	-git branch -D gh-pages
 	-git push origin --delete gh-pages
 	ghp-import -n -b gh-pages -m "Update documentation" ./build/html
