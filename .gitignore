@@ -22,7 +22,8 @@ Thumbs.db
 *.egg-info
 __pycache__
 
-docs/_build
+docs/build
+docs/source/_autosummary
 .ipynb_checkpoints
 
 # Compiled Python files

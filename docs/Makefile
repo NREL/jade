@@ -18,7 +18,6 @@ help:
 # TODO: define table dependencies on the Python Pydantic model files.
 
 %: Makefile
-	rm -rf build
 	rm -rf source/_autosummary
 	python make_model_tables.py -o $(BUILDDIR)/model_tables
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
