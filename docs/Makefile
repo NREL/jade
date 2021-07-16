@@ -6,7 +6,6 @@ SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
-BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -19,12 +18,11 @@ help:
 # TODO: define table dependencies on the Python Pydantic model files.
 
 %: Makefile
+	rm -rf source/_autosummary
 	python make_model_tables.py -o $(BUILDDIR)/model_tables
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 github: html
-	rm -rf source/jade
-	sphinx-apidoc -o source/jade ../jade
 	-git branch -D gh-pages
 	-git push origin --delete gh-pages
 	ghp-import -n -b gh-pages -m "Update documentation" ./build/html

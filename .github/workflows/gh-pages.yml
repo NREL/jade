@@ -23,6 +23,7 @@ jobs:
       - name: build documentation
         run: |
           cd docs
+          make clean
           make html
       - name: deploy
         uses: peaceiris/actions-gh-pages@v3.6.1
