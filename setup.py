@@ -2,10 +2,14 @@
 setup.py
 """
 import os
+import json
 import logging
 from codecs import open
 from pathlib import Path
 from setuptools import setup, find_packages
+from setuptools.command.develop import develop
+from setuptools.command.install import install
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +31,41 @@ version = version.split()[2].strip('"').strip("'")
 demo_requires = ["matplotlib", "statsmodels>=0.10.1"]
 dataframe_utils_requires = ["tables", "pyarrow"]
 dev_requires = read_lines("dev-requirements.txt") + demo_requires + dataframe_utils_requires
+
+
+class PostDevelopCommand(develop):
+    """Post-installation for development mode."""
+
+    def run(self):
+        develop.run(self)
+        remove_demo_extension()
+
+
+class PostInstallCommand(install):
+    """Post-installation for installation mode."""
+
+    def run(self):
+        install.run(self)
+        remove_demo_extension()
+
+
+def remove_demo_extension():
+    # Older versions of Jade installed the demo extension into the registry as
+    # well as its dependencies. Newer versions do not. This causes import errors
+    # when a user upgrades to the newer version.
+    # Remove the demo extension. The user can add it later if they want.
+    registry_file = Path.home() / ".jade-registry.json"
+    if not registry_file.exists():
+        return
+
+    data = json.loads(registry_file.read_text())
+    for i, ext in enumerate(data["extensions"]):
+        if ext["name"] == "demo":
+            data["extensions"].pop(i)
+            break
+    with open(registry_file, "w") as f_out:
+        json.dump(data, f_out)
+
 
 setup(
     name="NREL-jade",
@@ -63,4 +102,5 @@ setup(
         "dataframe_utils": dataframe_utils_requires,
     },
     install_requires=read_lines("requirements.txt"),
+    cmdclass={"install": PostInstallCommand, "develop": PostDevelopCommand},
 )
