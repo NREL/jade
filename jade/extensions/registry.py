@@ -74,10 +74,22 @@ class Registry:
             if field not in extension:
                 raise InvalidParameter(f"required field {field} not present")
 
-        cmod = importlib.import_module(extension["job_configuration_module"])
-        emod = importlib.import_module(extension["job_execution_module"])
-        pmod = importlib.import_module(extension["job_parameters_module"])
-        cli_mod = importlib.import_module(extension["cli_module"])
+        try:
+            cmod = importlib.import_module(extension["job_configuration_module"])
+            emod = importlib.import_module(extension["job_execution_module"])
+            pmod = importlib.import_module(extension["job_parameters_module"])
+            cli_mod = importlib.import_module(extension["cli_module"])
+        except ImportError as exc:
+            if "statsmodels" in exc.msg:
+                # Older versions of Jade installed the demo extension into the registry as
+                # well as its dependencies. Newer versions do not. This causes import errors
+                # when a user upgrades to the newer version.
+                # Remove the demo extension. The user can add it later if they want.
+                # This can be removed whenever all users have gone through an upgrade.
+                self._remove_demo_extension()
+                return
+            else:
+                raise
 
         ext = copy.copy(extension)
         ext[ExtensionClassType.CONFIGURATION] = getattr(cmod, extension["job_configuration_class"])
@@ -276,3 +288,18 @@ class Registry:
                 "cli_module": "jade.extensions.demo.cli",
             },
         )
+
+    def _remove_demo_extension(self):
+        registry_file = pathlib.Path.home() / self._REGISTRY_FILENAME
+        if not registry_file.exists():
+            return
+
+        data = load_data(registry_file)
+        found = False
+        for i, ext in enumerate(data["extensions"]):
+            if ext["name"] == "demo":
+                data["extensions"].pop(i)
+                found = True
+                break
+        if found:
+            dump_data(data, registry_file, indent=2)
