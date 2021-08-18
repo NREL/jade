@@ -129,7 +129,7 @@ class JobRunner(JobManagerBase):
             # TODO: need to implement persistent recording of fake status for FakeManager
             return
 
-        max_time_s = 300
+        max_time_s = 30
         interval = 5
         completed = False
         for _ in range(max_time_s // interval):
