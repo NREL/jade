@@ -138,6 +138,16 @@ class HpcManagerInterface(abc.ABC):
         """
 
     @abc.abstractmethod
+    def get_current_job_id(self):
+        """Get the job ID for the local compute node.
+
+        Returns
+        -------
+        str
+
+        """
+
+    @abc.abstractmethod
     def get_local_scratch(self):
         """Get path to local storage space.
 

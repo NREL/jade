@@ -1,7 +1,6 @@
 import logging
 import os
 import socket
-from pathlib import Path
 
 from filelock import SoftFileLock, Timeout
 
@@ -134,6 +133,16 @@ class Cluster:
     def am_i_submitter(self):
         """Return True if the current system is the submitter."""
         return self._config.submitter == self._hostname
+
+    def complete_hpc_job_id(self, job_id):
+        """Complete an HPC job.
+
+        Parameters
+        ----------
+        job_id : str
+
+        """
+        return self._do_action_under_lock(self._complete_hpc_job_id, job_id, serialize=True)
 
     @property
     def config(self):
@@ -395,6 +404,12 @@ class Cluster:
         ), "completed={self._config.completed_jobs}"
         return True
 
+    def _complete_hpc_job_id(self, job_id, serialize=True):
+        self._job_status.hpc_job_ids.remove(job_id)
+        logger.info("Completed HPC job_id=%s", job_id)
+        if serialize:
+            self._serialize_jobs("complete_hpc_job_id")
+
     def _demote_from_submitter(self, serialize=True):
         assert self.am_i_submitter(), self._config.submitter
         self._config.submitter = None
@@ -570,7 +585,7 @@ class Cluster:
             old.blocked_by = job.blocked_by
             processed.add(job.name)
 
-        for job in canceled_jobs:
+        for _ in canceled_jobs:
             self._config.submitted_jobs += 1
 
         for name in completed_job_names:
