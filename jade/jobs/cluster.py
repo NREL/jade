@@ -463,15 +463,24 @@ class Cluster:
             val = func(*args, **kwargs)
             lock.release()
             return val
-        except Exception:
+        except Exception as exc:
             lock.release()
             # SoftFileLock always deletes the file, so create it again.
-            Path(lock_file).touch()
+            # There is a small window where this won't work and another node takes over, so
+            # callers need to handle the possibility.
             logger.exception(
-                "An exception occurred while holding the Cluster lock. "
-                "The state of the cluster is unknown. A deadlock will occur."
+                "An exception occurred while holding the Cluster lock. The state of the cluster "
+                "is unknown."
             )
-            raise
+            try:
+                fd = os.open(lock_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_TRUNC)
+                os.close(fd)
+                logger.error("A deadlock will occur.")
+            except (IOError, OSError):
+                logger.exception(
+                    "Unable to cause deadlock. Another node was promoted to submitter"
+                )
+            raise exc
 
     def _get_config_version(self):
         with open(self._config_version_file, "r") as f_in:

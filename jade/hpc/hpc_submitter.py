@@ -123,7 +123,10 @@ class HpcSubmitter:
         completed_job_names, canceled_jobs = self._update_completed_jobs()
 
         lock_file = Path(self._output) / self.LOCK_FILENAME
-        assert not lock_file.exists(), lock_file
+        if lock_file.exists():
+            raise Exception(
+                f"{lock_file} exists. A previous submitter crashed in an unknown state."
+            )
         lock_file.touch()
 
         # Start submitting jobs. If any unexpected exception prevents us from updating the

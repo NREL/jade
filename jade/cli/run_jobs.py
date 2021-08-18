@@ -45,7 +45,6 @@ def run_jobs(config_file, output, num_processes, verbose):
 
     # When running on compute nodes try to submit more jobs before and after
     # running this batch's jobs.
-    cluster, _ = Cluster.deserialize(output)
     _try_submit_jobs(output, verbose)
 
     mgr = JobRunner(config_file, output=output, batch_id=batch_id)
