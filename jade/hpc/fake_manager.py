@@ -2,8 +2,10 @@
 
 import logging
 import multiprocessing
-import os
 import tempfile
+from pathlib import Path
+
+from filelock import SoftFileLock
 
 from jade.enums import Status
 from jade.hpc.common import HpcJobStatus, HpcJobInfo
@@ -26,7 +28,8 @@ DEFAULTS = {
 class FakeManager(HpcManagerInterface):
     """Simulates management of HPC jobs."""
 
-    next_job_id = 1
+    JOB_ID_FILE = "fake_manager_job_id.txt"
+    LOCK_FILE = "fake_manager.lock"
 
     def __init__(self, config):
         self._subprocess_mgr = None
@@ -93,9 +96,22 @@ class FakeManager(HpcManagerInterface):
     def log_environment_variables(self):
         pass
 
+    @staticmethod
+    def _get_next_job_id(output_path):
+        # TODO: This could be enhanced to record completions.
+        with SoftFileLock(output_path / FakeManager.LOCK_FILE, timeout=30):
+            path = output_path / FakeManager.JOB_ID_FILE
+            if path.exists():
+                job_id = int(path.read_text().strip())
+            else:
+                job_id = 1
+            next_job_id = job_id + 1
+            path.write_text(str(next_job_id) + "\n")
+
+        return job_id
+
     def submit(self, filename):
-        self._job_id = str(FakeManager.next_job_id)
-        FakeManager.next_job_id += 1
+        self._job_id = self._get_next_job_id(Path(filename).parent)
         self._subprocess_mgr = SubprocessManager()
         self._subprocess_mgr.run(filename)
         return Status.GOOD, self._job_id, None
