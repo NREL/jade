@@ -3,6 +3,7 @@
 import logging
 import multiprocessing
 import tempfile
+import time
 from pathlib import Path
 
 from filelock import SoftFileLock
@@ -98,20 +99,33 @@ class FakeManager(HpcManagerInterface):
 
     @staticmethod
     def _get_next_job_id(output_path):
-        # TODO: This could be enhanced to record completions.
-        with SoftFileLock(output_path / FakeManager.LOCK_FILE, timeout=30):
-            path = output_path / FakeManager.JOB_ID_FILE
-            if path.exists():
-                job_id = int(path.read_text().strip())
-            else:
-                job_id = 1
-            next_job_id = job_id + 1
-            path.write_text(str(next_job_id) + "\n")
+        """Returns the next job ID and increments the index.
+        A lock must be held while calling this method.
 
+        """
+        # TODO: This could be enhanced to record completions.
+        path = output_path / FakeManager.JOB_ID_FILE
+        if path.exists():
+            job_id = int(path.read_text().strip())
+        else:
+            job_id = 1
+        next_job_id = job_id + 1
+        path.write_text(str(next_job_id) + "\n")
         return job_id
 
     def submit(self, filename):
-        self._job_id = self._get_next_job_id(Path(filename).parent)
-        self._subprocess_mgr = SubprocessManager()
-        self._subprocess_mgr.run(filename)
-        return Status.GOOD, self._job_id, None
+        # This method has a workaround for problems seen on some Linux systems
+        # (never on Mac).
+        # When multiple processes call this method at about the same time,
+        # one or more of the subprocesses do not get started. It seems like
+        # something within Python gets locked up.
+        # This workaround staggers starting of the subprocesses and prevents
+        # the issue from occurring.
+        output_path = Path(filename).parent
+        with SoftFileLock(output_path / FakeManager.LOCK_FILE, timeout=30):
+            self._job_id = self._get_next_job_id(output_path)
+            self._subprocess_mgr = SubprocessManager()
+            self._subprocess_mgr.run(filename)
+            logger.error("Submit job with %s", self._job_id)
+            time.sleep(1)
+            return Status.GOOD, self._job_id, None
