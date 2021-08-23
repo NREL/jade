@@ -71,7 +71,7 @@ def submit_jobs(
         if force:
             shutil.rmtree(output)
         else:
-            print(f"{output} already exists. Delete it or use '--force' to overwrite.")
+            print(f"{output} already exists. Delete it or use '--force' to overwrite.", sys.stderr)
             sys.exit(1)
 
     if submitter_params is not None:
@@ -96,7 +96,7 @@ def submit_jobs(
         )
 
     if params.time_based_batching and params.num_processes is None:
-        print("Error: num_processes must be set with time-based batching")
+        print("Error: num_processes must be set with time-based batching", sys.stderr)
         sys.exit(1)
 
     os.makedirs(output)

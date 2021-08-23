@@ -73,7 +73,7 @@ def plot(stats, output):
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
         else:
-            print(f"Invalid stat={stat}")
+            print(f"Invalid stat={stat}", sys.stderr)
             sys.exit(1)
         viewer.plot_to_file(plot_dir)
 
@@ -203,7 +203,7 @@ def _show_periodic_stats(stats, json_summary, output, summary_only):
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
         else:
-            print(f"Invalid stat={stat}")
+            print(f"Invalid stat={stat}", sys.stderr)
             sys.exit(1)
         if json_summary:
             summaries_as_dicts += viewer.get_stats_summary()

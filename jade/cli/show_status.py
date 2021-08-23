@@ -47,7 +47,7 @@ def show_status(output, job_status, verbose):
     try:
         cluster, _ = Cluster.deserialize(output, deserialize_jobs=True)
     except InvalidConfiguration:
-        print(f"{output} is not a JADE output directory used in cluster mode")
+        print(f"{output} is not a JADE output directory used in cluster mode", sys.stderr)
         sys.exit(1)
 
     summary = cluster.get_status_summary(include_jobs=job_status)

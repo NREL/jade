@@ -10,7 +10,7 @@ import click
 
 from jade.events import EventsSummary
 from jade.loggers import setup_logging
-from jade.resource_monitor import ResourceMonitor
+from jade.resource_monitor import ResourceMonitorLogger
 
 
 logger = logging.getLogger(__name__)
@@ -48,13 +48,15 @@ def collect(duration, force, interval, output):
         if force:
             shutil.rmtree(output)
         else:
-            print(f"The directory {output} already exists. Delete it or run with --force")
+            print(
+                f"The directory {output} already exists. Delete it or run with --force", sys.stderr
+            )
             sys.exit(1)
 
     os.makedirs(output)
     event_file = os.path.join(output, "stats_events.log")
     setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
-    monitor = ResourceMonitor("ResourceMonitor")
+    monitor = ResourceMonitorLogger("ResourceMonitor")
     start_time = time.time()
 
     show_cmd = f"jade stats show -o {output} [STATS]"

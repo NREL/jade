@@ -28,7 +28,7 @@ def am_i_manager(output_dir, verbose):
     try:
         cluster, _ = Cluster.deserialize(output_dir, deserialize_jobs=True)
     except InvalidConfiguration:
-        print(f"{output_dir} is not a JADE output directory used in cluster mode")
+        print(f"{output_dir} is not a JADE output directory used in cluster mode", sys.stderr)
         sys.exit(1)
 
     if cluster.is_complete():
@@ -53,7 +53,7 @@ def hostnames(output_dir, verbose):
     try:
         cluster, _ = Cluster.deserialize(output_dir, deserialize_jobs=True)
     except InvalidConfiguration:
-        print(f"{output_dir} is not a JADE output directory used in cluster mode")
+        print(f"{output_dir} is not a JADE output directory used in cluster mode", sys.stderr)
         sys.exit(1)
 
     if cluster.is_complete():
@@ -67,7 +67,7 @@ def hostnames(output_dir, verbose):
         nodes += hpc_mgr.list_active_nodes(job_id)
 
     if not nodes:
-        print("No nodes were detected.")
+        print("No nodes were detected.", sys.stderr)
         sys.exit(1)
 
     print(" ".join(nodes))
