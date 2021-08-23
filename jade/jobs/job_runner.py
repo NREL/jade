@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+import time
 import uuid
 
 from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_temp_results_filename
@@ -108,8 +109,48 @@ class JobRunner(JobManagerBase):
             logger.info("Completed %s jobs", len(jobs))
         finally:
             shutil.rmtree(scratch_dir)
+            if not are_inputs_local:
+                self._complete_hpc_job()
 
         return result
+
+    def _complete_hpc_job(self):
+        """Complete the HPC job in the cluster. A future submitter could detect this. However,
+        it's better to do it here for these reasons:
+
+        1. If we don't do this and the user runs 'jade show-status -j' before the next submitter
+           runs, a stale HPC job ID will show up.
+        2. The last submitter will never detect its job as complete, and so the job status file
+           will always include it.
+
+        """
+        job_id = self._intf.get_current_job_id()
+        if job_id is None:
+            # TODO: need to implement persistent recording of fake status for FakeManager
+            return
+
+        max_time_s = 30
+        interval = 5
+        completed = False
+        for _ in range(max_time_s // interval):
+            cluster, promoted = Cluster.deserialize(
+                self._output, try_promote_to_submitter=True, deserialize_jobs=True
+            )
+            if promoted:
+                try:
+                    cluster.complete_hpc_job_id(job_id)
+                finally:
+                    cluster.demote_from_submitter()
+                completed = True
+                break
+            time.sleep(interval)
+
+        if not completed:
+            logger.warning(
+                "Could not promote to submitter. HPC job ID %s is still present", job_id
+            )
+            # Couldn't acquire lock because other nodes were continually doing work (unexpected).
+            # A future submitter will see that this job ID is complete and clear the condition.
 
     def _create_local_scratch(self):
         local_scratch = self._intf.get_local_scratch()
@@ -153,7 +194,6 @@ class JobRunner(JobManagerBase):
         self._intf.log_environment_variables()
 
         name = f"resource_monitor_batch_{self._batch_id}_{self._node_id}"
-        cluster, _ = Cluster.deserialize(self._output)
         resource_monitor = ResourceMonitor(name)
         group = self._config.get_default_submission_group()
         if group.submitter_params.resource_monitor_interval is None:

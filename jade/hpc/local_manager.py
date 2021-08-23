@@ -59,6 +59,9 @@ class LocalManager(HpcManagerInterface):
     def get_config(self):
         return {"hpc": {}}
 
+    def get_current_job_id(self):
+        return None
+
     def get_local_scratch(self):
         return tempfile.gettempdir()
 

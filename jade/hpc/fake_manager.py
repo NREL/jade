@@ -2,8 +2,11 @@
 
 import logging
 import multiprocessing
-import os
 import tempfile
+import time
+from pathlib import Path
+
+from filelock import SoftFileLock
 
 from jade.enums import Status
 from jade.hpc.common import HpcJobStatus, HpcJobInfo
@@ -26,7 +29,8 @@ DEFAULTS = {
 class FakeManager(HpcManagerInterface):
     """Simulates management of HPC jobs."""
 
-    next_job_id = 1
+    JOB_ID_FILE = "fake_manager_job_id.txt"
+    LOCK_FILE = "fake_manager.lock"
 
     def __init__(self, config):
         self._subprocess_mgr = None
@@ -73,6 +77,9 @@ class FakeManager(HpcManagerInterface):
     def get_config(self):
         return {"hpc": {}}
 
+    def get_current_job_id(self):
+        return None
+
     def get_local_scratch(self):
         return tempfile.gettempdir()
 
@@ -90,9 +97,35 @@ class FakeManager(HpcManagerInterface):
     def log_environment_variables(self):
         pass
 
+    @staticmethod
+    def _get_next_job_id(output_path):
+        """Returns the next job ID and increments the index.
+        A lock must be held while calling this method.
+
+        """
+        # TODO: This could be enhanced to record completions.
+        path = output_path / FakeManager.JOB_ID_FILE
+        if path.exists():
+            job_id = int(path.read_text().strip())
+        else:
+            job_id = 1
+        next_job_id = job_id + 1
+        path.write_text(str(next_job_id) + "\n")
+        return job_id
+
     def submit(self, filename):
-        self._job_id = str(FakeManager.next_job_id)
-        FakeManager.next_job_id += 1
-        self._subprocess_mgr = SubprocessManager()
-        self._subprocess_mgr.run(filename)
-        return Status.GOOD, self._job_id, None
+        # This method has a workaround for problems seen on some Linux systems
+        # (never on Mac).
+        # When multiple processes call this method at about the same time,
+        # one or more of the subprocesses do not get started. It seems like
+        # something within Python gets locked up.
+        # This workaround staggers starting of the subprocesses and prevents
+        # the issue from occurring.
+        output_path = Path(filename).parent
+        with SoftFileLock(output_path / FakeManager.LOCK_FILE, timeout=30):
+            self._job_id = self._get_next_job_id(output_path)
+            self._subprocess_mgr = SubprocessManager()
+            self._subprocess_mgr.run(filename)
+            logger.error("Submit job with %s", self._job_id)
+            time.sleep(1)
+            return Status.GOOD, self._job_id, None

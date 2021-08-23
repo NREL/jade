@@ -69,6 +69,9 @@ class PbsManager(HpcManagerInterface):
     def get_config(self):
         return self._config
 
+    def get_current_job_id(self):
+        assert False
+
     def get_local_scratch(self):
         return "."
 

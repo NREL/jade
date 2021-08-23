@@ -1,7 +1,6 @@
 import logging
 import os
 import socket
-from pathlib import Path
 
 from filelock import SoftFileLock, Timeout
 
@@ -134,6 +133,16 @@ class Cluster:
     def am_i_submitter(self):
         """Return True if the current system is the submitter."""
         return self._config.submitter == self._hostname
+
+    def complete_hpc_job_id(self, job_id):
+        """Complete an HPC job.
+
+        Parameters
+        ----------
+        job_id : str
+
+        """
+        return self._do_action_under_lock(self._complete_hpc_job_id, job_id, serialize=True)
 
     @property
     def config(self):
@@ -395,6 +404,12 @@ class Cluster:
         ), "completed={self._config.completed_jobs}"
         return True
 
+    def _complete_hpc_job_id(self, job_id, serialize=True):
+        self._job_status.hpc_job_ids.remove(job_id)
+        logger.info("Completed HPC job_id=%s", job_id)
+        if serialize:
+            self._serialize_jobs("complete_hpc_job_id")
+
     def _demote_from_submitter(self, serialize=True):
         assert self.am_i_submitter(), self._config.submitter
         self._config.submitter = None
@@ -448,15 +463,24 @@ class Cluster:
             val = func(*args, **kwargs)
             lock.release()
             return val
-        except Exception:
+        except Exception as exc:
             lock.release()
             # SoftFileLock always deletes the file, so create it again.
-            Path(lock_file).touch()
+            # There is a small window where this won't work and another node takes over, so
+            # callers need to handle the possibility.
             logger.exception(
-                "An exception occurred while holding the Cluster lock. "
-                "The state of the cluster is unknown. A deadlock will occur."
+                "An exception occurred while holding the Cluster lock. The state of the cluster "
+                "is unknown."
             )
-            raise
+            try:
+                fd = os.open(lock_file, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_TRUNC)
+                os.close(fd)
+                logger.error("A deadlock will occur.")
+            except (IOError, OSError):
+                logger.exception(
+                    "Unable to cause deadlock. Another node was promoted to submitter"
+                )
+            raise exc
 
     def _get_config_version(self):
         with open(self._config_version_file, "r") as f_in:
@@ -570,7 +594,7 @@ class Cluster:
             old.blocked_by = job.blocked_by
             processed.add(job.name)
 
-        for job in canceled_jobs:
+        for _ in canceled_jobs:
             self._config.submitted_jobs += 1
 
         for name in completed_job_names:

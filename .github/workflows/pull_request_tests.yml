@@ -7,7 +7,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest]
+          # Tests using the FakeManager don't work on Windows because they use bash.
+          #os: [ubuntu-latest, macos-latest, windows-latest]
         python-version: [3.8]
         include:
           - os: ubuntu-latest
