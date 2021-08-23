@@ -21,7 +21,7 @@ from jade.utils.utils import load_data, dump_data
 TEST_FILENAME = "test-inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
-SUBMIT_JOBS = f"jade submit-jobs -h {FAKE_HPC_CONFIG}"
+SUBMIT_JOBS = f"jade submit-jobs -h {FAKE_HPC_CONFIG} -R none"
 RESUBMIT_JOBS = "jade resubmit-jobs"
 WAIT = "jade wait"
 NUM_COMMANDS = 5

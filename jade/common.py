@@ -4,8 +4,10 @@ import os
 
 
 OUTPUT_DIR = "output"
+EVENTS_DIR = "events"
 JOBS_OUTPUT_DIR = "job-outputs"
 SCRIPTS_DIR = "scripts"
+STATS_DIR = "stats"
 CONFIG_FILE = "config.json"
 RESULTS_FILE = "results.json"
 ANALYSIS_DIR = "analysis"

@@ -29,6 +29,14 @@ class JobCompletionStatus(enum.Enum):
     MISSING = "missing"  # No result recorded. Happens with walltime timeout.
 
 
+class ResourceMonitorType(enum.Enum):
+    """Type of resource monitoring to perform"""
+
+    AGGREGATION = "aggregation"
+    PERIODIC = "periodic"
+    NONE = "none"
+
+
 PUBLIC_ENUMS = {
     "Mode": Mode,
     "JobCompletionStatus": JobCompletionStatus,

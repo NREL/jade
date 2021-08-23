@@ -8,7 +8,7 @@ import sys
 import click
 
 from jade.common import HPC_CONFIG_FILE
-from jade.enums import Mode
+from jade.enums import Mode, ResourceMonitorType
 from jade.exceptions import UserAbort
 from jade.models import HpcConfig, LocalHpcConfig, SubmitterParams, get_model_defaults
 from jade.utils.utils import load_data
@@ -32,6 +32,12 @@ def handle_enum_input(_, param, value):
         return tup[0](tup[1](value))
     except ValueError as err:
         raise click.BadParameter(str(err))
+
+
+def _handle_resource_monitor_type(_, __, value):
+    if value is None:
+        return None
+    return ResourceMonitorType(value)
 
 
 def _handle_simulation_scripts(ctx, _, value):
@@ -127,10 +133,23 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-r",
         "--resource-monitor-interval",
-        default=SUBMITTER_PARAMS_DEFAULTS["resource_monitor_interval"],
+        default=None,
         type=int,
         show_default=True,
-        help="Interval in seconds on which to collect resource stats. Default is None.",
+        help="Interval in seconds on which to collect resource stats. Default is 1 second if "
+        "--resource-monitor-type is 'aggregation' or 'periodic'.",
+    ),
+    click.option(
+        "-R",
+        "--resource-monitor-type",
+        default=None,
+        type=click.Choice([x.value for x in ResourceMonitorType]),
+        help="Type of resource monitoring to perform. Default is aggregation unless "
+        "--resource-monitor-interval is specified (for backwards compatibility). "
+        "'aggregation' will keep average/min/max stats in memory and generate a summary report "
+        "at the end. 'periodic' will record stats to files at the specified interval. "
+        "It will generate a summary report as well as interactive HTML plots.",
+        callback=_handle_resource_monitor_type,
     ),
     click.option(
         "-q",
@@ -204,6 +223,7 @@ def make_submitter_params(
     max_nodes=None,
     poll_interval=None,
     resource_monitor_interval=None,
+    resource_monitor_type=None,
     num_processes=None,
     verbose=None,
     reports=None,
@@ -242,6 +262,21 @@ def make_submitter_params(
         print("Error: num_processes must be set with time-based batching")
         sys.exit(1)
 
+    # We added resource_monitor_type after resource_monitor_interval. The following logic
+    # maintains backwards compatibility with user settings.
+    default_monitor_interval = SUBMITTER_PARAMS_DEFAULTS["resource_monitor_interval"]
+    if resource_monitor_interval is not None and resource_monitor_type is not None:
+        pass
+    elif resource_monitor_interval is None and resource_monitor_type is None:
+        resource_monitor_type = ResourceMonitorType.AGGREGATION
+        resource_monitor_interval = default_monitor_interval
+    elif resource_monitor_interval is not None and resource_monitor_type is None:
+        resource_monitor_type = ResourceMonitorType.PERIODIC
+    elif resource_monitor_interval is None and resource_monitor_type is not None:
+        resource_monitor_interval = default_monitor_interval
+    else:
+        assert False, f"interval={resource_monitor_interval} type={resource_monitor_type}"
+
     return SubmitterParams(
         generate_reports=reports,
         hpc_config=hpc_config,
@@ -253,6 +288,7 @@ def make_submitter_params(
         node_shutdown_script=node_shutdown_script,
         poll_interval=poll_interval,
         resource_monitor_interval=resource_monitor_interval,
+        resource_monitor_type=resource_monitor_type,
         time_based_batching=time_based_batching,
         try_add_blocked_jobs=try_add_blocked_jobs,
         verbose=verbose,

@@ -34,7 +34,7 @@ def cleanup(example_output):
 
 
 def test_jobs_submitter__generate_reports(example_output, cleanup):
-    ret = JobSubmitter.generate_reports(example_output, include_stats=True)
+    ret = JobSubmitter.generate_reports(example_output, True)
     assert ret == 0
     for filename in ("errors.txt", "results.txt", "stats.txt"):
         path = os.path.join(example_output, filename)

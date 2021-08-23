@@ -12,7 +12,7 @@ from jade.events import (
 )
 from jade.loggers import setup_logging
 from jade.resource_monitor import (
-    ResourceMonitor,
+    ResourceMonitorLogger,
     CpuStatsViewer,
     DiskStatsViewer,
     MemoryStatsViewer,
@@ -26,7 +26,7 @@ def test_resource_stats():
         event_file = os.path.join(tmpdir, "events.log")
         setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
-        resource_monitor = ResourceMonitor("test")
+        resource_monitor = ResourceMonitorLogger("test")
         count = 2
         found_cpu = 0
         found_disk = 0

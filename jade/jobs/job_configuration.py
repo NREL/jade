@@ -238,12 +238,18 @@ class JobConfiguration(abc.ABC):
             "hpc_config",
             "per_node_batch_size",
         )
-        user_overrides = ("generate_reports", "resource_monitor_interval", "dry_run", "verbose")
+        user_overrides = (
+            "generate_reports",
+            "resource_monitor_interval",
+            "resource_monitor_type",
+            "dry_run",
+            "verbose",
+        )
         user_override_if_not_set = ("node_setup_script", "node_shutdown_script")
         must_be_same = ("max_nodes", "poll_interval")
         all_params = (must_be_same, group_params, user_overrides, user_override_if_not_set)
         fields = {item for params in all_params for item in params}
-        assert sorted(list(fields)) == sorted(SubmitterParams.__fields__)
+        assert sorted(list(fields)) == sorted(SubmitterParams.__fields__), sorted(list(fields))
         hpc_type = first_group.submitter_params.hpc_config.hpc_type
         group_names = set()
         for group in groups:
