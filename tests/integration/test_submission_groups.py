@@ -20,7 +20,7 @@ from jade.utils.utils import load_data
 TEST_FILENAME = "test-inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
-SUBMIT_JOBS = "jade submit-jobs"
+SUBMIT_JOBS = "jade submit-jobs -R none"
 WAIT = "jade wait"
 
 

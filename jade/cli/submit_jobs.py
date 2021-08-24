@@ -56,6 +56,7 @@ def submit_jobs(
     output=None,
     poll_interval=None,
     resource_monitor_interval=None,
+    resource_monitor_type=None,
     num_processes=None,
     verbose=None,
     reports=None,
@@ -70,7 +71,7 @@ def submit_jobs(
         if force:
             shutil.rmtree(output)
         else:
-            print(f"{output} already exists. Delete it or use '--force' to overwrite.")
+            print(f"{output} already exists. Delete it or use '--force' to overwrite.", sys.stderr)
             sys.exit(1)
 
     if submitter_params is not None:
@@ -84,6 +85,7 @@ def submit_jobs(
             max_nodes=max_nodes,
             poll_interval=poll_interval,
             resource_monitor_interval=resource_monitor_interval,
+            resource_monitor_type=resource_monitor_type,
             num_processes=num_processes,
             verbose=verbose,
             reports=reports,
@@ -94,7 +96,7 @@ def submit_jobs(
         )
 
     if params.time_based_batching and params.num_processes is None:
-        print("Error: num_processes must be set with time-based batching")
+        print("Error: num_processes must be set with time-based batching", sys.stderr)
         sys.exit(1)
 
     os.makedirs(output)

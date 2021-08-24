@@ -16,7 +16,7 @@ from jade.test_common import FAKE_HPC_CONFIG
 TEST_FILENAME = "inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
-SUBMIT_JOBS = "jade submit-jobs"
+SUBMIT_JOBS = "jade submit-jobs -R none"
 
 
 @pytest.fixture

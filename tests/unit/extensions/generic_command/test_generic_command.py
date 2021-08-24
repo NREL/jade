@@ -5,6 +5,7 @@ Unit tests for auto-regression execution class methods and properties.
 import logging
 import os
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -14,12 +15,13 @@ from jade.extensions.generic_command import GenericCommandParameters
 from jade.result import ResultsSummary
 from jade.test_common import FAKE_HPC_CONFIG
 from jade.utils.run_command import check_run_command
+from jade.utils.utils import load_data
 
 
 TEST_FILENAME = "inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
-SUBMIT_JOBS = "jade submit-jobs -f"
+SUBMIT_JOBS = "jade submit-jobs -f -R aggregation"
 WAIT = "jade wait"
 
 
@@ -144,3 +146,13 @@ def test_job_order(generic_command_fixture):
     assert tracker["2"].completion_time > tracker["1"].completion_time
     assert tracker["21"].completion_time > tracker["30"].completion_time
     assert tracker["41"].completion_time > tracker["50"].completion_time
+
+    # Verify that stats are summarized correctly with aggregation mode.
+    stats_text = Path(OUTPUT) / "stats.txt"
+    assert stats_text.exists()
+    assert "Average" in stats_text.read_text()
+    stats_json = Path(OUTPUT) / "stats_summary.json"
+    assert stats_json.exists()
+    stats = load_data(stats_json)
+    assert stats
+    assert "batch" in stats[0]

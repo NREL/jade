@@ -7,7 +7,7 @@ import time
 import uuid
 
 from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_temp_results_filename
-from jade.enums import Status
+from jade.enums import Status, ResourceMonitorType
 from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.cluster import Cluster
@@ -16,7 +16,7 @@ from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
 from jade.models import JobState
 from jade.loggers import setup_logging
-from jade.resource_monitor import ResourceMonitor
+from jade.resource_monitor import ResourceMonitorAggregator, ResourceMonitorLogger
 from jade.utils.timing_utils import timed_info
 
 
@@ -194,20 +194,32 @@ class JobRunner(JobManagerBase):
         self._intf.log_environment_variables()
 
         name = f"resource_monitor_batch_{self._batch_id}_{self._node_id}"
-        resource_monitor = ResourceMonitor(name)
         group = self._config.get_default_submission_group()
-        if group.submitter_params.resource_monitor_interval is None:
-            monitor_func = None
-        else:
+        monitor_type = group.submitter_params.resource_monitor_type
+        resource_aggregator = None
+        if monitor_type == ResourceMonitorType.AGGREGATION:
+            resource_aggregator = ResourceMonitorAggregator(name)
+            monitor_func = resource_aggregator.update_resource_stats
+            resource_monitor_interval = group.submitter_params.resource_monitor_interval
+        elif monitor_type == ResourceMonitorType.PERIODIC:
+            resource_monitor = ResourceMonitorLogger(name)
             monitor_func = resource_monitor.log_resource_stats
+            resource_monitor_interval = group.submitter_params.resource_monitor_interval
+        elif monitor_type == ResourceMonitorType.NONE:
+            monitor_func = None
+            resource_monitor_interval = None
+        else:
+            assert False, monitor_type
         JobQueue.run_jobs(
             jobs,
             max_queue_depth=num_workers,
             monitor_func=monitor_func,
-            monitor_interval=group.submitter_params.resource_monitor_interval,
+            monitor_interval=resource_monitor_interval,
         )
 
         logger.info("Jobs are complete. count=%s", num_jobs)
+        if resource_aggregator is not None:
+            resource_aggregator.finalize(self._output)
         self._aggregate_events()
         return Status.GOOD  # TODO
 

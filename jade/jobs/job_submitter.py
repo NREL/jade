@@ -16,7 +16,7 @@ from jade.common import (
     RESULTS_FILE,
     HPC_CONFIG_FILE,
 )
-from jade.enums import JobCompletionStatus, Status
+from jade.enums import JobCompletionStatus, Status, ResourceMonitorType
 from jade.events import (
     EVENTS_FILENAME,
     EVENT_NAME_ERROR_LOG,
@@ -202,10 +202,7 @@ results_summary={self.get_results_summmary_report()}"""
         log_event(event)
 
         group = self._config.get_default_submission_group()
-        if group.submitter_params.generate_reports:
-            include_stats = bool(group.submitter_params.resource_monitor_interval)
-            self.generate_reports(self._output, include_stats=include_stats)
-
+        self.generate_reports(self._output, group.submitter_params.resource_monitor_type)
         cluster.mark_complete()
 
         if cluster.config.pipeline_stage_num is not None:
@@ -340,30 +337,32 @@ results_summary={self.get_results_summmary_report()}"""
                     break
 
     @staticmethod
-    def generate_reports(directory, include_stats=False):
+    def generate_reports(directory, resource_monitor_type):
         """Create reports summarizing the output results of a set of jobs.
 
         Parameters
         ----------
         directory : str
             output directory
+        resource_monitor_type : ResourceMonitorType
 
         """
         commands = [
             (f"jade show-results -o {directory}", "results.txt"),
             (f"jade show-events -o {directory} --categories Error", "errors.txt"),
         ]
-        if include_stats:
-            commands.append((f"jade stats plot -o {directory}", None))
+        if resource_monitor_type != ResourceMonitorType.NONE:
             commands.append((f"jade stats show -o {directory}", "stats.txt"))
             commands.append((f"jade stats show -o {directory} -j", "stats_summary.json"))
+        if resource_monitor_type == ResourceMonitorType.PERIODIC:
+            commands.append((f"jade stats plot -o {directory}", None))
 
         reports = []
         for cmd in commands:
             output = {}
             ret = run_command(cmd[0], output=output)
             if ret != 0:
-                return ret
+                logger.error("Failed to run [%s]: %s: %s", cmd, ret, output["stderr"])
 
             if cmd[1] is not None:
                 filename = os.path.join(directory, cmd[1])

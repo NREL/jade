@@ -264,7 +264,7 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     cfg = load_data(config_file)
     jobs = cfg["jobs"]
     if not jobs:
-        print("The configuration has no jobs")
+        print("The configuration has no jobs", sys.stderr)
         sys.exit(1)
 
     if output_file is None:
@@ -276,7 +276,7 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 
     try:
         if not new_config_file.endswith(".json"):
-            print("new_config_file must have extension .json")
+            print("new_config_file must have extension .json", sys.stderr)
             sys.exit(1)
 
         orig_len = len(jobs)
@@ -355,6 +355,7 @@ def submitter_params(
     max_nodes=None,
     poll_interval=None,
     resource_monitor_interval=None,
+    resource_monitor_type=None,
     num_processes=None,
     verbose=None,
     reports=None,
@@ -372,6 +373,7 @@ def submitter_params(
         max_nodes=max_nodes,
         poll_interval=poll_interval,
         resource_monitor_interval=resource_monitor_interval,
+        resource_monitor_type=resource_monitor_type,
         num_processes=num_processes,
         verbose=verbose,
         reports=reports,

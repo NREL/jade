@@ -69,7 +69,7 @@ def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
     )
     if not cluster.is_complete():
         cluster.demote_from_submitter()
-        print("resubmit-jobs requires that the existing submission be complete")
+        print("resubmit-jobs requires that the existing submission be complete", sys.stderr)
         sys.exit(1)
     assert promoted
 

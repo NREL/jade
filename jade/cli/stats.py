@@ -6,13 +6,15 @@ import datetime
 import json
 import os
 import sys
+from collections import defaultdict
 from pathlib import Path
 
 import click
+from prettytable import PrettyTable
 from psutil._common import bytes2human
 
 from jade.cli.collect_stats import collect
-from jade.common import OUTPUT_DIR
+from jade.common import EVENTS_DIR, OUTPUT_DIR, STATS_DIR
 from jade.loggers import setup_logging
 from jade.events import EventsSummary
 from jade.resource_monitor import (
@@ -21,6 +23,7 @@ from jade.resource_monitor import (
     MemoryStatsViewer,
     NetworkStatsViewer,
 )
+from jade.utils.utils import dump_data, load_data
 
 
 STATS = ("cpu", "disk", "mem", "net")
@@ -58,8 +61,8 @@ def plot(stats, output):
     if not stats:
         stats = STATS
 
-    plot_dir = Path(output) / "stats"
-    os.makedirs(plot_dir, exist_ok=True)
+    plot_dir = Path(output) / STATS_DIR
+    plot_dir.mkdir(exist_ok=True)
     for stat in stats:
         if stat == "cpu":
             viewer = CpuStatsViewer(events)
@@ -70,7 +73,7 @@ def plot(stats, output):
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
         else:
-            print(f"Invalid stat={stat}")
+            print(f"Invalid stat={stat}", sys.stderr)
             sys.exit(1)
         viewer.plot_to_file(plot_dir)
 
@@ -108,10 +111,86 @@ def show(stats, json_summary, output, summary_only):
     jade stats show --summary cpu disk mem
     jade stats show --json-summary cpu disk mem
     """
-    events = EventsSummary(output)
-
+    events_path = Path(output) / EVENTS_DIR
+    stats_path = Path(output) / STATS_DIR
+    if not events_path.exists():
+        print(f"{output} does not contain JADE stats", sys.stderr)
+        sys.exit(1)
     if not stats:
         stats = STATS
+    if stats_path.exists():
+        json_files = list(stats_path.glob("*.json"))
+        json_files.sort()
+    else:
+        json_files = []
+    if json_files:
+        _show_summary_stats(stats, json_summary, json_files)
+    else:
+        _show_periodic_stats(stats, json_summary, output, summary_only)
+    return 0
+
+
+def _show_summary_stats(stats, json_summary, json_files):
+    type_mapping = {
+        CpuStatsViewer.metric(): "cpu",
+        DiskStatsViewer.metric(): "disk",
+        MemoryStatsViewer.metric(): "mem",
+        NetworkStatsViewer.metric(): "net",
+    }
+    reverse_mapping = {v: k for k, v in type_mapping.items()}
+    cls_mapping = {
+        CpuStatsViewer.metric(): CpuStatsViewer,
+        DiskStatsViewer.metric(): DiskStatsViewer,
+        MemoryStatsViewer.metric(): MemoryStatsViewer,
+        NetworkStatsViewer.metric(): NetworkStatsViewer,
+    }
+    filtered = []
+    for filename in json_files:
+        data = load_data(filename)
+        for entry in data:
+            if type_mapping[entry["type"]] in stats:
+                filtered.append(entry)
+
+    if json_summary:
+        print(json.dumps(filtered, indent=2))
+    else:
+        by_type_and_batch = defaultdict(dict)
+        for entry in filtered:
+            if entry["batch"] not in by_type_and_batch[entry["type"]]:
+                by_type_and_batch[entry["type"]][entry["batch"]] = []
+            by_type_and_batch[entry["type"]][entry["batch"]].append(entry)
+        for stat in stats:
+            text = f"{reverse_mapping[stat]} statistics for each batch"
+            print(f"\n{text}")
+            print("=" * len(text) + "\n")
+
+            stat_type = reverse_mapping[stat]
+            stat_cls = cls_mapping[stat_type]
+            for resource_type in by_type_and_batch:
+                if resource_type != reverse_mapping[stat]:
+                    continue
+                for batch, entries in by_type_and_batch[resource_type].items():
+                    for entry in entries:
+                        table = PrettyTable(title=f"{stat_type} {batch} summary")
+                        table.field_names = [stat] + list(entry["average"].keys())
+                        row = ["Average"]
+                        for field, val in entry["average"].items():
+                            row.append(stat_cls.get_printable_value(field, val))
+                        table.add_row(row)
+                        row = ["Minimum"]
+                        for field, val in entry["minimum"].items():
+                            row.append(stat_cls.get_printable_value(field, val))
+                        table.add_row(row)
+                        row = ["Maximum"]
+                        for field, val in entry["maximum"].items():
+                            row.append(stat_cls.get_printable_value(field, val))
+                        table.add_row(row)
+                        print(table)
+                        print()
+
+
+def _show_periodic_stats(stats, json_summary, output, summary_only):
+    events = EventsSummary(output)
 
     summaries_as_dicts = []
     for stat in stats:
@@ -124,7 +203,7 @@ def show(stats, json_summary, output, summary_only):
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
         else:
-            print(f"Invalid stat={stat}")
+            print(f"Invalid stat={stat}", sys.stderr)
             sys.exit(1)
         if json_summary:
             summaries_as_dicts += viewer.get_stats_summary()

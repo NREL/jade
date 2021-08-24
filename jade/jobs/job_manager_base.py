@@ -5,7 +5,7 @@ import json
 import logging
 import os
 
-from jade.common import JOBS_OUTPUT_DIR
+from jade.common import JOBS_OUTPUT_DIR, STATS_DIR
 from jade.jobs.job_configuration_factory import create_config_from_file
 
 
@@ -20,10 +20,12 @@ class JobManagerBase(abc.ABC):
         self._config_file = config_file
         self._output = output_dir
         self._jobs_output = os.path.join(self._output, JOBS_OUTPUT_DIR)
+        self._stats_dir = os.path.join(self._output, STATS_DIR)
         self._results = []  # contains Result objects
 
         os.makedirs(self._output, exist_ok=True)
         os.makedirs(self._jobs_output, exist_ok=True)
+        os.makedirs(self._stats_dir, exist_ok=True)
 
     @property
     def config(self):

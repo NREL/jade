@@ -115,7 +115,8 @@ def create(
         if not os.path.exists(hpc_config):
             print(
                 f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
-                "or run in local mode with '-l'"
+                "or run in local mode with '-l'",
+                sys.stderr,
             )
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
@@ -152,7 +153,7 @@ def submit(config_file, output, force, verbose=False):
         if force:
             shutil.rmtree(output)
         else:
-            print(f"{output} already exists. Delete it or use '--force' to overwrite.")
+            print(f"{output} already exists. Delete it or use '--force' to overwrite.", sys.stderr)
             sys.exit(1)
     os.makedirs(output, exist_ok=True)
 

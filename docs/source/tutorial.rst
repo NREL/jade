@@ -543,12 +543,41 @@ jobs.
 Resource Monitoring
 ===================
 JADE optionally monitors CPU, disk, memory, and network utilization
-statistics in structured log events. You can enable the feature by passing
-``-rX`` or ``--resource-monitor-interval=X`` where ``X`` is an interval in
-seconds.
+statistics in structured log events. There are two ways to collect statistics:
 
-If reports are enabled (in ``submit-jobs``) then JADE will save interactive
-plots of the this data in ``<output-dir>/stats``.
+1. ``aggregation``: Track average/min/max stats in memory on each node and
+   generate a summary report at the end (default).
+2. ``periodic``: Record stats in files on each node and generate a summary
+   report and interactive HTML plots at the end. The reports include
+   average/min/max stats.
+
+You can specify the mode in ``jade submit-jobs`` or ``jade config
+submitter-params``. Note the short and long forms of the option.
+
+.. code-block:: bash
+
+   $ jade submit-jobs config.json --resource-monitor-type=aggregation
+   $ jade submit-jobs config.json -R aggregation
+   $ jade submit-jobs config.json --resource-monitor-type=periodic
+   $ jade submit-jobs config.json -R periodic
+   $ jade submit-jobs config.json --resource-monitor-type=none
+   $ jade submit-jobs config.json -R none
+
+The option ``--resource-monitor-interval`` or ``-r`` (in seconds) applies to both modes.
+
+.. note:: The periodic mode can generate large files if the compute nodes
+   run for a long time.
+
+The default mode is ``aggregation`` in order to minimize storage consumption.
+
+.. warning:: In order to preserve legacy behavior, if you specify
+   ``--resource-monitor-interval`` but not ``resource-monitor-type``,
+   ``periodic`` will be used. This may change in the future.
+
+Both modes will generate ``<output-dir>/stats.txt`` and
+``<output-dir>/stats_summary.json``.
+
+If the ``periodic`` mode is enabled:
 
 .. code-block:: bash
 
@@ -579,8 +608,7 @@ Use this CLI command to view textual tables after a run:
 .. note:: Reads and writes to the Lustre filesystem on the HPC are not tracked.
 
 Use the ``--json-summary`` option if you want to programmatically analyze the
-average/minimum/maximum stats for each metric type. Note that these are
-auto-generated in the file ``<output-dir>/stats_summary.json``.
+average/minimum/maximum stats for each metric type.
 
 The stats can also be provided as pandas.DataFrame objects. For example, here
 is how to view CPU stats for the node that ran the first batch:

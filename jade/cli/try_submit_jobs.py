@@ -26,6 +26,16 @@ logger = logging.getLogger(__name__)
 )
 def try_submit_jobs(output, verbose):
     """Internal command to try to submit new jobs for an existing submission."""
+    cluster, promoted = Cluster.deserialize(
+        output,
+        try_promote_to_submitter=True,
+        deserialize_jobs=True,
+    )
+    if not promoted:
+        print("Another node is already the submitter.")
+        sys.exit(0)
+
+    # Only create the logger if we get promoted.
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
@@ -35,15 +45,7 @@ def try_submit_jobs(output, verbose):
     # This effectively means no console logging.
     setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
-    cluster, promoted = Cluster.deserialize(
-        output,
-        try_promote_to_submitter=True,
-        deserialize_jobs=True,
-    )
-    if not promoted:
-        print("Another node is already the submitter.")
-        sys.exit(0)
-    elif cluster.is_complete():
+    if cluster.is_complete():
         cluster.demote_from_submitter()
         logger.info("All jobs are already finished.")
         sys.exit(0)

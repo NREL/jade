@@ -55,7 +55,8 @@ def show_results(failed, output, successful, post_process, job_name, verbose):
     except InvalidConfiguration:
         print(
             f"No results are available in {output}. To check status of in-progress jobs run "
-            f"'jade show-status -o {output}'"
+            f"'jade show-status -o {output}'",
+            sys.stderr,
         )
         sys.exit(1)
 

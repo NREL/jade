@@ -31,7 +31,7 @@ def wait(output, poll_interval):
         try:
             cluster, _ = Cluster.deserialize(output)
         except InvalidConfiguration:
-            print(f"{output} is not a JADE output directory used in cluster mode")
+            print(f"{output} is not a JADE output directory used in cluster mode", sys.stderr)
             sys.exit(1)
         if cluster.is_complete():
             print("All jobs are complete")
