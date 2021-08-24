@@ -144,8 +144,9 @@ COMMON_SUBMITTER_OPTIONS = (
         "--resource-monitor-type",
         default=None,
         type=click.Choice([x.value for x in ResourceMonitorType]),
-        help="Type of resource monitoring to perform. Default is aggregation unless "
-        "--resource-monitor-interval is specified (for backwards compatibility). "
+        help="Type of resource monitoring to perform. Default is 'aggregation' unless "
+        "--resource-monitor-interval is specified. In order to maintain backwards compatibility "
+        "that changes the default to 'periodic'. "
         "'aggregation' will keep average/min/max stats in memory and generate a summary report "
         "at the end. 'periodic' will record stats to files at the specified interval. "
         "It will generate a summary report as well as interactive HTML plots.",

@@ -552,15 +552,18 @@ statistics in structured log events. There are two ways to collect statistics:
    average/min/max stats.
 
 You can specify the mode in ``jade submit-jobs`` or ``jade config
-submitter-params``.
+submitter-params``. Note the short and long forms of the option.
 
 .. code-block:: bash
 
    $ jade submit-jobs config.json --resource-monitor-type=aggregation
+   $ jade submit-jobs config.json -R aggregation
    $ jade submit-jobs config.json --resource-monitor-type=periodic
+   $ jade submit-jobs config.json -R periodic
    $ jade submit-jobs config.json --resource-monitor-type=none
+   $ jade submit-jobs config.json -R none
 
-The option ``--resource-monitor-interval`` (in seconds) applies to both modes.
+The option ``--resource-monitor-interval`` or ``-r`` (in seconds) applies to both modes.
 
 .. note:: The periodic mode can generate large files if the compute nodes
    run for a long time.
