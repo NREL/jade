@@ -73,7 +73,7 @@ def plot(stats, output):
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
         else:
-            print(f"Invalid stat={stat}", sys.stderr)
+            print(f"Invalid stat={stat}", file=sys.stderr)
             sys.exit(1)
         viewer.plot_to_file(plot_dir)
 
@@ -114,7 +114,7 @@ def show(stats, json_summary, output, summary_only):
     events_path = Path(output) / EVENTS_DIR
     stats_path = Path(output) / STATS_DIR
     if not events_path.exists():
-        print(f"{output} does not contain JADE stats", sys.stderr)
+        print(f"{output} does not contain JADE stats", file=sys.stderr)
         sys.exit(1)
     if not stats:
         stats = STATS
@@ -203,7 +203,7 @@ def _show_periodic_stats(stats, json_summary, output, summary_only):
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
         else:
-            print(f"Invalid stat={stat}", sys.stderr)
+            print(f"Invalid stat={stat}", file=sys.stderr)
             sys.exit(1)
         if json_summary:
             summaries_as_dicts += viewer.get_stats_summary()

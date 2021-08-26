@@ -242,13 +242,13 @@ def make_submitter_params(
             print(
                 f"{hpc_config} does not exist. Generate it with 'jade config hpc' "
                 "or run in local mode with '-l'",
-                sys.stderr,
+                file=sys.stderr,
             )
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 
     if local and dry_run:
-        print("Dry run is not allowed in local mode.", sys.stderr)
+        print("Dry run is not allowed in local mode.", file=sys.stderr)
         sys.exit(1)
 
     if (
@@ -259,12 +259,12 @@ def make_submitter_params(
         # I don't see that click provides a way to detect that condition.
         print(
             "Error: --per-node-batch-size and --time-based-batching are mutually exclusive",
-            sys.stderr,
+            file=sys.stderr,
         )
         sys.exit(1)
 
     if time_based_batching and num_processes is None:
-        print("Error: num_processes must be set with time-based batching", sys.stderr)
+        print("Error: num_processes must be set with time-based batching", file=sys.stderr)
         sys.exit(1)
 
     # We added resource_monitor_type after resource_monitor_interval. The following logic

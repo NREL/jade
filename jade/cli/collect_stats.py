@@ -49,7 +49,8 @@ def collect(duration, force, interval, output):
             shutil.rmtree(output)
         else:
             print(
-                f"The directory {output} already exists. Delete it or run with --force", sys.stderr
+                f"The directory {output} already exists. Delete it or run with --force",
+                file=sys.stderr,
             )
             sys.exit(1)
 
