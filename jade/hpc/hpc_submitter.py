@@ -17,6 +17,7 @@ from jade.events import (
     EVENT_NAME_HPC_JOB_ASSIGNED,
     EVENT_NAME_HPC_JOB_STATE_CHANGE,
 )
+from jade.exceptions import InvalidConfiguration
 from jade.hpc.common import HpcJobStatus, HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.async_job_interface import AsyncJobInterface
@@ -60,6 +61,9 @@ class HpcSubmitter:
 
     def _create_run_script(self, config_file, filename, submission_group):
         text = ["#!/bin/bash"]
+        sing_params = submission_group.submitter_params.singularity_params
+        if sing_params.enabled:
+            text += sing_params.setup_commands
         command = f"jade-internal run-jobs {config_file} " f"--output={self._output}"
         if submission_group.submitter_params.num_processes is not None:
             command += f" --num-processes={submission_group.submitter_params.num_processes}"
@@ -488,10 +492,14 @@ class AsyncHpcSubmitter(AsyncJobInterface):
 
     def run(self):
         assert self._submission_group is not None
+        if self._submission_group.submitter_params.singularity_params.enabled:
+            script = self._make_singularity_command()
+        else:
+            script = self._run_script
         job_id, result = self._mgr.submit(
             self._output,
             self._name,
-            self._run_script,
+            script,
             self._submission_group.name,
             dry_run=self._dry_run,
         )
@@ -522,6 +530,15 @@ class AsyncHpcSubmitter(AsyncJobInterface):
 
     def set_blocking_jobs(self, jobs):
         assert False
+
+    def _make_singularity_command(self):
+        params = self._submission_group.submitter_params.singularity_params
+        if not params.run_command:
+            raise InvalidConfiguration("Singularity command cannot be empty.")
+        container_path = Path(params.container)
+        if not container_path.exists():
+            raise InvalidConfiguration(f"Singularity container {container_path} does not exist.")
+        return f"{params.run_command} {container_path} {self._run_script}"
 
 
 class HpcStatusCollector:

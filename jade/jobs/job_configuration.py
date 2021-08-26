@@ -237,6 +237,7 @@ class JobConfiguration(abc.ABC):
             "num_processes",
             "hpc_config",
             "per_node_batch_size",
+            "singularity_params",
         )
         user_overrides = (
             "generate_reports",
