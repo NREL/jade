@@ -1,6 +1,5 @@
 """Common functions for CLI scripts"""
 
-import logging
 import logging.config
 import os
 import sys
@@ -10,7 +9,13 @@ import click
 from jade.common import HPC_CONFIG_FILE
 from jade.enums import Mode, ResourceMonitorType
 from jade.exceptions import UserAbort
-from jade.models import HpcConfig, LocalHpcConfig, SubmitterParams, get_model_defaults
+from jade.models import (
+    HpcConfig,
+    LocalHpcConfig,
+    SingularityParams,
+    SubmitterParams,
+    get_model_defaults,
+)
 from jade.utils.utils import load_data
 
 
@@ -169,6 +174,20 @@ COMMON_SUBMITTER_OPTIONS = (
         help="Generate reports after execution.",
     ),
     click.option(
+        "-S",
+        "--enable-singularity",
+        is_flag=True,
+        default=False,
+        show_default=True,
+        help="Add Singularity parameters and set the config to run in a container.",
+    ),
+    click.option(
+        "-C",
+        "--container",
+        type=click.Path(exists=True),
+        help="Path to container",
+    ),
+    click.option(
         "-t",
         "--time-based-batching",
         is_flag=True,
@@ -228,6 +247,8 @@ def make_submitter_params(
     num_processes=None,
     verbose=None,
     reports=None,
+    enable_singularity=None,
+    container=None,
     try_add_blocked_jobs=None,
     time_based_batching=None,
     node_setup_script=None,
@@ -282,6 +303,10 @@ def make_submitter_params(
     else:
         assert False, f"interval={resource_monitor_interval} type={resource_monitor_type}"
 
+    if enable_singularity:
+        singularity_params = SingularityParams(enabled=True, container=container)
+    else:
+        singularity_params = None
     return SubmitterParams(
         generate_reports=reports,
         hpc_config=hpc_config,
@@ -294,6 +319,7 @@ def make_submitter_params(
         poll_interval=poll_interval,
         resource_monitor_interval=resource_monitor_interval,
         resource_monitor_type=resource_monitor_type,
+        singularity_params=singularity_params,
         time_based_batching=time_based_batching,
         try_add_blocked_jobs=try_add_blocked_jobs,
         verbose=verbose,

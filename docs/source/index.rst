@@ -83,6 +83,7 @@ Refer to :ref:`advanced_guide_label` for more information.
    job_configuration
    submission_strategies
    pipeline
+   singularity_containers
    distributed_submission
    advanced_usage
 
