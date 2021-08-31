@@ -37,6 +37,8 @@ will still have to install JADE (and likely some Python virtual environment).
     bash wrapper-script.sh 2
     bash wrapper-script.sh 3
 
+    $ jade config create commands.txt
+
 2. Package JADE with your application in a Singularity container. Assuming your
    HPC provides an installation of Singularity, your users won't have to
    install anything. Setting this up is more complex than #1 but it can be
@@ -76,8 +78,8 @@ on a strategy.
    Here is a working example that you can put in your Dockerfile for use
    on NREL's HPC.
 
-.. warning:: This sets ``$PATH`` on the Docker container but not Singularity. You may still need to
-    append to the path inside your Singularity container.
+.. warning:: This sets ``$PATH`` on the Docker container but not Singularity.
+   You still need to append to the path inside your Singularity container.
 
 .. code-block:: docker
 
@@ -90,11 +92,11 @@ on a strategy.
 6. Whenever the HPC queueing system allocates a node and starts your process it
    will first try to change to the directory in which the submission occurred.
    So, it's important that this directory is a bind mount passed when you start
-   the container. The recommended place to run jobs on NREL's HPC is /scratch/<username>, so
-   /scratch should always be mounted there.
+   the container. The recommended place to run jobs on NREL's HPC is
+   /scratch/<username>, so /scratch should always be mounted there.
 
 
-7. Adjust the appropriate settings in your compute node startup script like this:
+7. Adjust the appropriate settings in your compute node startup script:
 
 .. code-block:: bash
 
@@ -103,15 +105,17 @@ on a strategy.
     export PATH=$PATH:/nopt/slurm/current/bin
     bash my-script.sh
 
-8. Make sure that you can run your application, ``jade``, and the HPC executables.
+8. Make sure that you can run your application, ``jade``, and the HPC
+   executables.
 
-9. Once everything is working, create a read-only image for your users wth a command like this:
+9. Once everything is working, create a read-only image for your users wth a
+   command like this:
 
 .. code-block:: bash
 
     $ singularity build my-container.sif my-container
 
-   Note that you can skip step #4 if you already know the container will work.
+Note that you can skip step #4 if you already know the container will work.
 
 .. code-block:: bash
 
@@ -134,7 +138,7 @@ Running a container that includes JADE
 
 .. code-block:: bash
 
-    $ singularity shell -B /scratch:/scratch \
+    $ singularity shell -B /scratch:/scratch -B /projects:/projects \
         -B /nopt,/usr/lib64/libreadline.so.6,/usr/lib64/libhistory.so.6,/usr/lib64/libtinfo.so.5,/var/run/munge,/usr/lib64/libmunge.so.2,/run/munge \
         /scratch/<username>/my-container.sif
 
