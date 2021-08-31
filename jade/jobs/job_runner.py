@@ -226,7 +226,7 @@ class JobRunner(JobManagerBase):
     @timed_info
     def _aggregate_events(self):
         # Aggregate all job events.log files into this node's log file so
-        # that the master can more quickly make events.json later.
+        # that the we can more quickly make events.json later.
         for handler in self._event_logger.handlers:
             handler.close()
         with open(self._event_file, "a") as f_out:
