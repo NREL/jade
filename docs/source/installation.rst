@@ -12,7 +12,7 @@ Computer or HPC with conda
    existing `conda <https://docs.conda.io/en/latest/miniconda.html>`_
    environment or an environment from something like `pyenv
    <https://github.com/pyenv/pyenv>`_.  A validated conda
-   `environment <https://github.com/NREL/jade/blob/master/environment.yml>`_ is
+   `environment <https://github.com/NREL/jade/blob/main/environment.yml>`_ is
    provided in the JADE repository.
 
    Note that Python 3.7 or greater is required.

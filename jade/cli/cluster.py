@@ -37,8 +37,8 @@ def am_i_manager(output_dir, verbose):
 
     groups = make_submission_group_lookup([cluster.config.submission_groups[0]])
     hpc_mgr = HpcManager(groups, output_dir)
-    am_master = hpc_mgr.am_i_manager()
-    print(str(am_master).lower(), end="")
+    am_manager = hpc_mgr.am_i_manager()
+    print(str(am_manager).lower(), end="")
 
 
 @click.command()

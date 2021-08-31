@@ -45,9 +45,9 @@ class PipelineManager:
 
         """
         os.makedirs(output, exist_ok=True)
-        master_file = os.path.join(output, cls.CONFIG_FILENAME)
-        shutil.copyfile(config_file, master_file)
-        mgr = cls(master_file, output)
+        main_file = os.path.join(output, cls.CONFIG_FILENAME)
+        shutil.copyfile(config_file, main_file)
+        mgr = cls(main_file, output)
         for stage in mgr.stages:
             stage.path = cls.get_stage_output_path(output, stage.stage_num)
         mgr._serialize()

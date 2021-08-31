@@ -44,7 +44,7 @@ class HpcManager:
         return self._intfs[submission_group_name]
 
     def am_i_manager(self):
-        """Return True if the current node is the master node.
+        """Return True if the current node is the manager node.
 
         Returns
         -------

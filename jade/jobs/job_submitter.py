@@ -73,9 +73,9 @@ class JobSubmitter(JobManagerBase):
             Output directory
 
         """
-        master_file = os.path.join(output, CONFIG_FILE)
-        shutil.copyfile(config_file, master_file)
-        mgr = cls(master_file, output, True)
+        main_file = os.path.join(output, CONFIG_FILE)
+        shutil.copyfile(config_file, main_file)
+        mgr = cls(main_file, output, True)
         mgr.run_checks(params)
         return mgr
 
