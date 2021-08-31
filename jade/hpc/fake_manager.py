@@ -70,7 +70,7 @@ class FakeManager(HpcManagerInterface):
     def create_submission_script(self, name, script, filename, path):
         lines = [
             "#!/bin/bash",
-            script,
+            str(script),
         ]
         create_script(filename, "\n".join(lines))
 

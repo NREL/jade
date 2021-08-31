@@ -178,7 +178,7 @@ class SlurmManager(HpcManagerInterface):
 
     def create_submission_script(self, name, script, filename, path):
         text = self._create_submission_script_text(name, script, path)
-        utils.create_script(filename, "\n".join(text))
+        utils.create_script(filename, "\n".join(text) + "\n")
 
     def _create_submission_script_text(self, name, script, path):
         lines = [

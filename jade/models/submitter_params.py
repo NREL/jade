@@ -2,46 +2,10 @@
 
 from typing import List, Optional, Set, Union
 
-from pydantic import Field
+from pydantic import Field, validator
 
 from jade.enums import ResourceMonitorType
-from jade.models import JadeBaseModel, HpcConfig
-
-
-SINGULARITY_SETUP_COMMANDS = """export LD_LIBRARY_PATH=/usr/lib64:/nopt/slurm/current/lib64/slurm:$LD_LIBRARY_PATH
-echo "slurm:x:989:989:SLURM workload manager:/var/lib/slurm:/bin/bash" >> /etc/passwd
-echo "slurm:x:989:" >> /etc/group
-export PATH=$PATH:/nopt/slurm/current/bin
-cd /data
-"""
-
-BINDS = "/nopt,/usr/lib64/libreadline.so.6,/usr/lib64/libhistory.so.6,/usr/lib64/libtinfo.so.5,/var/run/munge,/usr/lib64/libmunge.so.2,/usr/lib64/libmunge.so.2.0.0,/run/munge"
-SINGULARITY_RUN_COMMAND = f"singularity run -B {BINDS} -B .:/data"
-
-
-class SingularityParams(JadeBaseModel):
-    """Defines parameters for using Singularity containers"""
-
-    container: Optional[str] = Field(
-        title="container",
-        description="path to Singularity container",
-        default="",
-    )
-    setup_commands: Optional[str] = Field(
-        title="setup_commands",
-        description="commands to execute within the Singularity container",
-        default=SINGULARITY_SETUP_COMMANDS,
-    )
-    run_command: Optional[str] = Field(
-        title="run_command",
-        description="command to run the Singularity container",
-        default=SINGULARITY_RUN_COMMAND,
-    )
-    enabled: Optional[bool] = Field(
-        title="enabled",
-        description="Run all jobs through a Singularity container",
-        default=False,
-    )
+from jade.models import JadeBaseModel, HpcConfig, SingularityParams
 
 
 class SubmitterParams(JadeBaseModel):
@@ -121,5 +85,5 @@ class SubmitterParams(JadeBaseModel):
     singularity_params: Optional[SingularityParams] = Field(
         title="singularity_params",
         description="Singularity container parameters",
-        default=SingularityParams(),
+        default=None,
     )

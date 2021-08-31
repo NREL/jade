@@ -3,6 +3,7 @@
 import logging
 import sys
 import click
+from pathlib import Path
 
 from jade.common import OUTPUT_DIR
 from jade.exceptions import InvalidConfiguration
@@ -43,6 +44,10 @@ from jade.result import ResultsSummary
 @click.command()
 def show_results(failed, output, successful, post_process, job_name, verbose):
     """Shows the results of a batch of jobs."""
+    if not Path(output).exists():
+        print(f"{output} does not exist", file=sys.stderr)
+        sys.exit(1)
+
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("show_results", None, console_level=level)
 

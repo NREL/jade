@@ -48,3 +48,14 @@ def test_none(config_file):
     assert config_file.exists()
     data = load_data(config_file)
     assert data["resource_monitor_type"] == ResourceMonitorType.NONE.value
+
+
+def test_singularity_params(config_file):
+    # Not a real container. It needs to be a path that exists
+    container = "jade"
+    check_run_command(f"{CMD} -S -C {container} -c {config_file}")
+    assert config_file.exists()
+    data = load_data(config_file)
+    assert data["singularity_params"] is not None
+    assert data["singularity_params"]["enabled"]
+    assert data["singularity_params"]["container"] == "jade"

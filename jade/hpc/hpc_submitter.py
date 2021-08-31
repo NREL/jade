@@ -62,8 +62,8 @@ class HpcSubmitter:
     def _create_run_script(self, config_file, filename, submission_group):
         text = ["#!/bin/bash"]
         sing_params = submission_group.submitter_params.singularity_params
-        if sing_params.enabled:
-            text += sing_params.setup_commands
+        if sing_params and sing_params.enabled:
+            text += sing_params.setup_commands.split("\n")
         command = f"jade-internal run-jobs {config_file} " f"--output={self._output}"
         if submission_group.submitter_params.num_processes is not None:
             command += f" --num-processes={submission_group.submitter_params.num_processes}"
@@ -71,7 +71,7 @@ class HpcSubmitter:
             command += " --verbose"
 
         text.append(command)
-        create_script(filename, "\n".join(text))
+        create_script(filename, "\n".join(text) + "\n")
 
     def _make_async_submitter(self, jobs, submission_group, dry_run=False):
         config = copy.copy(self._base_config)
@@ -416,7 +416,7 @@ class AsyncHpcSubmitter(AsyncJobInterface):
     ):
         self._mgr = hpc_manager
         self._status_collector = status_collector
-        self._run_script = run_script
+        self._run_script = Path(run_script) if run_script else None
         self._submission_group = submission_group
         self._job_id = job_id
         self._output = output
@@ -492,14 +492,15 @@ class AsyncHpcSubmitter(AsyncJobInterface):
 
     def run(self):
         assert self._submission_group is not None
-        if self._submission_group.submitter_params.singularity_params.enabled:
+        sing_params = self._submission_group.submitter_params.singularity_params
+        if sing_params and sing_params.enabled:
             script = self._make_singularity_command()
         else:
             script = self._run_script
         job_id, result = self._mgr.submit(
             self._output,
             self._name,
-            script,
+            str(script),
             self._submission_group.name,
             dry_run=self._dry_run,
         )
@@ -536,9 +537,13 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         if not params.run_command:
             raise InvalidConfiguration("Singularity command cannot be empty.")
         container_path = Path(params.container)
-        if not container_path.exists():
-            raise InvalidConfiguration(f"Singularity container {container_path} does not exist.")
-        return f"{params.run_command} {container_path} {self._run_script}"
+        cmd = f"{params.run_command} {container_path} {self._run_script}"
+        sing_script = self._run_script.parent / self._run_script.name.replace(
+            "run", "singularity", 1
+        )
+        text = "#!/bin/bash\n" + params.load_command + "\n" + cmd + "\n"
+        create_script(str(sing_script), text)
+        return sing_script
 
 
 class HpcStatusCollector:
