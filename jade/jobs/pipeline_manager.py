@@ -69,6 +69,10 @@ class PipelineManager:
         config_file = os.path.join(output, cls.CONFIG_FILENAME)
         return cls(config_file, output)
 
+    @property
+    def config(self):
+        return self._config
+
     def submit_next_stage(self, stage_num, return_code=None):
         """Submit the next stage of the pipeline for execution.
 

@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import sys
+from pathlib import Path
 
 import click
 
@@ -11,7 +12,13 @@ from jade.common import HPC_CONFIG_FILE, OUTPUT_DIR
 from jade.hpc.common import HpcType
 from jade.loggers import setup_logging
 from jade.jobs.pipeline_manager import PipelineManager
-from jade.models import HpcConfig, LocalHpcConfig, SubmitterParams, get_model_defaults
+from jade.models import (
+    HpcConfig,
+    LocalHpcConfig,
+    SingularityParams,
+    SubmitterParams,
+    get_model_defaults,
+)
 from jade.utils.utils import get_cli_string, load_data
 
 
@@ -94,6 +101,20 @@ def pipeline():
     help="Generate reports after execution.",
 )
 @click.option(
+    "-S",
+    "--enable-singularity",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Add Singularity parameters and set the config to run in a container.",
+)
+@click.option(
+    "-C",
+    "--container",
+    type=click.Path(exists=True),
+    help="Path to container",
+)
+@click.option(
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def create(
@@ -106,6 +127,8 @@ def create(
     poll_interval,
     num_processes,
     reports,
+    enable_singularity,
+    container,
     verbose,
 ):
     """Create a pipeline with multiple Jade configurations."""
@@ -121,6 +144,10 @@ def create(
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
 
+    if enable_singularity:
+        singularity_params = SingularityParams(enabled=True, container=container)
+    else:
+        singularity_params = None
     submit_params = SubmitterParams(
         generate_reports=reports,
         hpc_config=hpc_config,
@@ -128,9 +155,43 @@ def create(
         num_processes=num_processes,
         per_node_batch_size=per_node_batch_size,
         poll_interval=poll_interval,
+        singularity_params=singularity_params,
         verbose=verbose,
     )
     PipelineManager.create_config(auto_config_cmds, config_file, submit_params)
+
+
+@click.command()
+@click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
+@click.option(
+    "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
+)
+def status(output, verbose):
+    """Check status of the pipeline."""
+    try:
+        mgr = PipelineManager.load(output)
+    except FileNotFoundError:
+        print(f"{output} is not a valid pipeline output directory", file=stderr)
+        sys.exit(1)
+
+    config = mgr.config
+    completed_stages = []
+    current_stage = None
+    for stage in config.stages:
+        if stage.stage_num < config.stage_num:
+            completed_stages.append(stage)
+        elif stage.stage_num == config.stage_num:
+            current_stage = stage
+
+    print(f"Is complete: {config.is_complete}")
+    if current_stage is not None:
+        print(f"Current stage number: {config.stage_num}")
+        print("\nTo view the status of the current stage:")
+        print(f"  jade show-status -o {current_stage.path}")
+    if completed_stages:
+        print(f"\nTo view results of the completed stages:")
+        for stage in completed_stages:
+            print(f"  jade show-results -o {stage.path}")
 
 
 @click.command()
@@ -212,5 +273,6 @@ def submit_next_stage(output, stage_num, return_code, verbose=False):
 
 
 pipeline.add_command(create)
+pipeline.add_command(status)
 pipeline.add_command(submit)
 pipeline.add_command(submit_next_stage)
