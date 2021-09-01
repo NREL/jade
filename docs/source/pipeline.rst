@@ -42,8 +42,14 @@ Submit the pipeline
 
 .. code-block:: bash
 
-    $ jade pipeline submit pipeline.toml
+    $ jade pipeline submit pipeline.toml -o pipeline-output
 
+Check status
+============
+
+.. code-block:: bash
+
+    $ jade pipeline status -o pipeline-output
 
 Example
 =======

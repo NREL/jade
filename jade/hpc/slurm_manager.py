@@ -48,10 +48,9 @@ class SlurmManager(HpcManagerInterface):
 
         output = {}
         # Transient failures could be costly. Retry for up to one minute.
-        ret = run_command(cmd, output, num_retries=6, retry_delay_s=10)
+        errors = ["Invalid job id specified"]
+        ret = run_command(cmd, output, num_retries=6, retry_delay_s=10, error_strings=errors)
         if ret != 0:
-            # TODO: Enhance run_command to not retry on known error messages.
-            # There is no need to retry in this case.
             if "Invalid job id specified" in output["stderr"]:
                 return HpcJobInfo("", "", HpcJobStatus.NONE)
 
