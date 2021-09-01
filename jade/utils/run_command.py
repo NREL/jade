@@ -4,7 +4,7 @@ import subprocess
 import sys
 import time
 
-from jade.exceptions import ExecutionError
+from jade.exceptions import ExecutionError, InvalidParameter
 from jade.utils.timing_utils import timed_debug
 
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 @timed_debug
-def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0):
+def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0, error_strings=None):
     """Runs a command as a subprocess.
 
     Parameters
@@ -28,6 +28,8 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0):
         Return code and output are from the last command execution.
     retry_delay_s : float, default=2.0
         Number of seconds to delay in between retries.
+    error_strings : None | str
+        Skip retries for these known error strings. Requires output to be set.
 
     Returns
     -------
@@ -40,6 +42,11 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0):
     file descriptor.
 
     """
+    if error_strings and output is None:
+        raise InvalidParameter(f"output must be set if error_strings are passed")
+    if error_strings is None:
+        error_strings = []
+
     logger.debug(cmd)
     # Disable posix if on Windows.
     command = shlex.split(cmd, posix="win" not in sys.platform)
@@ -50,9 +57,19 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0):
         _output = {} if isinstance(output, dict) else None
         ret = _run_command(command, _output, cwd)
         if ret != 0 and num_retries > 0:
-            logger.warning("Command [%s] failed on iteration %s: %s", cmd, i + 1, ret)
             if _output:
-                logger.debug(_output["stderr"])
+                if _should_exit_early(_output["stderr"], error_strings):
+                    i = max_tries - 1
+                else:
+                    logger.warning(
+                        "Command [%s] failed on iteration %s: %s: %s",
+                        cmd,
+                        i + 1,
+                        ret,
+                        _output["stderr"],
+                    )
+            else:
+                logger.warning("Command [%s] failed on iteration %s: %s", cmd, i + 1, ret)
         if ret == 0 or i == max_tries - 1:
             if isinstance(output, dict):
                 output.update(_output)
@@ -65,6 +82,13 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0):
             logger.debug(output["stderr"])
 
     return ret
+
+
+def _should_exit_early(std_err, error_strings):
+    for err in error_strings:
+        if err in std_err:
+            return True
+    return False
 
 
 def _run_command(command, output, cwd):

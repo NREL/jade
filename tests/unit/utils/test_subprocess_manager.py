@@ -1,6 +1,7 @@
 """
 Unit tests for subprocess management methods in SubprocessManager class
 """
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -129,6 +130,26 @@ def test_run_command_retries_exhausted():
     command = "ls invalid_test_file"
     ret = run_command(command, num_retries=3, retry_delay_s=0.1)
     assert ret != 0
+
+
+def test_run_command_skip_retries():
+    """Should run a command as a subprocess"""
+    command = "jade bad-command"
+    output = {}
+    errors = ["No such command"]
+    # Make sure that we get the expected return.
+    ret = run_command(command, output)
+    assert ret != 0
+    assert "stderr" in output
+    assert errors[0] in output["stderr"]
+
+    # Now make it hang if it doesn't skip retries.
+    ret = run_command(
+        command, output, error_strings=errors, num_retries=sys.maxsize, retry_delay_s=100000
+    )
+    assert ret != 0
+    assert "stderr" in output
+    assert "No such command" in output["stderr"]
 
 
 def test_check_run_command():
