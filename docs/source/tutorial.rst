@@ -531,7 +531,7 @@ should usually take at most a few seconds. If a walltime timeout occurs while
 this lock is held and the JADE process is terminated then no other node will be
 able to promote itself to submitter and jobs will be stuck.
 
-We plan to add code to detect this condition it in the future. If this occurs
+We plan to add code to detect this condition in the future. If this occurs
 you can fix it manually by deleting the lock file and restarting jobs. This is
 safe if you know that no new jobs were submitted. It is unsafe if one or more
 jobs were submitted but not recorded. Restarting the jobs could result in the
