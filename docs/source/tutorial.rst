@@ -527,13 +527,15 @@ Deadlocks
 While it should be very rare, it is possible that JADE gets deadlocked and
 stops submitting jobs. When a compute node finishes a batch of jobs it acquires
 a file lock in order to update status and attempt to submit new jobs. This
-should usually take less than one second. If a walltime timeout occurs while
+should usually take at most a few seconds. If a walltime timeout occurs while
 this lock is held and the JADE process is terminated then no other node will be
 able to promote itself to submitter and jobs will be stuck.
 
-We plan to add code to detect this condition and resolve it in the future. If
-this occurs you can fix it manually by deleting the lock file and restarting
-jobs.
+We plan to add code to detect this condition it in the future. If this occurs
+you can fix it manually by deleting the lock file and restarting jobs. This is
+safe if you know that no new jobs were submitted. It is unsafe if one or more
+jobs were submitted but not recorded. Restarting the jobs could result in the
+same jobs being run multiple times.
 
 .. code-block:: bash
 
