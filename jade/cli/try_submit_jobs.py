@@ -9,11 +9,8 @@ import click
 from jade.enums import Status
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_submitter import JobSubmitter
-from jade.loggers import setup_logging
+from jade.loggers import setup_logging, setup_event_logging
 from jade.utils.utils import get_cli_string
-
-
-logger = logging.getLogger(__name__)
 
 
 @click.command()
@@ -37,13 +34,11 @@ def try_submit_jobs(output, verbose):
 
     # Only create the logger if we get promoted.
     filename = os.path.join(output, "submit_jobs.log")
+    event_filename = os.path.join(output, "submit_jobs_events.log")
+    setup_event_logging(event_filename, mode="a")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
+    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
     logger.info(get_cli_string())
-
-    event_file = os.path.join(output, "submit_jobs_events.log")
-    # This effectively means no console logging.
-    setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
     if cluster.is_complete():
         cluster.demote_from_submitter()

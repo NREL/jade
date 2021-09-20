@@ -29,7 +29,6 @@ def setup_logging(
         "version": 1,
         "disable_existing_loggers": False,
         "formatters": {
-            "basic": {"format": "%(message)s"},
             "short": {
                 "format": "%(asctime)s - %(levelname)s [%(name)s "
                 "%(filename)s:%(lineno)d] : %(message)s",
@@ -52,26 +51,10 @@ def setup_logging(
                 "mode": mode,
                 "formatter": "detailed",
             },
-            "structured_file": {
-                "class": "logging.FileHandler",
-                "level": file_level,
-                "filename": filename,
-                "mode": "a",
-                "formatter": "basic",
-            },
         },
         "loggers": {
             name: {"handlers": ["console", "file"], "level": "DEBUG", "propagate": False},
-            "event": {
-                "handlers": ["console", "structured_file"],
-                "level": "DEBUG",
-                "propagate": False,
-            },
         },
-        # "root": {
-        #    "handlers": ["console", "file"],
-        #    "level": "WARN",
-        # },
     }
 
     logging_packages = set(Registry().list_loggers())
@@ -93,19 +76,59 @@ def setup_logging(
             if "file" in log_config["loggers"][package]["handlers"]:
                 log_config["loggers"][package]["handlers"].remove("file")
 
-    # For event logging
-    if name == "event":
-        log_config["handlers"].pop("file")
-        for package in logging_packages:
-            log_config["loggers"].pop(package)
-    else:
-        log_config["handlers"].pop("structured_file")
-        log_config["loggers"]["event"]["handlers"].remove("structured_file")
-
     logging.config.dictConfig(log_config)
     logger = logging.getLogger(name)
 
     return logger
+
+
+_EVENT_LOGGER_NAME = "_jade_event"
+
+
+def setup_event_logging(filename, mode="w"):
+    """Configures structured event logging.
+
+    Parameters
+    ----------
+    filename : str
+        log filename
+    mode : str
+
+    """
+    log_config = {
+        "version": 1,
+        "disable_existing_loggers": False,
+        "formatters": {
+            "basic": {"format": "%(message)s"},
+        },
+        "handlers": {
+            "file": {
+                "class": "logging.FileHandler",
+                "level": logging.INFO,
+                "filename": filename,
+                "mode": mode,
+                "formatter": "basic",
+            },
+        },
+        "loggers": {
+            "_jade_event": {
+                "handlers": ["file"],
+                "level": "INFO",
+                "propagate": False,
+            },
+        },
+    }
+
+    logging.config.dictConfig(log_config)
+    logger = logging.getLogger(_EVENT_LOGGER_NAME)
+
+    return logger
+
+
+def close_event_logging():
+    """Close the event log file handle."""
+    for handler in logging.getLogger(_EVENT_LOGGER_NAME).handlers:
+        handler.close()
 
 
 def log_event(event):
@@ -118,5 +141,5 @@ def log_event(event):
         An instance of :obj:`StructuredLogEvent`
 
     """
-    logger = logging.getLogger("event")
+    logger = logging.getLogger(_EVENT_LOGGER_NAME)
     logger.info(event)

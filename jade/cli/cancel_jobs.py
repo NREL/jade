@@ -28,7 +28,7 @@ def cancel_jobs(output, verbose):
     """Cancels jobs."""
     filename = os.path.join(output, "cancel_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
+    setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
     logger.info(get_cli_string())
 
     for _ in range(60):

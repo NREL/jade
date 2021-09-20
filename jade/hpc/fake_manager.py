@@ -126,6 +126,6 @@ class FakeManager(HpcManagerInterface):
             self._job_id = self._get_next_job_id(output_path)
             self._subprocess_mgr = SubprocessManager()
             self._subprocess_mgr.run(filename)
-            logger.error("Submit job with %s", self._job_id)
+            logger.info("Submit job with %s", self._job_id)
             time.sleep(1)
             return Status.GOOD, self._job_id, None

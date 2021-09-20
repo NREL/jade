@@ -15,7 +15,7 @@ from jade.jobs.async_cli_command import AsyncCliCommand
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_queue import JobQueue
 from jade.models import JobState
-from jade.loggers import setup_logging
+from jade.loggers import close_event_logging
 from jade.resource_monitor import ResourceMonitorAggregator, ResourceMonitorLogger
 from jade.utils.timing_utils import timed_info
 
@@ -42,13 +42,17 @@ class JobRunner(JobManagerBase):
         self._node_id = self._intf.get_node_id()
         self._intf_type = config.hpc_type
         self._batch_id = batch_id
-        self._event_file = os.path.join(
+        self._event_filename = os.path.join(
             output,
             f"run_jobs_batch_{batch_id}_{self._node_id}_events.log",
         )
         self._event_logger = None
 
         logger.debug("Constructed JobRunner output=%s batch=%s", output, batch_id)
+
+    @property
+    def event_filename(self):
+        return self._event_filename
 
     def _check_jobs(self, cluster: Cluster):
         if cluster.job_status is None:
@@ -95,11 +99,6 @@ class JobRunner(JobManagerBase):
         logger.info("Run jobs.")
         scratch_dir = self._create_local_scratch()
         are_inputs_local = self._intf_type == HpcType.LOCAL
-
-        # Not sure exactly why, but this needs to come after run_jobs.py has initialized logging.
-        self._event_logger = setup_logging(
-            "event", self._event_file, console_level=logging.ERROR, file_level=logging.INFO
-        )
 
         try:
             config_file = self._config.serialize_for_execution(scratch_dir, are_inputs_local)
@@ -227,9 +226,8 @@ class JobRunner(JobManagerBase):
     def _aggregate_events(self):
         # Aggregate all job events.log files into this node's log file so
         # that the we can more quickly make events.json later.
-        for handler in self._event_logger.handlers:
-            handler.close()
-        with open(self._event_file, "a") as f_out:
+        close_event_logging()
+        with open(self._event_filename, "a") as f_out:
             for job in self._config.iter_jobs():
                 job_file = os.path.join(self._output, JOBS_OUTPUT_DIR, job.name, "events.log")
                 if not os.path.exists(job_file):
@@ -239,4 +237,4 @@ class JobRunner(JobManagerBase):
                     for line in f_in:
                         f_out.write(line)
                 os.remove(job_file)
-                logger.debug("Moved contents of %s to %s", job_file, self._event_file)
+                logger.debug("Moved contents of %s to %s", job_file, self._event_filename)

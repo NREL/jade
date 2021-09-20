@@ -13,7 +13,7 @@ from jade.jobs.cluster import Cluster
 from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.jobs.job_submitter import JobSubmitter
-from jade.loggers import setup_logging
+from jade.loggers import setup_logging, setup_event_logging
 from jade.result import ResultsSummary
 from jade.utils.utils import rotate_filenames
 
@@ -54,13 +54,11 @@ def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
     if rotate_logs:
         rotate_filenames(output, ".log")
 
+    event_file = os.path.join(output, "submit_jobs_events.log")
+    setup_event_logging(event_file, mode="a")
     filename = os.path.join(output, "submit_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
-
-    event_file = os.path.join(output, "submit_jobs_events.log")
-    # This effectively means no console logging.
-    setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
 
     cluster, promoted = Cluster.deserialize(
         output,

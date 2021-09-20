@@ -9,7 +9,7 @@ import time
 import click
 
 from jade.events import EventsSummary
-from jade.loggers import setup_logging
+from jade.loggers import setup_event_logging
 from jade.resource_monitor import ResourceMonitorLogger
 
 
@@ -56,7 +56,7 @@ def collect(duration, force, interval, output):
 
     os.makedirs(output)
     event_file = os.path.join(output, "stats_events.log")
-    setup_logging("event", event_file, console_level=logging.ERROR, file_level=logging.INFO)
+    setup_event_logging(event_file)
     monitor = ResourceMonitorLogger("ResourceMonitor")
     start_time = time.time()
 
