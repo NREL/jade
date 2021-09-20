@@ -64,6 +64,7 @@ def submit_jobs(
     node_setup_script=None,
     node_shutdown_script=None,
     submitter_params=None,
+    no_distributed_submitter=None,
 ):
     """Submits jobs for execution, locally or on HPC."""
     if os.path.exists(output):
@@ -97,6 +98,7 @@ def submit_jobs(
             time_based_batching=time_based_batching,
             node_setup_script=node_setup_script,
             node_shutdown_script=node_shutdown_script,
+            no_distributed_submitter=no_distributed_submitter,
         )
 
     if params.time_based_batching and params.num_processes is None:

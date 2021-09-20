@@ -58,7 +58,7 @@ class SubmitterParams(JadeBaseModel):
     )
     resource_monitor_type: Optional[ResourceMonitorType] = Field(
         title="resource_monitor_type",
-        description=f"Type of resource monitoring to perform. Options: {list(ResourceMonitorType)}",
+        description=f"Type of resource monitoring to perform. Options: {[x.value for x in ResourceMonitorType]}",
         default=ResourceMonitorType.AGGREGATION,
     )
     try_add_blocked_jobs: Optional[bool] = Field(
@@ -86,4 +86,9 @@ class SubmitterParams(JadeBaseModel):
         title="singularity_params",
         description="Singularity container parameters",
         default=None,
+    )
+    distributed_submitter: Optional[bool] = Field(
+        title="distributed_submitter",
+        description="Submit new jobs and update status on compute nodes.",
+        default=True,
     )

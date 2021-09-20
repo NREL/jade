@@ -223,6 +223,14 @@ COMMON_SUBMITTER_OPTIONS = (
         default=SUBMITTER_PARAMS_DEFAULTS["node_shutdown_script"],
         help="Script to run on each after completing jobs (upload output files).",
     ),
+    click.option(
+        "-N",
+        "--no-distributed-submitter",
+        is_flag=True,
+        default=False,
+        show_default=True,
+        help="Disable the distributed submitter",
+    ),
 )
 
 
@@ -253,6 +261,7 @@ def make_submitter_params(
     time_based_batching=None,
     node_setup_script=None,
     node_shutdown_script=None,
+    no_distributed_submitter=None,
 ):
     """Returns an instance of SubmitterParams for use in a job submission."""
     if local:
@@ -313,6 +322,7 @@ def make_submitter_params(
         max_nodes=max_nodes,
         num_processes=num_processes,
         per_node_batch_size=per_node_batch_size,
+        distributed_submitter=not no_distributed_submitter,
         dry_run=dry_run,
         node_setup_script=node_setup_script,
         node_shutdown_script=node_shutdown_script,

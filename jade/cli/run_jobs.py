@@ -20,6 +20,13 @@ from jade.utils.utils import get_cli_string
     "config-file",
     type=str,
 )
+@click.option(
+    "--distributed-submitter/--no-distributed-submitter",
+    is_flag=True,
+    default=True,
+    show_default=True,
+    help="Enable distributed submitter",
+)
 @click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
     "-q",
@@ -33,7 +40,7 @@ from jade.utils.utils import get_cli_string
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 @click.command()
-def run_jobs(config_file, output, num_processes, verbose):
+def run_jobs(config_file, distributed_submitter, output, num_processes, verbose):
     """Starts jobs on HPC."""
     match = re.search(r"batch_(\d+)\.json", config_file)
     assert match
@@ -42,7 +49,11 @@ def run_jobs(config_file, output, num_processes, verbose):
 
     # When running on compute nodes try to submit more jobs before and after
     # running this batch's jobs.
-    _try_submit_jobs(output, verbose)
+    # In order to debug some slowness issues record how long this function is taking on each node.
+    if distributed_submitter:
+        start = time.time()
+        _try_submit_jobs(output, verbose)
+        first_try_submit_seconds = time.time() - start
 
     mgr = JobRunner(config_file, output=output, batch_id=batch_id)
 
@@ -53,6 +64,8 @@ def run_jobs(config_file, output, num_processes, verbose):
     setup_event_logging(mgr.event_filename)
     logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
     logger.info(get_cli_string())
+    if distributed_submitter:
+        logger.info("First try-submit-jobs took %s seconds", first_try_submit_seconds)
 
     group = mgr.config.get_default_submission_group()
     if group.submitter_params.node_setup_script:
@@ -71,8 +84,10 @@ def run_jobs(config_file, output, num_processes, verbose):
         if ret2 != 0:
             logger.error("Failed to run node shutdown script %s: %s", cmd, ret2)
 
-    if status == Status.GOOD:
+    if status == Status.GOOD and distributed_submitter:
+        start = time.time()
         _try_submit_jobs(output, verbose=verbose)
+        logger.info("Second try-submit-jobs took %s seconds", time.time() - start)
 
     sys.exit(ret)
 

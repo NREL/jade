@@ -64,7 +64,11 @@ class HpcSubmitter:
         sing_params = submission_group.submitter_params.singularity_params
         if sing_params and sing_params.enabled:
             text += sing_params.setup_commands.split("\n")
-        command = f"jade-internal run-jobs {config_file} " f"--output={self._output}"
+        if submission_group.submitter_params.distributed_submitter:
+            dsub = "--distributed-submitter"
+        else:
+            dsub = "--no-distributed-submitter"
+        command = f"jade-internal run-jobs {config_file} --output={self._output} {dsub}"
         if submission_group.submitter_params.num_processes is not None:
             command += f" --num-processes={submission_group.submitter_params.num_processes}"
         if submission_group.submitter_params.verbose:

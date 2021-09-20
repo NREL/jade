@@ -542,6 +542,28 @@ same jobs being run multiple times.
     $ rm <output-dir>/cluster_config.json.lock
     $ jade try-submit-jobs <output-dir>
 
+If you would like to avoid the possibility of this happening then you can
+pass ``--no-distributed-submitter`` to ``jade submit-jobs``. That will prevent
+each compute node from updating status or looking for unblocked jobs to submit.
+You will need to run the command ``jade try-submit-jobs`` yourself to do this.
+
+If you enable periodic resource utilization collection in this mode, be aware
+of the fact that once JADE detects that all jobs are complete it will
+aggregate the stats and generate plots in that process. This is
+resource-intensive and you may not want to run it on the login node. You can
+tell if this will occur beforehand by comparing the total number of jobs with 
+the number of completed jobs.
+
+.. code-block:: bash
+
+    # This will print the total number of jobs.
+    $ jade config show config.json
+
+    # This file lists the completed jobs and a header. Subtract one from this
+    # output to get the number of completed jobs.
+    $ wc -l output/results.csv
+
+
 Resource Monitoring
 ===================
 JADE optionally monitors CPU, disk, memory, and network utilization

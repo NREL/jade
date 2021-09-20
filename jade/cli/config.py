@@ -365,6 +365,7 @@ def submitter_params(
     time_based_batching=None,
     node_setup_script=None,
     node_shutdown_script=None,
+    no_distributed_submitter=None,
 ):
     """Create parameters for use in 'jade submit-jobs'."""
     params = make_submitter_params(
@@ -385,6 +386,7 @@ def submitter_params(
         time_based_batching=time_based_batching,
         node_setup_script=node_setup_script,
         node_shutdown_script=node_shutdown_script,
+        no_distributed_submitter=no_distributed_submitter,
     )
     # This converts enums to values.
     data = json.loads(params.json())
