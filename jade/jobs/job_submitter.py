@@ -202,7 +202,8 @@ results_summary={self.get_results_summmary_report()}"""
         log_event(event)
 
         group = self._config.get_default_submission_group()
-        self.generate_reports(self._output, group.submitter_params.resource_monitor_type)
+        if group.submitter_params.generate_reports:
+            self.generate_reports(self._output, group.submitter_params.resource_monitor_type)
         cluster.mark_complete()
 
         if cluster.config.pipeline_stage_num is not None:

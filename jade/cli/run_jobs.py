@@ -4,19 +4,16 @@ import logging
 import os
 import re
 import sys
+import time
 
 import click
 
 from jade.common import OUTPUT_DIR
 from jade.enums import Status
-from jade.jobs.cluster import Cluster
 from jade.jobs.job_runner import JobRunner
-from jade.loggers import setup_logging
+from jade.loggers import setup_logging, setup_event_logging
 from jade.utils.subprocess_manager import run_command
 from jade.utils.utils import get_cli_string
-
-
-logger = logging.getLogger(__name__)
 
 
 @click.argument(
@@ -53,7 +50,8 @@ def run_jobs(config_file, output, num_processes, verbose):
     # is what makes the file unique.
     filename = os.path.join(output, f"run_jobs_batch_{batch_id}_{mgr.node_id}.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_logging(__name__, filename, file_level=level, console_level=logging.ERROR)
+    setup_event_logging(mgr.event_filename)
+    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
     logger.info(get_cli_string())
 
     group = mgr.config.get_default_submission_group()
@@ -85,4 +83,5 @@ def _try_submit_jobs(output, verbose):
         try_submit_cmd += " --verbose"
     ret = run_command(try_submit_cmd)
     if ret != 0:
+        logger = logging.getLogger(__name__)
         logger.error("Failed to run '%s' ret=%s", try_submit_cmd, ret)

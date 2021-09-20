@@ -8,7 +8,7 @@ import click
 
 from jade.common import OUTPUT_DIR
 from jade.events import StructuredErrorLogEvent, EVENT_CATEGORY_ERROR, EVENT_NAME_UNHANDLED_ERROR
-from jade.loggers import log_event, setup_logging
+from jade.loggers import log_event, setup_logging, setup_event_logging
 from jade.jobs.job_post_process import JobPostProcess
 from jade.utils.utils import get_cli_string, load_data
 from jade.exceptions import InvalidExtension
@@ -53,6 +53,10 @@ def run(extension, **kwargs):
     # Create directory for current job
     job_dir = os.path.join(output, name)
     os.makedirs(job_dir, exist_ok=True)
+    # Structural logging setup
+    event_file = os.path.join(job_dir, "events.log")
+    setup_event_logging(event_file)
+
     # General logging setup
     log_file = os.path.join(job_dir, "run.log")
     general_logger = setup_logging(
@@ -62,10 +66,6 @@ def run(extension, **kwargs):
         file_level=level,
     )
     general_logger.info(get_cli_string())
-
-    # Structural logging setup
-    event_file = os.path.join(job_dir, "events.log")
-    setup_logging("event", event_file, console_level=logging.ERROR, file_level=level)
 
     # Create config for run
     try:
