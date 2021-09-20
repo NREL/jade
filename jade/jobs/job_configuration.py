@@ -238,8 +238,10 @@ class JobConfiguration(abc.ABC):
             "hpc_config",
             "per_node_batch_size",
             "singularity_params",
+            "distributed_submitter",
         )
         user_overrides = (
+            "distributed_submitter",
             "generate_reports",
             "resource_monitor_interval",
             "resource_monitor_type",

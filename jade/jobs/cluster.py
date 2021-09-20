@@ -1,6 +1,7 @@
 import logging
 import os
 import socket
+import time
 
 from filelock import SoftFileLock, Timeout
 
@@ -445,9 +446,12 @@ class Cluster:
     def _do_action_under_lock_internal(lock_file, func, *args, timeout=LOCK_TIMEOUT, **kwargs):
         # Using this instead of FileLock because it will be used across nodes
         # on the Lustre filesystem.
+        lock_acquisition_seconds = None
         lock = SoftFileLock(lock_file, timeout=timeout)
         try:
+            start = time.time()
             lock.acquire(timeout=timeout)
+            lock_acquisition_seconds = time.time() - start
         except Timeout:
             # Picked a default value such that this should not trip. If it does
             # trip under normal circumstances then we need to reconsider this.
@@ -458,6 +462,13 @@ class Cluster:
                 socket.gethostname(),
             )
             raise
+
+        if lock_acquisition_seconds > 5:
+            logger.warning(
+                "cluster lock acquisition for %s took %s seconds",
+                func.__name__,
+                lock_acquisition_seconds,
+            )
 
         try:
             val = func(*args, **kwargs)
