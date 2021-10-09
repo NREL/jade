@@ -136,7 +136,7 @@ results_summary={self.get_results_summmary_report()}"""
             )
             log_event(event)
         else:
-            self._handle_submission_groups_after_deserialize(cluster)
+            self._handle_submission_groups()
 
         result = Status.IN_PROGRESS
         group = self._config.get_default_submission_group()

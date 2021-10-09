@@ -69,7 +69,7 @@ def test_deserialize_result(jade_data, jade_results):
 def test_deserialize_results(jade_data, jade_results):
     """Should result a list of jade result as expected"""
     results = deserialize_results(jade_data["results"])
-    assert results == jade_results
+    assert list(results.values()) == jade_results
 
 
 # Disabled per DISCO-205

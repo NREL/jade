@@ -98,8 +98,9 @@ def _get_jobs_to_resubmit(cluster, output, failed, missing):
     results = ResultsSummary(output)
     jobs_to_resubmit = []
     if failed:
-        jobs_to_resubmit += results.get_canceled_results()
-        jobs_to_resubmit += results.get_failed_results()
+        res = results.get_results_by_type()
+        jobs_to_resubmit += res["canceled"]
+        jobs_to_resubmit += res["failed"]
     if missing:
         jobs_to_resubmit += results.get_missing_jobs(cluster.iter_jobs())
 
@@ -117,9 +118,12 @@ def _update_with_blocking_jobs(jobs_to_resubmit, output):
     for i in range(max_iter):
         first = len(jobs_to_resubmit)
         for job in config.iter_jobs():
-            blocking_jobs = job.get_blocking_jobs().intersection(jobs_to_resubmit)
-            updated_blocking_jobs_by_name[job.name] = blocking_jobs
-            if blocking_jobs:
+            blocking_jobs = job.get_blocking_jobs()
+            if not blocking_jobs:
+                continue
+            intersecting_jobs = blocking_jobs.intersection(jobs_to_resubmit)
+            if intersecting_jobs:
+                updated_blocking_jobs_by_name[job.name] = intersecting_jobs
                 jobs_to_resubmit.add(job.name)
         num_added = len(jobs_to_resubmit) - first
         if num_added == 0:

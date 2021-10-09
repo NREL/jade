@@ -111,14 +111,15 @@ def deserialize_results(data):
 
     Parameters
     ----------
-    data : list of dict
+    data : dict
+        name to Result
 
     Returns
     -------
-    list of Result
+    dict of Result instances
 
     """
-    return [deserialize_result(x) for x in data]
+    return {x["name"]: deserialize_result(x) for x in data}
 
 
 class ResultsSummary:
@@ -157,7 +158,7 @@ class ResultsSummary:
             list of Result objects
 
         """
-        return self._results
+        return list(self._results.values())
 
     @staticmethod
     def _parse(results_file):
@@ -171,12 +172,9 @@ class ResultsSummary:
         Returns
         -------
         dict
-        """
-        for result in self._results["results"]:
-            if job_name == result.name:
-                return result
 
-        return None
+        """
+        return self._results["results"].get(job_name)
 
     def get_successful_result(self, job_name):
         """Return the successful job result from the results
@@ -202,9 +200,31 @@ class ResultsSummary:
 
         return result
 
+    def get_results_by_type(self):
+        """Return the results split by type.
+
+        Returns
+        -------
+        dict
+
+        """
+        successful = []
+        failed = []
+        canceled = []
+
+        for result in self._results["results"].values():
+            if result.is_successful():
+                successful.append(result)
+            elif result.is_failed():
+                failed.append(result)
+            elif result.is_canceled():
+                canceled.append(result)
+
+        return {"successful": successful, "failed": failed, "canceled": canceled}
+
     def get_successful_results(self):
         """Return the successful results."""
-        return [x for x in self._results["results"] if x.is_successful()]
+        return [x for x in self._results["results"].values() if x.is_successful()]
 
     def get_missing_jobs(self, expected_jobs):
         """Return the jobs for which there are no results.
@@ -228,11 +248,11 @@ class ResultsSummary:
 
     def get_canceled_results(self):
         """Return the canceled results."""
-        return [x for x in self._results["results"] if x.is_canceled()]
+        return [x for x in self._results["results"].values() if x.is_canceled()]
 
     def get_failed_results(self):
         """Return the failed results."""
-        return [x for x in self._results["results"] if x.is_failed()]
+        return [x for x in self._results["results"].values() if x.is_failed()]
 
     def list_results(self):
         """Return the results.
@@ -242,7 +262,7 @@ class ResultsSummary:
         list
 
         """
-        return self._results["results"][:]
+        return list(self._results["results"].values())
 
     def show_results(self, only_failed=False, only_successful=False):
         """Show the results in a table."""
@@ -268,10 +288,11 @@ class ResultsSummary:
             "Execution Time (s)",
             "Completion Time",
         ]
-        min_exec = self._results["results"][0].exec_time_s
-        max_exec = self._results["results"][0].exec_time_s
+        first = next(iter(self._results["results"].values()))
+        min_exec = first.exec_time_s
+        max_exec = first.exec_time_s
         exec_times = []
-        for result in self._results["results"]:
+        for result in self._results["results"].values():
             if result.is_successful():
                 num_successful += 1
             elif result.is_failed():

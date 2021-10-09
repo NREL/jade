@@ -5,6 +5,7 @@ import os
 import shutil
 import time
 import uuid
+from pathlib import Path
 
 from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_temp_results_filename
 from jade.enums import Status, ResourceMonitorType
@@ -33,9 +34,7 @@ class JobRunner(JobManagerBase):
         batch_id=0,
     ):
         super(JobRunner, self).__init__(config_file, output)
-        cluster, _ = Cluster.deserialize(output)
-        self._check_jobs(cluster)
-        self._handle_submission_groups_after_deserialize(cluster)
+        self._handle_submission_groups()
         group = self.config.get_default_submission_group()
         config = group.submitter_params.hpc_config
         self._intf = HpcManager.create_hpc_interface(config)
@@ -54,21 +53,6 @@ class JobRunner(JobManagerBase):
     def event_filename(self):
         return self._event_filename
 
-    def _check_jobs(self, cluster: Cluster):
-        if cluster.job_status is None:
-            # This is true in local mode and these checks are not relevant.
-            return
-
-        # Perform a sanity check. If all jobs aren't "submitted" then something went wrong.
-        submitted_jobs = {job.name for job in cluster.iter_jobs(state=JobState.SUBMITTED)}
-        error_jobs = []
-        for job in self._config.iter_jobs():
-            if job.name not in submitted_jobs:
-                error_jobs.append(job.name)
-        if error_jobs:
-            logger.error("Jobs were not in the submitted state: %s", " ".join(error_jobs))
-            assert not error_jobs, f"number of jobs not in submitted state = {len(error_jobs)}"
-
     @property
     def node_id(self):
         """Return the node ID of the current system.
@@ -81,11 +65,13 @@ class JobRunner(JobManagerBase):
         return self._node_id
 
     @timed_info
-    def run_jobs(self, verbose=False, num_processes=None):
+    def run_jobs(self, distributed_submitter=True, verbose=False, num_processes=None):
         """Run the jobs.
 
         Parameters
         ----------
+        distributed_submitter : bool
+            If True, make cluster updates.
         verbose : bool
             If True, enable debug logging.
         num_processes : int
@@ -108,7 +94,7 @@ class JobRunner(JobManagerBase):
             logger.info("Completed %s jobs", len(jobs))
         finally:
             shutil.rmtree(scratch_dir)
-            if not are_inputs_local:
+            if distributed_submitter and are_inputs_local:
                 self._complete_hpc_job()
 
         return result
