@@ -76,6 +76,10 @@ def test_cancel_on_failure_detect_by_submitter(cleanup):
     assert len(summary.get_successful_results()) == 1
     assert len(summary.get_failed_results()) == 1
     assert len(summary.get_canceled_results()) == 6
+    results = summary.get_results_by_type()
+    assert len(results["successful"]) == 1
+    assert len(results["failed"]) == 1
+    assert len(results["canceled"]) == 6
 
 
 def test_cancel_on_failure_detect_by_runner(cleanup):
@@ -91,3 +95,7 @@ def test_cancel_on_failure_detect_by_runner(cleanup):
     assert len(summary.get_successful_results()) == 1
     assert len(summary.get_failed_results()) == 1
     assert len(summary.get_canceled_results()) == 6
+    results = summary.get_results_by_type()
+    assert len(results["successful"]) == 1
+    assert len(results["failed"]) == 1
+    assert len(results["canceled"]) == 6
