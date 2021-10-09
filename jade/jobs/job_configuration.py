@@ -466,17 +466,14 @@ class JobConfiguration(abc.ABC):
 
     def get_default_submission_group(self):
         """Return the default submission group.
-        If all the jobs in the config have the same group, return that one.
-        If the jobs have different groups, return an arbitrary one.
 
         Returns
         -------
         SubmissionGroup
 
         """
-        group_names = {x.submission_group for x in self.iter_jobs()}
-        logger.debug(f"submission groups: {group_names}")
-        return self.get_submission_group(next(iter(group_names)))
+        name = next(iter(self.iter_jobs())).submission_group
+        return self.get_submission_group(name)
 
     def get_submission_group(self, name):
         """Return the submission group matching name.

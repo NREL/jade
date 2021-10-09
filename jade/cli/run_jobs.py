@@ -47,14 +47,6 @@ def run_jobs(config_file, distributed_submitter, output, num_processes, verbose)
     batch_id = match.group(1)
     os.makedirs(output, exist_ok=True)
 
-    # When running on compute nodes try to submit more jobs before and after
-    # running this batch's jobs.
-    # In order to debug some slowness issues record how long this function is taking on each node.
-    if distributed_submitter:
-        start = time.time()
-        _try_submit_jobs(output, verbose)
-        first_try_submit_seconds = time.time() - start
-
     mgr = JobRunner(config_file, output=output, batch_id=batch_id)
 
     # Logging has to get enabled after the JobRunner is created because we need the node ID
@@ -64,8 +56,6 @@ def run_jobs(config_file, distributed_submitter, output, num_processes, verbose)
     setup_event_logging(mgr.event_filename)
     logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
     logger.info(get_cli_string())
-    if distributed_submitter:
-        logger.info("First try-submit-jobs took %s seconds", first_try_submit_seconds)
 
     group = mgr.config.get_default_submission_group()
     if group.submitter_params.node_setup_script:
@@ -75,7 +65,9 @@ def run_jobs(config_file, distributed_submitter, output, num_processes, verbose)
             logger.error("Failed to run node setup script %s: %s", cmd, ret)
             sys.exit(ret)
 
-    status = mgr.run_jobs(verbose=verbose, num_processes=num_processes)
+    status = mgr.run_jobs(
+        distributed_submitter=distributed_submitter, verbose=verbose, num_processes=num_processes
+    )
     ret = status.value
 
     if group.submitter_params.node_shutdown_script:
@@ -87,7 +79,7 @@ def run_jobs(config_file, distributed_submitter, output, num_processes, verbose)
     if status == Status.GOOD and distributed_submitter:
         start = time.time()
         _try_submit_jobs(output, verbose=verbose)
-        logger.info("Second try-submit-jobs took %s seconds", time.time() - start)
+        logger.info("try-submit-jobs took %s seconds", time.time() - start)
 
     sys.exit(ret)
 

@@ -2,19 +2,20 @@ import logging
 import os
 import socket
 import time
+from pathlib import Path
 
 from filelock import SoftFileLock, Timeout
 
 from jade.exceptions import InvalidConfiguration
 from jade.jobs.job_configuration import JobConfiguration
-from jade.models import ClusterConfig, Job, JobState, JobStatus
-from jade.utils.utils import load_data
+from jade.models import ClusterConfig, Job, JobState, JobStatus, SubmissionGroup
+from jade.utils.utils import load_data, dump_data, ExtendedJSONEncoder
 
 
 logger = logging.getLogger(__name__)
 
 
-LOCK_TIMEOUT = 60
+LOCK_TIMEOUT = 300
 
 
 class Cluster:
@@ -25,6 +26,7 @@ class Cluster:
     LOCK_FILE = "cluster_config.json.lock"
     CONFIG_VERSION_FILE = "config_version.txt"
     JOB_STATUS_VERSION_FILE = "job_status_version.txt"
+    SUBMITTER_GROUP_FILE = "submitter_groups.json"
 
     def __init__(self, config, job_status=None, lock_timeout=LOCK_TIMEOUT):
         """Internal constructor. Use create() or deserialize()."""
@@ -88,6 +90,7 @@ class Cluster:
         cluster._serialize_job_status_version()
         cluster.serialize("create")
         cluster.serialize_jobs("create")
+        cluster.serialize_submission_groups(Path(path))
         return cluster
 
     @classmethod
@@ -330,7 +333,7 @@ class Cluster:
         for job in self.iter_jobs():
             if job.name in jobs_to_resubmit:
                 job.state = JobState.NOT_SUBMITTED
-                job.blocked_by = updated_blocking_jobs_by_name[job.name]
+                job.blocked_by = updated_blocking_jobs_by_name.get(job.name, set())
             elif job.state == JobState.DONE:
                 self._config.completed_jobs += 1
 
@@ -354,6 +357,35 @@ class Cluster:
     def serialize_jobs(self, reason):
         """Serialize the job status to a file."""
         self._do_action_under_lock(self._serialize_jobs, reason)
+
+    def serialize_submission_groups(self, directory):
+        """Serialize the submission groups so that they can be read without
+        acquiring a lock.
+
+        Parameters
+        ----------
+        directory : Path
+
+        """
+        path = directory / self.SUBMITTER_GROUP_FILE
+        data = [x.dict() for x in self._config.submission_groups]
+        dump_data(data, path, cls=ExtendedJSONEncoder)
+
+    @staticmethod
+    def deserialize_submission_groups(directory):
+        """Return the submission groups being used by the cluster.
+
+        Parameters
+        ----------
+        directory : Path
+
+        Returns
+        -------
+        list
+            list of SubmissionGroup
+
+        """
+        return [SubmissionGroup(**x) for x in load_data(directory / Cluster.SUBMITTER_GROUP_FILE)]
 
     def update_job_status(
         self,

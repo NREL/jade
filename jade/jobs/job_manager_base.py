@@ -4,7 +4,9 @@ import abc
 import json
 import logging
 import os
+from pathlib import Path
 
+from jade.jobs.cluster import Cluster
 from jade.common import JOBS_OUTPUT_DIR, STATS_DIR
 from jade.jobs.job_configuration_factory import create_config_from_file
 
@@ -91,9 +93,10 @@ class JobManagerBase(abc.ABC):
         """Get the batch post-process config data"""
         return self._config.batch_post_process_config
 
-    def _handle_submission_groups_after_deserialize(self, cluster):
+    def _handle_submission_groups(self):
         # The JobConfiguration will not have any groups if the user didn't define any.
         # Reload from the cluster config.
         if not self._config.submission_groups:
-            assert len(cluster.config.submission_groups) == 1
-            self._config.append_submission_group(cluster.config.submission_groups[0])
+            submission_groups = Cluster.deserialize_submission_groups(Path(self._output))
+            assert len(submission_groups) == 1
+            self._config.append_submission_group(submission_groups[0])
