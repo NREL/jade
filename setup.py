@@ -25,7 +25,8 @@ with open(os.path.join(here, "jade", "version.py"), encoding="utf-8") as f:
 
 version = version.split()[2].strip('"').strip("'")
 
-demo_requires = ["matplotlib", "statsmodels>=0.10.1"]
+# TODO: Current code breaks with statsmodels 0.13.
+demo_requires = ["matplotlib", "statsmodels==0.12"]
 dataframe_utils_requires = ["tables", "pyarrow"]
 dev_requires = read_lines("dev-requirements.txt") + demo_requires + dataframe_utils_requires
 
