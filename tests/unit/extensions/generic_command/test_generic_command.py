@@ -69,6 +69,10 @@ def test_run_generic_commands(generic_command_fixture):
         check_run_command(cmd)
         check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
 
+    assert list(Path(OUTPUT).glob("*.sh"))
+    check_run_command(f"jade prune-files {OUTPUT}")
+    assert not list(Path(OUTPUT).glob("*.sh"))
+
 
 def test_generic_command_parameters():
     cmd = "bash myscript.sh"

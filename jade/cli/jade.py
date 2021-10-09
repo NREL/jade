@@ -13,6 +13,7 @@ from jade.cli.config import config
 from jade.cli.cluster import cluster
 from jade.cli.extensions import extensions
 from jade.cli.pipeline import pipeline
+from jade.cli.prune_files import prune_files
 from jade.cli.resubmit_jobs import resubmit_jobs
 from jade.cli.show_events import show_events
 from jade.cli.show_results import show_results
@@ -51,6 +52,7 @@ cli.add_command(cancel_jobs)
 cli.add_command(cluster)
 cli.add_command(config)
 cli.add_command(pipeline)
+cli.add_command(prune_files)
 cli.add_command(resubmit_jobs)
 cli.add_command(show_events)
 cli.add_command(show_results)
