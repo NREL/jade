@@ -175,7 +175,7 @@ class ResultsAggregator:
         self._do_action_under_lock(self._append_result, text)
         duration = time.time() - start
         if duration > 10:
-            logger.warning("Appending a result took too long: duration")
+            logger.warning("Appending a result took too long: %s", duration)
 
     def _append_result(self, text):
         with open(self._filename, "a") as f_out:
