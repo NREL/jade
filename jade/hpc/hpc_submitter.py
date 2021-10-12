@@ -1,6 +1,7 @@
 """Controls submission of jobs to HPC nodes."""
 
 import copy
+import itertools
 import logging
 import os
 import re
@@ -30,7 +31,12 @@ from jade.models import JobState
 from jade.models.submission_group import make_submission_group_lookup
 from jade.result import Result
 from jade.utils.timing_utils import timed_debug
-from jade.utils.utils import dump_data, create_script, ExtendedJSONEncoder
+from jade.utils.utils import (
+    aggregate_data_from_files,
+    dump_data,
+    create_script,
+    ExtendedJSONEncoder,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -286,27 +292,30 @@ class HpcSubmitter:
         )
         log_event(event)
 
-    def _cancel_job(self, job):
+    def _cancel_job(self, job, aggregator):
         job.state = JobState.DONE
         job.blocked_by.clear()
         result = Result(job.name, 1, JobCompletionStatus.CANCELED, 0)
-        ResultsAggregator.append(self._output, result)
+        aggregator.append_result(result)
         logger.info("Canceled job %s because one of its blocking jobs failed.", job.name)
+        return result
 
     def _update_completed_jobs(self):
         newly_completed = set()
         canceled_jobs = []
         # If jobs fail and are configured to cancel blocked jobs, we may need to run this
         # loop many times to cancel the entire chain.
+        aggregator = ResultsAggregator.load(self._output)
         need_to_rerun = True
+        new_results = []
         while need_to_rerun:
             need_to_rerun = False
-            aggregator = ResultsAggregator.load(self._output)
             failed_jobs = set()
-            for result in aggregator.process_results():
+            for result in itertools.chain(aggregator.process_results(), new_results):
                 newly_completed.add(result.name)
                 if result.return_code != 0:
                     failed_jobs.add(result.name)
+            new_results.clear()
 
             logger.debug("Detected completion of jobs: %s", newly_completed)
             logger.debug("Detected failed jobs: %s", failed_jobs)
@@ -315,8 +324,9 @@ class HpcSubmitter:
                     if job.cancel_on_blocking_job_failure and job.blocked_by.intersection(
                         failed_jobs
                     ):
-                        self._cancel_job(job)
+                        result = self._cancel_job(job, aggregator)
                         canceled_jobs.append(job)
+                        new_results.append(result)
                         need_to_rerun = True
                     else:
                         job.blocked_by.difference_update(newly_completed)

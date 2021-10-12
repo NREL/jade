@@ -34,13 +34,13 @@ def test_results_aggregator(cleanup):
     results = [create_result(i) for i in range(100)]
     os.makedirs(OUTPUT)
     pytest.aggregator = ResultsAggregator.create(OUTPUT)
-    assert os.path.exists(pytest.aggregator._processed_filename)
+    assert os.path.exists(pytest.aggregator._filename)
 
     for result in results:
         if int(result.name) % 2 == 0:
             pytest.aggregator.append_result(result)
 
-    final_results = pytest.aggregator.process_results()
+    final_results = pytest.aggregator.get_results()
     final_results.sort(key=lambda x: int(x.name))
     expected = [x for x in results if int(x.name) % 2 == 0]
     assert final_results == expected

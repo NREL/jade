@@ -9,6 +9,7 @@ import time
 import mock
 import pytest
 
+from jade.common import RESULTS_DIR
 from jade.jobs.async_cli_command import AsyncCliCommand
 from jade.jobs.results_aggregator import ResultsAggregator
 
@@ -21,8 +22,9 @@ def async_cmd():
     cmd = "echo 'Hello World'"
     output = os.path.join(tempfile.gettempdir(), "jade-test-async-cli-job")
     os.makedirs(output, exist_ok=True)
+    os.makedirs(os.path.join(output, RESULTS_DIR), exist_ok=True)
     ResultsAggregator.create(output)
-    cmd = AsyncCliCommand(job, cmd, output)
+    cmd = AsyncCliCommand(job, cmd, output, 1)
     yield cmd
     shutil.rmtree(output)
 
@@ -41,11 +43,6 @@ def test_async_cmd__run(async_cmd):
     async_cmd.run()
     assert async_cmd._pipe is not None
     assert async_cmd._is_pending is True
-
-
-def test_async_cmd__is_complete(async_cmd):
-    """Should generate result file as expected"""
-    async_cmd.run()
 
     while not async_cmd.is_complete():
         time.sleep(0.1)

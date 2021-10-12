@@ -6,8 +6,9 @@ import shlex
 import subprocess
 import sys
 import time
+from pathlib import Path
 
-from jade.common import JOBS_OUTPUT_DIR
+from jade.common import JOBS_OUTPUT_DIR, RESULTS_DIR
 from jade.enums import JobCompletionStatus, Status
 from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, EVENT_CATEGORY_RESOURCE_UTIL
 from jade.jobs.async_job_interface import AsyncJobInterface
@@ -23,15 +24,16 @@ logger = logging.getLogger(__name__)
 class AsyncCliCommand(AsyncJobInterface):
     """Defines a a CLI command that can be submitted asynchronously."""
 
-    def __init__(self, job, cmd, output):
+    def __init__(self, job, cmd, output, batch_id):
         self._job = job
         self._cli_cmd = cmd
-        self._output = output
+        self._output = Path(output)
         self._pipe = None
         self._is_pending = False
         self._start_time = None
         self._return_code = None
         self._is_complete = False
+        self._batch_id = batch_id
 
     def __del__(self):
         if self._is_pending:
@@ -42,7 +44,7 @@ class AsyncCliCommand(AsyncJobInterface):
         exec_time_s = time.time() - self._start_time
 
         status = JobCompletionStatus.FINISHED
-        output_dir = os.path.join(self._output, JOBS_OUTPUT_DIR, self._job.name)
+        output_dir = self._output / JOBS_OUTPUT_DIR / self._job.name
         bytes_consumed = get_directory_size_bytes(output_dir)
         event = StructuredLogEvent(
             source=self._job.name,
@@ -53,7 +55,7 @@ class AsyncCliCommand(AsyncJobInterface):
         )
         log_event(event)
         result = Result(self._job.name, self._return_code, status, exec_time_s)
-        ResultsAggregator.append(self._output, result)
+        ResultsAggregator.append(self._output, result, batch_id=self._batch_id)
 
         logger.info(
             "Job %s completed return_code=%s exec_time_s=%s",
@@ -66,7 +68,7 @@ class AsyncCliCommand(AsyncJobInterface):
         self._return_code = 1
         self._is_complete = True
         result = Result(self._job.name, self._return_code, JobCompletionStatus.CANCELED, 0.0)
-        ResultsAggregator.append(self._output, result)
+        ResultsAggregator.append(self._output, result, batch_id=self._batch_id)
         logger.info("Canceled job %s", self._job.name)
 
     @property
