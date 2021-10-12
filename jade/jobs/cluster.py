@@ -339,6 +339,7 @@ class Cluster:
 
         self._serialize("prepare_for_resubmission")
         self._serialize_jobs("prepare_for_resubmission")
+        self.serialize_submission_groups(Path(self._config.path))
 
     def promote_to_submitter(self, serialize=True):
         """Promote the current system to submitter.

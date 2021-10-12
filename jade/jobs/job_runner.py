@@ -7,7 +7,7 @@ import time
 import uuid
 from pathlib import Path
 
-from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR, get_temp_results_filename
+from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR
 from jade.enums import Status, ResourceMonitorType
 from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
@@ -158,6 +158,7 @@ class JobRunner(JobManagerBase):
                     verbose=verbose,
                 ),
                 self._output,
+                self._batch_id,
             )
             jobs.append(djob)
 

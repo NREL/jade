@@ -388,13 +388,15 @@ While jobs are running you can check status with this command:
 The status is updated when each compute node starts or completes its execution
 of a batch, so this status may not be current.
 
-Every job runner will log completions to the same file, so you can see live job
-completions with this command. Note that this file is cleared each time a
-submitter processes it.
+Each job runner will log completions to its own file, so you can see live job
+completions with this command. Note that these files are cleared each time a
+submitter processes them.
 
 .. code-block:: bash
 
-    $ tail -F output/results.csv
+    $ tail -F output/results/results_batch_1.csv
+    # This will follow all files that exist, not ones yet to be created.
+    $ tail -F output/results/results_batch_*.csv
 
 Check processed jobs in this file:
 

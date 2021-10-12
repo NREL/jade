@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from jade.common import RESULTS_DIR
 from jade.extensions.generic_command import GenericCommandInputs
 from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.test_common import FAKE_HPC_CONFIG
@@ -51,15 +52,16 @@ def test_no_distributed_submitter(cleanup):
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -N --no-reports"
     check_run_command(cmd)
 
-    results_file = Path(OUTPUT) / "results.csv"
+    results_file = Path(OUTPUT) / RESULTS_DIR / "results_batch_1.csv"
     processed_results_file = Path(OUTPUT) / "processed_results.csv"
     all_jobs_complete = False
     for _ in range(10):
-        lines = results_file.read_text().splitlines()
-        # The file has an extra line for the header.
-        if len(lines) == NUM_COMMANDS + 1:
-            all_jobs_complete = True
-            break
+        if results_file.exists():
+            lines = results_file.read_text().splitlines()
+            # The file has an extra line for the header.
+            if len(lines) == NUM_COMMANDS + 1:
+                all_jobs_complete = True
+                break
         time.sleep(1)
 
     assert all_jobs_complete
@@ -68,4 +70,4 @@ def test_no_distributed_submitter(cleanup):
     check_run_command(f"{TRY_SUBMIT_JOBS} {OUTPUT}")
     check_run_command(f"{WAIT} --output={OUTPUT}")
     assert len(processed_results_file.read_text().splitlines()) == NUM_COMMANDS + 1
-    assert len(results_file.read_text().splitlines()) == 1
+    assert not results_file.exists()

@@ -15,7 +15,6 @@ from jade.jobs.results_aggregator import ResultsAggregator
 from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging, setup_event_logging
 from jade.result import ResultsSummary
-from jade.utils.utils import rotate_filenames
 
 
 logger = logging.getLogger(__name__)
@@ -41,19 +40,10 @@ logger = logging.getLogger(__name__)
     help="Resubmit missing jobs.",
 )
 @click.option(
-    "--rotate-logs/--no-rotate-logs",
-    default=True,
-    show_default=True,
-    help="Rotate log files so that they aren't overwritten.",
-)
-@click.option(
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
-def resubmit_jobs(output, failed, missing, rotate_logs, verbose):
+def resubmit_jobs(output, failed, missing, verbose):
     """Resubmit failed and missing jobs."""
-    if rotate_logs:
-        rotate_filenames(output, ".log")
-
     event_file = os.path.join(output, "submit_jobs_events.log")
     setup_event_logging(event_file, mode="a")
     filename = os.path.join(output, "submit_jobs.log")

@@ -4,38 +4,47 @@ import csv
 import glob
 import logging
 import os
+import time
+from pathlib import Path
 
 from filelock import SoftFileLock, Timeout
 
-from jade.common import get_results_filename, get_temp_results_filename
+from jade.common import RESULTS_DIR
 from jade.result import Result, deserialize_result, serialize_result
 
+
+LOCK_TIMEOUT = 300
+PROCESSED_RESULTS_FILENAME = "processed_results.csv"
 
 logger = logging.getLogger(__name__)
 
 
 class ResultsAggregator:
-    """Synchronizes updates to the results file across jobs on one system."""
+    """Synchronizes updates to the results file.
 
-    def __init__(self, path, timeout=300, delimiter=","):
+    One instance is used to aggregate results from all compute nodes.
+    One instance is used for each compute node.
+    """
+
+    def __init__(self, filename, timeout=LOCK_TIMEOUT, delimiter=","):
         """
         Constructs ResultsAggregator.
 
         Parameters
         ----------
-        filename : str
-            Full path to results filename. Must be accessible by all workers.
+        filename : Path
+            Results file.
         timeout : int
             Lock acquistion timeout in seconds.
         delimiter : str
             Delimiter to use for CSV formatting.
 
         """
-        self._filename = get_temp_results_filename(path)
-        self._processed_filename = get_results_filename(path)
-        self._lock_file = self._filename + ".lock"
+        self._filename = filename
+        self._lock_file = self._filename.parent / (self._filename.name + ".lock")
         self._timeout = timeout
         self._delimiter = delimiter
+        self._is_node = "batch" in filename.name
 
     @classmethod
     def create(cls, output_dir, **kwargs):
@@ -50,7 +59,7 @@ class ResultsAggregator:
         ResultsAggregator
 
         """
-        agg = cls(output_dir, **kwargs)
+        agg = cls(Path(output_dir) / PROCESSED_RESULTS_FILENAME, **kwargs)
         agg.create_files()
         return agg
 
@@ -67,7 +76,38 @@ class ResultsAggregator:
         ResultsAggregator
 
         """
-        return cls(output_dir, **kwargs)
+        return cls(Path(output_dir) / PROCESSED_RESULTS_FILENAME, **kwargs)
+
+    @classmethod
+    def load_node_results(cls, output_dir, batch_id, **kwargs):
+        """Load a per-node instance from an output directory.
+
+        Parameters
+        ----------
+        output_dir : str
+        batch_id : int
+
+        Returns
+        -------
+        ResultsAggregator
+
+        """
+        return cls(Path(output_dir) / RESULTS_DIR / f"results_batch_{batch_id}.csv", **kwargs)
+
+    @classmethod
+    def load_node_results_file(cls, path, **kwargs):
+        """Load a per-node instance from an output directory.
+
+        Parameters
+        ----------
+        path : Path
+
+        Returns
+        -------
+        ResultsAggregator
+
+        """
+        return cls(path, **kwargs)
 
     @staticmethod
     def _get_fields():
@@ -77,6 +117,7 @@ class ResultsAggregator:
         # Using this instead of FileLock because it will be used across nodes
         # on the Lustre filesystem.
         lock = SoftFileLock(self._lock_file, timeout=self._timeout)
+        start = time.time()
         try:
             lock.acquire(timeout=self._timeout)
         except Timeout:
@@ -86,6 +127,10 @@ class ResultsAggregator:
                 "Failed to acquire file lock %s within %s seconds", self._lock_file, self._timeout
             )
             raise
+
+        duration = time.time() - start
+        if duration > 10:
+            logger.warning("Acquiring ResultsAggregator lock took too long: %s", duration)
 
         try:
             return func(*args, **kwargs)
@@ -100,19 +145,23 @@ class ResultsAggregator:
         self._do_action_under_lock(self._create_files)
 
     def _create_files(self):
-        for filename in (self._filename, self._processed_filename):
-            with open(filename, "w") as f_out:
-                f_out.write(self._delimiter.join(self._get_fields()))
-                f_out.write("\n")
+        with open(self._filename, "w") as f_out:
+            f_out.write(self._delimiter.join(self._get_fields()))
+            f_out.write("\n")
 
     @classmethod
-    def append(cls, output_dir, result):
+    def append(cls, output_dir, result, batch_id=None):
         """Append a result to the file.
 
+        output_dir : str
         result : Result
+        batch_id : int
 
         """
-        aggregator = cls.load(output_dir)
+        if batch_id is None:
+            aggregator = cls.load(output_dir)
+        else:
+            aggregator = cls.load_node_results(output_dir, batch_id)
         aggregator.append_result(result)
 
     def append_result(self, result):
@@ -121,26 +170,28 @@ class ResultsAggregator:
         result : Result
 
         """
+        start = time.time()
         text = self._delimiter.join([str(getattr(result, x)) for x in self._get_fields()])
         self._do_action_under_lock(self._append_result, text)
+        duration = time.time() - start
+        if duration > 10:
+            logger.warning("Appending a result took too long: %s", duration)
 
     def _append_result(self, text):
         with open(self._filename, "a") as f_out:
+            if f_out.tell() == 0:
+                f_out.write(self._delimiter.join(self._get_fields()))
+                f_out.write("\n")
             f_out.write(text)
             f_out.write("\n")
 
     def _append_processed_results(self, results):
-        with open(self._processed_filename, "a") as f_out:
+        assert not self._is_node
+        with open(self._filename, "a") as f_out:
             for result in results:
                 text = self._delimiter.join([str(getattr(result, x)) for x in self._get_fields()])
                 f_out.write(text)
                 f_out.write("\n")
-
-    def _clear_temp_results(self):
-        """Clear the file, once the results have been processed."""
-        with open(self._filename, "w") as f_out:
-            f_out.write(self._delimiter.join(self._get_fields()))
-            f_out.write("\n")
 
     def clear_results_for_resubmission(self, jobs_to_resubmit):
         """Remove jobs that will be resubmitted from the results file.
@@ -153,7 +204,7 @@ class ResultsAggregator:
         """
         results = [x for x in self.get_results() if x.name not in jobs_to_resubmit]
         self._write_results(results)
-        logger.info("Cleared %s results from %s", len(results), self._processed_filename)
+        logger.info("Cleared %s results from %s", len(results), self._filename)
 
     def clear_unsuccessful_results(self):
         """Remove failed and canceled results from the results file."""
@@ -163,7 +214,7 @@ class ResultsAggregator:
 
     def _write_results(self, results):
         _results = [serialize_result(x) for x in results]
-        with open(self._processed_filename, "w") as f_out:
+        with open(self._filename, "w") as f_out:
             writer = csv.DictWriter(f_out, fieldnames=_results[0].keys())
             writer.writeheader()
             if results:
@@ -193,14 +244,14 @@ class ResultsAggregator:
         return self._get_results()
 
     def _get_all_results(self):
-        # Include unprocessed and processed results.
-        return self._get_results(processed_results=True) + self._get_results(
-            processed_results=False
-        )
+        unprocessed_results = list((self._filename / RESULTS_DIR).glob("results*.csv"))
+        if unprocessed_results:
+            logger.error("Found unprocessed results: %s", unprocessed_results)
+        # TODO: Older code included unprocessed results here. Not sure why.
+        return self._get_results()
 
-    def _get_results(self, processed_results=True):
-        filename = self._processed_filename if processed_results else self._filename
-        with open(filename) as f_in:
+    def _get_results(self):
+        with open(self._filename) as f_in:
             results = []
             reader = csv.DictReader(f_in, delimiter=self._delimiter)
             for row in reader:
@@ -211,6 +262,27 @@ class ResultsAggregator:
                 results.append(result)
 
             return results
+
+    def move_results(self, func):
+        """Move the results to a new location and delete the file.
+
+        Parameters
+        ----------
+        func : function
+
+        Returns
+        -------
+        list
+            list of Result
+
+        """
+        return self._do_action_under_lock(self._move_results, func)
+
+    def _move_results(self, func):
+        results = self._get_results()
+        func(results)
+        os.remove(self._filename)
+        return results
 
     @classmethod
     def list_results(cls, output_dir, **kwargs):
@@ -238,10 +310,16 @@ class ResultsAggregator:
             list of Result objects that are newly completed
 
         """
+        assert not self._is_node
         return self._do_action_under_lock(self._process_results)
 
+    def _get_node_results_files(self):
+        assert not self._is_node
+        return list((self._filename.parent / RESULTS_DIR).glob("results_batch_*.csv"))
+
     def _process_results(self):
-        results = self._get_results(processed_results=False)
-        self._append_processed_results(results)
-        self._clear_temp_results()
+        results = []
+        for path in self._get_node_results_files():
+            agg = ResultsAggregator.load_node_results_file(path)
+            results += agg.move_results(self._append_processed_results)
         return results
