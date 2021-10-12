@@ -72,3 +72,7 @@ class JobContainerInterface(abc.ABC):
         job : JobParametersInterface
 
         """
+
+    @abc.abstractmethod
+    def shuffle(self):
+        """Shuffle the order of the jobs."""

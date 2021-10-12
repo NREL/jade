@@ -78,3 +78,11 @@ class JobContainerByKey(JobContainerInterface):
             return [self._jobs[x] for x in keys]
 
         return list(self)
+
+    def shuffle(self):
+        keys = list(self._jobs.keys())
+        random.shuffle(keys)
+        new_jobs = {}
+        for key in keys:
+            new_jobs[key] = self._jobs.pop(key)
+        self._jobs = new_jobs
