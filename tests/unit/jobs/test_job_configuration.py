@@ -67,3 +67,19 @@ def test_job_configuration__check_job_dependencies_estimate(job_fixture):
     params = SubmitterParams(hpc_config=hpc_config, per_node_batch_size=0)
     with pytest.raises(InvalidConfiguration):
         config.check_job_dependencies(params)
+
+
+def test_job_configuration__shuffle_jobs(job_fixture):
+    num_jobs = 10
+    with open(TEST_FILENAME, "w") as f_out:
+        for i in range(num_jobs):
+            f_out.write("echo hello world\n")
+
+    inputs = GenericCommandInputs(TEST_FILENAME)
+    config = GenericCommandConfiguration(job_inputs=inputs)
+    for job_param in inputs.iter_jobs():
+        config.add_job(job_param)
+    assert config.get_num_jobs() == num_jobs
+    assert [x.name for x in config.iter_jobs()] == [str(x) for x in range(1, num_jobs + 1)]
+    config.shuffle_jobs()
+    assert [x.name for x in config.iter_jobs()] != [str(x) for x in range(1, num_jobs + 1)]

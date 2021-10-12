@@ -610,6 +610,10 @@ class JobConfiguration(abc.ABC):
 
         """
 
+    def shuffle_jobs(self):
+        """Shuffle the job order."""
+        self._jobs.shuffle()
+
     def show_jobs(self):
         """Show the configured jobs."""
         for job in self.iter_jobs():

@@ -1,6 +1,7 @@
 """Implements a container for jobs represented by a key."""
 
 import logging
+import random
 
 from jade.exceptions import InvalidParameter
 from jade.jobs.job_container_interface import JobContainerInterface
@@ -48,3 +49,11 @@ class JobContainerByName(JobContainerInterface):
             return [self._jobs[x] for x in names]
 
         return list(self)
+
+    def shuffle(self):
+        names = list(self._jobs.keys())
+        random.shuffle(names)
+        new_jobs = {}
+        for name in names:
+            new_jobs[name] = self._jobs.pop(name)
+        self._jobs = new_jobs

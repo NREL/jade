@@ -53,6 +53,20 @@ def config():
     help="estimated minutes per job.",
 )
 @click.option(
+    "--shuffle/--no-shuffle",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Shuffle order of jobs.",
+)
+@click.option(
+    "--strip-whitespace/--no-strip-whitespace",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Strip whitespace in file.",
+)
+@click.option(
     "-v",
     "--verbose",
     is_flag=True,
@@ -60,7 +74,15 @@ def config():
     show_default=True,
     help="Enable verbose log output.",
 )
-def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_job, verbose):
+def create(
+    filename,
+    config_file,
+    cancel_on_blocking_job_failure,
+    minutes_per_job,
+    shuffle,
+    strip_whitespace,
+    verbose,
+):
     """Create a config file from a filename with a list of executable commands."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("auto_config", None, console_level=level)
@@ -70,8 +92,11 @@ def create(filename, config_file, cancel_on_blocking_job_failure, minutes_per_jo
         cancel_on_blocking_job_failure=cancel_on_blocking_job_failure,
         minutes_per_job=minutes_per_job,
     )
+    if shuffle:
+        config.shuffle_jobs()
     print(f"Created configuration with {config.get_num_jobs()} jobs.")
-    config.dump(config_file)
+    indent = None if strip_whitespace else 2
+    config.dump(config_file, indent=indent)
     print(f"Dumped configuration to {config_file}.\n")
 
 
