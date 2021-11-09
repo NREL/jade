@@ -60,6 +60,10 @@ Case 1
 
 JADE will submit 4 single-node jobs to the HPC.
 
+.. note:: If you will have hundreds of thousands of jobs and hundreds of nodes,
+   you may experience lock contention issues. If you aren't concerned with
+   job-ordering then consider setting ``--no-distributed-submitter``.
+
 Case 2
 ------
 Same as case 1 but acquisition time is long on all queues.

@@ -179,7 +179,7 @@ class HpcManagerInterface(abc.ABC):
 
     @abc.abstractmethod
     def list_active_nodes(self, job_id):
-        """Return the nodes currently participating in the job.
+        """Return the nodes currently participating in the job. Order should be deterministic.
 
         Parameters
         ----------

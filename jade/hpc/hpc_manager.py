@@ -112,7 +112,7 @@ class HpcManager:
         return intf.check_statuses()
 
     def get_hpc_config(self, submission_group_name):
-        """Returns the HPC config parameters.
+        """Returns the HPC interface instance.
 
         Parameters
         ----------
@@ -120,11 +120,36 @@ class HpcManager:
 
         Returns
         -------
-        dict
-            config parameters
+        HpcManagerInterface
 
         """
         return self._get_interface(submission_group_name=submission_group_name)
+
+    def get_local_scratch(self):
+        """Get path to local storage space.
+
+        Returns
+        -------
+        str
+
+        """
+        return self._get_interface().get_local_scratch()
+
+    def get_manager_node(self, job_id):
+        """Return the first node in the job.
+
+        Parameters
+        ----------
+        job_id : str
+
+        Returns
+        -------
+        list
+            list of node hostnames
+
+        """
+        intf = self._get_interface()
+        return intf.list_active_nodes(job_id)[0]
 
     @property
     def hpc_type(self):
@@ -138,7 +163,7 @@ class HpcManager:
         return self._hpc_type
 
     def list_active_nodes(self, job_id):
-        """Return the nodes currently participating in the job.
+        """Return the nodes currently participating in the job. Order should be deterministic.
 
         Parameters
         ----------

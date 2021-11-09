@@ -4,6 +4,8 @@ import json
 import logging
 import os
 import re
+import shutil
+import stat
 import sys
 import tempfile
 from pathlib import Path
@@ -16,8 +18,10 @@ from jade.common import CONFIG_FILE, HPC_CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration, GenericCommandParameters
 from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
+from jade.utils.run_command import check_run_command
 from jade.utils.utils import dump_data, load_data
 from jade.models import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig
+from jade.models.spark import SparkConfigModel, SparkContainerModel
 
 
 logger = logging.getLogger(__name__)
@@ -364,6 +368,121 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 @click.command()
 @click.option(
     "-c",
+    "--container-path",
+    type=str,
+    required=True,
+    help="Path to container that can run Spark",
+)
+@click.option(
+    "-h",
+    "--hpc-config",
+    type=click.Path(exists=True),
+    default=HPC_CONFIG_FILE,
+    show_default=True,
+    help="HPC config file to be used. Defines number of nodes.",
+)
+@click.option(
+    "-S",
+    "--spark-dir",
+    type=str,
+    default="spark",
+    show_default=True,
+    help="Spark configuration directory to create.",
+)
+@click.option(
+    "-u",
+    "--update-config-file",
+    type=str,
+    default=None,
+    help="Update all jobs in this config file with this Spark configuration.",
+)
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Enable verbose log output.",
+)
+def spark(container_path, hpc_config, spark_dir, update_config_file, verbose):
+    """Create a Spark configuration to use for running a job on a Spark cluster."""
+    level = logging.DEBUG if verbose else logging.WARNING
+    setup_logging("config_spark", None, console_level=level)
+    spark_dir = Path(spark_dir)
+
+    hpc_config_data = HpcConfig.load(hpc_config)
+    nodes = getattr(hpc_config_data.hpc, "nodes", None)
+    if nodes is None:
+        print(f"hpc_type={hpc_config_data.hpc_type} doesn't have a nodes field", file=sys.stderr)
+        sys.exit(1)
+
+    if not spark_dir.exists():
+        spark_dir.mkdir(parents=True)
+    for dirname in ("bin", "conf"):
+        src_path = Path(os.path.dirname(__file__)).parent / "spark" / dirname
+        dst_path = spark_dir / dirname
+        if not dst_path.exists():
+            dst_path.mkdir()
+        for filename in src_path.iterdir():
+            shutil.copyfile(filename, dst_path / filename.name)
+    with open(spark_dir / "conf" / "spark-defaults.conf", "a") as f_out:
+        # Online documentation says this value should correlate with the number of cores in the
+        # cluster. Some sources say 1 per core, others say 2 or 4 per core. Depends on use case.
+        # This should be a reasonable default for users, who can customize dynamically.
+        f_out.write("spark.sql.shuffle.partitions ")
+        f_out.write(str(nodes * 36))
+        f_out.write("\n")
+    replacement_values = [
+        ("SPARK_DIR", str(spark_dir)),
+        ("CONTAINER_PATH", container_path),
+    ]
+    for name in ("run_spark_script_wrapper.sh", "run_user_script_wrapper.sh"):
+        filename = spark_dir / "bin" / name
+        _replace_tag(replacement_values, filename)
+        st = os.stat(filename)
+        os.chmod(filename, st.st_mode | stat.S_IEXEC)
+        print(f"Assigned paths in {filename}")
+
+    scripts = [spark_dir / "conf" / "spark-env.sh"] + list((spark_dir / "bin").glob("*.sh"))
+    for script in scripts:
+        st = os.stat(script)
+        os.chmod(script, st.st_mode | stat.S_IEXEC)
+
+    print(f"Created Spark configuration in {spark_dir.absolute()} for a {nodes}-node cluster.")
+
+    spark_config = SparkConfigModel(
+        conf_dir=str(spark_dir),
+        enabled=True,
+        container=SparkContainerModel(path=container_path),
+    )
+
+    if update_config_file is not None:
+        if not Path(update_config_file).exists():
+            print(f"'update_config_file={update_config_file} does not exist", file=sys.stderr)
+            sys.exit(1)
+        config = load_data(update_config_file)
+        for job in config["jobs"]:
+            job["spark_config"] = spark_config.dict()
+        dump_data(config, update_config_file, indent=2)
+        print(f"Updated jobs in {update_config_file} with this Spark configuration.")
+    else:
+        print(
+            "\nAdd and customize this JSON object to the 'spark_config' field for each Spark "
+            "job in your config.json file:\n"
+        )
+        print(spark_config.json(indent=2))
+
+
+def _replace_tag(values, filename):
+    text = filename.read_text()
+    for tag, value in values:
+        text = text.replace(f"<{tag}>", value)
+    filename.write_text(text)
+
+
+@click.command()
+@click.option(
+    "-c",
     "--config-file",
     default="submitter_params.json",
     show_default=True,
@@ -426,4 +545,5 @@ config.add_command(create)
 config.add_command(hpc)
 config.add_command(show)
 config.add_command(_filter)
+config.add_command(spark)
 config.add_command(submitter_params)
