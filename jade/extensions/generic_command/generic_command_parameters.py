@@ -2,11 +2,13 @@
 
 import logging
 from collections import namedtuple
+from pathlib import Path
 from typing import Dict, List, Optional, Set
 
 from pydantic import Field, validator
 
 from jade.models import JadeBaseModel
+from jade.models.spark import SparkConfigModel, SparkContainerModel
 from jade.common import DEFAULT_SUBMISSION_GROUP
 from jade.jobs.job_parameters_interface import JobParametersInterface
 
@@ -43,6 +45,8 @@ class GenericCommandParameters(JobParametersInterface):
     def command(self):
         if self._model.use_multi_node_manager:
             return f"jade-internal run-multi-node-job {self.name} {self._model.command}"
+        elif self._model.spark_config is not None and self._model.spark_config.enabled:
+            return f"jade-internal run-spark-cluster {self.name} {self._model.command}"
         return self._model.command
 
     @property
@@ -76,6 +80,10 @@ class GenericCommandParameters(JobParametersInterface):
     def get_blocking_jobs(self):
         return self._model.blocked_by
 
+    @property
+    def model(self):
+        return self._model
+
     def remove_blocking_job(self, name):
         self._model.blocked_by.remove(name)
 
@@ -94,6 +102,11 @@ class GenericCommandParametersModel(JadeBaseModel):
         title="use_multi_node_manager",
         description="If true JADE will run this job with its multi-node manager.",
         default=False,
+    )
+    spark_config: Optional[SparkConfigModel] = Field(
+        title="spark_config",
+        description="If enabled JADE will run this job on a Spark cluster.",
+        default=None,
     )
     command: str = Field(
         title="command",
@@ -143,8 +156,13 @@ class GenericCommandParametersModel(JadeBaseModel):
 
     @validator("append_output_dir")
     def handle_append_output_dir(cls, value, values):
-        if values["use_multi_node_manager"]:
-            logger.debug("Override 'append_output_dir' because 'use_multi_node_manager' is set")
+        spark_enabled = False
+        if values["spark_config"] is not None:
+            spark_enabled = getattr(values["spark_config"], "enabled")
+        if values["use_multi_node_manager"] or spark_enabled:
+            logger.debug(
+                "Override 'append_output_dir' because 'use_multi_node_manager' is set or spark is enabled"
+            )
             return True
         return value
 

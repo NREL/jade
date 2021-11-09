@@ -74,7 +74,8 @@ def _run_manager(job_name, output_dir, verbose, manager_script_and_args):
 
     # Note that the manager receives its own hostname.
     output = {}
-    check_run_command(f"jade cluster hostnames {output_dir}", output)
+    job_id = os.environ["SLURM_JOB_ID"]  # TODO: needs to be agnostic to HPC type
+    check_run_command(f"jade cluster hostnames -j {job_id} {output_dir}", output)
     hostnames = [x for x in output["stdout"].split() if x != ""]
     logger.info("Manager found %s hostnames: %s", len(hostnames), hostnames)
     cmd = " ".join(manager_script_and_args)

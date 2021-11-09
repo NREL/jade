@@ -47,6 +47,9 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0, er
     if error_strings is None:
         error_strings = []
 
+    if not isinstance(cmd, str):
+        # Handle pathlib.Path.
+        cmd = str(cmd)
     logger.debug(cmd)
     # Disable posix if on Windows.
     command = shlex.split(cmd, posix="win" not in sys.platform)
