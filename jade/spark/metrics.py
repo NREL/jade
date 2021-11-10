@@ -16,9 +16,10 @@ class SparkMetrics:
 
     METRICS_FILE = "metrics.json"
 
-    def __init__(self, manager_node):
+    def __init__(self, manager_node, history=False):
         self._manager_node = manager_node
-        self._endpoint = f"http://{manager_node}:4040/api/v1/applications/"
+        port = "18080" if history else "4040"
+        self._endpoint = f"http://{manager_node}:{port}/api/v1/applications/"
 
     def _submit_request(self, cmd, *args):
         if not cmd.endswith("/"):

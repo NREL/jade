@@ -78,14 +78,22 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
         "Run cluster master on %s job=%s: %s", socket.gethostname(), job.name, get_cli_string()
     )
 
+    # For some reason Spark requires that this directory exist.
+    (Path("/tmp/scratch") / "spark" / "events").mkdir(parents=True, exist_ok=True)
+
     # It would be better to start all workers from the master. Doing so would require that
     # Spark processes on the master node be able to ssh into the worker nodes.
     # I haven't spent the time to figure out to do that inside Singularity containers.
     master_cmd = job.model.spark_config.get_start_master()
     logger.info("Run spark master: [%s]", master_cmd)
     check_run_command(master_cmd)
+    history_cmd = job.model.spark_config.get_start_history_server()
+    logger.info("Run spark history server: [%s]", history_cmd)
+    check_run_command(history_cmd)
     manager_node = _get_manager_node_name(output_dir)
-    worker_cmd = _get_worker_command(job, manager_node)
+    # Let the master keep some extra memory for its services and the history server.
+    worker_memory = str(job.model.spark_config.worker_memory_gb - 5) + "g"
+    worker_cmd = _get_worker_command(job, manager_node, memory=worker_memory)
     logger.info("Run spark worker: [%s]", worker_cmd)
     check_run_command(worker_cmd)
 
@@ -102,21 +110,22 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     ret = run_command(user_cmd)
     logger.info("Finished job. duration = %s seconds", time.time() - start)
 
-    # TODO: This is failing for an unknown reason.
-    # metrics = SparkMetrics("localhost")
-    # try:
-    #    metrics.generate_metrics(user_output / "spark_metrics")
-    # except Exception:
-    #    o = {}
-    #    logger.exception("Failed to generate metrics")
-    #    retcode = run_command("curl -X GET http://localhost:4040/api/v1/applications", output=o)
-    #    logger.info("result of curl command: retcode=%s output=%s", retcode, o)
-    spark_logs = Path(output_dir) / "spark_logs"
-    if spark_logs.exists():
-        shutil.rmtree(spark_logs)
-    shutil.copytree("/tmp/scratch/spark/logs", spark_logs)
+    # Delay to ensure the history is saved.
+    time.sleep(10)
+    metrics = SparkMetrics("localhost", history=True)
+    try:
+        metrics.generate_metrics(user_output / "spark_metrics")
+    except Exception:
+        logger.exception("Failed to generate metrics")
+    spark_path = Path(output_dir) / "spark"
+    for dirname in ("events", "logs"):
+        dst_path = spark_path / dirname
+        if dst_path.exists():
+            shutil.rmtree(dst_path)
+        shutil.copytree(f"/tmp/scratch/spark/{dirname}", dst_path)
 
     check_run_command(job.model.spark_config.get_stop_worker())
+    check_run_command(job.model.spark_config.get_stop_history_server())
     check_run_command(job.model.spark_config.get_stop_master())
     return ret
 
@@ -133,7 +142,8 @@ def run_worker(job, output_dir, verbose, poll_interval=60):
 
     # Give the master a head start.
     time.sleep(10)
-    cmd = _get_worker_command(job, manager_node, memory="75g")
+    worker_memory = str(job.model.spark_config.worker_memory_gb) + "g"
+    cmd = _get_worker_command(job, manager_node, worker_memory)
     ret = 1
     output = {}
     for _ in range(5):
@@ -159,7 +169,7 @@ def _get_cluster(manager_node):
     return f"spark://{manager_node}:7077"
 
 
-def _get_worker_command(job, manager_node, memory="80g"):
+def _get_worker_command(job, manager_node, memory):
     cluster = _get_cluster(manager_node)
     return job.spark_config.get_start_worker(memory, cluster)
 
