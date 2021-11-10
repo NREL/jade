@@ -6,4 +6,5 @@ plotly
 prettytable
 psutil
 pydantic
+requests
 toml>=0.10.0

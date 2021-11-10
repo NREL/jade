@@ -32,7 +32,11 @@ class SparkConfigModel(JadeBaseModel):
         title="container",
         description="Container parameters",
     )
-    # TODO: metrics collection options
+    worker_memory_gb: Optional[int] = Field(
+        title="worker_memory_gb",
+        description="Amount of memory to allocate to worker processes",
+        default=80,
+    )
     # TODO: Add option to configure Spark logging
 
     def get_spark_script(self):
@@ -44,13 +48,19 @@ class SparkConfigModel(JadeBaseModel):
         return self.get_spark_script() + " sbin/start-master.sh"
 
     def get_stop_master(self):
-        return self.get_spark_script() + f" sbin/stop-master.sh"
+        return self.get_spark_script() + " sbin/stop-master.sh"
 
     def get_start_worker(self, memory, cluster):
         return self.get_spark_script() + f" sbin/start-worker.sh -m {memory} {cluster}"
 
     def get_stop_worker(self):
-        return self.get_spark_script() + f" sbin/stop-worker.sh"
+        return self.get_spark_script() + " sbin/stop-worker.sh"
+
+    def get_start_history_server(self):
+        return self.get_spark_script() + " sbin/start-history-server.sh"
+
+    def get_stop_history_server(self):
+        return self.get_spark_script() + " sbin/stop-history-server.sh"
 
     def get_run_user_script(self):
         return Path(self.conf_dir) / "bin" / "run_user_script_wrapper.sh"
