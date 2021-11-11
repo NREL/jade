@@ -1,0 +1,4 @@
+include jade/spark/conf/*.sh
+include jade/spark/conf/*.template
+include jade/spark/conf/*.conf
+include jade/spark/bin/*.sh
