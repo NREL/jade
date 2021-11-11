@@ -9,7 +9,7 @@ from pathlib import Path
 
 import click
 
-from jade.common import CONFIG_FILE
+from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR
 from jade.exceptions import ExecutionError
 from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
@@ -101,8 +101,9 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     # TODO: find a way to check programmatically with the rest api
     # or parse the logs
     time.sleep(15)
-    user_output = Path(output_dir) / "user"
-    args = list(manager_script_and_args) + [_get_cluster(manager_node), str(user_output)]
+    job_output = Path(output_dir) / JOBS_OUTPUT_DIR / job.name
+    job_output.mkdir(exist_ok=True, parents=True)
+    args = list(manager_script_and_args) + [_get_cluster(manager_node), str(job_output)]
     user_cmd = str(job.model.spark_config.get_run_user_script()) + " " + " ".join(args)
     logger.info("Run user script [%s]", user_cmd)
 
@@ -114,10 +115,10 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     time.sleep(10)
     metrics = SparkMetrics("localhost", history=True)
     try:
-        metrics.generate_metrics(user_output / "spark_metrics")
+        metrics.generate_metrics(job_output / "spark_metrics")
     except Exception:
         logger.exception("Failed to generate metrics")
-    spark_path = Path(output_dir) / "spark"
+    spark_path = job_output / "spark"
     for dirname in ("events", "logs"):
         dst_path = spark_path / dirname
         if dst_path.exists():

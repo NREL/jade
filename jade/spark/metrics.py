@@ -56,7 +56,7 @@ class SparkMetrics:
             results["metrics"].append(metrics)
 
         filename = output_dir / self.METRICS_FILE
-        dump_data(results, filename)
+        dump_data(results, filename, indent=2)
         logger.info("Recorded metrics in %s", filename)
 
     def list_applications(self):
