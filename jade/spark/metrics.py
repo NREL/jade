@@ -44,8 +44,7 @@ class SparkMetrics:
             Output directory in which to write files
 
         """
-        if not output_dir.exists():
-            output_dir.mkdir()
+        output_dir.mkdir(exist_ok=True, parents=True)
         apps = self.list_applications()
         results = {"metrics": []}
         for app in apps:
