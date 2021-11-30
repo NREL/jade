@@ -92,7 +92,9 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     check_run_command(history_cmd)
     manager_node = _get_manager_node_name(output_dir)
     # Let the master keep some extra memory for its services and the history server.
-    worker_memory = str(job.model.spark_config.worker_memory_gb - 5) + "g"
+    # This also means that the master node can start 7 executors with default settings.
+    # 80 - 3 = 77. 77g / 11g per executor = 7
+    worker_memory = str(job.model.spark_config.worker_memory_gb - 3) + "g"
     worker_cmd = _get_worker_command(job, manager_node, memory=worker_memory)
     logger.info("Run spark worker: [%s]", worker_cmd)
     check_run_command(worker_cmd)
@@ -118,16 +120,13 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
         metrics.generate_metrics(job_output / "spark_metrics")
     except Exception:
         logger.exception("Failed to generate metrics")
-    spark_path = job_output / "spark"
-    for dirname in ("events", "logs"):
-        dst_path = spark_path / dirname
-        if dst_path.exists():
-            shutil.rmtree(dst_path)
-        shutil.copytree(f"/tmp/scratch/spark/{dirname}", dst_path)
 
     check_run_command(job.model.spark_config.get_stop_worker())
     check_run_command(job.model.spark_config.get_stop_history_server())
     check_run_command(job.model.spark_config.get_stop_master())
+    # This is not ideal because we'll lose the logs on a walltime timeout or exception.
+    # We could make Spark log to this directory directly.
+    _copy_logs(job_output)
     return ret
 
 
@@ -163,7 +162,23 @@ def run_worker(job, output_dir, verbose, poll_interval=60):
 
     logger.info("Detected shutdown.")
     check_run_command(job.model.spark_config.get_stop_worker())
+    job_output = Path(output_dir) / JOBS_OUTPUT_DIR / job.name
+    job_output.mkdir(exist_ok=True, parents=True)
+    _copy_logs(job_output)
     return 0
+
+
+def _copy_logs(job_output):
+    spark_path = job_output / "spark" / socket.gethostname()
+    if spark_path.exists():
+        shutil.rmtree(spark_path)
+    spark_path.mkdir(parents=True)
+    for dirname in ("events", "logs"):
+        src_path = Path(f"/tmp/scratch/spark/{dirname}")
+        if src_path.exists():
+            # Worker nodes don't have events.
+            dst_path = spark_path / dirname
+            shutil.copytree(src_path, dst_path)
 
 
 def _get_cluster(manager_node):
