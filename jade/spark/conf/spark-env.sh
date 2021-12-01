@@ -83,6 +83,6 @@ SPARK_WORKER_DIR=/tmp/scratch/spark/worker
 # 7 executors.
 SPARK_EXECUTOR_MEMORY=11G
 SPARK_EXECUTOR_CORES=5
-# There is disputed information about this setting. Some sources say to make it the same
+# There is conflicting information about this setting. Some sources say to make it the same
 # as the executor memory. We don't expect to be pulling much data back to the driver.
-SPARK_DRIVER_MEMORY=2G
+SPARK_DRIVER_MEMORY=4G
