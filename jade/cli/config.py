@@ -397,6 +397,14 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     help="Update all jobs in this config file with this Spark configuration.",
 )
 @click.option(
+    "-s",
+    "--shuffle-partition-multiplier",
+    type=int,
+    default=1,
+    show_default=True,
+    help="Set spark.sql.shuffle.partitions to total_cores multiplied by this value.",
+)
+@click.option(
     "-v",
     "--verbose",
     is_flag=True,
@@ -404,7 +412,14 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     show_default=True,
     help="Enable verbose log output.",
 )
-def spark(container_path, hpc_config, spark_dir, update_config_file, verbose):
+def spark(
+    container_path,
+    hpc_config,
+    spark_dir,
+    update_config_file,
+    shuffle_partition_multiplier,
+    verbose,
+):
     """Create a Spark configuration to use for running a job on a Spark cluster."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("config_spark", None, console_level=level)
@@ -430,7 +445,7 @@ def spark(container_path, hpc_config, spark_dir, update_config_file, verbose):
         # cluster. Some sources say 1 per core, others say 2 or 4 per core. Depends on use case.
         # This should be a reasonable default for users, who can customize dynamically.
         f_out.write("spark.sql.shuffle.partitions ")
-        f_out.write(str(nodes * 36))
+        f_out.write(str(nodes * 36 * shuffle_partition_multiplier))
         f_out.write("\n")
     replacement_values = [
         ("SPARK_DIR", str(spark_dir)),
