@@ -4,7 +4,7 @@ import abc
 
 
 class JobParametersInterface(abc.ABC):
-    """Job Parameters interface definitio."""
+    """Job Parameters interface definition."""
 
     DELIMITER = "__"
 
@@ -125,3 +125,13 @@ class JobParametersInterface(abc.ABC):
         group : SubmissionGroup
 
         """
+
+    def is_spark_job(self):
+        """Return True if the job is a Spark job.
+
+        Returns
+        -------
+        bool
+
+        """
+        return False

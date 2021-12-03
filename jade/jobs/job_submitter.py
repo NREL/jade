@@ -396,6 +396,7 @@ results_summary={self.get_results_summmary_report()}"""
         """Checks the configuration for errors. May mutate the config."""
         self._config.check_job_dependencies(params)
         self._config.check_submission_groups(params)
+        self._config.check_spark_config()
 
     @staticmethod
     def run_submit_jobs(config_file, output, params, pipeline_stage_num=None):

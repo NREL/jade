@@ -45,7 +45,7 @@ class GenericCommandParameters(JobParametersInterface):
     def command(self):
         if self._model.use_multi_node_manager:
             return f"jade-internal run-multi-node-job {self.name} {self._model.command}"
-        elif self._model.spark_config is not None and self._model.spark_config.enabled:
+        elif self.is_spark_job():
             return f"jade-internal run-spark-cluster {self.name} {self._model.command}"
         return self._model.command
 
@@ -93,6 +93,9 @@ class GenericCommandParameters(JobParametersInterface):
     @property
     def submission_group(self):
         return self._model.submission_group
+
+    def is_spark_job(self):
+        return self._model.spark_config is not None and self._model.spark_config.enabled
 
 
 class GenericCommandParametersModel(JadeBaseModel):

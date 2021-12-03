@@ -73,16 +73,4 @@
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
 
 SPARK_LOCAL_DIRS=/tmp/scratch/spark/local
-SPARK_LOG_DIR=/tmp/scratch/spark/logs
 SPARK_WORKER_DIR=/tmp/scratch/spark/worker
-# Many online sources say to
-# 1. Use no more than 5 cores for one executor.
-# 2. Start as many executors as can fit on one node.
-# spark.executor.instances does not appear to apply to standalone mode,
-# we can only set it indirectly. Most Eagle nodes have ~85 GiB of memory, and so can fit
-# 7 executors.
-SPARK_EXECUTOR_MEMORY=11G
-SPARK_EXECUTOR_CORES=5
-# There is conflicting information about this setting. Some sources say to make it the same
-# as the executor memory. We don't expect to be pulling much data back to the driver.
-SPARK_DRIVER_MEMORY=4G

@@ -14,12 +14,13 @@ from jade.common import CONFIG_FILE
 from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.extensions.registry import Registry, ExtensionClassType
 from jade.jobs.job_container_by_name import JobContainerByName
+from jade.models import submission_group
 from jade.models.submission_group import SubmissionGroup, SubmitterParams
 from jade.utils.utils import dump_data, load_data, ExtendedJSONEncoder
 from jade.utils.timing_utils import timed_debug
 
 
-logger = logging.getLogger()
+logger = logging.getLogger(__name__)
 
 
 class ConfigSerializeOptions(enum.Enum):
@@ -210,6 +211,22 @@ class JobConfiguration(abc.ABC):
             raise InvalidConfiguration(
                 "Submitting batches by time requires that each job define estimated_run_minutes"
             )
+
+    def check_spark_config(self):
+        """If Spark jobs are present in the config, configure the params to run
+        one job at a time.
+
+        """
+        groups_with_spark_jobs = set()
+        for job in self.iter_jobs():
+            if job.is_spark_job():
+                groups_with_spark_jobs.add(job.submission_group)
+
+        for group_name in groups_with_spark_jobs:
+            for group in self._submission_groups:
+                if group.name == group_name and group.submitter_params.num_processes != 1:
+                    group.submitter_params.num_processes = 1
+                    logger.info("Set num_processes=1 for group=%s for Spark jobs.", group_name)
 
     def check_submission_groups(self, submitter_params):
         """Check for invalid job submission group assignments.

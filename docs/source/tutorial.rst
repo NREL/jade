@@ -566,6 +566,8 @@ the number of completed jobs.
     $ wc -l output/results.csv
 
 
+.. _resource_monitoring:
+
 Resource Monitoring
 ===================
 JADE optionally monitors CPU, disk, memory, and network utilization

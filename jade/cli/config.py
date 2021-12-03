@@ -444,9 +444,11 @@ def spark(
         # Online documentation says this value should correlate with the number of cores in the
         # cluster. Some sources say 1 per core, others say 2 or 4 per core. Depends on use case.
         # This should be a reasonable default for users, who can customize dynamically.
-        f_out.write("spark.sql.shuffle.partitions ")
-        f_out.write(str(nodes * 36 * shuffle_partition_multiplier))
-        f_out.write("\n")
+        for param in ("spark.sql.shuffle.partitions", "spark.default.parallelism"):
+            f_out.write(param)
+            f_out.write(" ")
+            f_out.write(str(nodes * 36 * shuffle_partition_multiplier))
+            f_out.write("\n")
     replacement_values = [
         ("SPARK_DIR", str(spark_dir)),
         ("CONTAINER_PATH", container_path),
