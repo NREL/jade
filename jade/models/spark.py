@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Set
 
 from pydantic import Field
 
@@ -18,12 +18,12 @@ class SparkContainerModel(JadeBaseModel):
 class SparkConfigModel(JadeBaseModel):
     """Model definition for a Spark configuration"""
 
-    conf_dir: Optional[str] = Field(
+    conf_dir: str = Field(
         title="conf_dir",
         description="Spark configuration directory",
         default="spark-conf",
     )
-    enabled: Optional[bool] = Field(
+    enabled: bool = Field(
         title="enabled",
         description="Set to true to run this job on a Spark cluster",
         default=False,
@@ -32,7 +32,7 @@ class SparkConfigModel(JadeBaseModel):
         title="container",
         description="Container parameters",
     )
-    worker_memory_gb: Optional[int] = Field(
+    worker_memory_gb: int = Field(
         title="worker_memory_gb",
         description="Amount of memory to allocate to worker processes",
         default=80,

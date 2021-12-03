@@ -73,6 +73,4 @@
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
 
 SPARK_LOCAL_DIRS=/tmp/scratch/spark/local
-SPARK_LOG_DIR=/tmp/scratch/spark/logs
 SPARK_WORKER_DIR=/tmp/scratch/spark/worker
-SPARK_EXECUTOR_MEMORY=20G

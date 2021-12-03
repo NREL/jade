@@ -10,7 +10,6 @@ from pathlib import Path
 import click
 
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR
-from jade.exceptions import ExecutionError
 from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
 from jade.spark.metrics import SparkMetrics
@@ -78,8 +77,20 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
         "Run cluster master on %s job=%s: %s", socket.gethostname(), job.name, get_cli_string()
     )
 
-    # For some reason Spark requires that this directory exist.
-    (Path("/tmp/scratch") / "spark" / "events").mkdir(parents=True, exist_ok=True)
+    job_output = Path(output_dir) / JOBS_OUTPUT_DIR / job.name
+    if job_output.exists():
+        shutil.rmtree(job_output)
+    job_output.mkdir(parents=True)
+    events_dir = job_output / "spark" / "events"
+    events_dir.mkdir(parents=True)
+    logs_dir = job_output / "spark" / "logs"
+    logs_dir.mkdir()
+
+    # Make a job-specific conf directory because the log and event files need to be per-job.
+    job_conf_dir = job_output / "spark" / "conf"
+    shutil.copytree(Path(job.model.spark_config.conf_dir) / "conf", job_conf_dir)
+    _fix_spark_conf_file(job_conf_dir, events_dir)
+    _set_env_variables(job_conf_dir, logs_dir)
 
     # It would be better to start all workers from the master. Doing so would require that
     # Spark processes on the master node be able to ssh into the worker nodes.
@@ -92,7 +103,9 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     check_run_command(history_cmd)
     manager_node = _get_manager_node_name(output_dir)
     # Let the master keep some extra memory for its services and the history server.
-    worker_memory = str(job.model.spark_config.worker_memory_gb - 5) + "g"
+    # This also means that the master node can start 7 executors with default settings.
+    # 80 - 3 = 77. 77g / 11g per executor = 7
+    worker_memory = str(job.model.spark_config.worker_memory_gb - 3) + "g"
     worker_cmd = _get_worker_command(job, manager_node, memory=worker_memory)
     logger.info("Run spark worker: [%s]", worker_cmd)
     check_run_command(worker_cmd)
@@ -101,8 +114,6 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     # TODO: find a way to check programmatically with the rest api
     # or parse the logs
     time.sleep(15)
-    job_output = Path(output_dir) / JOBS_OUTPUT_DIR / job.name
-    job_output.mkdir(exist_ok=True, parents=True)
     args = list(manager_script_and_args) + [_get_cluster(manager_node), str(job_output)]
     user_cmd = str(job.model.spark_config.get_run_user_script()) + " " + " ".join(args)
     logger.info("Run user script [%s]", user_cmd)
@@ -118,12 +129,6 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
         metrics.generate_metrics(job_output / "spark_metrics")
     except Exception:
         logger.exception("Failed to generate metrics")
-    spark_path = job_output / "spark"
-    for dirname in ("events", "logs"):
-        dst_path = spark_path / dirname
-        if dst_path.exists():
-            shutil.rmtree(dst_path)
-        shutil.copytree(f"/tmp/scratch/spark/{dirname}", dst_path)
 
     check_run_command(job.model.spark_config.get_stop_worker())
     check_run_command(job.model.spark_config.get_stop_history_server())
@@ -143,6 +148,10 @@ def run_worker(job, output_dir, verbose, poll_interval=60):
 
     # Give the master a head start.
     time.sleep(10)
+    job_output = Path(output_dir) / JOBS_OUTPUT_DIR / job.name
+    logs_dir = job_output / "spark" / "logs"
+    job_conf_dir = job_output / "spark" / "conf"
+    _set_env_variables(job_conf_dir, logs_dir)
     worker_memory = str(job.model.spark_config.worker_memory_gb) + "g"
     cmd = _get_worker_command(job, manager_node, worker_memory)
     ret = 1
@@ -164,6 +173,11 @@ def run_worker(job, output_dir, verbose, poll_interval=60):
     logger.info("Detected shutdown.")
     check_run_command(job.model.spark_config.get_stop_worker())
     return 0
+
+
+def _set_env_variables(conf_dir, logs_dir):
+    os.environ["SPARK_CONF_DIR"] = str(conf_dir.absolute())
+    os.environ["SPARK_LOG_DIR"] = str(logs_dir.absolute())
 
 
 def _get_cluster(manager_node):
@@ -195,3 +209,11 @@ def _set_hostnames(output_dir):
 
 def _get_shutdown_file(job_name, output_dir):
     return Path(output_dir) / (SHUTDOWN_FILENAME + "__" + job_name)
+
+
+def _fix_spark_conf_file(job_conf_dir, events_dir):
+    events_dir = events_dir.absolute()
+    conf_file = job_conf_dir / "spark-defaults.conf"
+    with open(conf_file, "a") as f_out:
+        f_out.write(f"spark.eventLog.dir file://{events_dir}\n")
+        f_out.write(f"spark.history.fs.logDirectory file://{events_dir}\n")
