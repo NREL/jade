@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class AsyncCliCommand(AsyncJobInterface):
     """Defines a a CLI command that can be submitted asynchronously."""
 
-    def __init__(self, job, cmd, output, batch_id):
+    def __init__(self, job, cmd, output, batch_id, is_manager_node):
         self._job = job
         self._cli_cmd = cmd
         self._output = Path(output)
@@ -34,6 +34,7 @@ class AsyncCliCommand(AsyncJobInterface):
         self._return_code = None
         self._is_complete = False
         self._batch_id = batch_id
+        self._is_manager_node = is_manager_node
 
     def __del__(self):
         if self._is_pending:
@@ -42,6 +43,16 @@ class AsyncCliCommand(AsyncJobInterface):
     def _complete(self):
         self._return_code = self._pipe.returncode
         exec_time_s = time.time() - self._start_time
+
+        if not self._is_manager_node:
+            # This will happen on a multi-node job. Don't complete it multiple times.
+            logger.info(
+                "Job %s completed on non-manager node return_code=%s exec_time_s=%s",
+                self._job.name,
+                self._return_code,
+                exec_time_s,
+            )
+            return
 
         status = JobCompletionStatus.FINISHED
         output_dir = self._output / JOBS_OUTPUT_DIR / self._job.name
@@ -67,9 +78,12 @@ class AsyncCliCommand(AsyncJobInterface):
     def cancel(self):
         self._return_code = 1
         self._is_complete = True
-        result = Result(self._job.name, self._return_code, JobCompletionStatus.CANCELED, 0.0)
-        ResultsAggregator.append(self._output, result, batch_id=self._batch_id)
-        logger.info("Canceled job %s", self._job.name)
+        if self._is_manager_node:
+            result = Result(self._job.name, self._return_code, JobCompletionStatus.CANCELED, 0.0)
+            ResultsAggregator.append(self._output, result, batch_id=self._batch_id)
+            logger.info("Canceled job %s", self._job.name)
+        else:
+            logger.info("Canceled job %s on non-manager node", self._job.name)
 
     @property
     def cancel_on_blocking_job_failure(self):

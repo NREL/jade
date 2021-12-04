@@ -38,7 +38,7 @@ class FakeManager(HpcManagerInterface):
         self._config = config
 
     def am_i_manager(self):
-        assert False
+        return True
 
     def cancel_job(self, job_id):
         return 0
