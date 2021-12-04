@@ -159,6 +159,7 @@ class JobRunner(JobManagerBase):
                 ),
                 self._output,
                 self._batch_id,
+                self._intf.am_i_manager(),
             )
             jobs.append(djob)
 
