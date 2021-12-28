@@ -382,6 +382,15 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     help="HPC config file to be used. Defines number of nodes.",
 )
 @click.option(
+    "-r",
+    "--run-user-script-outside-container",
+    type=bool,
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Run the user script outside the container.",
+)
+@click.option(
     "-S",
     "--spark-dir",
     type=str,
@@ -390,19 +399,19 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     help="Spark configuration directory to create.",
 )
 @click.option(
-    "-u",
-    "--update-config-file",
-    type=str,
-    default=None,
-    help="Update all jobs in this config file with this Spark configuration.",
-)
-@click.option(
     "-s",
     "--shuffle-partition-multiplier",
     type=int,
     default=1,
     show_default=True,
     help="Set spark.sql.shuffle.partitions to total_cores multiplied by this value.",
+)
+@click.option(
+    "-u",
+    "--update-config-file",
+    type=str,
+    default=None,
+    help="Update all jobs in this config file with this Spark configuration.",
 )
 @click.option(
     "-v",
@@ -415,9 +424,10 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 def spark(
     container_path,
     hpc_config,
+    run_user_script_outside_container,
     spark_dir,
-    update_config_file,
     shuffle_partition_multiplier,
+    update_config_file,
     verbose,
 ):
     """Create a Spark configuration to use for running a job on a Spark cluster."""
@@ -471,6 +481,7 @@ def spark(
         conf_dir=str(spark_dir),
         enabled=True,
         container=SparkContainerModel(path=container_path),
+        run_user_script_outside_container=run_user_script_outside_container,
     )
 
     if update_config_file is not None:
