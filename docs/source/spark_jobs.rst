@@ -16,14 +16,14 @@ Setup
 3. Follow the normal steps to create your Jade configuration, such as with ``jade config create
    commands.txt``. The commands should be the scripts that you want to run against the Spark
    cluster including any command-line arguments. **Note**: Jade will append two positional
-   arguments to your command line arguments: the spark cluster (spark://node_name:7077) and the
+   arguments to your command line arguments: the spark cluster (spark://<node_name>:7077) and the
    job output directory.
 4. Create your HPC config file with ``jade config hpc -c hpc_config.toml``. Set ``nodes`` in
    ``hpc_config.toml`` to be the number of compute nodes you want to participate in the Spark
    cluster.
-5. Run this command to update the configuration with Spark parameters. Refer to ``--help`` for
+5. Run the command below to update the configuration with Spark parameters. Refer to ``--help`` for
    additional options. This will produce spark configuration files in ``./spark/conf`` that you
-   can customize.  One possible customization is ``spark.sql.shuffle.partititons`` and 
+   can customize. One possible customization is ``spark.sql.shuffle.partititons`` and 
    ``spark.default.parallelism`` in ``spark/conf/spark-defaults.conf``. Jade sets them to the total
    number of cores in the cluster by default. Refer to Spark documentation for help with the
    parameters.
@@ -32,8 +32,19 @@ Setup
 
     $ jade config spark -c <path-to-container> -h hpc_config.toml --update-config-file=config.json
 
-5. View the changes to your ``config.json`` if desired.
-6. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
+6. If you set a custom memory requirement in your ``hpc_config.toml`` then increase the
+   ``spark.executor.memory`` value in ``spark/conf/spark-defaults.conf``. The default value is
+   configured to create 7 executors on each compute node where each executor has 11 GiB of memory
+   and 5 cores.  Most compute nodes in NREL's HPC have 96 GiB of memory. If you acquire nodes with
+   192 GiB then double the executor memory.
+7. View the changes to your ``config.json`` if desired.
+8. Consider whether you want your jobs to be run inside or outside the container (default is inside).
+   Jade will run each job outside the container if the ``run_user_script_outside_container`` option is
+   set to true. You can set the option for each job in ``config.json`` or by passing ``-r`` to
+   the ``jade config spark`` command. If you do run your script outside of the container, Jade will
+   still set Spark environment variables to point to your local, customizable Spark config
+   directory.
+9. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
    job, running them sequentially.
 
 Debugging Problems

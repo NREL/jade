@@ -34,8 +34,13 @@ class SparkConfigModel(JadeBaseModel):
     )
     worker_memory_gb: int = Field(
         title="worker_memory_gb",
-        description="Amount of memory to allocate to worker processes",
-        default=80,
+        description="Deprecated and ignored. Memory is auto-determined.",
+        default=0,
+    )
+    run_user_script_outside_container: bool = Field(
+        title="run_user_script_outside_container",
+        description="Run the user script outside of the container.",
+        default=False,
     )
     # TODO: Add option to configure Spark logging
 
@@ -63,4 +68,5 @@ class SparkConfigModel(JadeBaseModel):
         return self.get_spark_script() + " sbin/stop-history-server.sh"
 
     def get_run_user_script(self):
+        assert not self.run_user_script_outside_container
         return Path(self.conf_dir) / "bin" / "run_user_script_wrapper.sh"
