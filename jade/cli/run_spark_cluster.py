@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 import click
+import psutil
 
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR
 from jade.jobs.job_configuration_factory import create_config_from_file
@@ -17,6 +18,7 @@ from jade.utils.run_command import check_run_command, run_command
 from jade.utils.utils import get_cli_string
 
 
+GiB = 1024 * 1024 * 1024
 SHUTDOWN_FILENAME = "shutdown"
 
 logger = logging.getLogger(__name__)
@@ -102,10 +104,7 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     logger.info("Run spark history server: [%s]", history_cmd)
     check_run_command(history_cmd)
     manager_node = _get_manager_node_name(output_dir)
-    # Let the master keep some extra memory for its services and the history server.
-    # This also means that the master node can start 7 executors with default settings.
-    # 80 - 3 = 77. 77g / 11g per executor = 7
-    worker_memory = str(job.model.spark_config.worker_memory_gb - 3) + "g"
+    worker_memory = _get_worker_memory_str(is_master=True)
     worker_cmd = _get_worker_command(job, manager_node, memory=worker_memory)
     logger.info("Run spark worker: [%s]", worker_cmd)
     check_run_command(worker_cmd)
@@ -115,7 +114,10 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     # or parse the logs
     time.sleep(15)
     args = list(manager_script_and_args) + [_get_cluster(manager_node), str(job_output)]
-    user_cmd = str(job.model.spark_config.get_run_user_script()) + " " + " ".join(args)
+    if job.model.spark_config.run_user_script_outside_container:
+        user_cmd = " ".join(args)
+    else:
+        user_cmd = str(job.model.spark_config.get_run_user_script()) + " " + " ".join(args)
     logger.info("Run user script [%s]", user_cmd)
 
     start = time.time()
@@ -152,7 +154,7 @@ def run_worker(job, output_dir, verbose, poll_interval=60):
     logs_dir = job_output / "spark" / "logs"
     job_conf_dir = job_output / "spark" / "conf"
     _set_env_variables(job_conf_dir, logs_dir)
-    worker_memory = str(job.model.spark_config.worker_memory_gb) + "g"
+    worker_memory = _get_worker_memory_str(is_master=False)
     cmd = _get_worker_command(job, manager_node, worker_memory)
     ret = 1
     output = {}
@@ -217,3 +219,16 @@ def _fix_spark_conf_file(job_conf_dir, events_dir):
     with open(conf_file, "a") as f_out:
         f_out.write(f"spark.eventLog.dir file://{events_dir}\n")
         f_out.write(f"spark.history.fs.logDirectory file://{events_dir}\n")
+
+
+def _get_total_memory_gib():
+    return psutil.virtual_memory()._asdict()["total"] // GiB
+
+
+def _get_worker_memory_str(is_master):
+    overhead = 10  # For operating system and system software.
+    if is_master:
+        # Let the master keep some extra memory for its services and the history server.
+        overhead += 3
+
+    return str(_get_total_memory_gib() - overhead) + "g"
