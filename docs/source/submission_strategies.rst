@@ -145,18 +145,16 @@ A submission group allows you to define batch parameters like
 ``per-node-batch-size`` as well as HPC parameters. You can customize most of
 these parameters for each submission group.
 
-Here's how to create the JSON object that you will need to add to the
-``config.json`` file.
+Here's how to modify the existing ``config.json`` file.
 
 1. Create default submission parameters with ``jade config submitter-params -c
-   submitter_params.json``.
-2. Edit that file and make the single object an array of objects (enclose it
-   with `[]`).
-3. Make a copy of the object for each group.
-4. Customize each group.
-5. Add the group to the ``config.json`` file at the root level.
-6. Add a ``submission_group`` entry to each job where the value is the group
-   name.
+   short-jobs.json``.
+2. Customize the file as necessary.
+3. Add those parameters as a submission group with
+   ``jade config add-submission-group short-jobs.json short_jobs config.json``
+4. Repeat steps 1-3 to create a group called ``long_jobs``.
+5. Edit the ``submission_group`` field for each job in ``config.json`` to be
+   one of the group names defined above.
 
 Here is an example of part of a ``config.json`` file:
 

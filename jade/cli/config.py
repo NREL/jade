@@ -1,5 +1,9 @@
 """CLI to display and manage config files."""
 
+from jade.models.submission_group import SubmissionGroup
+from pandas.io.parsers.readers import _stringify_na_values
+from jade.models.submission_group import SubmissionGroup
+from jade.models.submitter_params import SubmitterParams
 import json
 import logging
 import os
@@ -457,7 +461,7 @@ def spark(
         for param in ("spark.sql.shuffle.partitions", "spark.default.parallelism"):
             f_out.write(param)
             f_out.write(" ")
-            f_out.write(str(nodes * 36 * shuffle_partition_multiplier))
+            f_out.write(str(nodes * 35 * shuffle_partition_multiplier))
             f_out.write("\n")
     replacement_values = [
         ("SPARK_DIR", str(spark_dir)),
@@ -569,9 +573,35 @@ def submitter_params(
     print(f"Created submitter parameter file {config_file}")
 
 
+@click.command()
+@click.argument("params_file", type=click.Path(exists=True))
+@click.argument("name")
+@click.argument("config_file", type=click.Path(exists=True))
+def add_submission_group(params_file, name, config_file):
+    """Add a submission group with parameters defined in params_file to config_file."""
+    config = load_data(config_file)
+    for group in config["submission_groups"]:
+        if name == group["name"]:
+            print(f"Error: {name} is already stored in {config_file}", file=sys.stderr)
+            sys.exit(1)
+
+    params = load_data(params_file)
+    group = {
+        "name": name,
+        "submitter_params": params,
+    }
+    # Make sure it parses.
+    SubmissionGroup(**group)
+
+    config["submission_groups"].append(group)
+    dump_data(config, config_file, indent=2)
+    print(f"Updated {config_file} with submission group {name}.")
+
+
 config.add_command(create)
 config.add_command(hpc)
 config.add_command(show)
 config.add_command(_filter)
 config.add_command(spark)
 config.add_command(submitter_params)
+config.add_command(add_submission_group)
