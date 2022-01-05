@@ -461,7 +461,7 @@ def spark(
         for param in ("spark.sql.shuffle.partitions", "spark.default.parallelism"):
             f_out.write(param)
             f_out.write(" ")
-            f_out.write(str(nodes * 36 * shuffle_partition_multiplier))
+            f_out.write(str(nodes * 35 * shuffle_partition_multiplier))
             f_out.write("\n")
     replacement_values = [
         ("SPARK_DIR", str(spark_dir)),
