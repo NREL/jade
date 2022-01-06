@@ -71,6 +71,3 @@
 # You might get better performance to enable these options if using native BLAS (see SPARK-21305).
 # - MKL_NUM_THREADS=1        Disable multi-threading of Intel MKL
 # - OPENBLAS_NUM_THREADS=1   Disable multi-threading of OpenBLAS
-
-SPARK_LOCAL_DIRS=/tmp/scratch/spark/local
-SPARK_WORKER_DIR=/tmp/scratch/spark/worker

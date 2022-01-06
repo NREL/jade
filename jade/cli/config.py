@@ -1,9 +1,6 @@
 """CLI to display and manage config files."""
 
 from jade.models.submission_group import SubmissionGroup
-from pandas.io.parsers.readers import _stringify_na_values
-from jade.models.submission_group import SubmissionGroup
-from jade.models.submitter_params import SubmitterParams
 import json
 import logging
 import os
@@ -24,7 +21,7 @@ from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
 from jade.utils.run_command import check_run_command
 from jade.utils.utils import dump_data, load_data
-from jade.models import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig
+from jade.models import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig, get_model_defaults
 from jade.models.spark import SparkConfigModel, SparkContainerModel
 
 
@@ -369,7 +366,18 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
             os.remove(new_config_file)
 
 
+SPARK_MODEL_DEFAULTS = get_model_defaults(SparkConfigModel)
+
+
 @click.command()
+@click.option(
+    "-C",
+    "--collect-worker-logs",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Collect logs from worker processes.",
+)
 @click.option(
     "-c",
     "--container-path",
@@ -384,6 +392,20 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     default=HPC_CONFIG_FILE,
     show_default=True,
     help="HPC config file to be used. Defines number of nodes.",
+)
+@click.option(
+    "-m",
+    "--master-node-memory-overhead-gb",
+    default=SPARK_MODEL_DEFAULTS["master_node_memory_overhead_gb"],
+    show_default=True,
+    help="Memory overhead for Spark master processes",
+)
+@click.option(
+    "-n",
+    "--node-memory-overhead-gb",
+    default=SPARK_MODEL_DEFAULTS["node_memory_overhead_gb"],
+    show_default=True,
+    help="Memory overhead for node operating system and existing applications",
 )
 @click.option(
     "-r",
@@ -411,6 +433,14 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     help="Set spark.sql.shuffle.partitions to total_cores multiplied by this value.",
 )
 @click.option(
+    "-U",
+    "--use-tmpfs-for-scratch",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Use tmpfs on node for scratch space.",
+)
+@click.option(
     "-u",
     "--update-config-file",
     type=str,
@@ -425,14 +455,26 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
     show_default=True,
     help="Enable verbose log output.",
 )
+@click.option(
+    "-W",
+    "--worker-memory-gb",
+    default=SPARK_MODEL_DEFAULTS["worker_memory_gb"],
+    show_default=True,
+    help="If 0, give all node memory minus overhead to worker.",
+)
 def spark(
+    collect_worker_logs,
     container_path,
     hpc_config,
+    master_node_memory_overhead_gb,
+    node_memory_overhead_gb,
     run_user_script_outside_container,
     spark_dir,
     shuffle_partition_multiplier,
     update_config_file,
+    use_tmpfs_for_scratch,
     verbose,
+    worker_memory_gb,
 ):
     """Create a Spark configuration to use for running a job on a Spark cluster."""
     level = logging.DEBUG if verbose else logging.WARNING
@@ -482,10 +524,15 @@ def spark(
     print(f"Created Spark configuration in {spark_dir.absolute()} for a {nodes}-node cluster.")
 
     spark_config = SparkConfigModel(
+        collect_worker_logs=collect_worker_logs,
         conf_dir=str(spark_dir),
-        enabled=True,
         container=SparkContainerModel(path=container_path),
+        enabled=True,
+        master_node_memory_overhead_gb=master_node_memory_overhead_gb,
+        node_memory_overhead_gb=node_memory_overhead_gb,
         run_user_script_outside_container=run_user_script_outside_container,
+        use_tmpfs_for_scratch=use_tmpfs_for_scratch,
+        worker_memory_gb=worker_memory_gb,
     )
 
     if update_config_file is not None:

@@ -18,31 +18,50 @@ class SparkContainerModel(JadeBaseModel):
 class SparkConfigModel(JadeBaseModel):
     """Model definition for a Spark configuration"""
 
+    collect_worker_logs: bool = Field(
+        title="collect_worker_logs",
+        description="Collect logs from worker processes.",
+        default=False,
+    )
     conf_dir: str = Field(
         title="conf_dir",
         description="Spark configuration directory",
         default="spark-conf",
+    )
+    container: SparkContainerModel = Field(
+        title="container",
+        description="Container parameters",
     )
     enabled: bool = Field(
         title="enabled",
         description="Set to true to run this job on a Spark cluster",
         default=False,
     )
-    container: SparkContainerModel = Field(
-        title="container",
-        description="Container parameters",
+    master_node_memory_overhead_gb: int = Field(
+        title="master_node_memory_overhead_gb",
+        description="Memory overhead for Spark master processes",
+        default=3,
     )
-    worker_memory_gb: int = Field(
-        title="worker_memory_gb",
-        description="Deprecated and ignored. Memory is auto-determined.",
-        default=0,
+    node_memory_overhead_gb: int = Field(
+        title="node_memory_overhead_gb",
+        description="Memory overhead for node operating system and existing applications",
+        default=10,
     )
     run_user_script_outside_container: bool = Field(
         title="run_user_script_outside_container",
         description="Run the user script outside of the container.",
         default=False,
     )
-    # TODO: Add option to configure Spark logging
+    use_tmpfs_for_scratch: bool = Field(
+        title="use_tmpfs_for_scratch",
+        description="Use node's tmpfs instead of internal storage for scratch space.",
+        default=False,
+    )
+    worker_memory_gb: int = Field(
+        title="worker_memory_gb",
+        description="If 0, give all node memory minus overhead to worker.",
+        default=0,
+    )
 
     def get_spark_script(self):
         wrapper = Path(self.conf_dir) / "bin" / "run_spark_script_wrapper.sh"
