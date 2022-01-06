@@ -2,6 +2,7 @@
 
 import logging
 import os
+import re
 import shutil
 import socket
 import time
@@ -18,8 +19,11 @@ from jade.utils.run_command import check_run_command, run_command
 from jade.utils.utils import get_cli_string
 
 
-GiB = 1024 * 1024 * 1024
+KiB = 1024
+MiB = KiB * KiB
+GiB = MiB * KiB
 SHUTDOWN_FILENAME = "shutdown"
+TMPFS_MOUNT = "/dev/shm"
 
 logger = logging.getLogger(__name__)
 
@@ -87,12 +91,14 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     events_dir.mkdir(parents=True)
     logs_dir = job_output / "spark" / "logs"
     logs_dir.mkdir()
+    workers_dir = job_output / "spark" / "workers"
+    workers_dir.mkdir()
 
     # Make a job-specific conf directory because the log and event files need to be per-job.
     job_conf_dir = job_output / "spark" / "conf"
     shutil.copytree(Path(job.model.spark_config.conf_dir) / "conf", job_conf_dir)
     _fix_spark_conf_file(job_conf_dir, events_dir)
-    _set_env_variables(job_conf_dir, logs_dir)
+    _set_env_variables(job, job_conf_dir, logs_dir)
 
     # It would be better to start all workers from the master. Doing so would require that
     # Spark processes on the master node be able to ssh into the worker nodes.
@@ -104,7 +110,8 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     logger.info("Run spark history server: [%s]", history_cmd)
     check_run_command(history_cmd)
     manager_node = _get_manager_node_name(output_dir)
-    worker_memory = _get_worker_memory_str(is_master=True)
+    worker_memory = _get_worker_memory_str(job, is_master=True)
+
     worker_cmd = _get_worker_command(job, manager_node, memory=worker_memory)
     logger.info("Run spark worker: [%s]", worker_cmd)
     check_run_command(worker_cmd)
@@ -135,6 +142,8 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     check_run_command(job.model.spark_config.get_stop_worker())
     check_run_command(job.model.spark_config.get_stop_history_server())
     check_run_command(job.model.spark_config.get_stop_master())
+    if job.model.spark_config.collect_worker_logs:
+        shutil.copytree(Path(os.environ["SPARK_WORKER_DIR"]), workers_dir / socket.gethostname())
     return ret
 
 
@@ -153,8 +162,9 @@ def run_worker(job, output_dir, verbose, poll_interval=60):
     job_output = Path(output_dir) / JOBS_OUTPUT_DIR / job.name
     logs_dir = job_output / "spark" / "logs"
     job_conf_dir = job_output / "spark" / "conf"
-    _set_env_variables(job_conf_dir, logs_dir)
-    worker_memory = _get_worker_memory_str(is_master=False)
+    workers_dir = job_output / "spark" / "workers"
+    _set_env_variables(job, job_conf_dir, logs_dir)
+    worker_memory = _get_worker_memory_str(job, is_master=False)
     cmd = _get_worker_command(job, manager_node, worker_memory)
     ret = 1
     output = {}
@@ -174,12 +184,20 @@ def run_worker(job, output_dir, verbose, poll_interval=60):
 
     logger.info("Detected shutdown.")
     check_run_command(job.model.spark_config.get_stop_worker())
+    if job.model.spark_config.collect_worker_logs:
+        shutil.copytree(Path(os.environ["SPARK_WORKER_DIR"]), workers_dir / hostname)
     return 0
 
 
-def _set_env_variables(conf_dir, logs_dir):
+def _set_env_variables(job, conf_dir, logs_dir):
     os.environ["SPARK_CONF_DIR"] = str(conf_dir.absolute())
     os.environ["SPARK_LOG_DIR"] = str(logs_dir.absolute())
+    if job.model.spark_config.use_tmpfs_for_scratch:
+        scratch = TMPFS_MOUNT
+    else:
+        scratch = os.environ["LOCAL_SCRATCH"]
+    os.environ["SPARK_LOCAL_DIRS"] = f"{scratch}/spark/local"
+    os.environ["SPARK_WORKER_DIR"] = f"{scratch}/spark/worker"
 
 
 def _get_cluster(manager_node):
@@ -221,14 +239,50 @@ def _fix_spark_conf_file(job_conf_dir, events_dir):
         f_out.write(f"spark.history.fs.logDirectory file://{events_dir}\n")
 
 
+def _get_tmpfs_size_gb():
+    output = {}
+    check_run_command("df -h", output=output)
+    # Output looks like this:
+    # Filesystem                                  Size  Used Avail Use% Mounted on
+    # tmpfs                                       378G  4.0K  378G   1% /dev/shm
+    for line in output["stdout"].splitlines():
+        if line.endswith(TMPFS_MOUNT):
+            return _parse_tmpfs_size_str(line)
+    raise Exception(f"Did not find {TMPFS_MOUNT} in 'df -h' output: {output['stdout']}")
+
+
+def _parse_tmpfs_size_str(text):
+    fields = text.strip().split()
+    if len(fields) < 5:
+        raise Exception(f"Output of 'df -h' not understood: {text}")
+    avail = fields[3]
+    match = re.search(r"(\d+)([MGT])$", avail)
+    if match is None:
+        raise Exception(f"format of size not understood: {avail}")
+    val = int(match.group(1))
+    unit = match.group(2)
+    if unit == "M":
+        val /= KiB
+    elif unit == "T":
+        val *= KiB
+    return val
+
+
 def _get_total_memory_gib():
     return psutil.virtual_memory()._asdict()["total"] // GiB
 
 
-def _get_worker_memory_str(is_master):
-    overhead = 10  # For operating system and system software.
+def _get_worker_memory_str(job, is_master):
+    overhead = job.model.spark_config.node_memory_overhead_gb
     if is_master:
-        # Let the master keep some extra memory for its services and the history server.
-        overhead += 3
+        overhead += job.model.spark_config.master_node_memory_overhead_gb
 
-    return str(_get_total_memory_gib() - overhead) + "g"
+    if job.model.spark_config.worker_memory_gb == 0:
+        total_memory = _get_total_memory_gib()
+    else:
+        total_memory = job.model.spark_config.worker_memory_gb
+
+    if job.model.spark_config.use_tmpfs_for_scratch:
+        total_memory -= _get_tmpfs_size_gb()
+
+    return str(total_memory - overhead) + "g"

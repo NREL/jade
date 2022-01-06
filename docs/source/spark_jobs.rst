@@ -20,7 +20,10 @@ Setup
    job output directory.
 4. Create your HPC config file with ``jade config hpc -c hpc_config.toml``. Set ``nodes`` in
    ``hpc_config.toml`` to be the number of compute nodes you want to participate in the Spark
-   cluster.
+   cluster. Spark will perform poorly if its scratch file space is on slow storage. You should
+   specify requirements here that give you nodes with fast internal storage. On NREL's Eagle
+   HPC cluster that is only the big-memory and CPU nodes. Alternatively, you can use nodes' tmpfs
+   for scratch space as described below.
 5. Run the command below to update the configuration with Spark parameters. Refer to ``--help`` for
    additional options. This will produce spark configuration files in ``./spark/conf`` that you
    can customize. One possible customization is ``spark.sql.shuffle.partititons`` and 
@@ -38,14 +41,19 @@ Setup
    and 5 cores.  Most compute nodes in NREL's HPC have 96 GiB of memory. If you acquire nodes with
    192 GiB then double the executor memory.
 7. View the changes to your ``config.json`` if desired.
-8. Consider whether you want your jobs to be run inside or outside the container (default is inside).
+8. If you are using compute nodes with slow internal storage, consider setting ``use_tmpfs_for_scratch``
+   to true. Note that this reduces availabe worker memory by half and you'll need to adjust
+   ``spark.executor.memory`` accordingly. You can set the option in ``config.json`` or by passing
+   ``-U`` to the ``jade config spark`` command.
+9. Consider whether you want your jobs to be run inside or outside the container (default is inside).
    Jade will run each job outside the container if the ``run_user_script_outside_container`` option is
    set to true. You can set the option for each job in ``config.json`` or by passing ``-r`` to
    the ``jade config spark`` command. If you do run your script outside of the container, Jade will
    still set Spark environment variables to point to your local, customizable Spark config
    directory.
-9. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
-   job, running them sequentially.
+10. Set ``collect_worker_logs`` to true if your jobs are getting logs of errors. These can grow large.
+11. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
+    job, running them sequentially.
 
 Debugging Problems
 ==================
