@@ -51,10 +51,13 @@ class Registry:
 
     def __init__(self, registry_filename=None):
         if registry_filename is None:
-            self._registry_filename = os.path.join(
-                str(pathlib.Path.home()),
-                self._REGISTRY_FILENAME,
-            )
+            if "JADE_REGISTRY" in os.environ:
+                self._registry_filename = os.environ["JADE_REGISTRY"]
+            else:
+                self._registry_filename = os.path.join(
+                    str(pathlib.Path.home()),
+                    self._REGISTRY_FILENAME,
+                )
         else:
             self._registry_filename = registry_filename
 
