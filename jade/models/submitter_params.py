@@ -1,5 +1,7 @@
 """Models for submitter options"""
 
+import re
+from datetime import timedelta
 from typing import List, Optional, Set, Union
 
 from pydantic import Field, validator
@@ -92,3 +94,28 @@ class SubmitterParams(JadeBaseModel):
         description="Submit new jobs and update status on compute nodes.",
         default=True,
     )
+
+    def get_wall_time(self):
+        """Return the wall time from the HPC parameters.
+
+        Returns
+        -------
+        timedelta
+
+        """
+        wall_time = getattr(self.hpc_config.hpc, "walltime", None)
+        if wall_time is None:
+            return timedelta(seconds=0xFFFFFFFF)  # largest 8-byte integer
+        return _to_timedelta(wall_time)
+
+
+_REGEX_WALL_TIME = re.compile(r"(\d+):(\d+):(\d+)")
+
+
+def _to_timedelta(wall_time):
+    match = _REGEX_WALL_TIME.search(wall_time)
+    assert match
+    hours = int(match.group(1))
+    minutes = int(match.group(2))
+    seconds = int(match.group(3))
+    return timedelta(hours=hours, minutes=minutes, seconds=seconds)

@@ -4,7 +4,6 @@ import copy
 import itertools
 import logging
 import os
-import re
 import sys
 import time
 from datetime import timedelta
@@ -243,10 +242,10 @@ class HpcSubmitter:
                     blocked_jobs_by_name[job.name] = job
                 else:
                     jade_job.set_blocking_jobs(job.blocked_by)
-                    batch.append(jade_job)
-                    submitted_jobs.append(job)
-                    submitted_jobs_by_name[job.name] = job
-                    blocked_jobs_by_name.pop(job.name, None)
+                    if batch.try_append(jade_job):
+                        submitted_jobs.append(job)
+                        submitted_jobs_by_name[job.name] = job
+                        blocked_jobs_by_name.pop(job.name, None)
                 if batch.ready_to_submit() or len(submitted_jobs_by_name) == len(available_jobs):
                     done = True
                     break
@@ -346,18 +345,32 @@ class _BatchJobs:
         self._jobs = []
         self._job_names = set()
         if self._time_based_batching:
-            self._max_batch_time = (
-                _to_timedelta(params.hpc_config.hpc.walltime) * self._num_processes
-            )
+            self._max_batch_time = params.get_wall_time() * self._num_processes
         else:
             self._max_batch_time = None
 
-    def append(self, job):
-        """Append a job."""
+    def try_append(self, job):
+        """Return True if the job is appended to the batch.
+
+        Returns
+        -------
+        bool
+
+        """
+        # This is probably too simplistic and could be made more robust.
+        if (
+            self._time_based_batching
+            and self._estimated_batch_time + timedelta(minutes=job.estimated_run_minutes)
+            > self._max_batch_time
+        ):
+            return False
+
         self._jobs.append(job)
         self._job_names.add(job.name)
+
         if self._time_based_batching:
             self._estimated_batch_time += timedelta(minutes=job.estimated_run_minutes)
+        return True
 
     def are_blocking_jobs_present(self, blocking_jobs):
         """Return True if all blocking jobs are already in the batch.
@@ -604,15 +617,3 @@ class HpcStatusCollector:
 
         """
         return list(self._statuses.values())
-
-
-_REGEX_WALL_TIME = re.compile(r"(\d+):(\d+):(\d+)")
-
-
-def _to_timedelta(wall_time):
-    match = _REGEX_WALL_TIME.search(wall_time)
-    assert match
-    hours = int(match.group(1))
-    minutes = int(match.group(2))
-    seconds = int(match.group(3))
-    return timedelta(hours=hours, minutes=minutes, seconds=seconds)
