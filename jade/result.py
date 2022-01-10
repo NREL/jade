@@ -137,6 +137,12 @@ class ResultsSummary:
         self._missing_jobs = data["missing_jobs"]
         self._base_directory = data["base_directory"]
 
+    def __iadd__(self, other):
+        for result in other.results:
+            self._results["results"][result.name] = result
+        self._missing_jobs += other.missing_jobs
+        return self
+
     @property
     def base_directory(self):
         """Return the base directory for the job results.
@@ -149,16 +155,20 @@ class ResultsSummary:
         return self._base_directory
 
     @property
+    def missing_jobs(self):
+        return self._missing_jobs
+
+    @property
     def results(self):
         """Return the results.
 
         Returns
         -------
-        list
-            list of Result objects
+        dict_values
+            iterable of Result objects
 
         """
-        return list(self._results.values())
+        return self._results["results"].values()
 
     @staticmethod
     def _parse(results_file):
