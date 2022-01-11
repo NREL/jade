@@ -7,6 +7,7 @@ import logging
 import os
 import sys
 from collections import defaultdict
+from datetime import timedelta
 
 import toml
 
@@ -211,6 +212,25 @@ class JobConfiguration(abc.ABC):
             raise InvalidConfiguration(
                 "Submitting batches by time requires that each job define estimated_run_minutes"
             )
+
+    def check_job_runtimes(self):
+        """Check for any job with a longer estimated runtime than the walltime.
+
+        Raises
+        ------
+        InvalidConfiguration
+            Raised if any job is too long.
+
+        """
+        wall_times = {x.name: x.submitter_params.get_wall_time() for x in self.submission_groups}
+        for job in self.iter_jobs():
+            wall_time = wall_times[job.submission_group]
+            if job.estimated_run_minutes is not None:
+                estimate = timedelta(minutes=job.estimated_run_minutes)
+                if estimate > wall_time:
+                    raise InvalidConfiguration(
+                        f"job {job.name} has estimated_run_minutes={estimate} longer than wall_time={wall_time}"
+                    )
 
     def check_spark_config(self):
         """If Spark jobs are present in the config, configure the params to run

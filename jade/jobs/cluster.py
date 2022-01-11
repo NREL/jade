@@ -182,7 +182,7 @@ class Cluster:
 
     def deserialize_jobs(self):
         """Deserialize the current job status."""
-        return self._do_action_under_lock(self._deserialize_jobs)
+        return self._do_action_under_lock(self._deserialize_jobs, self._config.path)
 
     @staticmethod
     def do_action_under_lock(path, func, *args, **kwargs):
@@ -462,12 +462,12 @@ class Cluster:
         if try_promote_to_submitter:
             promoted = cluster._promote_to_submitter()
         if deserialize_jobs:
-            cluster._deserialize_jobs()
+            cluster._deserialize_jobs(path)
 
         return cluster, promoted
 
-    def _deserialize_jobs(self):
-        data = load_data(self.get_job_status_file(self._config.path))
+    def _deserialize_jobs(self, path):
+        data = load_data(self.get_job_status_file(path))
         self._job_status = JobStatus(**data)
 
     def _do_action_under_lock(self, func, *args, **kwargs):
