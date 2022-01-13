@@ -13,7 +13,7 @@ from jade.models import JadeBaseModel, HpcConfig, SingularityParams
 class SubmitterParams(JadeBaseModel):
     """Defines the submitter options selected by the user."""
 
-    generate_reports: Optional[bool] = Field(
+    generate_reports: bool = Field(
         title="generate_reports",
         description="Controls whether to generate reports after completion",
         default=True,
@@ -32,7 +32,7 @@ class SubmitterParams(JadeBaseModel):
         description="Number of processes to run in parallel on each node",
         default=None,
     )
-    per_node_batch_size: Optional[int] = Field(
+    per_node_batch_size: int = Field(
         title="per_node_batch_size",
         description="How many jobs to assign to each node",
         default=500,
@@ -47,39 +47,39 @@ class SubmitterParams(JadeBaseModel):
         description="Script to run on each node after completing jobs",
         default=None,
     )
-    poll_interval: Optional[int] = Field(
+    poll_interval: int = Field(
         title="poll_interval",
         description="Interval in seconds on which to poll jobs for status",
         default=60,
     )
-    resource_monitor_interval: Optional[int] = Field(
+    resource_monitor_interval: int = Field(
         title="resource_monitor_interval",
         description="Interval in seconds on which to collect resource stats. If None, aggregate"
         "summaries of stats.",
         default=1,
     )
-    resource_monitor_type: Optional[ResourceMonitorType] = Field(
+    resource_monitor_type: ResourceMonitorType = Field(
         title="resource_monitor_type",
         description=f"Type of resource monitoring to perform. Options: {[x.value for x in ResourceMonitorType]}",
         default=ResourceMonitorType.AGGREGATION,
     )
-    try_add_blocked_jobs: Optional[bool] = Field(
+    try_add_blocked_jobs: bool = Field(
         title="try_add_blocked_jobs",
         description="Add blocked jobs to a batch if all blocking jobs are in the batch. "
         "Be aware of time constraints.",
         default=True,
     )
-    time_based_batching: Optional[bool] = Field(
+    time_based_batching: bool = Field(
         title="time_based_batching",
         description="Use time-based batching instead of job-count-based batching",
         default=False,
     )
-    dry_run: Optional[bool] = Field(
+    dry_run: bool = Field(
         title="dry_run",
         description="Dry run mode; don't start any jobs",
         default=False,
     )
-    verbose: Optional[bool] = Field(
+    verbose: bool = Field(
         title="verbose",
         description="Enable debug logging",
         default=False,
@@ -89,7 +89,7 @@ class SubmitterParams(JadeBaseModel):
         description="Singularity container parameters",
         default=None,
     )
-    distributed_submitter: Optional[bool] = Field(
+    distributed_submitter: bool = Field(
         title="distributed_submitter",
         description="Submit new jobs and update status on compute nodes.",
         default=True,

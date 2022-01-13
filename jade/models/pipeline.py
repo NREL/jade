@@ -51,7 +51,7 @@ class PipelineConfig(JadeBaseModel):
         title="stages",
         description="stages in the pipeline",
     )
-    is_complete: Optional[bool] = Field(
+    is_complete: bool = Field(
         title="is_complete",
         description="set to True when the pipeline is complete",
         default=False,

@@ -26,7 +26,7 @@ class SlurmConfig(JadeBaseModel):
         description="Set to high to get faster node allocations at twice the cost",
         default=None,
     )
-    walltime: Optional[str] = Field(
+    walltime: str = Field(
         title="walltime",
         description="Maximum time allocated to each node",
         default="4:00:00",
@@ -95,7 +95,7 @@ class HpcConfig(JadeBaseModel):
         title="hpc_type",
         description="Type of HPC queueing system (such as 'slurm')",
     )
-    job_prefix: Optional[str] = Field(
+    job_prefix: str = Field(
         title="job_prefix",
         description="Prefix added to each HPC job name",
         default="job",

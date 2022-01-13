@@ -1,7 +1,5 @@
 """Defines parameters for submitting jobs to an HPC."""
 
-from typing import Optional
-
 from pydantic import Field
 
 from jade.models import JadeBaseModel, SubmitterParams

@@ -21,7 +21,7 @@ class SingularityParams(JadeBaseModel):
     """Defines parameters for using Singularity containers"""
 
     # This must be first for validation to work.
-    enabled: Optional[bool] = Field(
+    enabled: bool = Field(
         title="enabled",
         description="Run all jobs through a Singularity container",
         default=False,
@@ -30,17 +30,17 @@ class SingularityParams(JadeBaseModel):
         title="container",
         description="Path to Singularity container",
     )
-    load_command: Optional[str] = Field(
+    load_command: str = Field(
         title="load_command",
         description="Command to load the singularity environment. Can be empty.",
         default="module load singularity-container",
     )
-    run_command: Optional[str] = Field(
+    run_command: str = Field(
         title="run_command",
         description="Command to run the Singularity container",
         default=SINGULARITY_RUN_COMMAND,
     )
-    setup_commands: Optional[str] = Field(
+    setup_commands: str = Field(
         title="setup_commands",
         description="Commands to execute within the Singularity container",
         default=SINGULARITY_SETUP_COMMANDS,

@@ -27,7 +27,7 @@ class Job(JadeBaseModel):
         title="blocked_by",
         description="job names that are blocking this job",
     )
-    cancel_on_blocking_job_failure: Optional[bool] = Field(
+    cancel_on_blocking_job_failure: bool = Field(
         title="cancel_on_blocking_job_failure",
         description="cancel job if one of its blocking jobs fails",
         default=False,
@@ -49,7 +49,7 @@ class JobStatus(JadeBaseModel):
         title="hpc_job_ids",
         description="HPC job IDs for active jobs",
     )
-    batch_index: Optional[int] = Field(
+    batch_index: int = Field(
         title="batch_index",
         description="HPC batch index",
         default=1,
