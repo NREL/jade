@@ -197,7 +197,13 @@ class HpcSubmitter:
         assert not queue.is_full()
         num_submitted_jobs = 0
         _submitted_jobs = []  # only exists for the check at the end
-        available_jobs = self._get_available_jobs(submission_group)
+        if (
+            not submission_group.submitter_params.time_based_batching
+            or "JADE_SKIP_SORT_BY_TIME" in os.environ
+        ):
+            available_jobs = self._get_available_jobs(submission_group)
+        else:
+            available_jobs = self._get_available_jobs_by_time(submission_group)
         while not queue.is_full() and available_jobs:
             batch, available_jobs = self._make_batch(
                 available_jobs, submission_group, _submitted_jobs, blocked_jobs
@@ -219,9 +225,22 @@ class HpcSubmitter:
                 available_jobs.append(job)
         return available_jobs
 
+    def _get_available_jobs_by_time(self, submission_group):
+        available_jobs = {}
+        job_order = []
+        for job in self._cluster.iter_jobs(state=JobState.NOT_SUBMITTED):
+            jade_job = self._config.get_job(job.name)
+            if jade_job.submission_group == submission_group.name:
+                job_order.append((job.name, jade_job.estimated_run_minutes))
+                available_jobs[job.name] = job
+        job_order.sort(key=lambda x: x[1])
+
+        logger.info("Sorted jobs by estimated_run_minutes.")
+        return [available_jobs[x[0]] for x in job_order]
+
     def _make_batch(self, available_jobs, submission_group, submitted_jobs, blocked_jobs):
         blocked_jobs_by_name = {}
-        submitted_jobs_by_name = {}
+        submitted_jobs_by_name = set()
         batch = _BatchJobs(submission_group.submitter_params)
         if submission_group.submitter_params.try_add_blocked_jobs:
             # Allow multiple rounds in case the user listed blocked jobs before
@@ -244,9 +263,12 @@ class HpcSubmitter:
                     jade_job.set_blocking_jobs(job.blocked_by)
                     if batch.try_append(jade_job):
                         submitted_jobs.append(job)
-                        submitted_jobs_by_name[job.name] = job
+                        submitted_jobs_by_name.add(job.name)
                         blocked_jobs_by_name.pop(job.name, None)
-                if batch.ready_to_submit() or len(submitted_jobs_by_name) == len(available_jobs):
+                    else:
+                        # Need to look at this job in the next round.
+                        highest_index -= 1
+                if batch.is_ready_to_submit or len(submitted_jobs_by_name) == len(available_jobs):
                     done = True
                     break
             if done:
@@ -344,6 +366,7 @@ class _BatchJobs:
         self._try_add_blocked_jobs = params.try_add_blocked_jobs
         self._jobs = []
         self._job_names = set()
+        self._is_ready_to_submit = False
         if self._time_based_batching:
             self._max_batch_time = params.get_wall_time() * self._num_processes
         else:
@@ -358,11 +381,15 @@ class _BatchJobs:
 
         """
         # This is probably too simplistic and could be made more robust.
+        # It does assume that if time_based_batching is enabled, jobs are sorted by
+        # estimated_run_minutes in ascending order. Once one job is too long, all other
+        # jobs will be too long.
         if (
             self._time_based_batching
             and self._estimated_batch_time + timedelta(minutes=job.estimated_run_minutes)
             > self._max_batch_time
         ):
+            self._is_ready_to_submit = True
             return False
 
         self._jobs.append(job)
@@ -370,6 +397,8 @@ class _BatchJobs:
 
         if self._time_based_batching:
             self._estimated_batch_time += timedelta(minutes=job.estimated_run_minutes)
+        elif self.num_jobs >= self._per_node_batch_size:
+            self._is_ready_to_submit = True
         return True
 
     def are_blocking_jobs_present(self, blocking_jobs):
@@ -381,15 +410,6 @@ class _BatchJobs:
 
         """
         return blocking_jobs.issubset(self._job_names)
-
-    def ready_to_submit(self):
-        """Return True if the batch has enough jobs to submit."""
-        if self._time_based_batching:
-            if self._estimated_batch_time >= self._max_batch_time:
-                return True
-        elif self.num_jobs >= self._per_node_batch_size:
-            return True
-        return False
 
     def is_job_blocked(self, job):
         """Return True if the job is blocked.
@@ -409,6 +429,11 @@ class _BatchJobs:
             # JobRunner will manage the execution ordering on the compute node.
             return False
         return True
+
+    @property
+    def is_ready_to_submit(self):
+        """Return True if the batch has enough jobs to submit."""
+        return self._is_ready_to_submit
 
     @property
     def num_jobs(self):
