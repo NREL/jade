@@ -199,8 +199,8 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
         is_flag=True,
-        default=True,
-        show_default=SUBMITTER_PARAMS_DEFAULTS["try_add_blocked_jobs"],
+        default=SUBMITTER_PARAMS_DEFAULTS["try_add_blocked_jobs"],
+        show_default=True,
         help="Add blocked jobs to a node's batch if they are blocked by jobs "
         "already in the batch.",
     ),
