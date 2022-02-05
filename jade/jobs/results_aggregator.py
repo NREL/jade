@@ -215,7 +215,7 @@ class ResultsAggregator:
     def _write_results(self, results):
         _results = [serialize_result(x) for x in results]
         with open(self._filename, "w") as f_out:
-            writer = csv.DictWriter(f_out, fieldnames=_results[0].keys())
+            writer = csv.DictWriter(f_out, fieldnames=Result._fields)
             writer.writeheader()
             if results:
                 writer.writerows(_results)
