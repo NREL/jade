@@ -40,10 +40,17 @@ logger = logging.getLogger(__name__)
     help="Resubmit missing jobs.",
 )
 @click.option(
+    "--successful/--no-successful",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Resubmit successful jobs.",
+)
+@click.option(
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
-def resubmit_jobs(output, failed, missing, verbose):
-    """Resubmit failed and missing jobs."""
+def resubmit_jobs(output, failed, missing, successful, verbose):
+    """Resubmit jobs."""
     event_file = os.path.join(output, "submit_jobs_events.log")
     setup_event_logging(event_file, mode="a")
     filename = os.path.join(output, "submit_jobs.log")
@@ -61,7 +68,7 @@ def resubmit_jobs(output, failed, missing, verbose):
         sys.exit(1)
     assert promoted
 
-    jobs_to_resubmit = _get_jobs_to_resubmit(cluster, output, failed, missing)
+    jobs_to_resubmit = _get_jobs_to_resubmit(cluster, output, failed, missing, successful)
     updated_blocking_jobs_by_name = _update_with_blocking_jobs(jobs_to_resubmit, output)
     _reset_results(output, jobs_to_resubmit)
     cluster.prepare_for_resubmission(jobs_to_resubmit, updated_blocking_jobs_by_name)
@@ -84,13 +91,16 @@ def resubmit_jobs(output, failed, missing, verbose):
     sys.exit(ret)
 
 
-def _get_jobs_to_resubmit(cluster, output, failed, missing):
+def _get_jobs_to_resubmit(cluster, output, failed, missing, successful):
     results = ResultsSummary(output)
     jobs_to_resubmit = []
-    if failed:
+    if failed or successful:
         res = results.get_results_by_type()
-        jobs_to_resubmit += res["canceled"]
-        jobs_to_resubmit += res["failed"]
+        if failed:
+            jobs_to_resubmit += res["canceled"]
+            jobs_to_resubmit += res["failed"]
+        if successful:
+            jobs_to_resubmit += res["successful"]
     if missing:
         jobs_to_resubmit += results.get_missing_jobs(cluster.iter_jobs())
 
