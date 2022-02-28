@@ -6,6 +6,7 @@ import pytest
 from jade.exceptions import InvalidConfiguration
 from jade.extensions.generic_command import GenericCommandInputs
 from jade.extensions.generic_command import GenericCommandConfiguration
+from jade.extensions.generic_command import GenericCommandParameters
 from jade.models.hpc import HpcConfig
 from jade.models.submitter_params import SubmitterParams
 from jade.utils.subprocess_manager import run_command
@@ -83,3 +84,20 @@ def test_job_configuration__shuffle_jobs(job_fixture):
     assert [x.name for x in config.iter_jobs()] == [str(x) for x in range(1, num_jobs + 1)]
     config.shuffle_jobs()
     assert [x.name for x in config.iter_jobs()] != [str(x) for x in range(1, num_jobs + 1)]
+
+
+def test_job_configuration__custom_names(job_fixture):
+    num_jobs = 3
+    with open(TEST_FILENAME, "w") as f_out:
+        for i in range(num_jobs):
+            f_out.write("echo hello world\n")
+
+    inputs = GenericCommandInputs(TEST_FILENAME)
+    config = GenericCommandConfiguration(job_inputs=inputs)
+    for i, job_param in enumerate(inputs.iter_jobs()):
+        job_param.name = f"job_{i}"
+        config.add_job(job_param)
+    assert config.get_num_jobs() == num_jobs
+    job = GenericCommandParameters(command="echo hello world", name="job_2")
+    with pytest.raises(InvalidConfiguration):
+        config.add_job(job)

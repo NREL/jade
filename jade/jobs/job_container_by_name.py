@@ -3,7 +3,7 @@
 import logging
 import random
 
-from jade.exceptions import InvalidParameter
+from jade.exceptions import InvalidConfiguration, InvalidParameter
 from jade.jobs.job_container_interface import JobContainerInterface
 
 
@@ -25,6 +25,8 @@ class JobContainerByName(JobContainerInterface):
         return len(self._jobs)
 
     def add_job(self, job):
+        if job.name in self._jobs:
+            raise InvalidConfiguration(f"job name {job.name} is already stored")
         self._jobs[job.name] = job
         logger.debug("Added job %s", job.name)
 

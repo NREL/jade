@@ -59,7 +59,7 @@ class GenericCommandParameters(JobParametersInterface):
 
     @property
     def name(self):
-        return self._create_name()
+        return self._create_name() if self._model.name is None else self._model.name
 
     def _create_name(self):
         return str(self._model.job_id)
@@ -101,6 +101,10 @@ class GenericCommandParameters(JobParametersInterface):
 class GenericCommandParametersModel(JadeBaseModel):
     """Model definition for generic command parameters"""
 
+    name: Optional[str] = Field(
+        title="name",
+        description="If not set Jade will use the job_id converted to a string. Must be unique.",
+    )
     use_multi_node_manager: Optional[bool] = Field(
         title="use_multi_node_manager",
         description="If true JADE will run this job with its multi-node manager.",

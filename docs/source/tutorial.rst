@@ -117,6 +117,8 @@ Job Commands
 JADE created ``config.json`` with one definition per job. You can edit this
 file to customize execution behavior.
 
+.. note:: You can assign custom job names. This can make it easier to inspect results.
+
 Refer to :ref:`model_generic_command_parameters` for a full list of
 configurable parameters.
 

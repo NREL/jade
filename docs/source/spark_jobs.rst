@@ -35,11 +35,9 @@ Setup
 
     $ jade config spark -c <path-to-container> -h hpc_config.toml --update-config-file=config.json
 
-6. If you set a custom memory requirement in your ``hpc_config.toml`` then increase the
+6. If you set a custom memory requirement in your ``hpc_config.toml`` then Jade will increase the
    ``spark.executor.memory`` value in ``spark/conf/spark-defaults.conf``. The default value is
-   configured to create 7 executors on each compute node where each executor has 11 GiB of memory
-   and 5 cores.  Most compute nodes in NREL's HPC have 96 GiB of memory. If you acquire nodes with
-   192 GiB then double the executor memory.
+   intended to maximize memory for 7 executors on each compute node. Customize as needed.
 7. View the changes to your ``config.json`` if desired.
 8. If you are using compute nodes with slow internal storage, consider setting ``use_tmpfs_for_scratch``
    to true. Note that this reduces availabe worker memory by half and you'll need to adjust

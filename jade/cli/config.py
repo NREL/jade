@@ -486,6 +486,20 @@ def spark(
     if nodes is None:
         print(f"hpc_type={hpc_config_data.hpc_type} doesn't have a nodes field", file=sys.stderr)
         sys.exit(1)
+    mem = getattr(hpc_config_data.hpc, "mem", None)
+    if mem is None:
+        executor_mem_gb = 11
+        print(f"Use default per-executor memory of {executor_mem_gb}G")
+    else:
+        num_executors = 7
+        if not mem.endswith("G"):
+            raise Exception(f"This feature only support HPC memory requirements ending with 'G'")
+        per_node_mem_gb = int(mem[:-1])
+        if use_tmpfs_for_scratch:
+            per_node_mem_gb //= 2
+        overhead = master_node_memory_overhead_gb - node_memory_overhead_gb
+        executor_mem_gb = (per_node_mem_gb - overhead) // num_executors
+        print(f"Use custom per-executor memory of {executor_mem_gb}G based on per-node {mem}")
 
     if not spark_dir.exists():
         spark_dir.mkdir(parents=True)
@@ -496,7 +510,10 @@ def spark(
             dst_path.mkdir()
         for filename in src_path.iterdir():
             shutil.copyfile(filename, dst_path / filename.name)
+
     with open(spark_dir / "conf" / "spark-defaults.conf", "a") as f_out:
+        f_out.write("\n")
+        f_out.write(f"spark.executor.memory {executor_mem_gb}G\n")
         # Online documentation says this value should correlate with the number of cores in the
         # cluster. Some sources say 1 per core, others say 2 or 4 per core. Depends on use case.
         # This should be a reasonable default for users, who can customize dynamically.
