@@ -122,6 +122,57 @@ file to customize execution behavior.
 Refer to :ref:`model_generic_command_parameters` for a full list of
 configurable parameters.
 
+Create a config programmatically
+--------------------------------
+If you are setting many custom parameters, it may be more convenient to create the
+JADE configuration programmatically. An example is below. This will make the following customizations:
+
+- Append the JADE runtime output directory to each command.
+- Make a final post-processing job dependent on the other jobs.
+- Set a custom name for each job.
+
+.. code-block:: python
+
+    from jade.extensions.generic_command import GenericCommandConfiguration, GenericCommandParameters
+
+    config = GenericCommandConfiguration()
+    base_cmd = "bash my_script.sh"
+    regular_job_names = []
+    for i in range(1, 4):
+        cmd = base_cmd + " " + str(i)
+        name = f"job_{i}"
+        job = GenericCommandParameters(
+            command=cmd,
+            name=name,
+            append_output_dir=True,
+        )
+        config.add_job(job)
+        regular_job_names.append(name)
+
+    post_process_job = GenericCommandParameters(
+        command="bash run_post_process.sh",
+        name="post_process",
+        append_output_dir=True,
+        blocked_by=regular_job_names,
+        cancel_on_blocking_job_failure=True,
+    )
+    config.add_job(post_process_job)
+    config_file = "config.json"
+    config.dump(config_file, indent=2)
+
+Here is the result::
+
+    $ jade config show config.json
+    Num jobs: 4
+    +-------+--------------+--------------------------+------------------------+
+    | index |     name     |         command          | blocked_by (job names) |
+    +-------+--------------+--------------------------+------------------------+
+    |   0   |    job_1     |   bash my_script.sh 1    |                        |
+    |   1   |    job_2     |   bash my_script.sh 2    |                        |
+    |   2   |    job_3     |   bash my_script.sh 3    |                        |
+    |   3   | post_process | bash run_post_process.sh |  job_1, job_2, job_3   |
+    +-------+--------------+--------------------------+------------------------+
+
 Job Ordering
 ------------
 Each job defines a ``blocked_by`` field. If you want to guarantee that job ID
