@@ -29,3 +29,7 @@ github: html
 	git checkout gh-pages
 	git push --set-upstream origin gh-pages
 	git checkout ${BRANCH}
+
+clean:
+	@echo "Removing everything under 'build'..."
+	rm -rf build
