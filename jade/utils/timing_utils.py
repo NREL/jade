@@ -110,10 +110,33 @@ class Timer:
         self._timer_stat = timer_stats.get_stat(name)
 
     def __enter__(self):
-        self._start = time.time()
+        self._start = time.perf_counter()
 
     def __exit__(self, exc, value, tb):
-        self._timer_stat.update(time.time() - self._start)
+        self._timer_stat.update(time.perf_counter() - self._start)
+
+
+def track_timing(collector):
+    """Decorator to track statistics on a function's execution time.
+
+    Parameters
+    ----------
+    collector : TimerStatsCollector
+
+    """
+
+    def wrap(func):
+        def timed_(*args, **kwargs):
+            return _timed_func(collector, func, *args, **kwargs)
+
+        return timed_
+
+    return wrap
+
+
+def _timed_func(timer_stats, func, *args, **kwargs):
+    with Timer(timer_stats, func.__qualname__):
+        return func(*args, **kwargs)
 
 
 class TimerStatsCollector:
@@ -174,24 +197,4 @@ class TimerStatsCollector:
         return stat
 
 
-def track_timing(timer_stats):
-    """Decorator to track statistics on a function's execution time.
-
-    Parameters
-    ----------
-    timer_stats : TimerStatsManager
-
-    """
-
-    def wrap(func):
-        def timed_(*args, **kwargs):
-            return _timed_func(timer_stats, func, *args, **kwargs)
-
-        return timed_
-
-    return wrap
-
-
-def _timed_func(timer_stats, func, *args, **kwargs):
-    with Timer(timer_stats, func.__name__):
-        return func(*args, **kwargs)
+timer_stats_collector = TimerStatsCollector()
