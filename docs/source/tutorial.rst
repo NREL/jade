@@ -130,7 +130,7 @@ and the last job is the post-processing job.
 
 .. note:: Job indexes are 0-based.
 
-.. code-block bash
+.. code-block:: bash
 
     $ jade config assign-blocked-by config.json 4 -o new-config.json
 
