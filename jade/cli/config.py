@@ -28,6 +28,18 @@ from jade.models.spark import SparkConfigModel, SparkContainerModel
 logger = logging.getLogger(__name__)
 
 
+def _handle_indexes_list(_, __, indexes):
+    if indexes is None:
+        return indexes
+    return [int(x) for x in indexes]
+
+
+def _handle_indexes_set(_, __, indexes):
+    if indexes is None:
+        return indexes
+    return {int(x) for x in indexes}
+
+
 @click.group()
 def config():
     """Manage a JADE configuration."""
@@ -103,6 +115,54 @@ def create(
     indent = None if strip_whitespace else 2
     config.dump(config_file, indent=indent)
     print(f"Dumped configuration to {config_file}.\n")
+
+
+@click.command()
+@click.argument("config_file", type=click.Path(exists=True))
+@click.argument("job_index", type=int)
+@click.argument("blocking_job_indexes", nargs=-1, callback=_handle_indexes_set)
+@click.option(
+    "-o",
+    "--output-file",
+    default="updated_config.json",
+    show_default=True,
+    help="Create new config file with updated jobs.",
+)
+def assign_blocked_by(config_file, job_index, blocking_job_indexes, output_file):
+    """Assign the blocked_by attribute for job_name with jobs specified by block_job_indexes
+    (0-based). If no blocking jobs are specified then make all other jobs blocking.
+
+    \b
+    Examples:
+    1. Make the last job blocked by all other jobs.
+       jade config assign-blocked-by config.json post-process-job -o new-config.json
+    2. Select first 10 indexes through shell expansion.
+       jade config assign-blocked-by config.json post-process-job {0..9} -o new-config.json
+    3. Specify blocking indexes.
+       jade config assign-blocked-by config.json post-process-job 0 1 2 3 -o new-config.json
+    """
+    if blocking_job_indexes and job_index in blocking_job_indexes:
+        print(f"job_index={job_index} is included in blocking_job_indexes", file=sys.stderr)
+        sys.exit(1)
+
+    config = create_config_from_file(config_file)
+    if job_index > config.get_num_jobs() - 1:
+        print(f"Invalid job_index={job_index}. Max={config.get_num_jobs() - 1}", file=sys.stderr)
+        sys.exit(1)
+
+    blocking_jobs = set()
+    main_job = None
+    for i, job in enumerate(config.iter_jobs()):
+        if i == job_index:
+            main_job = job
+            continue
+        if i != job_index and (not blocking_job_indexes or i in blocking_job_indexes):
+            blocking_jobs.add(job.name)
+
+    assert main_job
+    main_job.set_blocking_jobs(blocking_jobs)
+    config.dump(output_file, indent=2)
+    print(f"Added {len(blocking_jobs)} blocking jobs to {main_job.name} in {output_file}")
 
 
 @click.command()
@@ -247,7 +307,7 @@ def _show(config_file, fields=None, blocked_by=True):
 
 @click.command("filter")
 @click.argument("config_file", type=click.Path(exists=True))
-@click.argument("indices", nargs=-1)
+@click.argument("indexes", nargs=-1, callback=_handle_indexes_list)
 @click.option(
     "-o",
     "--output-file",
@@ -270,7 +330,7 @@ def _show(config_file, fields=None, blocked_by=True):
     help="Show the new config (only applicable if output-file is provided).",
 )
 # Named _filter to avoid collisions with the built-in function.
-def _filter(config_file, output_file, indices, fields, show_config=False):
+def _filter(config_file, output_file, indexes, fields, show_config=False):
     """Filters jobs in CONFIG_FILE. Prints the new jobs to the console or
     optionally creates a new file.
 
@@ -278,16 +338,11 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
 
     \b
     Examples:
-    1. Select the first job. Output only.
-       jade config filter c1.json 0
-    2. Select indices 0-4, 10-14, 20, 25, create new file.
-       jade config filter c1.json :5 10:15 20 25 -o c2.json
-    3. Select the last 5 jobs. Note the use of '--' to prevent '-5' from being
-       treated as an option.
-       jade config filter c1.json -o c2.json -- -5:
-    4. Select indices 5 through the end.
-       jade config filter c1.json -o c2.json 5:
-    5. Select jobs with parameters param1=green and param2=3.
+    1. Select the first two jobs by index. Output only.
+       jade config filter c1.json 0 1
+    2. Select indexes through shell expansion, create new file.
+       jade config filter c1.json {0..4} {10..14} 20 25 -o c2.json
+    3. Select jobs with parameters param1=green and param2=3.
        jade config filter c1.json -o c2.json -f param1 green -f param2 3
 
     """
@@ -310,33 +365,13 @@ def _filter(config_file, output_file, indices, fields, show_config=False):
             sys.exit(1)
 
         orig_len = len(jobs)
-        new_jobs = []
-        regex_int = re.compile(r"^(?P<index>\d+)$")
-        regex_range = re.compile(r"^(?P<start>[\d-]*):(?P<end>[\d-]*)$")
-        for index in indices:
-            match = regex_int.search(index)
-            if match:
-                i = int(match.groupdict()["index"])
-                new_jobs.append(jobs[i])
-                continue
-            match = regex_range.search(index)
-            if match:
-                start = match.groupdict()["start"]
-                if start == "":
-                    start = None
-                else:
-                    start = int(start)
-                end = match.groupdict()["end"]
-                if end == "":
-                    end = None
-                else:
-                    end = int(end)
-                new_jobs += jobs[start:end]
 
         # Note: when looking at just the JSON, there is no way to get the job name,
         # and so we can't check for duplicates.
 
-        if not new_jobs:
+        if indexes:
+            new_jobs = [jobs[i] for i in indexes]
+        else:
             new_jobs = jobs
 
         if fields:
@@ -663,6 +698,7 @@ def add_submission_group(params_file, name, config_file):
 
 
 config.add_command(create)
+config.add_command(assign_blocked_by)
 config.add_command(hpc)
 config.add_command(show)
 config.add_command(_filter)

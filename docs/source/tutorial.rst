@@ -91,8 +91,8 @@ References:
 
     $ lfs setstripe -c 16 <run-directory>
 
-Configuring Jobs
-================
+Configure Jobs
+==============
 Create a text file with a list of commands, one per line.
 
 .. code-block:: bash
@@ -121,6 +121,28 @@ file to customize execution behavior.
 
 Refer to :ref:`model_generic_command_parameters` for a full list of
 configurable parameters.
+
+Add blocking jobs
+-----------------
+A common use case is to include a post-processing job as the last job, and then make all
+other jobs blocked by it. Here is one way to do that. This assumes that there are 5 jobs
+and the last job is the post-processing job.
+
+.. note:: Job indexes are 0-based.
+
+.. code-block bash
+
+    $ jade config assign-blocked-by config.json 4 -o new-config.json
+
+    # These alternatives are identical.
+    $ jade config assign-blocked-by config.json 4 {0..3} -o new-config.json
+    $ jade config assign-blocked-by config.json 4 0 1 2 3 -o new-config.json
+
+Tip: Use this command to see the job indexes:
+
+.. code-block:: bash
+
+    $ jade config show config.json
 
 Create a config programmatically
 --------------------------------
@@ -575,7 +597,7 @@ Filter ranges of indices of jobs into a new config file:
 
 .. code-block:: bash
 
-    $ jade config filter config.json :5 10:15 20 25 -o new_config.json
+    $ jade config filter config.json {0..4} {10:14} 20 25 -o new_config.json
 
 Deadlocks
 ---------
