@@ -171,7 +171,7 @@ def status(output, verbose):
     try:
         mgr = PipelineManager.load(output)
     except FileNotFoundError:
-        print(f"{output} is not a valid pipeline output directory", file=stderr)
+        print(f"{output} is not a valid pipeline output directory", file=sys.stderr)
         sys.exit(1)
 
     config = mgr.config

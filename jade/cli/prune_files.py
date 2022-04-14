@@ -29,8 +29,6 @@ def prune_files(output):
         base_path.glob("submit_jobs_events*.log*"),
         base_path.glob("run_jobs_batch*.log*"),
         base_path.glob("config_batch*.json"),
-        base_path.glob("*.o"),
-        base_path.glob("*.e"),
         base_path.glob("*.sh"),
     ):
         path.unlink()
