@@ -172,6 +172,7 @@ JADE configuration programmatically. An example is below. This will make the fol
             command=cmd,
             name=name,
             append_output_dir=True,
+            append_job_name=True,
         )
         config.add_job(job)
         regular_job_names.append(name)
@@ -180,6 +181,7 @@ JADE configuration programmatically. An example is below. This will make the fol
         command="bash run_post_process.sh",
         name="post_process",
         append_output_dir=True,
+        append_job_name=True,
         blocked_by=regular_job_names,
         cancel_on_blocking_job_failure=True,
     )
@@ -338,7 +340,7 @@ Output Directory
 JADE stores all of its configuration information and log files in the output
 directory specified by the ``submit-jobs`` command. You can tell JADE to
 forward this directory to the job CLI commands by setting the
-``append_output_dir`` job parameter to true.
+``append_output_dir`` and ``append_job_name job parameters to true.
 
 Suppose you submit jobs with
 
@@ -353,18 +355,22 @@ Where ``config.json`` contains a job definition like this:
     {
       "command": "bash my_script.sh",
       "job_id": 1,
+      "name": "job1",
       "blocked_by": [],
-      "append_output_dir": true
+      "append_output_dir": true,
+      "append_job_name": true
     }
 
 JADE will actually invoke this:
 
 .. code-block:: bash
 
-    $ bash my_script.sh --jade-runtime-output=output
+    $ bash my_script.sh --jade-runtime-output=output --jade-job-name=job1
 
 This can be useful to collect all job outputs in a common location. JADE
 automatically creates ``<output-dir>/job-outputs`` for this purpose.
+
+Your job can store its output files in ``<output-dir>/job-outputs/job1``
 
 Node setup and shutdown scripts
 -------------------------------
@@ -617,6 +623,14 @@ Useful grep commands
 
     $ grep "WARNING\|ERROR" output/*log
     $ grep -n "srun\|slurmstepd\|Traceback" output/*.e
+
+Matching JADE jobs with HPC logs
+--------------------------------
+As mentioned above the HPC system captures stderr and stdout in ``<output-dir>/job_output_<HPC job ID>.e``
+and ``<output-dir>/job_output_<HPC job ID>.o``. You may need to match JADE job IDs/names with these
+files.
+
+To help with this JADE records the HPC job ID for each job in ``results.txt`` (or ``jade show-results``).
 
 Events
 ------

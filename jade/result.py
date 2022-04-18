@@ -1,9 +1,10 @@
 """Defines a Result object."""
 
-from collections import namedtuple
+import logging
 import os
-from time import time
+from collections import namedtuple
 from datetime import datetime
+from time import time
 
 from prettytable import PrettyTable
 
@@ -13,7 +14,12 @@ from jade.exceptions import InvalidConfiguration, InvalidParameter, ExecutionErr
 from jade.utils.utils import load_data
 
 
-class Result(namedtuple("Result", "name, return_code, status, exec_time_s, completion_time")):
+logger = logging.getLogger(__name__)
+
+
+class Result(
+    namedtuple("Result", "name, return_code, status, exec_time_s, completion_time, hpc_job_id")
+):
     """
     Result class containing data after jobs have finished. `completion_time`
     will be populated when result created and passed in when deserializing
@@ -28,14 +34,16 @@ class Result(namedtuple("Result", "name, return_code, status, exec_time_s, compl
 
     """
 
-    def __new__(cls, name, return_code, status, exec_time_s, completion_time=None):
+    def __new__(
+        cls, name, return_code, status, exec_time_s, completion_time=None, hpc_job_id=None
+    ):
         # add default values
         if completion_time is None:
             completion_time = time()
         if isinstance(status, JobCompletionStatus):
             status = status.value
         return super(Result, cls).__new__(
-            cls, name, return_code, status, exec_time_s, completion_time
+            cls, name, return_code, status, exec_time_s, completion_time, hpc_job_id
         )
 
     def is_canceled(self):
@@ -94,16 +102,27 @@ def deserialize_result(data):
     Result
 
     """
+    hpc_job_id = data.get("hpc_job_id")
+    if hpc_job_id == "None":
+        hpc_job_id = None
+
     if "completion_time" in data.keys():
         return Result(
             data["name"],
             data["return_code"],
             data["status"],
             data["exec_time_s"],
-            data["completion_time"],
+            completion_time=data["completion_time"],
+            hpc_job_id=hpc_job_id,
         )
 
-    return Result(data["name"], data["return_code"], data["status"], data["exec_time_s"])
+    return Result(
+        data["name"],
+        data["return_code"],
+        data["status"],
+        data["exec_time_s"],
+        hpc_job_id=hpc_job_id,
+    )
 
 
 def deserialize_results(data):
@@ -127,6 +146,7 @@ class ResultsSummary:
 
     def __init__(self, output_dir):
         self._output_dir = output_dir
+
         self._results_file = os.path.join(output_dir, RESULTS_FILE)
         if not os.path.exists(self._results_file):
             raise InvalidConfiguration(f"There is no results file in {output_dir}")
@@ -297,6 +317,7 @@ class ResultsSummary:
             "Status",
             "Execution Time (s)",
             "Completion Time",
+            "HPC Job ID",
         ]
         first = next(iter(self._results["results"].values()))
         min_exec = first.exec_time_s
@@ -326,6 +347,7 @@ class ResultsSummary:
                     result.status,
                     result.exec_time_s,
                     datetime.fromtimestamp(result.completion_time),
+                    result.hpc_job_id,
                 ]
             )
 

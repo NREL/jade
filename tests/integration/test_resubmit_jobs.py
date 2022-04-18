@@ -70,7 +70,7 @@ def test_resubmit_failed(cleanup):
     for result in results:
         assert result.return_code == 0
     x = results[0]
-    results[0] = Result(x.name, 1, x.status, x.exec_time_s, x.completion_time)
+    results[0] = Result(x.name, 1, x.status, x.exec_time_s, x.completion_time, hpc_job_id=None)
     agg._write_results(results)
 
     results_filename = os.path.join(OUTPUT, RESULTS_FILE)

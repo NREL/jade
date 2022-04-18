@@ -316,7 +316,7 @@ class HpcSubmitter:
     def _cancel_job(self, job, aggregator):
         job.state = JobState.DONE
         job.blocked_by.clear()
-        result = Result(job.name, 1, JobCompletionStatus.CANCELED, 0)
+        result = Result(job.name, 1, JobCompletionStatus.CANCELED, 0, hpc_job_id=None)
         aggregator.append_result(result)
         logger.info("Canceled job %s because one of its blocking jobs failed.", job.name)
         return result
