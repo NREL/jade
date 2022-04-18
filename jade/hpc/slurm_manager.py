@@ -3,10 +3,11 @@
 import logging
 import os
 import re
+from datetime import datetime, timedelta
 
 from jade.enums import Status
 from jade.exceptions import ExecutionError  # , InvalidConfiguration
-from jade.hpc.common import HpcJobStatus, HpcJobInfo
+from jade.hpc.common import HpcJobStats, HpcJobStatus, HpcJobInfo
 from jade.hpc.hpc_manager_interface import HpcManagerInterface
 from jade.utils.run_command import check_run_command, run_command
 from jade.utils import utils
@@ -22,6 +23,7 @@ class SlurmManager(HpcManagerInterface):
         "PENDING": HpcJobStatus.QUEUED,
         "CONFIGURING": HpcJobStatus.QUEUED,
         "RUNNING": HpcJobStatus.RUNNING,
+        "COMPLETED": HpcJobStatus.COMPLETE,
         "COMPLETING": HpcJobStatus.COMPLETE,
     }
     _REGEX_SBATCH_OUTPUT = re.compile(r"Submitted batch job (\d+)")
@@ -197,6 +199,48 @@ class SlurmManager(HpcManagerInterface):
         lines.append("")
         lines.append(f"srun {script}")
         return lines
+
+    def get_job_stats(self, job_id):
+        cmd = (
+            f"sacct -j {job_id} --format=JobID,JobName%20,state,start,end,Account,Partition%15,QOS"
+        )
+        output = {}
+        check_run_command(cmd, output=output)
+        result = output["stdout"].strip().split("\n")
+        if len(result) != 6:
+            raise Exception(f"Unknown output for sacct: {result} length={len(result)}")
+
+        # 8165902       COMPLETED 2022-01-16T12:10:37 2022-01-17T04:04:34
+        fields = result[2].split()
+        if fields[0] != job_id:
+            raise Exception(f"sacct returned unexpected job_id={fields[0]}")
+
+        state = self._STATUSES.get(fields[2], HpcJobStatus.UNKNOWN)
+        fmt = "%Y-%m-%dT%H:%M:%S"
+        try:
+            start = datetime.strptime(fields[3], fmt)
+        except ValueError:
+            logger.exception("Failed to parse start_time=%s", fields[3])
+            raise
+        try:
+            if fields[4] == "Unknown":
+                end = fields[4]
+            else:
+                end = datetime.strptime(fields[4], fmt)
+        except ValueError:
+            logger.exception("Failed to parse end_time=%s", fields[4])
+            raise
+        stats = HpcJobStats(
+            hpc_job_id=job_id,
+            name=fields[1],
+            state=state,
+            start=start,
+            end=end,
+            account=fields[5],
+            partition=fields[6],
+            qos=fields[7],
+        )
+        return stats
 
     def get_local_scratch(self):
         return os.environ["LOCAL_SCRATCH"]

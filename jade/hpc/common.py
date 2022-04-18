@@ -15,6 +15,9 @@ class HpcJobStatus(enum.Enum):
 
 
 HpcJobInfo = namedtuple("HpcJobInfo", "job_id, name, status")
+HpcJobStats = namedtuple(
+    "HpcJobStats", "hpc_job_id, name, start, end, state, account, partition, qos"
+)
 
 
 class HpcQos(enum.Enum):

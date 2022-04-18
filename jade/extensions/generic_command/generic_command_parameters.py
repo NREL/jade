@@ -44,9 +44,9 @@ class GenericCommandParameters(JobParametersInterface):
     @property
     def command(self):
         if self._model.use_multi_node_manager:
-            return f"jade-internal run-multi-node-job {self.name} {self._model.command}"
+            return f"jade-internal run-multi-node-job {self.name}"
         elif self.is_spark_job():
-            return f"jade-internal run-spark-cluster {self.name} {self._model.command}"
+            return f"jade-internal run-spark-cluster {self.name}"
         return self._model.command
 
     @property
@@ -138,6 +138,11 @@ class GenericCommandParametersModel(JadeBaseModel):
         title="submission_group",
         description="Optional name of a submission group",
         default=DEFAULT_SUBMISSION_GROUP,
+    )
+    append_job_name: bool = Field(
+        title="append_job_name",
+        description="If true JADE will append --jade-job-name=X where X is the job's name.",
+        default=False,
     )
     append_output_dir: bool = Field(
         title="append_output_dir",

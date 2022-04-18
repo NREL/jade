@@ -23,7 +23,7 @@ def cleanup():
 
 def create_result(index):
     """Creates a result with unique fields based on an index."""
-    return Result(str(index), index, "finished", 1.0 + index)
+    return Result(str(index), index, "finished", 1.0 + index, hpc_job_id=None)
 
 
 def test_results_aggregator(cleanup):

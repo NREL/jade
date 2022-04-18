@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 class AsyncCliCommand(AsyncJobInterface):
     """Defines a a CLI command that can be submitted asynchronously."""
 
-    def __init__(self, job, cmd, output, batch_id, is_manager_node):
+    def __init__(self, job, cmd, output, batch_id, is_manager_node, hpc_job_id):
         self._job = job
         self._cli_cmd = cmd
         self._output = Path(output)
@@ -35,6 +35,7 @@ class AsyncCliCommand(AsyncJobInterface):
         self._is_complete = False
         self._batch_id = batch_id
         self._is_manager_node = is_manager_node
+        self._hpc_job_id = hpc_job_id
 
     def __del__(self):
         if self._is_pending:
@@ -65,21 +66,30 @@ class AsyncCliCommand(AsyncJobInterface):
             bytes_consumed=bytes_consumed,
         )
         log_event(event)
-        result = Result(self._job.name, self._return_code, status, exec_time_s)
+        result = Result(
+            self._job.name, self._return_code, status, exec_time_s, hpc_job_id=self._hpc_job_id
+        )
         ResultsAggregator.append(self._output, result, batch_id=self._batch_id)
 
         logger.info(
-            "Job %s completed return_code=%s exec_time_s=%s",
+            "Job %s completed return_code=%s exec_time_s=%s hpc_job_id=%s",
             self._job.name,
             self._return_code,
             exec_time_s,
+            self._hpc_job_id,
         )
 
     def cancel(self):
         self._return_code = 1
         self._is_complete = True
         if self._is_manager_node:
-            result = Result(self._job.name, self._return_code, JobCompletionStatus.CANCELED, 0.0)
+            result = Result(
+                self._job.name,
+                self._return_code,
+                JobCompletionStatus.CANCELED,
+                0.0,
+                hpc_job_id=self._hpc_job_id,
+            )
             ResultsAggregator.append(self._output, result, batch_id=self._batch_id)
             logger.info("Canceled job %s", self._job.name)
         else:

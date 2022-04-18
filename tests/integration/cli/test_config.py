@@ -115,6 +115,7 @@ def test_config__assign_blocked_by(cleanup):
         job = GenericCommandParameters(
             command=cmd,
             name=name,
+            append_job_name=True,
             append_output_dir=True,
         )
         config.add_job(job)
@@ -124,6 +125,7 @@ def test_config__assign_blocked_by(cleanup):
     post_process_job = GenericCommandParameters(
         command="bash run_post_process.sh",
         name=pp_name,
+        append_job_name=True,
         append_output_dir=True,
     )
     config.add_job(post_process_job)

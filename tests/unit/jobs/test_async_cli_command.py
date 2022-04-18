@@ -24,7 +24,7 @@ def async_cmd():
     os.makedirs(output, exist_ok=True)
     os.makedirs(os.path.join(output, RESULTS_DIR), exist_ok=True)
     ResultsAggregator.create(output)
-    cmd = AsyncCliCommand(job, cmd, output, 1, True)
+    cmd = AsyncCliCommand(job, cmd, output, 1, True, "0")
     yield cmd
     shutil.rmtree(output)
 

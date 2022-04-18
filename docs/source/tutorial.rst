@@ -41,7 +41,7 @@ edit the file afterwards.
 The following parameters are optional when running on NREL's HPC (Eagle):
 
 - ``partition``: If not specified then the HPC will decide the partition based
-  on the wall time value (recommended unless you are using the `debug`
+  on the wall time value (recommended unless you are using the ``debug``
   partition).
 - ``mem``: If specified then the HPC will only
   provide nodes that have at least this amount of memory.  Refer to the HPC
@@ -64,6 +64,11 @@ multi-node feature.
 
 Refer to :ref:`model_slurm_config` for a full list of parameters available
 on NREL's Eagle HPC with SLURM.
+
+JADE will name each HPC job with this format: ``<job_prefix>_batch_N`` where
+``job_prefix`` is defined in ``hpc_config.toml`` and ``N`` is each batch index.
+Customize ``job_prefix`` if you will be running multiple JADE batches and want
+to be able to distinguish them.
 
 Submission Groups
 -----------------
@@ -167,6 +172,7 @@ JADE configuration programmatically. An example is below. This will make the fol
             command=cmd,
             name=name,
             append_output_dir=True,
+            append_job_name=True,
         )
         config.add_job(job)
         regular_job_names.append(name)
@@ -175,6 +181,7 @@ JADE configuration programmatically. An example is below. This will make the fol
         command="bash run_post_process.sh",
         name="post_process",
         append_output_dir=True,
+        append_job_name=True,
         blocked_by=regular_job_names,
         cancel_on_blocking_job_failure=True,
     )
@@ -333,7 +340,7 @@ Output Directory
 JADE stores all of its configuration information and log files in the output
 directory specified by the ``submit-jobs`` command. You can tell JADE to
 forward this directory to the job CLI commands by setting the
-``append_output_dir`` job parameter to true.
+``append_output_dir`` and ``append_job_name`` job parameters to true.
 
 Suppose you submit jobs with
 
@@ -348,18 +355,22 @@ Where ``config.json`` contains a job definition like this:
     {
       "command": "bash my_script.sh",
       "job_id": 1,
+      "name": "job1",
       "blocked_by": [],
-      "append_output_dir": true
+      "append_output_dir": true,
+      "append_job_name": true
     }
 
 JADE will actually invoke this:
 
 .. code-block:: bash
 
-    $ bash my_script.sh --jade-runtime-output=output
+    $ bash my_script.sh --jade-runtime-output=output --jade-job-name=job1
 
 This can be useful to collect all job outputs in a common location. JADE
 automatically creates ``<output-dir>/job-outputs`` for this purpose.
+
+Your job can store its output files in ``<output-dir>/job-outputs/job1``
 
 Node setup and shutdown scripts
 -------------------------------
@@ -536,6 +547,48 @@ Jobs that timeout will be reported as missing.
 
 .. note:: This command is currently not supported in local mode.
 
+HPC Job information
+===================
+
+Hours Used
+----------
+Run this command after your jobs finish to see how many node hours you used.
+Note that you can pass multiple output directories to accumulate jobs.
+
+.. code-block:: bash
+
+    $ jade hpc-jobs show-times output-dir*
+
+    +------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+    | hpc_job_id |         name        |        start        |         end         |  state   |  account   | partition |  qos   |
+    +------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+    |  9040969   |   P11U_CBA_batch_1  | 2022-04-15 18:58:17 | 2022-04-15 19:01:32 | complete | distcosts3 |   short   | normal |
+    |  9040970   |   P11U_CBA_batch_2  | 2022-04-15 18:58:17 | 2022-04-15 19:02:04 | complete | distcosts3 |   short   | normal |
+    |  9040971   |   P11U_CBA_batch_3  | 2022-04-15 18:58:17 | 2022-04-15 19:02:39 | complete | distcosts3 |   short   | normal |
+    |  9040972   |   P11U_CBA_batch_4  | 2022-04-15 18:58:17 | 2022-04-15 19:01:17 | complete | distcosts3 |   short   | normal |
+    |  9040973   |   P11U_CBA_batch_5  | 2022-04-15 18:58:17 | 2022-04-15 19:01:22 | complete | distcosts3 |   short   | normal |
+    |  9041184   | P11U_CBA_pp_batch_1 | 2022-04-15 19:10:26 | 2022-04-15 19:15:13 | complete | distcosts3 |   short   | normal |
+    +------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+
+    Total duration = 1 day, 2:25:13
+    Total hours = 26.42
+
+Active Job IDs
+--------------
+You may want to run HPC-specific commands on job IDs to perform some action not directly supported by JADE.
+You can run this command to see the active HPC job IDs (pending or running).
+
+.. code-block:: bash
+
+    $ jade hpc-jobs list-active-ids <output-dir>
+
+Suppose you want to change the walltime value for each pending job. This example will work if your HPC
+uses SLURM. (This will only work on pending jobs.)
+
+.. code-block:: bash
+
+    $ for x in `jade hpc-jobs list-active-ids <output-dir>`; do scontrol update jobid=$x TimeLimit="24:00:00"; done
+
 Debugging
 =========
 By default JADE generates report files that summarize what happened. Refer to
@@ -570,6 +623,14 @@ Useful grep commands
 
     $ grep "WARNING\|ERROR" output/*log
     $ grep -n "srun\|slurmstepd\|Traceback" output/*.e
+
+Matching JADE jobs with HPC logs
+--------------------------------
+As mentioned above the HPC system captures stderr and stdout in ``<output-dir>/job_output_<HPC job ID>.e``
+and ``<output-dir>/job_output_<HPC job ID>.o``. You may need to match JADE job IDs/names with these
+files.
+
+To help with this JADE records the HPC job ID for each job in ``results.txt`` (or ``jade show-results``).
 
 Events
 ------

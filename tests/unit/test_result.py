@@ -7,9 +7,9 @@ from jade.result import *
 def jade_results():
     """Fixture of jade results"""
     return [
-        Result("deployment__result__1", 0, "finished", 10, 15555555555),
-        Result("deployment__result__2", 1, "finished", 20, 15555555555),
-        Result("deployment__result__3", 0, "finished", 30, 15555555555),
+        Result("deployment__result__1", 0, "finished", 10, 15555555555, "1"),
+        Result("deployment__result__2", 1, "finished", 20, 15555555555, "2"),
+        Result("deployment__result__3", 0, "finished", 30, 15555555555, "3"),
     ]
 
 
@@ -25,6 +25,7 @@ def jade_data():
                 "status": "finished",
                 "exec_time_s": 10,
                 "completion_time": 15555555555,
+                "hpc_job_id": "1",
             },
             {
                 "name": "deployment__result__2",
@@ -32,6 +33,7 @@ def jade_data():
                 "status": "finished",
                 "exec_time_s": 20,
                 "completion_time": 15555555555,
+                "hpc_job_id": "2",
             },
             {
                 "name": "deployment__result__3",
@@ -39,6 +41,7 @@ def jade_data():
                 "status": "finished",
                 "exec_time_s": 30,
                 "completion_time": 15555555555,
+                "hpc_job_id": "3",
             },
         ],
         "jade_version": 0.1,

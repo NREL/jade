@@ -5,6 +5,7 @@ import getpass
 import os
 
 from jade.exceptions import InvalidParameter
+from jade.hpc.common import HpcJobStats
 from jade.utils.utils import load_data
 
 
@@ -144,6 +145,16 @@ class HpcManagerInterface(abc.ABC):
         Returns
         -------
         str
+
+        """
+
+    @abc.abstractmethod
+    def get_job_stats(self, job_id):
+        """Get stats for job ID.
+
+        Returns
+        -------
+        HpcJobStats
 
         """
 

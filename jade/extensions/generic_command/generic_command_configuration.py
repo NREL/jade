@@ -22,7 +22,13 @@ class GenericCommandConfiguration(JobConfiguration):
 
     @classmethod
     def auto_config(
-        cls, inputs, cancel_on_blocking_job_failure=False, minutes_per_job=None, **kwargs
+        cls,
+        inputs,
+        cancel_on_blocking_job_failure=False,
+        minutes_per_job=None,
+        append_job_name=False,
+        append_output_dir=False,
+        **kwargs,
     ):
         """Create a configuration from all available inputs."""
         if isinstance(inputs, str):
@@ -32,6 +38,8 @@ class GenericCommandConfiguration(JobConfiguration):
         for job_param in inputs.iter_jobs():
             job_param.cancel_on_blocking_job_failure = cancel_on_blocking_job_failure
             job_param.estimated_run_minutes = minutes_per_job
+            job_param.append_job_name = append_job_name
+            job_param.append_output_dir = append_output_dir
             config.add_job(job_param)
 
         return config

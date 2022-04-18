@@ -12,6 +12,7 @@ from jade.cli.cancel_jobs import cancel_jobs
 from jade.cli.config import config
 from jade.cli.cluster import cluster
 from jade.cli.extensions import extensions
+from jade.cli.hpc_jobs import hpc_jobs
 from jade.cli.pipeline import pipeline
 from jade.cli.prune_files import prune_files
 from jade.cli.resubmit_jobs import resubmit_jobs
@@ -51,6 +52,7 @@ cli.add_command(auto_config)
 cli.add_command(cancel_jobs)
 cli.add_command(cluster)
 cli.add_command(config)
+cli.add_command(hpc_jobs)
 cli.add_command(pipeline)
 cli.add_command(prune_files)
 cli.add_command(resubmit_jobs)
