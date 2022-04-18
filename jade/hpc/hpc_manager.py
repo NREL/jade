@@ -125,6 +125,9 @@ class HpcManager:
         """
         return self._get_interface(submission_group_name=submission_group_name)
 
+    def get_job_stats(self, job_id):
+        return self._get_interface().get_job_stats(job_id)
+
     def get_local_scratch(self):
         """Get path to local storage space.
 

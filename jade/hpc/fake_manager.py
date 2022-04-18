@@ -80,6 +80,12 @@ class FakeManager(HpcManagerInterface):
     def get_current_job_id(self):
         return None
 
+    def get_job_stats(self, job_id):
+        return None
+
+    def get_job_stats(self, job_id):
+        return None
+
     def get_local_scratch(self):
         return tempfile.gettempdir()
 

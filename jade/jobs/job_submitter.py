@@ -364,6 +364,7 @@ results_summary={self.get_results_summmary_report()}"""
             ret = run_command(cmd[0], output=output)
             if ret != 0:
                 logger.error("Failed to run [%s]: %s: %s", cmd, ret, output["stderr"])
+                continue
 
             if cmd[1] is not None:
                 filename = os.path.join(directory, cmd[1])

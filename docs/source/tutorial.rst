@@ -41,7 +41,7 @@ edit the file afterwards.
 The following parameters are optional when running on NREL's HPC (Eagle):
 
 - ``partition``: If not specified then the HPC will decide the partition based
-  on the wall time value (recommended unless you are using the `debug`
+  on the wall time value (recommended unless you are using the ``debug``
   partition).
 - ``mem``: If specified then the HPC will only
   provide nodes that have at least this amount of memory.  Refer to the HPC
@@ -64,6 +64,11 @@ multi-node feature.
 
 Refer to :ref:`model_slurm_config` for a full list of parameters available
 on NREL's Eagle HPC with SLURM.
+
+JADE will name each HPC job with this format: ``<job_prefix>_batch_N`` where
+``job_prefix`` is defined in ``hpc_config.toml`` and ``N`` is each batch index.
+Customize ``job_prefix`` if you will be running multiple JADE batches and want
+to be able to distinguish them.
 
 Submission Groups
 -----------------
@@ -535,6 +540,48 @@ Jobs that timeout will be reported as missing.
     $ jade resubmit-jobs --missing --failed output
 
 .. note:: This command is currently not supported in local mode.
+
+HPC Job information
+===================
+
+Hours Used
+----------
+Run this command after your jobs finish to see how many node hours you used.
+Note that you can pass multiple output directories to accumulate jobs.
+
+.. code-block:: bash
+
+    $ jade hpc-jobs show-times output-dir*
+
+    +------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+    | hpc_job_id |         name        |        start        |         end         |  state   |  account   | partition |  qos   |
+    +------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+    |  9040969   |   P11U_CBA_batch_1  | 2022-04-15 18:58:17 | 2022-04-15 19:01:32 | complete | distcosts3 |   short   | normal |
+    |  9040970   |   P11U_CBA_batch_2  | 2022-04-15 18:58:17 | 2022-04-15 19:02:04 | complete | distcosts3 |   short   | normal |
+    |  9040971   |   P11U_CBA_batch_3  | 2022-04-15 18:58:17 | 2022-04-15 19:02:39 | complete | distcosts3 |   short   | normal |
+    |  9040972   |   P11U_CBA_batch_4  | 2022-04-15 18:58:17 | 2022-04-15 19:01:17 | complete | distcosts3 |   short   | normal |
+    |  9040973   |   P11U_CBA_batch_5  | 2022-04-15 18:58:17 | 2022-04-15 19:01:22 | complete | distcosts3 |   short   | normal |
+    |  9041184   | P11U_CBA_pp_batch_1 | 2022-04-15 19:10:26 | 2022-04-15 19:15:13 | complete | distcosts3 |   short   | normal |
+    +------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+
+    Total duration = 1 day, 2:25:13
+    Total hours = 26.42
+
+Active Job IDs
+--------------
+You may want to run HPC-specific commands on job IDs to perform some action not directly supported by JADE.
+You can run this command to see the active HPC job IDs (pending or running).
+
+.. code-block:: bash
+
+    $ jade hpc-jobs list-active-ids <output-dir>
+
+Suppose you want to change the walltime value for each pending job. This example will work if your HPC
+uses SLURM. (This will only work on pending jobs.)
+
+.. code-block:: bash
+
+    $ for x in `jade hpc-jobs list-active-ids <output-dir>`; do scontrol update jobid=$x TimeLimit="24:00:00"; done
 
 Debugging
 =========
