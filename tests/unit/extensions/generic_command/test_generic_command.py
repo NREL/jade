@@ -80,9 +80,12 @@ def test_generic_command_parameters():
     with pytest.raises(AttributeError):
         job.extension = "invalid"
 
+    assert not job.append_job_name
     assert not job.append_output_dir
+    job.append_job_name = True
     job.append_output_dir = True
     assert job.append_output_dir
+    assert job.append_job_name
 
     job = GenericCommandParameters(command=cmd, use_multi_node_manager=True, blocked_by=[1])
     assert job.append_output_dir

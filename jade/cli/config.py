@@ -49,6 +49,22 @@ def config():
 @click.command()
 @click.argument("filename", type=click.Path(exists=True))
 @click.option(
+    "-A",
+    "--append-job-name",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Set append_job_name for every job.",
+)
+@click.option(
+    "-a",
+    "--append-output-dir",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Set append_output_dir for every job.",
+)
+@click.option(
     "-c",
     "--config-file",
     default=CONFIG_FILE,
@@ -93,6 +109,8 @@ def config():
 )
 def create(
     filename,
+    append_job_name,
+    append_output_dir,
     config_file,
     cancel_on_blocking_job_failure,
     minutes_per_job,
@@ -108,6 +126,8 @@ def create(
         filename,
         cancel_on_blocking_job_failure=cancel_on_blocking_job_failure,
         minutes_per_job=minutes_per_job,
+        append_job_name=append_job_name,
+        append_output_dir=append_output_dir,
     )
     if shuffle:
         config.shuffle_jobs()

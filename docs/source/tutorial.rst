@@ -340,7 +340,7 @@ Output Directory
 JADE stores all of its configuration information and log files in the output
 directory specified by the ``submit-jobs`` command. You can tell JADE to
 forward this directory to the job CLI commands by setting the
-``append_output_dir`` and ``append_job_name job parameters to true.
+``append_output_dir`` and ``append_job_name`` job parameters to true.
 
 Suppose you submit jobs with
 
