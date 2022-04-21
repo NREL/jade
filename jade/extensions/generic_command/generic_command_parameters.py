@@ -44,9 +44,9 @@ class GenericCommandParameters(JobParametersInterface):
     @property
     def command(self):
         if self._model.use_multi_node_manager:
-            return f"jade-internal run-multi-node-job {self.name}"
+            return f"jade-internal run-multi-node-job {self.name} {self._model.command}"
         elif self.is_spark_job():
-            return f"jade-internal run-spark-cluster {self.name}"
+            return f"jade-internal run-spark-cluster {self.name} {self._model.command}"
         return self._model.command
 
     @property
