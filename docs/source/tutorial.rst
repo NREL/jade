@@ -623,6 +623,7 @@ Useful grep commands
 
     $ grep "WARNING\|ERROR" output/*log
     $ grep -n "srun\|slurmstepd\|Traceback" output/*.e
+    $ grep "\bpercent\b" output/stats_summary.json | awk '{print $2}' | sort -n
 
 Matching JADE jobs with HPC logs
 --------------------------------
