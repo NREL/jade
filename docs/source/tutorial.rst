@@ -620,9 +620,13 @@ SLURM error strings:  ``srun``, ``slurmstepd``, ``DUE TO TIME LIMIT``
 Useful grep commands
 
 .. code-block:: bash
-
+    
+    # find error keywords in log and stderr files
     $ grep "WARNING\|ERROR" output/*log
     $ grep -n "srun\|slurmstepd\|Traceback" output/*.e
+ 
+    # From the stats_summary, check max memory usage (in %) per node, in the form of sorted values. This could inform num_processes that would fit in a node.
+    $ grep "\bpercent\b" output/stats_summary.json | awk '{print $2}' | sort -n
 
 Matching JADE jobs with HPC logs
 --------------------------------
