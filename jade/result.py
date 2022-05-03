@@ -303,10 +303,6 @@ class ResultsSummary:
         print(f"JADE Version: {self._results['jade_version']}")
         print(f"{self._results['timestamp']}\n")
 
-        if not self._results["results"]:
-            print("There are no results.")
-            return
-
         num_successful = 0
         num_failed = 0
         num_canceled = 0
@@ -319,9 +315,13 @@ class ResultsSummary:
             "Completion Time",
             "HPC Job ID",
         ]
-        first = next(iter(self._results["results"].values()))
-        min_exec = first.exec_time_s
-        max_exec = first.exec_time_s
+        if self._results["results"]:
+            first = next(iter(self._results["results"].values()))
+            min_exec = first.exec_time_s
+            max_exec = first.exec_time_s
+        else:
+            min_exec = 0.0
+            max_exec = 0.0
         exec_times = []
         for result in self._results["results"].values():
             if result.is_successful():
@@ -354,7 +354,10 @@ class ResultsSummary:
         num_missing = len(self._missing_jobs)
         total = num_successful + num_failed + num_canceled + num_missing
         assert total == len(self._results["results"]) + num_missing
-        avg_exec = sum(exec_times) / len(exec_times)
+        if exec_times:
+            avg_exec = sum(exec_times) / len(exec_times)
+        else:
+            avg_exec = 0.0
 
         print(table)
         print(f"\nNum successful: {num_successful}")

@@ -95,7 +95,7 @@ results_summary={self.get_results_summmary_report()}"""
         for job_id in cluster.job_status.hpc_job_ids:
             hpc.cancel_job(job_id)
 
-        cluster.mark_complete(canceled=True)
+        cluster.mark_canceled()
 
     def submit_jobs(self, cluster, force_local=False):
         """Submit simulations. Auto-detect whether the current system is an HPC
