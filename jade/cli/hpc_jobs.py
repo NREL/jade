@@ -1,6 +1,7 @@
 """CLI to show HPC job information."""
 
 import logging
+import os
 import sys
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -55,19 +56,45 @@ def show_times(output_dirs, verbose):
     total_duration = timedelta(seconds=0)
     table = PrettyTable()
     table.field_names = HpcJobStats._fields
+
+    total_aus = 0
+    if os.environ.get("NREL_CLUSTER") == "eagle":
+        au_parser = get_nrel_eagle_aus
+    else:
+        au_parser = None
+
     for job_id in job_ids:
         stats = hpc_mgr.get_job_stats(job_id)
         if stats is None:
             continue
+        duration = stats.end - stats.start
         if stats.state == HpcJobStatus.COMPLETE and isinstance(stats.end, datetime):
-            total_duration += stats.end - stats.start
+            total_duration += duration
         data = stats._asdict()
         data["state"] = data["state"].value
+        if au_parser is not None:
+            total_aus += au_parser(duration, stats.qos)
         table.add_row(data.values())
 
     print(table)
     print(f"\nTotal duration = {total_duration}")
     print("Total hours = {:.2f}".format(total_duration.total_seconds() / 3600))
+    if au_parser is not None:
+        print("Total AUs = {:.2f}".format(total_aus))
+
+
+def get_nrel_eagle_aus(duration, qos):
+    _duration = duration.total_seconds() / 3600
+    if qos == "normal":
+        val = _duration * 3.0
+    elif qos == "standby":
+        val = 0.0
+    elif qos == "high":
+        val = _duration * 3.0 * 2
+    else:
+        assert f"qos={qos} is not supported"
+
+    return val
 
 
 @click.command()
