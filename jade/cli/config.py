@@ -15,6 +15,7 @@ import click
 from prettytable import PrettyTable
 
 from jade.cli.common import COMMON_SUBMITTER_OPTIONS, add_options, make_submitter_params
+from jade.jobs.cluster import Cluster
 from jade.common import CONFIG_FILE, HPC_CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration, GenericCommandParameters
 from jade.jobs.job_configuration_factory import create_config_from_file
@@ -693,6 +694,41 @@ def submitter_params(
 
 
 @click.command()
+@click.argument("output_dir", type=click.Path(exists=True), callback=lambda _, __, x: Path(x))
+@click.option(
+    "-c",
+    "--config-file",
+    default="submission_groups.json",
+    show_default=True,
+    type=Path,
+    help="config file to create; can be .toml or .json",
+)
+@click.option(
+    "-f",
+    "--force",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Overwrite config_file if it already exists.",
+)
+def save_submission_groups(output_dir, config_file, force):
+    if config_file.exists() and not force:
+        print(
+            f"{config_file} exists. Use a different name or pass --force to overwrite.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    existing_groups_file = output_dir / Cluster.SUBMITTER_GROUP_FILE
+    if not existing_groups_file.exists():
+        print(f"{output_dir} is not a valid JADE output directory", file=sys.stderr)
+        sys.exit(1)
+
+    shutil.copyfile(existing_groups_file, config_file)
+    print(f"Copied submission groups to {config_file}")
+
+
+@click.command()
 @click.argument("params_file", type=click.Path(exists=True))
 @click.argument("name")
 @click.argument("config_file", type=click.Path(exists=True))
@@ -724,4 +760,5 @@ config.add_command(show)
 config.add_command(_filter)
 config.add_command(spark)
 config.add_command(submitter_params)
+config.add_command(save_submission_groups)
 config.add_command(add_submission_group)

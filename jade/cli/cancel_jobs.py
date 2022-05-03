@@ -10,6 +10,7 @@ import click
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging
+from jade.utils.run_command import run_command
 from jade.utils.utils import get_cli_string
 
 
@@ -22,9 +23,17 @@ logger = logging.getLogger(__name__)
     type=click.Path(exists=True),
 )
 @click.option(
+    "--complete/--no-complete",
+    default=True,
+    is_flag=True,
+    show_default=True,
+    help="Run completion operations. This can take some time. Use --no-complete if you plan to "
+    "discard the results.",
+)
+@click.option(
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
-def cancel_jobs(output, verbose):
+def cancel_jobs(output, complete, verbose):
     """Cancels jobs."""
     filename = os.path.join(output, "cancel_jobs.log")
     level = logging.DEBUG if verbose else logging.INFO
@@ -47,7 +56,14 @@ def cancel_jobs(output, verbose):
             sys.exit(0)
         submitter = JobSubmitter.load(output)
         submitter.cancel_jobs(cluster)
-        sys.exit(0)
+        cluster.demote_from_submitter()
+        ret = 0
+        if complete:
+            delay = 15
+            print(f"Delaying {delay} seconds to let the nodes complete.")
+            time.sleep(delay)
+            ret = run_command(f"jade try-submit-jobs {output}")
+        sys.exit(ret)
 
     logger.error("Failed to get promoted to submitter.")
     sys.exit(1)

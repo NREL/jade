@@ -14,12 +14,13 @@ from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.result import Result, ResultsSummary
 from jade.test_common import FAKE_HPC_CONFIG
-from jade.utils.subprocess_manager import run_command
+from jade.utils.subprocess_manager import run_command, check_run_command
 from jade.utils.utils import load_data, dump_data
 
 
 TEST_FILENAME = "test-inputs.txt"
 CONFIG_FILE = "test-config.json"
+SG_FILE = "test-submission-groups.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = f"jade submit-jobs -h {FAKE_HPC_CONFIG} -R none"
 RESUBMIT_JOBS = "jade resubmit-jobs"
@@ -50,11 +51,36 @@ def basic_setup():
 
 
 def _do_cleanup():
-    for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT):
+    for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT, SG_FILE):
         if os.path.isdir(path):
             shutil.rmtree(path)
         elif os.path.exists(path):
             os.remove(path)
+
+
+def test_resubmit_successful(cleanup):
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT}"
+    check_run_command(cmd)
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    summary = ResultsSummary(OUTPUT)
+    assert len(summary.get_failed_results()) == 0
+    assert len(summary.get_successful_results()) == NUM_COMMANDS
+
+    check_run_command(f"jade config save-submission-groups {OUTPUT} -c {SG_FILE}")
+    groups = load_data(SG_FILE)
+    assert groups[0]["submitter_params"]["per_node_batch_size"] > NUM_COMMANDS
+    groups[0]["submitter_params"]["per_node_batch_size"] = NUM_COMMANDS
+    dump_data(groups, SG_FILE)
+
+    check_run_command(f"{RESUBMIT_JOBS} {OUTPUT} -s {SG_FILE} --successful")
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    summary = ResultsSummary(OUTPUT)
+    assert len(summary.get_failed_results()) == 0
+    assert len(summary.get_successful_results()) == NUM_COMMANDS
+
+    check_run_command(f"jade config save-submission-groups {OUTPUT} --force -c {SG_FILE}")
+    groups = load_data(SG_FILE)
+    assert groups[0]["submitter_params"]["per_node_batch_size"] == NUM_COMMANDS
 
 
 def test_resubmit_failed(cleanup):

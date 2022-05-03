@@ -541,6 +541,10 @@ resubmit those specific jobs without re-running all the jobs that passed.
 
 Jobs that timeout will be reported as missing.
 
+.. note:: You can resubmit with different submission parameters, such as walltime,
+    if you run ``jade config save-submission-groups output``,
+    edit the resulting file, and then pass it to ``jade resubmit-jobs`` with ``-s <file>``
+
 .. code-block:: bash
 
     $ jade resubmit-jobs --missing --failed output
@@ -572,6 +576,7 @@ Note that you can pass multiple output directories to accumulate jobs.
 
     Total duration = 1 day, 2:25:13
     Total hours = 26.42
+    Total AUs = 79.26
 
 Active Job IDs
 --------------

@@ -302,16 +302,13 @@ class Cluster:
         """Return True if the submission is complete."""
         return self._config.is_complete
 
-    def mark_complete(self, canceled=False):
-        """Mark the submission as being complete.
+    def mark_canceled(self):
+        """Mark the submission as being canceled."""
+        return self._do_action_under_lock(self._mark_canceled)
 
-        Parameters
-        ----------
-        canceled : bool
-            Set to True if the submission was canceled.
-
-        """
-        return self._do_action_under_lock(self._mark_complete, canceled)
+    def mark_complete(self):
+        """Mark the submission as being complete."""
+        return self._do_action_under_lock(self._mark_complete)
 
     def prepare_for_resubmission(self, jobs_to_resubmit, updated_blocking_jobs_by_name):
         """Reset the state of the cluster for resubmission of jobs.
@@ -534,11 +531,13 @@ class Cluster:
         with open(self._job_status_version_file, "r") as f_in:
             return int(f_in.read().strip())
 
-    def _mark_complete(self, canceled):
+    def _mark_canceled(self):
+        self._config.is_canceled = True
+        self._serialize("mark_canceled")
+
+    def _mark_complete(self):
         assert not self._config.is_complete
         self._config.is_complete = True
-        if canceled:
-            self._config.is_canceled = True
         self._serialize("mark_complete")
 
     def _promote_to_submitter(self, serialize=True):
