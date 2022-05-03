@@ -14,7 +14,9 @@ from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.jobs.results_aggregator import ResultsAggregator
 from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging, setup_event_logging
+from jade.models.submission_group import SubmissionGroup
 from jade.result import ResultsSummary
+from jade.utils.utils import load_data
 
 
 logger = logging.getLogger(__name__)
@@ -47,9 +49,17 @@ logger = logging.getLogger(__name__)
     help="Resubmit successful jobs.",
 )
 @click.option(
+    "-s",
+    "--submission-groups-file",
+    default=None,
+    type=click.Path(exists=True),
+    help="Use submission parameters in this file generated from 'jade config '"
+    "save-submission-groups'",
+)
+@click.option(
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
-def resubmit_jobs(output, failed, missing, successful, verbose):
+def resubmit_jobs(output, failed, missing, successful, submission_groups_file, verbose):
     """Resubmit jobs."""
     event_file = os.path.join(output, "submit_jobs_events.log")
     setup_event_logging(event_file, mode="a")
@@ -67,6 +77,35 @@ def resubmit_jobs(output, failed, missing, successful, verbose):
         print("resubmit-jobs requires that the existing submission be complete", file=sys.stderr)
         sys.exit(1)
     assert promoted
+
+    if submission_groups_file is not None:
+        groups = load_data(submission_groups_file)
+        cur = len(groups)
+        orig = len(cluster.config.submission_groups)
+        if cur != orig:
+            print(
+                f"Length of submission_groups ({cur}) must be identical to the original ({orig})",
+                file=sys.stderr,
+            )
+            cluster.demote_from_submitter()
+            sys.exit(1)
+
+        for _group in groups:
+            group = SubmissionGroup(**_group)
+            found = False
+            for i, orig_group in enumerate(cluster.config.submission_groups):
+                if group.name == orig_group.name:
+                    cluster.config.submission_groups[i] = group
+                    found = True
+                    break
+            if not found:
+                print(
+                    f"submission group {group.name} does not exist in the original",
+                    file=sys.stderr,
+                )
+                cluster.demote_from_submitter()
+                sys.exit(1)
+        logger.info("Updated submitter parameters from %s", submission_groups_file)
 
     jobs_to_resubmit = _get_jobs_to_resubmit(cluster, output, failed, missing, successful)
     updated_blocking_jobs_by_name = _update_with_blocking_jobs(jobs_to_resubmit, output)
