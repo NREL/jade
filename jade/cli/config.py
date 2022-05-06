@@ -423,6 +423,9 @@ def _filter(config_file, output_file, indexes, fields, show_config=False):
 
 
 SPARK_MODEL_DEFAULTS = get_model_defaults(SparkConfigModel)
+DYNAMIC_ALLOCATION_SETTINGS = """spark.dynamicAllocation.enabled true
+spark.dynamicAllocation.shuffleTracking.enabled true
+spark.shuffle.service.enabled true"""
 
 
 @click.command()
@@ -440,6 +443,13 @@ SPARK_MODEL_DEFAULTS = get_model_defaults(SparkConfigModel)
     type=str,
     required=True,
     help="Path to container that can run Spark",
+)
+@click.option(
+    "--dynamic-allocation/--no-dynamic-allocation",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Enable Spark dynamic resource allocation.",
 )
 @click.option(
     "-h",
@@ -518,9 +528,18 @@ SPARK_MODEL_DEFAULTS = get_model_defaults(SparkConfigModel)
     show_default=True,
     help="If 0, give all node memory minus overhead to worker.",
 )
+@click.option(
+    "-f",
+    "--force",
+    default=False,
+    is_flag=True,
+    show_default=True,
+    help="Overwrite the spark configuration directory if it already exists.",
+)
 def spark(
     collect_worker_logs,
     container_path,
+    dynamic_allocation,
     hpc_config,
     master_node_memory_overhead_gb,
     node_memory_overhead_gb,
@@ -531,11 +550,22 @@ def spark(
     use_tmpfs_for_scratch,
     verbose,
     worker_memory_gb,
+    force,
 ):
     """Create a Spark configuration to use for running a job on a Spark cluster."""
     level = logging.DEBUG if verbose else logging.WARNING
     setup_logging("config_spark", None, console_level=level)
     spark_dir = Path(spark_dir)
+    if spark_dir.exists():
+        if force:
+            shutil.rmtree(spark_dir)
+        else:
+            print(
+                f"The directory '{spark_dir}' already exists. Use a different name or pass --force to overwrite.",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+    spark_dir.mkdir(parents=True)
 
     hpc_config_data = HpcConfig.load(hpc_config)
     nodes = getattr(hpc_config_data.hpc, "nodes", None)
@@ -557,8 +587,6 @@ def spark(
         executor_mem_gb = (per_node_mem_gb - overhead) // num_executors
         print(f"Use custom per-executor memory of {executor_mem_gb}G based on per-node {mem}")
 
-    if not spark_dir.exists():
-        spark_dir.mkdir(parents=True)
     for dirname in ("bin", "conf"):
         src_path = Path(os.path.dirname(__file__)).parent / "spark" / dirname
         dst_path = spark_dir / dirname
@@ -573,11 +601,23 @@ def spark(
         # Online documentation says this value should correlate with the number of cores in the
         # cluster. Some sources say 1 per core, others say 2 or 4 per core. Depends on use case.
         # This should be a reasonable default for users, who can customize dynamically.
-        for param in ("spark.sql.shuffle.partitions", "spark.default.parallelism"):
+        params = ["spark.sql.shuffle.partitions"]
+        if dynamic_allocation:
+            # Not sure why but this setting did not work well with dynamic allocation.
+            params.append("#spark.default.parallelism")
+        else:
+            params.append("spark.default.parallelism")
+        for param in params:
             f_out.write(param)
             f_out.write(" ")
             f_out.write(str(nodes * 35 * shuffle_partition_multiplier))
             f_out.write("\n")
+
+        if dynamic_allocation:
+            f_out.write("\n")
+            f_out.write(DYNAMIC_ALLOCATION_SETTINGS)
+            f_out.write("\n")
+
     replacement_values = [
         ("SPARK_DIR", str(spark_dir)),
         ("CONTAINER_PATH", container_path),
@@ -724,7 +764,8 @@ def save_submission_groups(output_dir, config_file, force):
         print(f"{output_dir} is not a valid JADE output directory", file=sys.stderr)
         sys.exit(1)
 
-    shutil.copyfile(existing_groups_file, config_file)
+    data = load_data(existing_groups_file)
+    dump_data(data, config_file, indent=2)
     print(f"Copied submission groups to {config_file}")
 
 
