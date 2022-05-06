@@ -423,6 +423,9 @@ def _filter(config_file, output_file, indexes, fields, show_config=False):
 
 
 SPARK_MODEL_DEFAULTS = get_model_defaults(SparkConfigModel)
+DYNAMIC_ALLOCATION_SETTINGS = """spark.dynamicAllocation.enabled true
+spark.dynamicAllocation.shuffleTracking.enabled true
+spark.shuffle.service.enabled true"""
 
 
 @click.command()
@@ -440,6 +443,13 @@ SPARK_MODEL_DEFAULTS = get_model_defaults(SparkConfigModel)
     type=str,
     required=True,
     help="Path to container that can run Spark",
+)
+@click.option(
+    "--dynamic-allocation/--no-dynamic-allocation",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Enable Spark dynamic resource allocation.",
 )
 @click.option(
     "-h",
@@ -529,6 +539,7 @@ SPARK_MODEL_DEFAULTS = get_model_defaults(SparkConfigModel)
 def spark(
     collect_worker_logs,
     container_path,
+    dynamic_allocation,
     hpc_config,
     master_node_memory_overhead_gb,
     node_memory_overhead_gb,
@@ -590,11 +601,23 @@ def spark(
         # Online documentation says this value should correlate with the number of cores in the
         # cluster. Some sources say 1 per core, others say 2 or 4 per core. Depends on use case.
         # This should be a reasonable default for users, who can customize dynamically.
-        for param in ("spark.sql.shuffle.partitions", "spark.default.parallelism"):
+        params = ["spark.sql.shuffle.partitions"]
+        if dynamic_allocation:
+            # Not sure why but this setting did not work well with dynamic allocation.
+            params.append("#spark.default.parallelism")
+        else:
+            params.append("spark.default.parallelism")
+        for param in params:
             f_out.write(param)
             f_out.write(" ")
             f_out.write(str(nodes * 35 * shuffle_partition_multiplier))
             f_out.write("\n")
+
+        if dynamic_allocation:
+            f_out.write("\n")
+            f_out.write(DYNAMIC_ALLOCATION_SETTINGS)
+            f_out.write("\n")
+
     replacement_values = [
         ("SPARK_DIR", str(spark_dir)),
         ("CONTAINER_PATH", container_path),
