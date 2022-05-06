@@ -3,8 +3,8 @@
 Spark Jobs
 **********
 
-JADE has functionality to create an ephemeral Spark cluster on HPC compute nodes and then run a
-job on that cluster.
+JADE has functionality to create an ephemeral Spark cluster on HPC compute nodes and then run one
+or more jobs on that cluster.
 
 **Prerequisite**: The Spark software must be installed inside a Singularity container.
 
@@ -16,7 +16,7 @@ Setup
 3. Follow the normal steps to create your Jade configuration, such as with ``jade config create
    commands.txt``. The commands should be the scripts that you want to run against the Spark
    cluster including any command-line arguments. **Note**: Jade will append two positional
-   arguments to your command line arguments: the spark cluster (spark://<node_name>:7077) and the
+   arguments to your command line arguments: the spark cluster (``spark://<node_name>:7077``) and the
    job output directory.
 4. Create your HPC config file with ``jade config hpc -c hpc_config.toml``. Set ``nodes`` in
    ``hpc_config.toml`` to be the number of compute nodes you want to participate in the Spark
@@ -52,6 +52,100 @@ Setup
 10. Set ``collect_worker_logs`` to true if your jobs are getting logs of errors. These can grow large.
 11. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
     job, running them sequentially.
+
+Run scripts manually
+====================
+In some cases you may prefer that JADE setup the cluster and then go to sleep while you ssh to a compute
+node and run scripts manually.
+
+1. Make a script called ``sleep.sh`` with the content below. This time of 59 minutes will allow JADE to
+   cleanly shutdown the cluster if there is a 1-hour wall-time timeout.
+
+.. code:: bash
+
+   #!/bin/bash
+   sleep 59m
+
+2. Set the JADE command in ``commands.txt``/``config.json`` to be ``bash sleep.sh``.
+
+3. Setup the environment. Before running your scripts it is important that you set the
+``SPARK_CONF_DIR`` environment variable so that your SparkSession gets initialized with
+the correct parameters.
+
+This example assumes that your JADE output directory is ``./output`` and there is one job named ``1``.
+
+.. code-block:: bash
+
+   $ ssh <first-compute-node-name>
+   $ cd <wherever-you-started-the-jade-jobs>
+   $ export SPARK_CONF_DIR=./output/job-outputs/1/spark/conf
+
+4. Run your scripts. Here is one way in Python to create a SparkSession.
+
+.. code-block:: bash
+
+   from pyspark.sql import SparkSession
+   from pyspark import SparkConf, SparkContext
+   cluster = "<first-compute-node-name>:7077"
+   conf = SparkConf().setAppName("my_session").setMaster(cluster)
+   spark = SparkSession.builder.config(conf=conf).getOrCreate()
+
+
+Run a Jupyter server
+====================
+This example shows how to make JADE start a Jupyter server with the environment ready to use the Spark
+cluster.
+
+1. Create a bash script with the content below. Save the script as ``start_notebook.sh``.
+
+.. code-block:: bash
+
+   #!/bin/bash
+   unset XDG_RUNTIME_DIR
+   export SPARK_CLUSTER=$1
+   echo "Spark cluster is running at ${SPARK_CLUSTER}" >&2
+   echo "JADE output directory is ${2}" >&2
+   jupyter notebook --no-browser --ip=0.0.0.0 --port 8889 &
+   sleep 10
+   echo "Create an ssh tunnel with this command: ssh -L 8889:${HOSTNAME}:8889 -L 8080:${HOSTNAME}:8080 -L 4040:${HOSTNAME}:4040 ${USER}@el1.hpc.nrel.gov" >&2
+   wait
+
+2. Set the JADE command in ``commands.txt``/``config.json`` to be ``bash start_notebook.sh``.
+
+3. Submit the jobs with ``jade submit-jobs config.json -o output``
+
+4. Once the job is allocated run ``tail -f output/*.e``. After 15-20 seconds you will see console
+   output from the script above telling you how to create the ssh tunnel required to connect to the
+   Jupyter server. You will also see console output from Jupyter that contains a URL.
+
+5. Open the ssh tunnel.
+
+6. Connect to the Jupyter server from your browser.
+
+7. Create a SparkSession and start running your code. An example is below. You probably will want
+   to split these into two cells. **Note** that this reads the Spark cluster name from the
+   environment.
+
+.. code-block:: python
+
+   import os
+   from IPython.core.display import display, HTML
+   from pyspark.sql import SparkSession
+   from pyspark import SparkConf, SparkContext
+   display(HTML("<style>.container { width:100% !important; }</style>"))
+
+   cluster = os.environ["SPARK_CLUSTER"]
+   conf = SparkConf().setAppName("my_session").setMaster(cluster)
+   spark = SparkSession.builder.config(conf=conf).getOrCreate()
+
+8. Connect to the Spark UI from your browser, if desired, to monitor your jobs.
+
+http://localhost:4040 and/or http://localhost:8080
+
+9. If you want to ensure that JADE shuts down the Spark cluster cleanly (preserving history)
+   then you should shutdown the notebook. ssh to the first compute-node and run
+   ``jupyter notebook stop 8889``.
+
 
 Debugging Problems
 ==================
