@@ -166,3 +166,25 @@ Compute Node Resource Monitoring
 It can be very helpful to collect CPU, memory, disk, and network resource utilization statistics
 for all compute nodes. Refer to :ref:`resource_monitoring` for how to configure Jade to do this for
 you.
+
+
+Start a Spark Cluster on Arbitrary Compute Nodes
+================================================
+In some cases you may want to allocate compute nodes apart from Jade and then start a cluster. Similarly, you
+may want to restart the cluster with different configuration settings and not have to relinquish compute
+nodes. In the examples below Jade will stop all Spark processes on the nodes and then start a new cluster.
+
+In this example Jade will start the cluster and then sleep indefinitely.
+
+.. code-block:: bash
+
+   $ jade start-spark-cluster --container <path-to-container> --spark-conf ./spark node1 node2 nodeN
+
+The value passed to ``--spark-conf`` should be equal in format to the directory created above in ``jade config spark``.
+
+In this example Jade will start the cluster and then run a user script to start a notebook. The script
+must be executable.
+
+.. code-block:: bash
+
+   $ jade start-spark-cluster --container <path-to-container> --spark-conf ./spark --script start_notebook.sh
