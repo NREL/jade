@@ -11,6 +11,7 @@ from jade.cli.auto_config import auto_config
 from jade.cli.cancel_jobs import cancel_jobs
 from jade.cli.config import config
 from jade.cli.cluster import cluster
+from jade.cli.start_spark_cluster import start_spark_cluster
 from jade.cli.extensions import extensions
 from jade.cli.hpc_jobs import hpc_jobs
 from jade.cli.pipeline import pipeline
@@ -59,6 +60,7 @@ cli.add_command(resubmit_jobs)
 cli.add_command(show_events)
 cli.add_command(show_results)
 cli.add_command(show_status)
+cli.add_command(start_spark_cluster)
 cli.add_command(stats)
 cli.add_command(submit_jobs)
 cli.add_command(try_submit_jobs)
