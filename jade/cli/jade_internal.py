@@ -8,7 +8,11 @@ import click
 
 from jade.cli.run_jobs import run_jobs
 from jade.cli.run_multi_node_job import run_multi_node_job
-from jade.cli.run_spark_cluster import run_spark_cluster
+from jade.cli.run_spark_cluster import (
+    run_spark_cluster,
+    start_spark_cluster_master,
+    start_spark_cluster_worker,
+)
 from jade.cli.run import run
 
 
@@ -24,3 +28,5 @@ cli.add_command(run)
 cli.add_command(run_jobs)
 cli.add_command(run_multi_node_job)
 cli.add_command(run_spark_cluster)
+cli.add_command(start_spark_cluster_master)
+cli.add_command(start_spark_cluster_worker)

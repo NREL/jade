@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, List, Set
 
-from pydantic import Field
+from pydantic import Field, root_validator
 
 from jade.models import JadeBaseModel
 
@@ -47,9 +47,9 @@ class SparkConfigModel(JadeBaseModel):
         description="Memory overhead for node operating system and existing applications",
         default=10,
     )
-    run_user_script_outside_container: bool = Field(
-        title="run_user_script_outside_container",
-        description="Run the user script outside of the container.",
+    run_user_script_inside_container: bool = Field(
+        title="run_user_script_inside_container",
+        description="Run the user script inside of the container.",
         default=False,
     )
     use_tmpfs_for_scratch: bool = Field(
@@ -62,6 +62,13 @@ class SparkConfigModel(JadeBaseModel):
         description="If 0, give all node memory minus overhead to worker.",
         default=0,
     )
+
+    @root_validator(pre=True)
+    def handle_legacy_values(cls, values):
+        run_outside = values.pop("run_user_script_outside_container", None)
+        if run_outside is not None and "run_user_script_inside_container" not in values:
+            values["run_user_script_inside_container"] = not run_outside
+        return values
 
     def get_spark_script(self):
         wrapper = Path(self.conf_dir) / "bin" / "run_spark_script_wrapper.sh"
@@ -87,5 +94,5 @@ class SparkConfigModel(JadeBaseModel):
         return self.get_spark_script() + " sbin/stop-history-server.sh"
 
     def get_run_user_script(self):
-        assert not self.run_user_script_outside_container
+        assert self.run_user_script_inside_container
         return Path(self.conf_dir) / "bin" / "run_user_script_wrapper.sh"

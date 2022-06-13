@@ -1,0 +1,12 @@
+[
+  {
+    "id": {
+      "componentName": "spark.worker",
+      "resourceName": "gpu"
+    },
+    "addresses": [
+      "0",
+      "1"
+    ]
+  }
+]

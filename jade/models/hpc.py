@@ -1,9 +1,9 @@
 """Models for HPC configurations"""
 
-import enum
+import re
 from typing import Optional, Union, List
 
-from pydantic import Field, validator, root_validator
+from pydantic import Field, validator, root_validator, validator
 
 from jade.hpc.common import HpcType
 from jade.models.base import JadeBaseModel
@@ -31,6 +31,10 @@ class SlurmConfig(JadeBaseModel):
         description="Maximum time allocated to each node",
         default="4:00:00",
     )
+    gres: Optional[str] = Field(
+        title="gpu",
+        description="Request nodes that have at least this number of GPUs. Ex: 'gpu:2'",
+    )
     mem: Optional[str] = Field(
         title="mem",
         description="Request nodes that have at least this amount of memory",
@@ -56,6 +60,16 @@ class SlurmConfig(JadeBaseModel):
         description="Number of tasks per job (max in number of CPUs)",
         default=None,
     )
+
+    @validator("gres")
+    def check_gpus(cls, gres):
+        if gres is None:
+            return gres
+        if re.search(r"^gpu:(\d+)$", gres) is None:
+            raise ValueError(
+                "gres value must follow the format 'gres=gpu:N' where N is the number of required GPUs"
+            )
+        return gres
 
     @root_validator(pre=True)
     def handle_allocation(cls, values: dict) -> dict:
@@ -117,3 +131,15 @@ class HpcConfig(JadeBaseModel):
         elif values["hpc_type"] == HpcType.LOCAL:
             return LocalHpcConfig()
         raise ValueError(f"Unsupported: {values['hpc_type']}")
+
+    def get_num_gpus(self):
+        """Return the number of GPUs specified by the config.
+
+        Returns
+        -------
+        int
+
+        """
+        if isinstance(self.hpc, SlurmConfig) and self.hpc.gres is not None:
+            return int(self.hpc.gres.split(":")[1])
+        return 0

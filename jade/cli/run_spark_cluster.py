@@ -12,11 +12,13 @@ import click
 import psutil
 
 from jade.common import CONFIG_FILE, JOBS_OUTPUT_DIR
+from jade.extensions.generic_command.generic_command_parameters import GenericCommandParameters
 from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.loggers import setup_logging
+from jade.models.spark import SparkConfigModel, SparkContainerModel
 from jade.spark.metrics import SparkMetrics
 from jade.utils.run_command import check_run_command, run_command
-from jade.utils.utils import get_cli_string
+from jade.utils.utils import get_cli_string, create_script
 
 
 KiB = 1024
@@ -54,28 +56,71 @@ def run_spark_cluster(job_name, jade_runtime_output, verbose, manager_script_and
     output = {}
     check_run_command(f"jade cluster am-i-manager {jade_runtime_output}", output)
     result = output["stdout"].strip()
+    manager_node = _get_manager_node_name(jade_runtime_output)
     if result == "true":
-        ret = run_cluster_master(job, jade_runtime_output, verbose, manager_script_and_args)
+        ret = run_cluster_master(
+            job, manager_node, jade_runtime_output, verbose, manager_script_and_args
+        )
     else:
         assert result == "false", result
-        ret = run_worker(job, jade_runtime_output, verbose)
+        ret = run_worker(job, manager_node, jade_runtime_output, verbose)
 
     return ret
 
 
-def run_cluster_master(job, output_dir, verbose, manager_script_and_args):
+@click.command()
+@click.argument("container")
+@click.argument("spark-conf")
+@click.argument("output-dir")
+@click.option(
+    "-s", "--script", help="Optional script to run on cluster. If None, sleep indefinitely."
+)
+def start_spark_cluster_master(container, spark_conf, output_dir, script):
+    job = _create_job(container, spark_conf, script)
+    manager_script_and_args = job.model.command.split(" ")
+    run_cluster_master(job, socket.gethostname(), output_dir, False, manager_script_and_args)
+
+
+@click.command()
+@click.argument("cluster-master-node-name")
+@click.argument("container")
+@click.argument("spark-conf")
+@click.argument("output-dir")
+def start_spark_cluster_worker(cluster_master_node_name, container, spark_conf, output_dir):
+    job = _create_job(container, spark_conf, None)
+    run_worker(job, cluster_master_node_name, output_dir, False)
+
+
+def _create_job(container, spark_conf, script):
+    if script is None:
+        script = Path("/tmp/sleep.sh")
+        # TODO: Can we get the walltime value?
+        create_script(script, "sleep 10d\n", executable=True)
+    return GenericCommandParameters(
+        name="1",
+        command=f"bash {script}",
+        spark_config=SparkConfigModel(
+            conf_dir=spark_conf,
+            container=SparkContainerModel(path=container),
+            enabled=True,
+            run_user_script_inside_container=False,
+        ),
+    )
+
+
+def run_cluster_master(job, manager_node, output_dir, verbose, manager_script_and_args):
     """Run the cluster master instance."""
     shutdown_file = _get_shutdown_file(job.name, output_dir)
     if shutdown_file.exists():
         os.remove(shutdown_file)
     try:
-        return _run_cluster_master(job, output_dir, verbose, manager_script_and_args)
+        return _run_cluster_master(job, manager_node, output_dir, verbose, manager_script_and_args)
     finally:
         # Notify the workers to shutdown.
         shutdown_file.touch()
 
 
-def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
+def _run_cluster_master(job, manager_node, output_dir, verbose, manager_script_and_args):
     filename = os.path.join(output_dir, f"run_spark_cluster__{job.name}.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
@@ -100,6 +145,11 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     _fix_spark_conf_file(job_conf_dir, events_dir)
     _set_env_variables(job, job_conf_dir, logs_dir)
 
+    # Ignore errors. Spark may not be running.
+    run_command(job.model.spark_config.get_stop_worker())
+    run_command(job.model.spark_config.get_stop_history_server())
+    run_command(job.model.spark_config.get_stop_master())
+
     # It would be better to start all workers from the master. Doing so would require that
     # Spark processes on the master node be able to ssh into the worker nodes.
     # I haven't spent the time to figure out to do that inside Singularity containers.
@@ -109,7 +159,6 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     history_cmd = job.model.spark_config.get_start_history_server()
     logger.info("Run spark history server: [%s]", history_cmd)
     check_run_command(history_cmd)
-    manager_node = _get_manager_node_name(output_dir)
     worker_memory = _get_worker_memory_str(job, is_master=True)
 
     worker_cmd = _get_worker_command(job, manager_node, memory=worker_memory)
@@ -121,10 +170,10 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     # or parse the logs
     time.sleep(15)
     args = list(manager_script_and_args) + [_get_cluster(manager_node), str(job_output)]
-    if job.model.spark_config.run_user_script_outside_container:
-        user_cmd = " ".join(args)
-    else:
+    if job.model.spark_config.run_user_script_inside_container:
         user_cmd = str(job.model.spark_config.get_run_user_script()) + " " + " ".join(args)
+    else:
+        user_cmd = " ".join(args)
     logger.info("Run user script [%s]", user_cmd)
 
     start = time.time()
@@ -147,15 +196,17 @@ def _run_cluster_master(job, output_dir, verbose, manager_script_and_args):
     return ret
 
 
-def run_worker(job, output_dir, verbose, poll_interval=60):
+def run_worker(job, manager_node, output_dir, verbose, poll_interval=60):
     """Run a worker instance."""
-    manager_node = _get_manager_node_name(output_dir)
     logger.error("in worker manager_node=%s job=%s", manager_node, job.name)
     hostname = socket.gethostname()
     filename = os.path.join(output_dir, f"run_spark_job_worker__{hostname}__{job.name}.log")
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
     logger.info("Run worker: %s", get_cli_string())
+
+    # Ignore errors. Spark may not be running.
+    run_command(job.model.spark_config.get_stop_worker())
 
     # Give the master a head start.
     time.sleep(10)

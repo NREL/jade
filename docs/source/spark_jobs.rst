@@ -11,7 +11,8 @@ or more jobs on that cluster.
 Setup
 =====
 1. Create a Docker container with Spark installed. Here is an `example
-   <https://github.com/dsgrid/dsgrid/blob/main/Dockerfile>`_.
+   <https://github.com/NREL/jade/blob/main/jade/spark/Dockerfile>`_. That image includes
+   Nvidia GPU support.
 2. Convert that container to Singularity and copy the image to the HPC's shared file system.
 3. Follow the normal steps to create your Jade configuration, such as with ``jade config create
    commands.txt``. The commands should be the scripts that you want to run against the Spark
@@ -24,7 +25,10 @@ Setup
    specify requirements here that give you nodes with fast internal storage. On NREL's Eagle
    HPC cluster that is only the big-memory and CPU nodes. Alternatively, you can use nodes' tmpfs
    for scratch space as described below.
-5. Run the command below to update the configuration with Spark parameters. Refer to ``--help`` for
+5. If you want Spark to use GPUs, add GPU requirements to ``hpc_config.toml``. This example on Eagle
+   will acquire nodes with two GPUs: ``gres=gpu:2``. Jade will detect this setting and add the
+   appropriate Spark settings.
+6. Run the command below to update the configuration with Spark parameters. Refer to ``--help`` for
    additional options. This will produce spark configuration files in ``./spark/conf`` that you
    can customize. One possible customization is ``spark.sql.shuffle.partititons`` and 
    ``spark.default.parallelism`` in ``spark/conf/spark-defaults.conf``. Jade sets them to the total
@@ -33,24 +37,24 @@ Setup
 
 ::
 
-    $ jade config spark -c <path-to-container> -h hpc_config.toml --update-config-file=config.json
+    $ jade spark config -c <path-to-container> -h hpc_config.toml --update-config-file=config.json
 
-6. If you set a custom memory requirement in your ``hpc_config.toml`` then Jade will increase the
+7. If you set a custom memory requirement in your ``hpc_config.toml`` then Jade will increase the
    ``spark.executor.memory`` value in ``spark/conf/spark-defaults.conf``. The default value is
    intended to maximize memory for 7 executors on each compute node. Customize as needed.
-7. View the changes to your ``config.json`` if desired.
-8. If you are using compute nodes with slow internal storage, consider setting ``use_tmpfs_for_scratch``
+8. View the changes to your ``config.json`` if desired.
+9. If you are using compute nodes with slow internal storage, consider setting ``use_tmpfs_for_scratch``
    to true. Note that this reduces availabe worker memory by half and you'll need to adjust
    ``spark.executor.memory`` accordingly. You can set the option in ``config.json`` or by passing
-   ``-U`` to the ``jade config spark`` command.
-9. Consider whether you want your jobs to be run inside or outside the container (default is inside).
-   Jade will run each job outside the container if the ``run_user_script_outside_container`` option is
+   ``-U`` to the ``jade spark config`` command.
+10. Consider whether you want your jobs to be run inside or outside the container (default is outside).
+   Jade will run each job inside the container if the ``run_user_script_inside_container`` option is
    set to true. You can set the option for each job in ``config.json`` or by passing ``-r`` to
-   the ``jade config spark`` command. If you do run your script outside of the container, Jade will
+   the ``jade spark config`` command. If you do run your script outside of the container, Jade will
    still set Spark environment variables to point to your local, customizable Spark config
    directory.
-10. Set ``collect_worker_logs`` to true if your jobs are getting logs of errors. These can grow large.
-11. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
+11. Set ``collect_worker_logs`` to true if your jobs are getting logs of errors. These can grow large.
+12. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
     job, running them sequentially.
 
 Run scripts manually
@@ -145,7 +149,93 @@ http://localhost:4040 and/or http://localhost:8080
 9. If you want to ensure that JADE shuts down the Spark cluster cleanly (preserving history)
    then you should shutdown the notebook. ssh to the first compute-node and run
    ``jupyter notebook stop 8889``.
+ 
+Run a Jupyter notebook on an existing cluster
+=============================================
+Unlike the previous section, this example assumes that there is an existing cluster and you have
+ssh'd into the master node.
 
+1. Configure ``pyspark`` to create a Jupyter Notebook instead of a regular interactive session.
+
+.. code-block:: bash
+
+   $ export PYSPARK_DRIVER_PYTHON=jupyter
+   $ export PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=0.0.0.0 --port 8889"
+   # If you have configured SPARK_HOME differently, don't run this command.
+   $ export SPARK_HOME=`python -c "import pyspark;print(pyspark.__path__[0])"`
+
+2. Start ``pyspark``, optionally with custom Spark parameters. It will create a Juypter
+   notebook and print the connection information.
+
+.. code-block:: bash
+
+   $ pyspark
+
+3. Create an ssh tunnel as described in the previous section.
+
+4. Connect to the notebook from your computer's browser.
+
+5. Connect to the ``SparkSession`` by pasting this code block into a cell.
+
+.. code-block:: python
+
+   from pyspark.sql import SparkSession
+   spark = SparkSession.builder.appName("my_app").getOrCreate()
+
+
+Use nodes with Nvidia GPUs
+==========================
+If your compute nodes have Nvidia GPUs then you can leverage Nvidia's
+`RAPIDS Accelerator for Apache Spark <https://nvidia.github.io/spark-rapids/>`_
+to get substantially faster performance in some cases. Ensure that your compute nodes have all
+required Nvidia software installed. This section assumes the presence of these files:
+
+- /opt/sparkRapidsPlugin/cudf-22.04.0-cuda11.jar
+- /opt/sparkRapidsPlugin/rapids-4-spark_2.12-22.04.0.jar
+
+and these environment variables:
+
+- export SPARK_RAPIDS_PLUGIN_JAR=/opt/sparkRapidsPlugin/rapids-4-spark_2.12-22.04.0.jar
+- export SPARK_CUDF_JAR=/opt/sparkRapidsPlugin/cudf-22.04.0-cuda11.jar
+
+Run a Spark job
+---------------
+This example works on NREL's Eagle HPC. It also assumes that you have ssh'd to the Spark master node.
+
+If you want to run the job in your own environment outside of the container, copy the three files
+mentioned above to your workspace and set the environment variables accordingly.
+
+Refer to `Nvidia's tuning guide <https://nvidia.github.io/spark-rapids/docs/tuning-guide.html>`_.
+
+.. code-block:: bash
+
+   $ module load singularity-container
+   $ singularity shell -B /scratch:/scratch -B /projects:/projects <path-to-continer>/nvidia_spark.sif
+   $ pyspark --master spark://`hostname`:7077 \
+     --name mysparkshell \
+     --deploy-mode client  \
+     --conf spark.executor.cores=4 \
+     --conf spark.executor.instances=2 \
+     --conf spark.executor.memory=4G \
+     --conf spark.executor.memoryOverhead=3G \
+     --conf spark.executor.resource.gpu.amount=1 \
+     --conf spark.executor.resource.gpu.vendor=nvidia.com \
+     --conf spark.locality.wait=0s \
+     --conf spark.rapids.memory.pinnedPool.size=2G \
+     --conf spark.rapids.sql.hasNans=false \
+     --conf spark.rapids.sql.castFloatToString.enabled=true \
+     --conf spark.rapids.sql.castStringToFloat.enabled=true \
+     --conf spark.sql.files.maxPartitionBytes=512m \
+     --conf spark.sql.shuffle.partitions=10 \
+     --conf spark.task.cpus=1 \
+     --conf spark.task.resource.gpu.amount=0.25 \
+     --jars ${SPARK_CUDF_JAR},${SPARK_RAPIDS_PLUGIN_JAR} \
+     --conf spark.plugins=com.nvidia.spark.SQLPlugin \
+     --driver-memory 4G
+
+.. warning:: This example assumes that the dataframes do not contain NaN values.
+
+.. note:: Add --conf spark.rapids.sql.explain=ALL to see whether jobs are running on the CPUs or GPUs.
 
 Debugging Problems
 ==================
@@ -166,3 +256,25 @@ Compute Node Resource Monitoring
 It can be very helpful to collect CPU, memory, disk, and network resource utilization statistics
 for all compute nodes. Refer to :ref:`resource_monitoring` for how to configure Jade to do this for
 you.
+
+
+Start a Spark Cluster on Arbitrary Compute Nodes
+================================================
+In some cases you may want to allocate compute nodes apart from Jade and then start a cluster. Similarly, you
+may want to restart the cluster with different configuration settings and not have to relinquish compute
+nodes. In the examples below Jade will stop all Spark processes on the nodes and then start a new cluster.
+
+In this example Jade will start the cluster and then sleep indefinitely.
+
+.. code-block:: bash
+
+   $ jade start-spark-cluster --container <path-to-container> --spark-conf ./spark node1 node2 nodeN
+
+The value passed to ``--spark-conf`` should be equal in format to the directory created above in ``jade spark config``.
+
+In this example Jade will start the cluster and then run a user script to start a notebook. The script
+must be executable.
+
+.. code-block:: bash
+
+   $ jade spark start-cluster --container <path-to-container> --spark-conf ./spark --script start_notebook.sh
