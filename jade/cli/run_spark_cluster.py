@@ -103,7 +103,7 @@ def _create_job(container, spark_conf, script):
             conf_dir=spark_conf,
             container=SparkContainerModel(path=container),
             enabled=True,
-            run_user_script_outside_container=True,
+            run_user_script_inside_container=False,
         ),
     )
 
@@ -170,10 +170,10 @@ def _run_cluster_master(job, manager_node, output_dir, verbose, manager_script_a
     # or parse the logs
     time.sleep(15)
     args = list(manager_script_and_args) + [_get_cluster(manager_node), str(job_output)]
-    if job.model.spark_config.run_user_script_outside_container:
-        user_cmd = " ".join(args)
-    else:
+    if job.model.spark_config.run_user_script_inside_container:
         user_cmd = str(job.model.spark_config.get_run_user_script()) + " " + " ".join(args)
+    else:
+        user_cmd = " ".join(args)
     logger.info("Run user script [%s]", user_cmd)
 
     start = time.time()

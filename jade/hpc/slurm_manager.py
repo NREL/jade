@@ -191,7 +191,16 @@ class SlurmManager(HpcManagerInterface):
             f"#SBATCH --error={path}/job_output_%j.e",
         ]
 
-        for param in ("mem", "nodes", "ntasks", "ntasks_per_node", "partition", "qos", "tmp"):
+        for param in (
+            "gres",
+            "mem",
+            "nodes",
+            "ntasks",
+            "ntasks_per_node",
+            "partition",
+            "qos",
+            "tmp",
+        ):
             value = getattr(self._config.hpc, param, None)
             if value is not None:
                 lines.append(f"#SBATCH --{param}={value}")
