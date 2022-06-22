@@ -12,7 +12,8 @@ Setup
 =====
 1. Create a Docker container with Spark installed. Here is an `example
    <https://github.com/NREL/jade/blob/main/jade/spark/Dockerfile>`_. That image includes
-   Nvidia GPU support.
+   Nvidia GPU support. Note that this container uses Python 3.8 and Spark 3.2.1. You may hit
+   incompatibilities if you run jobs against the cluster with different versions.
 2. Convert that container to Singularity and copy the image to the HPC's shared file system.
 3. Follow the normal steps to create your Jade configuration, such as with ``jade config create
    commands.txt``. The commands should be the scripts that you want to run against the Spark
@@ -23,8 +24,8 @@ Setup
    ``hpc_config.toml`` to be the number of compute nodes you want to participate in the Spark
    cluster. Spark will perform poorly if its scratch file space is on slow storage. You should
    specify requirements here that give you nodes with fast internal storage. On NREL's Eagle
-   HPC cluster that is only the big-memory and CPU nodes. Alternatively, you can use nodes' tmpfs
-   for scratch space as described below.
+   HPC cluster that is only the big-memory and GPU nodes. Alternatively, you can use nodes' tmpfs
+   for scratch space or another directory altogether as described below.
 5. If you want Spark to use GPUs, add GPU requirements to ``hpc_config.toml``. This example on Eagle
    will acquire nodes with two GPUs: ``gres=gpu:2``. Jade will detect this setting and add the
    appropriate Spark settings.
@@ -47,14 +48,17 @@ Setup
    to true. Note that this reduces availabe worker memory by half and you'll need to adjust
    ``spark.executor.memory`` accordingly. You can set the option in ``config.json`` or by passing
    ``-U`` to the ``jade spark config`` command.
-10. Consider whether you want your jobs to be run inside or outside the container (default is outside).
+10. Similar to the previous point, you can specify ``alt_scratch`` to use your own scratch directory.
+    On Eagle you may get decent performance if you specify a directory in ``/scratch/<username>``.
+    Be sure to clean up this up periodically because Spark will write lots of data during shuffles.
+11. Consider whether you want your jobs to be run inside or outside the container (default is outside).
    Jade will run each job inside the container if the ``run_user_script_inside_container`` option is
    set to true. You can set the option for each job in ``config.json`` or by passing ``-r`` to
    the ``jade spark config`` command. If you do run your script outside of the container, Jade will
    still set Spark environment variables to point to your local, customizable Spark config
    directory.
-11. Set ``collect_worker_logs`` to true if your jobs are getting logs of errors. These can grow large.
-12. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
+12. Set ``collect_worker_logs`` to true if your jobs are getting logs of errors. These can grow large.
+13. Submit the jobs with ``jade submit-jobs config.json``. Jade will create a new cluster for each
     job, running them sequentially.
 
 Run scripts manually
@@ -216,7 +220,7 @@ Refer to `Nvidia's tuning guide <https://nvidia.github.io/spark-rapids/docs/tuni
      --deploy-mode client  \
      --conf spark.executor.cores=4 \
      --conf spark.executor.instances=2 \
-     --conf spark.executor.memory=4G \
+     --conf spark.executor.memory=25G \
      --conf spark.executor.memoryOverhead=3G \
      --conf spark.executor.resource.gpu.amount=1 \
      --conf spark.executor.resource.gpu.vendor=nvidia.com \
@@ -231,7 +235,7 @@ Refer to `Nvidia's tuning guide <https://nvidia.github.io/spark-rapids/docs/tuni
      --conf spark.task.resource.gpu.amount=0.25 \
      --jars ${SPARK_CUDF_JAR},${SPARK_RAPIDS_PLUGIN_JAR} \
      --conf spark.plugins=com.nvidia.spark.SQLPlugin \
-     --driver-memory 4G
+     --driver-memory 25G
 
 .. warning:: This example assumes that the dataframes do not contain NaN values.
 

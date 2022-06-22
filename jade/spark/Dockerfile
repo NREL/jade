@@ -21,8 +21,11 @@
 # Usage:
 # 1. Download getGpuResources.sh from https://nvidia.github.io/spark-rapids/docs/get-started/getting-started-on-prem.html#install-the-gpu-discovery-script
 #    to your local directory.
-# 2. Detach from the VPN. You may get a certificate error while downloading spark.
-# 3. docker build --tag nvidia_spark --build-arg VERSION=<x.y.z> .
+# 2. Download these two jar files to your local directory.
+#    wget https://repo1.maven.org/maven2/ai/rapids/cudf/22.04.0/cudf-22.04.0-cuda11.jar
+#    wget https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.04.0/rapids-4-spark_2.12-22.04.0.jar
+# 3. Detach from the VPN. You may get a certificate error while downloading spark.
+# 4. docker build --tag nvidia_spark --build-arg VERSION=<x.y.z> .
 
 # This container can be converted to a Singularity container on Eagle with these commands:
 # Save and upload the docker image to Eagle.
@@ -94,11 +97,9 @@ RUN set -ex && \
     echo "auth required pam_wheel.so use_uid" >> /etc/pam.d/su && \
     chgrp root /etc/passwd && chmod ug+rw /etc/passwd
 
-RUN wget https://repo1.maven.org/maven2/com/nvidia/rapids-4-spark_2.12/22.04.0/rapids-4-spark_2.12-22.04.0.jar
-RUN wget https://repo1.maven.org/maven2/ai/rapids/cudf/22.04.0/cudf-22.04.0-cuda11.jar
-COPY *.jar ${SPARK_RAPIDS_PLUGIN_DIR}/
+COPY rapids-4-spark_2.12-22.04.0.jar ${SPARK_RAPIDS_PLUGIN_DIR}/
+COPY cudf-22.04.0-cuda11.jar ${SPARK_RAPIDS_PLUGIN_DIR}/
 COPY getGpusResources.sh ${SPARK_RAPIDS_PLUGIN_DIR}/
-RUN rm *.jar
 
 # This is a workaround documented in Nvidia online forums.
 RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/opt/ubuntu2004/x86_64/3bf863cc.pub

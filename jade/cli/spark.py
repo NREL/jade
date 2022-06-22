@@ -128,6 +128,13 @@ def _gpu_cb(_, __, val):
     help="Use tmpfs on node for scratch space.",
 )
 @click.option(
+    "-a",
+    "--alt-scratch",
+    default=None,
+    show_default=True,
+    help="Use this alternative directory for scratch space.",
+)
+@click.option(
     "-u",
     "--update-config-file",
     type=str,
@@ -170,6 +177,7 @@ def config(
     shuffle_partition_multiplier,
     update_config_file,
     use_tmpfs_for_scratch,
+    alt_scratch,
     verbose,
     worker_memory_gb,
     force,
@@ -188,6 +196,10 @@ def config(
             )
             sys.exit(1)
     spark_dir.mkdir(parents=True)
+
+    if use_tmpfs_for_scratch and alt is not None:
+        print("use_tmpfs_for_scratch and alt_scratch cannot both be set", file=sys.stderr)
+        sys.exit(1)
 
     hpc_config_data = HpcConfig.load(hpc_config)
     nodes = getattr(hpc_config_data.hpc, "nodes", None)
@@ -292,6 +304,7 @@ def config(
         node_memory_overhead_gb=node_memory_overhead_gb,
         run_user_script_inside_container=run_user_script_inside_container,
         use_tmpfs_for_scratch=use_tmpfs_for_scratch,
+        alt_scratch=alt_scratch,
         worker_memory_gb=worker_memory_gb,
     )
 
