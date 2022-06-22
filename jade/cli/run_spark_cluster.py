@@ -245,6 +245,9 @@ def _set_env_variables(job, conf_dir, logs_dir):
     os.environ["SPARK_LOG_DIR"] = str(logs_dir.absolute())
     if job.model.spark_config.use_tmpfs_for_scratch:
         scratch = TMPFS_MOUNT
+    elif job.model.spark_config.alt_scratch is not None:
+        scratch = job.model.spark_config.alt_scratch
+        Path(scratch).mkdir(parents=True, exist_ok=True)
     else:
         scratch = os.environ["LOCAL_SCRATCH"]
     os.environ["SPARK_LOCAL_DIRS"] = f"{scratch}/spark/local"

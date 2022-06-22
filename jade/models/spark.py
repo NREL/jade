@@ -57,6 +57,11 @@ class SparkConfigModel(JadeBaseModel):
         description="Use node's tmpfs instead of internal storage for scratch space.",
         default=False,
     )
+    alt_scratch: str = Field(
+        title="alt_scratch",
+        description="Use this alternative directory for scratch space.",
+        default=None,
+    )
     worker_memory_gb: int = Field(
         title="worker_memory_gb",
         description="If 0, give all node memory minus overhead to worker.",
