@@ -238,11 +238,9 @@ def config(
         # cluster. Some sources say 1 per core, others say 2 or 4 per core. Depends on use case.
         # This should be a reasonable default for users, who can customize dynamically.
         params = ["spark.sql.shuffle.partitions"]
-        if dynamic_allocation:
-            # Not sure why but this setting did not work well with dynamic allocation.
-            params.append("#spark.default.parallelism")
-        else:
-            params.append("spark.default.parallelism")
+        # Some sources say that we should set spark.default.parallelism to the same value,
+        # others say it doesn't work. Experiments showed harmful effects if dynamic allocation
+        # was enabled with a custom value.
         for param in params:
             f_out.write(param)
             f_out.write(" ")
