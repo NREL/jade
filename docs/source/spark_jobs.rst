@@ -31,10 +31,20 @@ Setup
    appropriate Spark settings.
 6. Run the command below to update the configuration with Spark parameters. Refer to ``--help`` for
    additional options. This will produce spark configuration files in ``./spark/conf`` that you
-   can customize. One possible customization is ``spark.sql.shuffle.partititons`` and 
-   ``spark.default.parallelism`` in ``spark/conf/spark-defaults.conf``. Jade sets them to the total
-   number of cores in the cluster by default. Refer to Spark documentation for help with the
-   parameters.
+   can customize. Refer to Spark documentation for help with the parameters.
+
+   One parameter that you should customize is ``spark.sql.shuffle.partititons`` in
+   ``spark/conf/spark-defaults.conf``.
+   Jade sets them to the total number of cores in the cluster by default.  This
+   `video <https://www.youtube.com/watch?v=daXEp4HmS-E&t=4251s>`_ offers an equation that works
+   well: ``num_partitions = max_shufffle_write_size / target_partition_size``.
+
+   You will have to run your job once to determine ``max_shuffle_write_size``. You can find it on
+   the Spark UI ``Stages`` tab in the ``Shuffle Write`` column. Your ``target_partition_size``
+   should be between 128 - 200 MB.
+
+   The minimum ``partitions`` value should be the total number of cores in the cluster unless you
+   want to leave some cores available for other jobs that may be running simultaneously.
 
 ::
 
@@ -45,7 +55,7 @@ Setup
    intended to maximize memory for 7 executors on each compute node. Customize as needed.
 8. View the changes to your ``config.json`` if desired.
 9. If you are using compute nodes with slow internal storage, consider setting ``use_tmpfs_for_scratch``
-   to true. Note that this reduces availabe worker memory by half and you'll need to adjust
+   to true. Note that this reduces available worker memory by half and you'll need to adjust
    ``spark.executor.memory`` accordingly. You can set the option in ``config.json`` or by passing
    ``-U`` to the ``jade spark config`` command.
 10. Similar to the previous point, you can specify ``alt_scratch`` to use your own scratch directory.
