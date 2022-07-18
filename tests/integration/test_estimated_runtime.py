@@ -74,7 +74,7 @@ def test_estimated_run_time(cleanup):
     # 100 jobs will take two batches.
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -t -n2 -q4"
     check_run_command(cmd)
-    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01 -t2")
 
     batch_config_1 = Path(OUTPUT) / "config_batch_1.json"
     assert os.path.exists(batch_config_1)

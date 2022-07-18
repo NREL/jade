@@ -67,7 +67,7 @@ def test_run_generic_commands(generic_command_fixture):
 
     for cmd in cmds:
         check_run_command(cmd)
-        check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
+        check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01 -t2")
 
     assert list(Path(OUTPUT).glob("*.sh"))
     check_run_command(f"jade prune-files {OUTPUT}")

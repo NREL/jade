@@ -207,6 +207,10 @@ def test_serialize():
         "jobs": [],
         "user_data": {},
         "submission_groups": [],
+        "setup_command": None,
+        "teardown_command": None,
+        "node_setup_command": None,
+        "node_teardown_command": None,
     }
     assert data == expected
 

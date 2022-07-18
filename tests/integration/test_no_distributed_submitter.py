@@ -68,6 +68,6 @@ def test_no_distributed_submitter(cleanup):
     assert len(processed_results_file.read_text().splitlines()) == 1
 
     check_run_command(f"{TRY_SUBMIT_JOBS} {OUTPUT}")
-    check_run_command(f"{WAIT} --output={OUTPUT}")
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01 -t2")
     assert len(processed_results_file.read_text().splitlines()) == NUM_COMMANDS + 1
     assert not results_file.exists()
