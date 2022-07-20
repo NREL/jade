@@ -45,6 +45,10 @@ class JobConfiguration(abc.ABC):
         job_post_process_config=None,
         user_data=None,
         submission_groups=None,
+        setup_command=None,
+        teardown_command=None,
+        node_setup_command=None,
+        node_teardown_command=None,
         **kwargs,
     ):
         """
@@ -64,6 +68,10 @@ class JobConfiguration(abc.ABC):
         self._job_post_process_config = job_post_process_config
         self._user_data = user_data or {}
         self._submission_groups = [SubmissionGroup(**x) for x in submission_groups or []]
+        self._setup_command = setup_command
+        self._teardown_command = teardown_command
+        self._node_setup_command = node_setup_command
+        self._node_teardown_command = node_teardown_command
 
         if kwargs.get("do_not_deserialize_jobs", False):
             assert "job_names" in kwargs, str(kwargs)
@@ -576,6 +584,10 @@ class JobConfiguration(abc.ABC):
             "format_version": self.FORMAT_VERSION,
             "user_data": self._user_data,
             "submission_groups": [x.dict() for x in self.submission_groups],
+            "setup_command": self.setup_command,
+            "teardown_command": self.teardown_command,
+            "node_setup_command": self.node_setup_command,
+            "node_teardown_command": self.node_teardown_command,
         }
         if self._job_global_config:
             data["job_global_config"] = self._job_global_config
@@ -640,6 +652,46 @@ class JobConfiguration(abc.ABC):
         logger.info("Dumped config file locally to %s", config_file)
 
         return config_file
+
+    @property
+    def setup_command(self):
+        """Command to run by submitter before submitting jobs"""
+        return self._setup_command
+
+    @setup_command.setter
+    def setup_command(self, cmd):
+        """Set command to run by submitter before submitting jobs"""
+        self._setup_command = cmd
+
+    @property
+    def teardown_command(self):
+        """Command to run by last node before completing jobs"""
+        return self._teardown_command
+
+    @teardown_command.setter
+    def teardown_command(self, cmd):
+        """Set command to run by last node before completing jobs"""
+        self._teardown_command = cmd
+
+    @property
+    def node_setup_command(self):
+        """Command to run on each node before starting jobs"""
+        return self._node_setup_command
+
+    @node_setup_command.setter
+    def node_setup_command(self, cmd):
+        """Set command to run on each node before starting jobs"""
+        self._node_setup_command = cmd
+
+    @property
+    def node_teardown_command(self):
+        """Command to run on each node after completing jobs"""
+        return self._node_teardown_command
+
+    @node_teardown_command.setter
+    def node_teardown_command(self, cmd):
+        """Set command to run on each node after completing jobs"""
+        self._node_teardown_command = cmd
 
     def _transform_for_local_execution(self, scratch_dir, are_inputs_local):
         """Transform data for efficient execution in a local environment.

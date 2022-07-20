@@ -2,9 +2,9 @@
 
 import re
 from datetime import timedelta
-from typing import List, Optional, Set, Union
+from typing import Optional
 
-from pydantic import Field, validator
+from pydantic import Field, root_validator
 
 from jade.enums import ResourceMonitorType
 from jade.models import JadeBaseModel, HpcConfig, SingularityParams
@@ -37,6 +37,7 @@ class SubmitterParams(JadeBaseModel):
         description="How many jobs to assign to each node",
         default=500,
     )
+    # The next two parameters are obsolete and will eventually be deleted.
     node_setup_script: Optional[str] = Field(
         title="node_setup_script",
         description="Script to run on each node before starting jobs",
@@ -107,6 +108,14 @@ class SubmitterParams(JadeBaseModel):
         if wall_time is None:
             return timedelta(seconds=0xFFFFFFFF)  # largest 8-byte integer
         return _to_timedelta(wall_time)
+
+    def dict(self, *args, **kwargs):
+        data = super().dict(*args, **kwargs)
+        if data["node_setup_script"] is None:
+            data.pop("node_setup_script")
+        if data["node_shutdown_script"] is None:
+            data.pop("node_shutdown_script")
+        return data
 
 
 _REGEX_WALL_TIME = re.compile(r"(\d+):(\d+):(\d+)")

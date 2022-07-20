@@ -154,7 +154,6 @@ Create a config programmatically
 If you are setting many custom parameters, it may be more convenient to create the
 JADE configuration programmatically. An example is below. This will make the following customizations:
 
-- Append the JADE runtime output directory to each command.
 - Make a final post-processing job dependent on the other jobs.
 - Set a custom name for each job.
 
@@ -171,8 +170,6 @@ JADE configuration programmatically. An example is below. This will make the fol
         job = GenericCommandParameters(
             command=cmd,
             name=name,
-            append_output_dir=True,
-            append_job_name=True,
         )
         config.add_job(job)
         regular_job_names.append(name)
@@ -180,8 +177,6 @@ JADE configuration programmatically. An example is below. This will make the fol
     post_process_job = GenericCommandParameters(
         command="bash run_post_process.sh",
         name="post_process",
-        append_output_dir=True,
-        append_job_name=True,
         blocked_by=regular_job_names,
         cancel_on_blocking_job_failure=True,
     )
@@ -338,102 +333,54 @@ And then pass this file to ``submit-jobs``
 Output Directory
 ----------------
 JADE stores all of its configuration information and log files in the output
-directory specified by the ``submit-jobs`` command. You can tell JADE to
-forward this directory to the job CLI commands by setting the
-``append_output_dir`` and ``append_job_name`` job parameters to true.
+directory specified by the ``submit-jobs`` command. JADE makes this directory
+available to jobs in the environment variable ``JADE_RUNTIME_OUTPUT``. JADE
+also makes each job name available in the environment variable
+``JADE_JOB_NAME``.
 
-Suppose you submit jobs with
+.. note:: Job names are either job_id cast as a string or the optional name field in config.json.
 
-.. code-block:: bash
-
-    jade submit-jobs config.json -o output
-
-Where ``config.json`` contains a job definition like this:
-
-.. code-block:: json
-
-    {
-      "command": "bash my_script.sh",
-      "job_id": 1,
-      "name": "job1",
-      "blocked_by": [],
-      "append_output_dir": true,
-      "append_job_name": true
-    }
-
-JADE will actually invoke this:
-
-.. code-block:: bash
-
-    $ bash my_script.sh --jade-runtime-output=output --jade-job-name=job1
-
-This can be useful to collect all job outputs in a common location. JADE
+This enables you to collect all job output files in a common location. JADE
 automatically creates ``<output-dir>/job-outputs`` for this purpose.
 
-Your job can store its output files in ``<output-dir>/job-outputs/job1``
+Your job can store its output files in ``<output-dir>/job-outputs/<job-name>``
 
-Node setup and shutdown scripts
--------------------------------
+Suppose your actual job command accepts a parameter for an output directory
+like this:
+
+.. code-block:: bash
+
+    run_my_simulation -o my-output-folder
+
+Here is an example JADE wrapper script to handle this::
+
+    #!/bin/bash
+    run_my_simulation -o $JADE_RUNTIME_OUTPUT/$JADE_JOB_NAME
+
+
+Setup and teardown scripts
+--------------------------
+JADE supports the ability to run a setup script before running any jobs as well as a teardown
+script after all jobs finish. Define the parameters ``setup_command`` and ``teardown_command``
+in ``config.json``.
+
+The following environment variable is available when these scripts are executed:
+
+- ``JADE_RUNTIME_OUTPUT``: output directory passed to ``jade submit-jobs``
+
+Note that the output directory contains a copy of ``config.json`` in case you need to access
+information from it.
+
 When running on an HPC you might want to copy input files to each compute node
-before running jobs and then upload output data afterwards. JADE provides
-options to automate this process.
+before running jobs and then upload output data afterwards. Define the parameters
+``node_setup_command`` and ``node_teardown_command`` in ``config.json``.
 
-.. code-block:: bash
+Note that the following environment variables are available when these scripts are executed:
 
-    jade submit-jobs --node-setup-script="python setup_node.py" --node-shutdown-script="python shutdown_node.py" config.json
+- ``JADE_RUNTIME_OUTPUT``: This is the output directory passed to ``jade submit-jobs``
+- ``JADE_SUBMISSION_GROUP``: This is the name of the submission group for the node.
 
-In this example JADE will invoke these commands on each compute node.
-
-.. code-block:: bash
-
-    python setup_node.py config_batch1.json output-dir
-    python shutdown_node.py config_batch1.json output-dir
-
-Note the arguments:
-
-1. JADE config file for that node's batch. It contains only the jobs in the
-   batch.
-2. the output directory passed to ``jade submit-jobs``
-
-You can use this information to decide what files to copy. Here is an example
-of how to use it.
-
-Pre-requisite: define required files for each in each job's ``ext`` field.
-
-.. code-block:: json
-
-    {
-      "command": "bash my-script.sh",
-      "job_id": 1,
-      "blocked_by": [],
-      "extension": "generic_command",
-      "ext": {"required_files": ["/projects/X/input_data.json"]}
-    }
-
-Here is what you can do in the setup script.
-
-.. code-block:: python
-
-    import os
-    import shutil
-    import sys
-    from pathlib import Path
-
-    from jade.jobs.job_configuration_factory import create_config_from_file
-
-    config_file = sys.argv[1]
-    config = create_config_from_file(config_file)
-    required_files = set()
-    for job in config.iter_jobs():
-        required_files.update(set(job.ext.get("required_files", [])))
-
-    work_dir = os.environ["LOCAL_SCRATCH"]  # or whatever is appropriate for your environment
-    for filename in required_files:
-        shutil.copyfile(filename, Path(work_dir) / os.path.basename(filename))
-
-
-.. note:: You can define different setup/shutdown scripts for different jobs if
-   you define submission groups.
+.. note:: You can also set these parameters programmatically when constructing ``GenericCommandConfiguration``.
 
 Job Execution
 =============

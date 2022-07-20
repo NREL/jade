@@ -7,6 +7,7 @@ import importlib
 import logging
 import os
 import shutil
+import time
 
 import jade
 from jade.common import (
@@ -42,7 +43,7 @@ from jade.models.submission_group import make_submission_group_lookup
 from jade.loggers import log_event
 from jade.result import serialize_results, ResultsSummary
 from jade.utils.repository_info import RepositoryInfo
-from jade.utils.subprocess_manager import run_command
+from jade.utils.subprocess_manager import check_run_command, run_command
 from jade.utils.utils import dump_data, get_directory_size_bytes
 import jade.version
 
@@ -135,6 +136,12 @@ results_summary={self.get_results_summmary_report()}"""
                 num_jobs=self.get_num_jobs(),
             )
             log_event(event)
+
+            os.environ["JADE_RUNTIME_OUTPUT"] = self._output
+            if self._config.setup_command is not None:
+                cmd = f"JADE_RUNTIME_OUTPUT={self._output} {self._config.setup_command}"
+                logger.info("Running setup command: %s", cmd)
+                check_run_command(self._config.setup_command)
         else:
             self._handle_submission_groups()
 
@@ -180,6 +187,16 @@ results_summary={self.get_results_summmary_report()}"""
             missing_jobs = []
 
         self.write_results_summary(RESULTS_FILE, missing_jobs)
+
+        if self._config.teardown_command is not None:
+            cmd = f"JADE_RUNTIME_OUTPUT={self._output} {self._config.teardown_command}"
+            logger.info("Running teardown command: %s", cmd)
+            start = time.time()
+            ret = run_command(self._config.teardown_command)
+            if ret != 0:
+                logger.error("Failed to run teardown command: %s", ret)
+            logger.info("Teardown command duration = %s seconds", time.time() - start)
+
         self._log_error_log_messages(self._output)
 
         bytes_consumed = get_directory_size_bytes(self._output, recursive=False)

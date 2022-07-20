@@ -57,24 +57,10 @@ def run_jobs(config_file, distributed_submitter, output, num_processes, verbose)
     logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
     logger.info(get_cli_string())
 
-    group = mgr.config.get_default_submission_group()
-    if group.submitter_params.node_setup_script:
-        cmd = f"{group.submitter_params.node_setup_script} {config_file} {output}"
-        ret = run_command(cmd)
-        if ret != 0:
-            logger.error("Failed to run node setup script %s: %s", cmd, ret)
-            sys.exit(ret)
-
     status = mgr.run_jobs(
         distributed_submitter=distributed_submitter, verbose=verbose, num_processes=num_processes
     )
     ret = status.value
-
-    if group.submitter_params.node_shutdown_script:
-        cmd = f"{group.submitter_params.node_shutdown_script} {config_file} {output}"
-        ret2 = run_command(cmd)
-        if ret2 != 0:
-            logger.error("Failed to run node shutdown script %s: %s", cmd, ret2)
 
     if status == Status.GOOD and distributed_submitter:
         start = time.time()

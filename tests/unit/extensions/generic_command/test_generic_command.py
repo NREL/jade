@@ -5,6 +5,7 @@ Unit tests for auto-regression execution class methods and properties.
 import logging
 import os
 import shutil
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -23,12 +24,14 @@ CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = "jade submit-jobs -f -R aggregation"
 WAIT = "jade wait"
+SETUP_SCRIPT = Path(tempfile.gettempdir()) / "jade_setup.sh"
+TEARDOWN_SCRIPT = Path(tempfile.gettempdir()) / "jade_teardown.sh"
 
 
 @pytest.fixture
 def generic_command_fixture():
     yield
-    for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT):
+    for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT, SETUP_SCRIPT, TEARDOWN_SCRIPT):
         if os.path.isdir(path):
             shutil.rmtree(path)
         elif os.path.exists(path):
@@ -49,8 +52,14 @@ def test_run_generic_commands(generic_command_fixture):
         for command in commands:
             f_out.write(command + "\n")
 
+    SETUP_SCRIPT.write_text("echo setup > $JADE_RUNTIME_OUTPUT/jade_setup.txt")
+    TEARDOWN_SCRIPT.write_text("echo teardown > $JADE_RUNTIME_OUTPUT/jade_teardown.txt")
+
     inputs = GenericCommandInputs(TEST_FILENAME)
-    config = GenericCommandConfiguration()
+    config = GenericCommandConfiguration(
+        setup_command=f"bash {SETUP_SCRIPT}",
+        teardown_command=f"bash {TEARDOWN_SCRIPT}",
+    )
     for job_param in inputs.iter_jobs():
         config.add_job(job_param)
     assert config.get_num_jobs() == 2
@@ -70,6 +79,8 @@ def test_run_generic_commands(generic_command_fixture):
         check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01 -t2")
 
     assert list(Path(OUTPUT).glob("*.sh"))
+    assert (Path(OUTPUT) / "jade_setup.txt").read_text().strip() == "setup"
+    assert (Path(OUTPUT) / "jade_teardown.txt").read_text().strip() == "teardown"
     check_run_command(f"jade prune-files {OUTPUT}")
     assert not list(Path(OUTPUT).glob("*.sh"))
 

@@ -181,3 +181,17 @@ class GenericCommandParametersModel(JadeBaseModel):
     @validator("blocked_by")
     def handle_blocked_by(cls, value):
         return {str(x) for x in value}
+
+    def dict(self, *args, **kwargs):
+        data = super().dict(*args, **kwargs)
+        # Keep the config file smaller by skipping values that are defaults.
+        for field in (
+            "use_multi_node_manager",
+            "spark_config",
+            "append_job_name",
+            "append_output_dir",
+            "ext",
+        ):
+            if data[field] == GenericCommandParametersModel.__fields__[field].default:
+                data.pop(field)
+        return data
