@@ -4,7 +4,7 @@ import re
 from datetime import timedelta
 from typing import Optional
 
-from pydantic import Field, root_validator
+from pydantic import Field
 
 from jade.enums import ResourceMonitorType
 from jade.models import JadeBaseModel, HpcConfig, SingularityParams

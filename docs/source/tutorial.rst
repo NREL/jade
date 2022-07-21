@@ -345,17 +345,19 @@ automatically creates ``<output-dir>/job-outputs`` for this purpose.
 
 Your job can store its output files in ``<output-dir>/job-outputs/<job-name>``
 
-Suppose your actual job command accepts a parameter for an output directory
-like this:
+Suppose your actual job command accepts a parameter for an output directory like this:
 
 .. code-block:: bash
 
-    run_my_simulation -o my-output-folder
+    run_my_simulation -o my-output-folder --arg1 X --arg2 Y
 
-Here is an example JADE wrapper script to handle this::
+Here is an example JADE wrapper script that forwards the runtime directory to your
+program. It will also forward the rest of the arguments.
 
     #!/bin/bash
-    run_my_simulation -o $JADE_RUNTIME_OUTPUT/$JADE_JOB_NAME
+    run_my_simulation -o $JADE_RUNTIME_OUTPUT/job-outputs/$JADE_JOB_NAME $@
+
+The command given to JADE would be ``bash jade_wrapper.sh --arg1 X --arg2 Y``.
 
 
 Setup and teardown scripts
@@ -373,7 +375,8 @@ information from it.
 
 When running on an HPC you might want to copy input files to each compute node
 before running jobs and then upload output data afterwards. Define the parameters
-``node_setup_command`` and ``node_teardown_command`` in ``config.json``.
+``node_setup_command`` and ``node_teardown_command`` in ``config.json``. JADE will run those
+commands before and after running each node's batch of jobs.
 
 Note that the following environment variables are available when these scripts are executed:
 
