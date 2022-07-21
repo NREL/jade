@@ -366,6 +366,14 @@ JADE supports the ability to run a setup script before running any jobs as well 
 script after all jobs finish. Define the parameters ``setup_command`` and ``teardown_command``
 in ``config.json``.
 
+JADE will run the ``setup_command`` on the node where you run ``jade submit-jobs``, so be 
+careful if this task will consume lots of computing resources. You may want to submit from
+a debug node instead of a login node.
+
+JADE will run the ``teardown_command`` on the last node to finish its jobs. It will run the
+command regardless of whether jobs pass or fail. Be sure to account for impacts to the
+per-node walltime timeout.
+
 The following environment variable is available when these scripts are executed:
 
 - ``JADE_RUNTIME_OUTPUT``: output directory passed to ``jade submit-jobs``
