@@ -12,7 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 @timed_debug
-def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0, error_strings=None):
+def run_command(
+    cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0, error_strings=None, **kwargs
+):
     """Runs a command as a subprocess.
 
     Parameters
@@ -30,6 +32,8 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0, er
         Number of seconds to delay in between retries.
     error_strings : None | str
         Skip retries for these known error strings. Requires output to be set.
+    kwargs
+        Keyword arguments to forward to the subprocess module.
 
     Returns
     -------
@@ -58,7 +62,7 @@ def run_command(cmd, output=None, cwd=None, num_retries=0, retry_delay_s=2.0, er
     ret = None
     for i in range(max_tries):
         _output = {} if isinstance(output, dict) else None
-        ret = _run_command(command, _output, cwd)
+        ret = _run_command(command, _output, cwd, **kwargs)
         if ret != 0 and num_retries > 0:
             if _output:
                 if _should_exit_early(_output["stderr"], error_strings):
@@ -94,15 +98,17 @@ def _should_exit_early(std_err, error_strings):
     return False
 
 
-def _run_command(command, output, cwd):
+def _run_command(command, output, cwd, **kwargs):
     if output is not None:
-        pipe = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd)
+        pipe = subprocess.Popen(
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=cwd, **kwargs
+        )
         out, err = pipe.communicate()
         output["stdout"] = out.decode("utf-8")
         output["stderr"] = err.decode("utf-8")
         ret = pipe.returncode
     else:
-        ret = subprocess.call(command, cwd=cwd)
+        ret = subprocess.call(command, cwd=cwd, **kwargs)
 
     return ret
 

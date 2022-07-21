@@ -149,7 +149,9 @@ class AsyncCliCommand(AsyncJobInterface):
 
         # Disable posix if on Windows.
         cmd = shlex.split(self._cli_cmd, posix="win" not in sys.platform)
-        self._pipe = subprocess.Popen(cmd)
+        env = os.environ.copy()
+        env["JADE_JOB_NAME"] = self.name
+        self._pipe = subprocess.Popen(cmd, env=env)
         self._is_pending = True
         logger.debug("Submitted %s", self._cli_cmd)
         return Status.GOOD

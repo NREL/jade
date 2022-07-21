@@ -215,13 +215,13 @@ COMMON_SUBMITTER_OPTIONS = (
         "-x",
         "--node-setup-script",
         default=SUBMITTER_PARAMS_DEFAULTS["node_setup_script"],
-        help="Script to run on each node before starting jobs (download input files).",
+        help="Deprecated. Script to run on each node before starting jobs (download input files).",
     ),
     click.option(
         "-y",
         "--node-shutdown-script",
         default=SUBMITTER_PARAMS_DEFAULTS["node_shutdown_script"],
-        help="Script to run on each after completing jobs (upload output files).",
+        help="Deprecated. Script to run on each after completing jobs (upload output files).",
     ),
     click.option(
         "-N",
@@ -264,6 +264,11 @@ def make_submitter_params(
     no_distributed_submitter=None,
 ):
     """Returns an instance of SubmitterParams for use in a job submission."""
+    if node_setup_script is not None or node_shutdown_script is not None:
+        print(
+            "Warning: node_setup_script and node_shutdown_script are deprecated and will "
+            "be removed in release v0.9.0."
+        )
     if local:
         hpc_config = HpcConfig(hpc_type="local", hpc=LocalHpcConfig())
     else:

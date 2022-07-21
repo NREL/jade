@@ -21,7 +21,6 @@ TEST_FILENAME = "test-inputs.txt"
 CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = "jade submit-jobs -R none"
-WAIT = "jade wait"
 
 
 @pytest.fixture
@@ -79,13 +78,16 @@ def test_submission_groups_mixed_max_nodes(cleanup):
 
 
 def test_submission_groups_per_node_setup(cleanup):
+    # TODO: this test is no longer in the right place. Belongs in file testing job_config.
     config = create_config()
-    config.submission_groups[1].submitter_params.node_setup_script = "node.sh"
+    config.node_setup_command = "node_setup.sh"
+    config.node_teardown_command = "node_teardown.sh"
     config.dump(CONFIG_FILE)
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -h {FAKE_HPC_CONFIG} --dry-run"
     check_run_command(cmd)
     config = create_config_from_file(Path(OUTPUT) / "config_batch_2.json")
-    assert config.get_default_submission_group().submitter_params.node_setup_script == "node.sh"
+    assert config.node_setup_command == "node_setup.sh"
+    assert config.node_teardown_command == "node_teardown.sh"
 
 
 def create_config():

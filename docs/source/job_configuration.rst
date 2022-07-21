@@ -50,13 +50,6 @@ parameters specified on the command line for ``jade submit-jobs``:
 - resource_monitor_interval
 - verbose
 
-JADE will override the following parameters in the submission groups with
-parameters specified on the command line for ``jade submit-jobs`` **only**
-if they are not set for the group:
-
-- node_setup_script
-- node_shutdown_script
-
 The following parameters are completely controlled by the group:
 
 - hpc_config

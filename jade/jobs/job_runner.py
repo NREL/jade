@@ -5,10 +5,12 @@ import os
 import shutil
 import time
 import uuid
+import time
 from pathlib import Path
 
 from jade.common import JOBS_OUTPUT_DIR, OUTPUT_DIR
 from jade.enums import Status, ResourceMonitorType
+from jade.exceptions import ExecutionError
 from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.jobs.cluster import Cluster
@@ -18,6 +20,7 @@ from jade.jobs.job_queue import JobQueue
 from jade.models import JobState
 from jade.loggers import close_event_logging
 from jade.resource_monitor import ResourceMonitorAggregator, ResourceMonitorLogger
+from jade.utils.run_command import run_command, check_run_command
 from jade.utils.timing_utils import timed_info
 
 
@@ -88,9 +91,37 @@ class JobRunner(JobManagerBase):
 
         try:
             config_file = self._config.serialize_for_execution(scratch_dir, are_inputs_local)
-
             jobs = self._generate_jobs(config_file, verbose)
+
+            os.environ["JADE_RUNTIME_OUTPUT"] = self._output
+            os.environ["JADE_SUBMISSION_GROUP"] = self._config.get_default_submission_group().name
+            # Setting node_setup_script and node_shutdown_script are obsolete and will
+            # eventually be deleted.
+            group = self._config.get_default_submission_group()
+            if group.submitter_params.node_setup_script is not None:
+                cmd = f"{group.submitter_params.node_setup_script} {config_file} {self._output}"
+                check_run_command(cmd)
+            elif self._config.node_setup_command is not None:
+                check_run_command(self._config.node_setup_command)
+
             result = self._run_jobs(jobs, num_processes=num_processes)
+
+            if group.submitter_params.node_shutdown_script:
+                cmd = f"{group.submitter_params.node_shutdown_script} {config_file} {self._output}"
+                ret2 = run_command(cmd)
+                if ret2 != 0:
+                    logger.error("Failed to run node shutdown script %s: %s", cmd, ret2)
+            elif self._config.node_teardown_command is not None:
+                start = time.time()
+                ret2 = run_command(self._config.node_teardown_script)
+                if ret2 != 0:
+                    logger.error(
+                        "Failed to run node shutdown script %s: %s",
+                        self._config.node_teardown_command,
+                        ret2,
+                    )
+                logger.info("Node teardown script duration = %s seconds", time.time() - start)
+
             logger.info("Completed %s jobs", len(jobs))
         finally:
             shutil.rmtree(scratch_dir)

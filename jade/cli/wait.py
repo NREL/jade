@@ -25,8 +25,18 @@ from jade.jobs.cluster import Cluster
     show_default=True,
     help="poll interval in minutes",
 )
-def wait(output, poll_interval):
+@click.option(
+    "-t",
+    "--timeout",
+    type=int,
+    help="Timeout in minutes. Default is no timeout.",
+)
+def wait(output, poll_interval, timeout):
     """Wait for a JADE submission to complete."""
+    if timeout is not None:
+        end = time.time() + timeout * 60
+    else:
+        end = None
     while True:
         try:
             cluster, _ = Cluster.deserialize(output)
@@ -37,3 +47,5 @@ def wait(output, poll_interval):
             print("All jobs are complete")
             break
         time.sleep(poll_interval * 60)
+        if end is not None and time.time() > end:
+            sys.exit(1)

@@ -286,6 +286,12 @@ def _show(config_file, fields=None, blocked_by=True):
     if num_jobs == 0:
         return
 
+    if config.setup_command is not None:
+        print(f"Setup command: {config.setup_command}")
+    if config.teardown_command is not None:
+        print(f"Teardown command: {config.teardown_command}")
+    print()
+
     # generic_command jobs have a command field which is very useful.
     # Other extensions do not.
     has_command = False

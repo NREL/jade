@@ -61,7 +61,7 @@ def _do_cleanup():
 def test_resubmit_successful(cleanup):
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT}"
     check_run_command(cmd)
-    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01 -t2")
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_failed_results()) == 0
     assert len(summary.get_successful_results()) == NUM_COMMANDS
