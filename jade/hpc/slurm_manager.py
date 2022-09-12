@@ -200,6 +200,7 @@ class SlurmManager(HpcManagerInterface):
             "partition",
             "qos",
             "tmp",
+            "reservation"
         ):
             value = getattr(self._config.hpc, param, None)
             if value is not None:

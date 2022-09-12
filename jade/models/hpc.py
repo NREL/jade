@@ -21,6 +21,11 @@ class SlurmConfig(JadeBaseModel):
         description="HPC partition on which to submit",
         default=None,
     )
+    reservation: Optional[str] = Field(
+        title="reservation",
+        description="HPC reservation on which to submit",
+        default=None,
+    )
     qos: Optional[str] = Field(
         title="qos",
         description="Set to high to get faster node allocations at twice the cost",
