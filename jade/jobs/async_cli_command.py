@@ -8,7 +8,7 @@ import sys
 import time
 from pathlib import Path
 
-from jade.common import JOBS_OUTPUT_DIR, RESULTS_DIR
+from jade.common import JOBS_OUTPUT_DIR, JOBS_STDIO_DIR, RESULTS_DIR
 from jade.enums import JobCompletionStatus, Status
 from jade.events import StructuredLogEvent, EVENT_NAME_BYTES_CONSUMED, EVENT_CATEGORY_RESOURCE_UTIL
 from jade.jobs.async_job_interface import AsyncJobInterface
@@ -36,6 +36,8 @@ class AsyncCliCommand(AsyncJobInterface):
         self._batch_id = batch_id
         self._is_manager_node = is_manager_node
         self._hpc_job_id = hpc_job_id
+        self._stdout_fp = None
+        self._stderr_fp = None
 
     def __del__(self):
         if self._is_pending:
@@ -43,6 +45,8 @@ class AsyncCliCommand(AsyncJobInterface):
 
     def _complete(self):
         self._return_code = self._pipe.returncode
+        self._stdout_fp.close()
+        self._stderr_fp.close()
         exec_time_s = time.time() - self._start_time
 
         if not self._is_manager_node:
@@ -151,7 +155,11 @@ class AsyncCliCommand(AsyncJobInterface):
         cmd = shlex.split(self._cli_cmd, posix="win" not in sys.platform)
         env = os.environ.copy()
         env["JADE_JOB_NAME"] = self.name
-        self._pipe = subprocess.Popen(cmd, env=env)
+        stdout_filename = self._output / JOBS_STDIO_DIR / f"{self._job.name}.o"
+        stderr_filename = self._output / JOBS_STDIO_DIR / f"{self._job.name}.e"
+        self._stdout_fp = open(stdout_filename, "w")
+        self._stderr_fp = open(stderr_filename, "w")
+        self._pipe = subprocess.Popen(cmd, env=env, stdout=self._stdout_fp, stderr=self._stderr_fp)
         self._is_pending = True
         logger.debug("Submitted %s", self._cli_cmd)
         return Status.GOOD
