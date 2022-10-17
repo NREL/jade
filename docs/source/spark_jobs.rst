@@ -19,7 +19,14 @@ Setup
    commands.txt``. The commands should be the scripts that you want to run against the Spark
    cluster including any command-line arguments. **Note**: Jade will append two positional
    arguments to your command line arguments: the spark cluster (``spark://<node_name>:7077``) and the
-   job output directory.
+   job output directory. Here is an example script::
+
+.. code-block:: bash
+
+   !/bin/bash
+   SPARK_CLUSTER=$1
+   spark-submit --master=${SPARK_CLUSTER} run_query.py
+
 4. Create your HPC config file with ``jade config hpc -c hpc_config.toml``. Set ``nodes`` in
    ``hpc_config.toml`` to be the number of compute nodes you want to participate in the Spark
    cluster. Spark will perform poorly if its scratch file space is on slow storage. You should
@@ -30,7 +37,7 @@ Setup
    will acquire nodes with two GPUs: ``gres=gpu:2``. Jade will detect this setting and add the
    appropriate Spark settings.
 6. Run the command below to update the configuration with Spark parameters. Refer to ``--help`` for
-   additional options. This will produce spark configuration files in ``./spark/conf`` that you
+   additional options. This will produce global spark configuration files in ``./spark/conf`` that you
    can customize. Refer to Spark documentation for help with the parameters.
 
    One parameter that you should customize is ``spark.sql.shuffle.partititons`` in
@@ -45,6 +52,9 @@ Setup
 
    The minimum ``partitions`` value should be the total number of cores in the cluster unless you
    want to leave some cores available for other jobs that may be running simultaneously.
+
+   Note that you can also customize any of these settings in your script that calls ``spark-submit``
+   or ``pyspark``.
 
 ::
 
@@ -86,9 +96,10 @@ node and run scripts manually.
 
 2. Set the JADE command in ``commands.txt``/``config.json`` to be ``bash sleep.sh``.
 
-3. Setup the environment. Before running your scripts it is important that you set the
-``SPARK_CONF_DIR`` environment variable so that your SparkSession gets initialized with
-the correct parameters.
+3. ssh to the first compute node in your allocation.
+
+4. If you want to use the custom Spark environment created by Jade, set the ``SPARK_CONF_DIR`` environment
+variable so that your SparkSession gets initialized with the correct parameters.
 
 This example assumes that your JADE output directory is ``./output`` and there is one job named ``1``.
 
@@ -98,15 +109,12 @@ This example assumes that your JADE output directory is ``./output`` and there i
    $ cd <wherever-you-started-the-jade-jobs>
    $ export SPARK_CONF_DIR=./output/job-outputs/1/spark/conf
 
-4. Run your scripts. Here is one way in Python to create a SparkSession.
+
+5. Run your code through ``pyspark`` or ``spark-submit``.
 
 .. code-block:: bash
 
-   from pyspark.sql import SparkSession
-   from pyspark import SparkConf, SparkContext
-   cluster = "<first-compute-node-name>:7077"
-   conf = SparkConf().setAppName("my_session").setMaster(cluster)
-   spark = SparkSession.builder.config(conf=conf).getOrCreate()
+   $ pyspark --master=spark://`hostname`:7077
 
 
 Run a Jupyter server
@@ -121,9 +129,11 @@ cluster.
    #!/bin/bash
    unset XDG_RUNTIME_DIR
    export SPARK_CLUSTER=$1
+   export PYSPARK_DRIVER_PYTHON=jupyter
+   export PYSPARK_DRIVER_PYTHON_OPTS="notebook --no-browser --ip=0.0.0.0 --port 8889"
+   pyspark --master=${SPARK_CLUSTER}
    echo "Spark cluster is running at ${SPARK_CLUSTER}" >&2
    echo "JADE output directory is ${2}" >&2
-   jupyter notebook --no-browser --ip=0.0.0.0 --port 8889 &
    sleep 10
    echo "Create an ssh tunnel with this command: ssh -L 8889:${HOSTNAME}:8889 -L 8080:${HOSTNAME}:8080 -L 4040:${HOSTNAME}:4040 ${USER}@el1.hpc.nrel.gov" >&2
    wait
@@ -132,7 +142,7 @@ cluster.
 
 3. Submit the jobs with ``jade submit-jobs config.json -o output``
 
-4. Once the job is allocated run ``tail -f output/*.e``. After 15-20 seconds you will see console
+4. Once the job is allocated run ``tail -f output/job-stdio/*.e``. After 15-20 seconds you will see console
    output from the script above telling you how to create the ssh tunnel required to connect to the
    Jupyter server. You will also see console output from Jupyter that contains a URL.
 
@@ -149,12 +159,8 @@ cluster.
    import os
    from IPython.core.display import display, HTML
    from pyspark.sql import SparkSession
-   from pyspark import SparkConf, SparkContext
    display(HTML("<style>.container { width:100% !important; }</style>"))
-
-   cluster = os.environ["SPARK_CLUSTER"]
-   conf = SparkConf().setAppName("my_session").setMaster(cluster)
-   spark = SparkSession.builder.config(conf=conf).getOrCreate()
+   spark = SparkSession.builder.appName("my_app").getOrCreate()
 
 8. Connect to the Spark UI from your browser, if desired, to monitor your jobs.
 
