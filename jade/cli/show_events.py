@@ -3,6 +3,7 @@ CLI to show events of a scenario.
 """
 
 import logging
+import sys
 
 import click
 
@@ -84,6 +85,8 @@ def show_events(
     else:
         if not names:
             names = results.list_unique_names()
+        if not names:
+            print(f"There are no events in {output}", file=sys.stderr)
         for name in names:
             if categories:
                 results.show_events_in_category(name)

@@ -42,7 +42,8 @@ logger = logging.getLogger(__name__)
     help="Interval in seconds on which to collect resource stats.",
 )
 @click.option("-o", "--output", default="stats", show_default=True, help="Output directory.")
-def collect(duration, force, interval, output):
+@click.pass_context
+def collect(ctx, duration, force, interval, output):
     """Collect resource utilization stats."""
     if os.path.exists(output):
         if force:
@@ -56,22 +57,22 @@ def collect(duration, force, interval, output):
 
     os.makedirs(output)
     event_file = os.path.join(output, "stats_events.log")
-    setup_event_logging(event_file)
+    setup_event_logging(event_file, mode="a")
     monitor = ResourceMonitorLogger("ResourceMonitor")
     start_time = time.time()
 
     show_cmd = f"jade stats show -o {output} [STATS]"
     print(f"Collecting stats. When complete run '{show_cmd}' to view stats.")
-    try:
-        while True:
-            monitor.log_resource_stats()
-            time.sleep(interval)
-            if duration is not None and time.time() - start_time > duration:
-                print(f"Exceeded {duration} seconds. Exiting.")
-                EventsSummary(output)
-                break
-    except KeyboardInterrupt:
-        # TODO: This doesn't actually work. click catches KeyboardInterrupt.
-        # Need to prevent it from doing that.
-        # Then always call EventsSummary(output) at the end.
-        pass
+    with ctx:
+        try:
+            while True:
+                monitor.log_resource_stats()
+                time.sleep(interval)
+                if duration is not None and time.time() - start_time > duration:
+                    print(f"Exceeded {duration} seconds. Exiting.")
+                    break
+        except KeyboardInterrupt:
+            pass
+        finally:
+            print(" Detected Ctrl-c, exiting")
+            EventsSummary(output)

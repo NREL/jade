@@ -31,7 +31,7 @@ Independent, short, multi-core jobs
 
 .. code-block:: bash
 
-    $ jade submit-jobs --num-processes=1 --per-node-batch-size=8 config.json
+    $ jade submit-jobs --num-parallel-processes-per-node=1 --per-node-batch-size=8 config.json
 
 JADE will submit 125 single-node jobs to the HPC.
 
@@ -118,7 +118,7 @@ Case 2
 
 - Define ``estimated_run_minutes`` for each job.
 - Run ``jade submit-jobs`` with ``--time-based-batching`` and
-  ``--num-processes=36``.
+  ``--num-parallel-processes-per-node=36``.
 - Set the walltime value to 4 hours.
 - JADE will build variable-sized batches based how many jobs can complete in 4
   hours on each node.
@@ -127,7 +127,7 @@ Case 2
 
 .. code-block:: bash
 
-    $ jade submit-jobs --num-processes=36 --time-based-batching config.json
+    $ jade submit-jobs --num-parallel-processes-per-node=36 --time-based-batching config.json
 
 .. _submission_group_strategy:
 

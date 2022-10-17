@@ -5,6 +5,8 @@ pandas
 plotly
 prettytable
 psutil
+pyarrow
 pydantic
 requests
+tabulate
 toml>=0.10.0

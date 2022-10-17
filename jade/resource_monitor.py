@@ -9,6 +9,7 @@ import pandas as pd
 from prettytable import PrettyTable
 import psutil
 from psutil._common import bytes2human
+from tabulate import tabulate
 
 from jade.common import STATS_DIR
 from jade.events import (
@@ -270,49 +271,12 @@ class StatsViewerBase(abc.ABC):
 
     def __init__(self, events, event_name):
         self._event_name = event_name
-        self._events_by_batch = defaultdict(list)
-        self._stat_min_by_batch = {}
-        self._stat_max_by_batch = {}
-        self._stat_sums_by_batch = {}
-        self._stat_totals = {}
-        self._num_events = 0
+        self._df_by_batch = {}
 
-        for event in events.iter_events(event_name):
-            self._num_events += 1
-            if not self._stat_totals:
-                self._stat_totals = {x: 0 for x in event.data.keys()}
-            batch = event.source
-            self._events_by_batch[batch].append(event)
-
-            if batch not in self._stat_sums_by_batch:
-                self._stat_sums_by_batch[batch] = {x: 0 for x in event.data.keys()}
-                self._stat_min_by_batch[batch] = {x: sys.maxsize for x in event.data.keys()}
-                self._stat_max_by_batch[batch] = {x: -1 for x in event.data.keys()}
-            for field, val in event.data.items():
-                self._stat_sums_by_batch[batch][field] += val
-                if val < self._stat_min_by_batch[batch][field]:
-                    self._stat_min_by_batch[batch][field] = val
-                if val > self._stat_max_by_batch[batch][field]:
-                    self._stat_max_by_batch[batch][field] = val
-                self._stat_totals[field] += val
-
-    def _calc_batch_averages(self, batch):
-        averages = {}
-        for field, val in self._stat_sums_by_batch[batch].items():
-            averages[field] = float(val) / len(self._events_by_batch[batch])
-        return averages
-
-    def _calc_total_averages(self):
-        averages = {}
-        for field, val in self._stat_totals.items():
-            averages[field] = float(val) / self._num_events
-        return averages
-
-    def _get_batch_minimums(self, batch):
-        return self._stat_min_by_batch[batch]
-
-    def _get_batch_maximums(self, batch):
-        return self._stat_max_by_batch[batch]
+        df = events.get_dataframe(event_name)
+        if not df.empty:
+            for batch in df["source"].unique():
+                self._df_by_batch[batch] = df.loc[df["source"] == batch]
 
     @staticmethod
     def get_printable_value(field, val):
@@ -332,17 +296,13 @@ class StatsViewerBase(abc.ABC):
         pd.DataFrame
 
         """
-        records = []
-        for event in self._events_by_batch[batch]:
-            data = {"timestamp": event.timestamp}
-            data.update(event.data)
-            records.append(data)
-
-        return pd.DataFrame.from_records(records, index="timestamp")
+        if batch not in self._df_by_batch:
+            return pd.DataFrame()
+        return self._df_by_batch[batch]
 
     def iter_batch_names(self):
         """Return an iterator over the batch names."""
-        return self._events_by_batch.keys()
+        return self._df_by_batch.keys()
 
     def plot_to_file(self, output_dir):
         """Make plots of resource utilization for one node.
@@ -358,8 +318,9 @@ class StatsViewerBase(abc.ABC):
 
         for name in self.iter_batch_names():
             df = self.get_dataframe(name)
+            cols = [x for x in df.columns if x != "source"]
             title = f"{self.__class__.__name__} {name}"
-            fig = df.plot(title=title)
+            fig = df[cols].plot(title=title)
             filename = Path(output_dir) / f"{self.__class__.__name__}__{name}.html"
             fig.write_html(str(filename))
             logger.info("Generated plot in %s", filename)
@@ -386,8 +347,8 @@ class StatsViewerBase(abc.ABC):
 
         """
         stats = []
-        for batch, events in self._events_by_batch.items():
-            if not events:
+        for batch, df in self._df_by_batch.items():
+            if df.empty:
                 continue
             entry = {
                 "type": self.metric(),
@@ -396,49 +357,50 @@ class StatsViewerBase(abc.ABC):
                 "minimum": {},
                 "maximum": {},
             }
-            for field, val in self._calc_batch_averages(batch).items():
-                entry["average"][field] = val
-            for field, val in self._get_batch_minimums(batch).items():
-                entry["minimum"][field] = val
-            for field, val in self._get_batch_maximums(batch).items():
-                entry["maximum"][field] = val
+            exclude = ("timestamp", "source")
+            cols = [x for x in df.columns if x not in exclude]
+            entry["average"].update(df[cols].mean().to_dict())
+            entry["minimum"].update(df[cols].min().to_dict())
+            entry["maximum"].update(df[cols].max().to_dict())
             stats.append(entry)
 
         return stats
 
     def _show_stats(self, show_all_timestamps=True):
-        for batch, events in self._events_by_batch.items():
-            if not events:
+        avg_across_batches = pd.DataFrame()
+        for batch, df in self._df_by_batch.items():
+            if df.empty:
                 continue
             if show_all_timestamps:
-                table = PrettyTable(title=f"{self.metric()} {batch}")
-                table.field_names = ["timestamp"] + list(events[0].data.keys())
-                for event in events:
-                    row = [event.timestamp]
-                    for field, val in event.data.items():
-                        row.append(self.get_printable_value(field, val))
-                    table.add_row(row)
-                print(table)
+                print(tabulate(df, headers="keys", tablefmt="psql", showindex=False))
+                print(f"Title = {self.metric()} {batch}\n")
                 print("\n", end="")
             table = PrettyTable(title=f"{self.metric()} {batch} summary")
-            table.field_names = ["stat"] + list(events[0].data.keys())
             row = ["Average"]
-            for field, val in self._calc_batch_averages(batch).items():
-                row.append(self.get_printable_value(field, val))
+            exclude = ("timestamp", "source")
+            cols = [x for x in df.columns if x not in exclude]
+            table.field_names = ["stat"] + cols
+            average = df[cols].mean()
+            avg_across_batches[batch] = average
+            for field, val in average.to_dict().items():
+                if field not in exclude:
+                    row.append(self.get_printable_value(field, val))
             table.add_row(row)
             row = ["Minimum"]
-            for field, val in self._get_batch_minimums(batch).items():
-                row.append(self.get_printable_value(field, val))
+            for field, val in df.min().to_dict().items():
+                if field not in exclude:
+                    row.append(self.get_printable_value(field, val))
             table.add_row(row)
             row = ["Maximum"]
-            for field, val in self._get_batch_maximums(batch).items():
-                row.append(self.get_printable_value(field, val))
+            for field, val in df.max().to_dict().items():
+                if field not in exclude:
+                    row.append(self.get_printable_value(field, val))
             table.add_row(row)
             print(table)
             print("\n", end="")
 
         table = PrettyTable(title=f"{self.metric()} averages per interval across batches")
-        averages = self._calc_total_averages()
+        averages = avg_across_batches.transpose().mean().to_dict()
         table.field_names = list(averages.keys())
         row = [self.get_printable_value(k, v) for k, v in averages.items()]
         table.add_row(row)
@@ -455,18 +417,23 @@ class StatsViewerBase(abc.ABC):
         """
         table = PrettyTable(title=f"{self.metric()} Totals")
         table.field_names = ["source"] + list(stats_to_total)
-        for batch, totals in self._stat_sums_by_batch.items():
+        totals = {}
+        for batch, df in self._df_by_batch.items():
             row = [batch]
             for stat in stats_to_total:
-                val = self.get_printable_value(stat, totals[stat])
+                total = df[stat].sum()
+                if stat not in totals:
+                    totals[stat] = total
+                else:
+                    totals[stat] += total
+                val = self.get_printable_value(stat, total)
                 row.append(val)
             table.add_row(row)
 
-        if self._stat_totals:
+        if totals:
             total_row = ["total"]
-            for stat in stats_to_total:
-                val = self.get_printable_value(stat, self._stat_totals[stat])
-                total_row.append(val)
+            for stat, val in totals.items():
+                total_row.append(self.get_printable_value(stat, val))
             table.add_row(total_row)
             print(table)
 
@@ -556,7 +523,7 @@ class NetworkStatsViewer(StatsViewerBase):
     def show_stats(self, show_all_timestamps=True):
         print("\nNetwork statistics for each batch")
         print("=================================\n")
-        if not self._events_by_batch:
+        if not self._df_by_batch:
             print("No events are stored")
             return
 

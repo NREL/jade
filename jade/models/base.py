@@ -17,6 +17,7 @@ class JadeBaseModel(BaseModel):
         validate_all = True
         extra = "forbid"
         use_enum_values = False
+        allow_population_by_field_name = True
 
     @classmethod
     def load(cls, path: Path):

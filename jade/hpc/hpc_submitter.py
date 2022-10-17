@@ -74,8 +74,8 @@ class HpcSubmitter:
         else:
             dsub = "--no-distributed-submitter"
         command = f"jade-internal run-jobs {config_file} --output={self._output} {dsub}"
-        if submission_group.submitter_params.num_processes is not None:
-            command += f" --num-processes={submission_group.submitter_params.num_processes}"
+        if submission_group.submitter_params.num_parallel_processes_per_node is not None:
+            command += f" --num-parallel-processes-per-node={submission_group.submitter_params.num_parallel_processes_per_node}"
         if submission_group.submitter_params.verbose:
             command += " --verbose"
 
@@ -360,7 +360,7 @@ class _BatchJobs:
 
     def __init__(self, params):
         self._estimated_batch_time = timedelta(seconds=0)
-        self._num_processes = params.num_processes
+        self._num_processes = params.num_parallel_processes_per_node
         self._per_node_batch_size = params.per_node_batch_size
         self._time_based_batching = params.time_based_batching
         self._try_add_blocked_jobs = params.try_add_blocked_jobs

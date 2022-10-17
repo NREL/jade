@@ -30,6 +30,7 @@ from jade.utils.utils import get_cli_string
 @click.option("-o", "--output", default=OUTPUT_DIR, show_default=True, help="Output directory.")
 @click.option(
     "-q",
+    "--num-parallel-processes-per-node",
     "--num-processes",
     default=None,
     show_default=False,
@@ -40,7 +41,7 @@ from jade.utils.utils import get_cli_string
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 @click.command()
-def run_jobs(config_file, distributed_submitter, output, num_processes, verbose):
+def run_jobs(config_file, distributed_submitter, output, num_parallel_processes_per_node, verbose):
     """Starts jobs on HPC."""
     match = re.search(r"batch_(\d+)\.json", config_file)
     assert match
@@ -53,12 +54,14 @@ def run_jobs(config_file, distributed_submitter, output, num_processes, verbose)
     # is what makes the file unique.
     filename = os.path.join(output, f"run_jobs_batch_{batch_id}_{mgr.node_id}.log")
     level = logging.DEBUG if verbose else logging.INFO
-    setup_event_logging(mgr.event_filename)
-    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
+    setup_event_logging(mgr.event_filename, mode="a")
+    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
     logger.info(get_cli_string())
 
     status = mgr.run_jobs(
-        distributed_submitter=distributed_submitter, verbose=verbose, num_processes=num_processes
+        distributed_submitter=distributed_submitter,
+        verbose=verbose,
+        num_parallel_processes_per_node=num_parallel_processes_per_node,
     )
     ret = status.value
 

@@ -148,7 +148,7 @@ def test_job_order(generic_command_fixture):
         "--max-nodes=4 "
         "--poll-interval=0.1 "
         f"--hpc-config {FAKE_HPC_CONFIG} "
-        "--num-processes=10"
+        "--num-parallel-processes-per-node=10"
     )
     check_run_command(cmd)
     check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")

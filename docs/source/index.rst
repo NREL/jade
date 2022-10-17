@@ -80,6 +80,7 @@ Refer to :ref:`advanced_guide_label` for more information.
    installation
    quickstart
    tutorial
+   faq
    job_configuration
    submission_strategies
    pipeline

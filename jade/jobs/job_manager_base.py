@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 
 from jade.jobs.cluster import Cluster
-from jade.common import JOBS_OUTPUT_DIR, RESULTS_DIR, STATS_DIR
+from jade.common import JOBS_OUTPUT_DIR, JOBS_STDIO_DIR, RESULTS_DIR, STATS_DIR
 from jade.jobs.job_configuration_factory import create_config_from_file
 
 
@@ -22,12 +22,14 @@ class JobManagerBase(abc.ABC):
         self._config_file = config_file
         self._output = output_dir
         self._jobs_output = os.path.join(self._output, JOBS_OUTPUT_DIR)
+        self._jobs_stdio_dir = os.path.join(self._output, JOBS_STDIO_DIR)
         self._results_dir = os.path.join(self._output, RESULTS_DIR)
         self._stats_dir = os.path.join(self._output, STATS_DIR)
         self._results = []  # contains Result objects
 
         os.makedirs(self._output, exist_ok=True)
         os.makedirs(self._jobs_output, exist_ok=True)
+        os.makedirs(self._jobs_stdio_dir, exist_ok=True)
         os.makedirs(self._results_dir, exist_ok=True)
         os.makedirs(self._stats_dir, exist_ok=True)
 

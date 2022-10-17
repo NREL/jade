@@ -9,7 +9,9 @@ import os
 import re
 import sys
 from datetime import datetime
+from pathlib import Path
 
+import pandas as pd
 from prettytable import PrettyTable
 
 from jade.common import JOBS_OUTPUT_DIR
@@ -194,7 +196,9 @@ def deserialize_event(data):
 class EventsSummary:
     """Provides summary of all events."""
 
-    def __init__(self, output_dir, preload=False):
+    RESOURCE_STATS = set(("cpu_stats", "disk_stats", "mem_stats", "net_stats"))
+
+    def __init__(self, output_dir, preload=False, optimize_resoure_stats=True):
         """
         Initialize EventsSummary class
 
@@ -206,62 +210,34 @@ class EventsSummary:
             Load all events into memory; otherwise, load by name on demand.
 
         """
+        self._optimize_resource_stats = optimize_resoure_stats
         self._events = defaultdict(list)
         self._output_dir = output_dir
-        self._event_dir = os.path.join(output_dir, EVENT_DIR)
-        os.makedirs(self._event_dir, exist_ok=True)
+        self._event_dir = Path(output_dir) / EVENT_DIR
+        self._event_dir.mkdir(exist_ok=True)
         self._job_outputs_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
-        event_files = os.listdir(self._event_dir)
+        event_files = list(self._event_dir.iterdir())
         if not event_files:
-            # The old "consolidate_events" code stored all events in one file
-            # called events.json.  They are now stored in one file per event
-            # type, but we still detect and convert the old format.  We can
-            # remove this once we're sure the old format doesn't exist.
-            legacy_file = os.path.join(output_dir, EVENTS_FILENAME)
-            if os.path.exists(legacy_file):
-                self._handle_legacy_file(legacy_file)
-            else:
-                self._consolidate_events()
-                self._save_events_summary()
+            self._consolidate_events()
+            self._save_events_summary()
         elif preload:
             self._load_all_events()
         # else, events have already been consolidated, load them on demand
 
-    def _most_recent_event_files(self):
-        """
-        Find most recent event log files in job outputs directory.
-
-        Examples
-        --------
-        a/events.log
-        a/events.log.1
-        a/events.log.2
-
-        b/events.log
-        b/events.log.1
-        b/events.log.2
-        ...
-        event_files = [a/events.log, b/events.log]
-
-        Returns
-        -------
-        list, a list of event log files.
-        """
-        regex = re.compile(r"\w*events.log")
-        return [
-            os.path.join(self._output_dir, x)
-            for x in os.listdir(self._output_dir)
-            if regex.search(x)
-        ]
+    def _iter_event_files(self):
+        return Path(self._output_dir).glob("*events.log")
 
     def _consolidate_events(self):
         """Find most recent event log files, and merge event data together."""
-        for event_file in self._most_recent_event_files():
+        # PERF: This could easily be parallelized across processes. Need to be sure we aren't on
+        # a login node.
+        for event_file in self._iter_event_files():
             with open(event_file, "r") as f:
-                for line in f.readlines():
+                for line in f:
                     record = json.loads(line)
                     event = deserialize_event(record)
                     self._events[event.name].append(event)
+
         for name in self._events.keys():
             self._events[name].sort(key=lambda x: x.timestamp)
 
@@ -271,40 +247,47 @@ class EventsSummary:
     def _get_events(self, name):
         if name not in self._events:
             self._load_event_file(name)
-
         return self._events.get(name, [])
 
-    def _handle_legacy_file(self, legacy_file):
-        with open(legacy_file) as f_in:
-            for line in f_in:
-                event = deserialize_event(json.loads(line.strip()))
-                self._events[event.name].append(event)
-
-        self._save_events_summary()
-        os.remove(legacy_file)
-        logger.info("Converted events to new format")
-
     def _load_all_events(self):
-        for filename in os.listdir(self._event_dir):
-            name = os.path.splitext(filename)[0]
-            if name in self._events:
-                continue
-            path = os.path.join(self._event_dir, filename)
-            self._deserialize_events(name, path)
+        for filename in self._event_dir.iterdir():
+            name = filename.stem
+            if name not in self._events and name not in self.RESOURCE_STATS:
+                self._deserialize_events(name, filename)
 
     def _load_event_file(self, name):
+        if name in self.RESOURCE_STATS:
+            raise Exception(f"event {name} is only available in Parquet")
+
         filename = self._make_event_filename(name)
-        if os.path.exists(filename):
+        if filename.exists():
             self._deserialize_events(name, filename)
 
+    def _make_data_filename(self, name):
+        return self._event_dir / (name + ".parquet")
+
     def _make_event_filename(self, name):
-        return os.path.join(self._event_dir, name) + ".json"
+        return self._event_dir / (name + ".json")
 
     def _save_events_summary(self):
         """Save events to one file per event name."""
         for name, events in self._events.items():
-            dict_events = [event.to_dict() for event in events]
-            dump_data(dict_events, self._make_event_filename(name))
+            if name in self.RESOURCE_STATS:
+                dict_events = []
+                for event in events:
+                    data = {"timestamp": event.timestamp, "source": event.source}
+                    data.update(event.data)
+                    dict_events.append(data)
+                df = pd.DataFrame.from_records(dict_events, index="timestamp")
+                filename = self._make_data_filename(name)
+                df.to_parquet(filename)
+            else:
+                dict_events = [event.to_dict() for event in events]
+                filename = self._make_event_filename(name)
+                dump_data(dict_events, filename)
+
+        for name in self.RESOURCE_STATS:
+            self._events.pop(name, None)
 
     def get_bytes_consumed(self):
         """Return a sum of all bytes_consumed events.
@@ -335,6 +318,13 @@ class EventsSummary:
 
         return events[0].data["config_execution_time"]
 
+    def get_dataframe(self, name):
+        """Return the dataframe for this event name. Only applicable to resource stats."""
+        filename = self._make_data_filename(name)
+        if not filename.exists():
+            return pd.DataFrame()
+        return pd.read_parquet(filename)
+
     def iter_events(self, name):
         """Return a generator over events with name.
 
@@ -359,7 +349,7 @@ class EventsSummary:
             list of StructuredLogEvent
 
         """
-        return self._get_events(name)
+        return list(self._get_events(name))
 
     def list_unique_categories(self):
         """Return the unique event categories in the log. Will cause all events
@@ -389,7 +379,7 @@ class EventsSummary:
         list
 
         """
-        return [os.path.splitext(x)[0] for x in os.listdir(self._event_dir)]
+        return [x.name for x in self._event_dir.iterdir() if x.suffix == ".json"]
 
     def show_events(self, name):
         """Print tabular events in terminal"""
