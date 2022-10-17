@@ -27,10 +27,11 @@ class SubmitterParams(JadeBaseModel):
         description="Max number of compute nodes to use simultaneously, default is unbounded",
         default=None,
     )
-    num_processes: Optional[int] = Field(
-        title="num_processes",
+    num_parallel_processes_per_node: Optional[int] = Field(
+        title="num_parallel_processes_per_node",
         description="Number of processes to run in parallel on each node",
         default=None,
+        alias="num_processes",
     )
     per_node_batch_size: int = Field(
         title="per_node_batch_size",

@@ -564,8 +564,10 @@ Here are the log files that JADE generates. Open these to dig deeper.
 
 - ``submit_jobs.log``: HPC-related information, such as the job ID and status
 - ``run_jobs.log``: information about JADE starting and stopping jobs
-- ``job_output_<HPC job ID>.e``: The HPC logs stdout and stderr from all
-  processes to this file. Look here to debug unexpected crashes or hangs.
+- ``job-stdio``: Jade logs stdout and stderr from each job to this directory.
+- ``job_output_<HPC job ID>.e``: The HPC logs stdout and stderr to this file.
+  You will see output for HPC software and the operating system. Look here to
+  debug unexpected crashes or hangs.
 
 .. code-block:: bash
 
@@ -588,7 +590,8 @@ Useful grep commands
     $ grep "WARNING\|ERROR" output/*log
     $ grep -n "srun\|slurmstepd\|Traceback" output/*.e
  
-    # From the stats_summary, check max memory usage (in %) per node, in the form of sorted values. This could inform num_processes that would fit in a node.
+    # From the stats_summary, check max memory usage (in %) per node, in the form of sorted values.
+    # This could inform the num_parallel_processes_per_node setting.
     $ grep "\bpercent\b" output/stats_summary.json | awk '{print $2}' | sort -n
 
 Matching JADE jobs with HPC logs
@@ -655,18 +658,8 @@ You will need to run the command ``jade try-submit-jobs`` yourself to do this.
 If you enable periodic resource utilization collection in this mode, be aware
 of the fact that once JADE detects that all jobs are complete it will
 aggregate the stats and generate plots in that process. This is
-resource-intensive and you may not want to run it on the login node. You can
-tell if this will occur beforehand by comparing the total number of jobs with 
-the number of completed jobs.
-
-.. code-block:: bash
-
-    # This will print the total number of jobs.
-    $ jade config show config.json
-
-    # This file lists the completed jobs and a header. Subtract one from this
-    # output to get the number of completed jobs.
-    $ wc -l output/results.csv
+resource-intensive and you may not want to run ``jade try-submit-jobs`` on the
+login node.
 
 
 .. _resource_monitoring:
@@ -754,6 +747,10 @@ is how to view CPU stats for the node that ran the first batch:
    for name in viewer.iter_batch_names():
        cpu_df = viewer.get_dataframe(name)
        print(cpu_df.head())
+
+The directory ``<output-dir>/events`` contains Parquet files for each stat. You can
+also open these directly. Note that the ``source`` column designates the node/batch
+that generated each row.
 
 Standalone Resource Monitoring
 ------------------------------

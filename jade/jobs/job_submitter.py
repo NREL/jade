@@ -12,20 +12,19 @@ import time
 import jade
 from jade.common import (
     CONFIG_FILE,
-    JOBS_OUTPUT_DIR,
     OUTPUT_DIR,
     RESULTS_FILE,
-    HPC_CONFIG_FILE,
 )
-from jade.enums import JobCompletionStatus, Status, ResourceMonitorType
+from jade.enums import Status, ResourceMonitorType
 from jade.events import (
     EVENTS_FILENAME,
     EVENT_NAME_ERROR_LOG,
     StructuredLogEvent,
     EVENT_CATEGORY_ERROR,
+    EVENT_CATEGORY_HPC,
     EVENT_CATEGORY_RESOURCE_UTIL,
     EVENT_NAME_BYTES_CONSUMED,
-    EVENT_NAME_SUBMIT_STARTED,
+    # EVENT_NAME_SUBMIT_STARTED,
     EVENT_NAME_SUBMIT_COMPLETED,
 )
 from jade.exceptions import InvalidParameter
@@ -130,7 +129,7 @@ results_summary={self.get_results_summmary_report()}"""
 
             event = StructuredLogEvent(
                 source="submitter",
-                category=EVENT_CATEGORY_RESOURCE_UTIL,
+                category=EVENT_CATEGORY_HPC,
                 name=EVENT_NAME_SUBMIT_COMPLETED,
                 message="job submission started",
                 num_jobs=self.get_num_jobs(),
@@ -152,9 +151,13 @@ results_summary={self.get_results_summmary_report()}"""
 
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
             runner = JobRunner(self._config_file, output=self._output)
-            num_processes = group.submitter_params.num_processes
+            num_parallel_processes_per_node = (
+                group.submitter_params.num_parallel_processes_per_node
+            )
             verbose = group.submitter_params.verbose
-            result = runner.run_jobs(verbose=verbose, num_processes=num_processes)
+            result = runner.run_jobs(
+                verbose=verbose, num_parallel_processes_per_node=num_parallel_processes_per_node
+            )
             agg = ResultsAggregator.load(self._output)
             agg.process_results()
             is_complete = True
@@ -211,7 +214,7 @@ results_summary={self.get_results_summmary_report()}"""
 
         event = StructuredLogEvent(
             source="submitter",
-            category=EVENT_CATEGORY_RESOURCE_UTIL,
+            category=EVENT_CATEGORY_HPC,
             name=EVENT_NAME_SUBMIT_COMPLETED,
             message="job submission completed",
             num_jobs=self.get_num_jobs(),
@@ -370,7 +373,7 @@ results_summary={self.get_results_summmary_report()}"""
             (f"jade show-events -o {directory} --categories Error", "errors.txt"),
         ]
         if resource_monitor_type != ResourceMonitorType.NONE:
-            commands.append((f"jade stats show -o {directory}", "stats.txt"))
+            commands.append((f"jade stats show -o {directory} --summary-only", "stats.txt"))
             commands.append((f"jade stats show -o {directory} -j", "stats_summary.json"))
         if resource_monitor_type == ResourceMonitorType.PERIODIC:
             commands.append((f"jade stats plot -o {directory}", None))

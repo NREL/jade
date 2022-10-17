@@ -20,4 +20,6 @@ def get_model_defaults(model_class: BaseModel):
     dict
 
     """
-    return {x: y.get("default") for x, y in model_class.schema()["properties"].items()}
+    return {
+        x: y.get("default") for x, y in model_class.schema(by_alias=False)["properties"].items()
+    }

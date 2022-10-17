@@ -131,8 +131,8 @@ class GenericCommandParametersModel(JadeBaseModel):
     )
     estimated_run_minutes: Optional[int] = Field(
         title="estimated_run_minutes",
-        description="JADE will use this value along with num-processes and walltime to "
-        "build per-node batches of jobs if time-based-batching is enabled.",
+        description="JADE will use this value along with num-parallel-processes-per-node and "
+        "walltime to build per-node batches of jobs if time-based-batching is enabled.",
     )
     submission_group: str = Field(
         title="submission_group",

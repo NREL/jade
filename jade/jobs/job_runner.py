@@ -68,7 +68,9 @@ class JobRunner(JobManagerBase):
         return self._node_id
 
     @timed_info
-    def run_jobs(self, distributed_submitter=True, verbose=False, num_processes=None):
+    def run_jobs(
+        self, distributed_submitter=True, verbose=False, num_parallel_processes_per_node=None
+    ):
         """Run the jobs.
 
         Parameters
@@ -77,7 +79,7 @@ class JobRunner(JobManagerBase):
             If True, make cluster updates.
         verbose : bool
             If True, enable debug logging.
-        num_processes : int
+        num_parallel_processes_per_node : int
             Number of processes to run in parallel; defaults to num CPUs
 
         Returns
@@ -104,7 +106,9 @@ class JobRunner(JobManagerBase):
             elif self._config.node_setup_command is not None:
                 check_run_command(self._config.node_setup_command)
 
-            result = self._run_jobs(jobs, num_processes=num_processes)
+            result = self._run_jobs(
+                jobs, num_parallel_processes_per_node=num_parallel_processes_per_node
+            )
 
             if group.submitter_params.node_shutdown_script:
                 cmd = f"{group.submitter_params.node_shutdown_script} {config_file} {self._output}"
@@ -197,12 +201,12 @@ class JobRunner(JobManagerBase):
 
         return jobs
 
-    def _run_jobs(self, jobs, num_processes=None):
+    def _run_jobs(self, jobs, num_parallel_processes_per_node=None):
         num_jobs = len(jobs)
-        if num_processes is None:
+        if num_parallel_processes_per_node is None:
             max_num_workers = self._intf.get_num_cpus()
         else:
-            max_num_workers = num_processes
+            max_num_workers = num_parallel_processes_per_node
         num_workers = min(num_jobs, max_num_workers)
         logger.info(
             "Generated %s jobs to execute on %s workers max=%s.",

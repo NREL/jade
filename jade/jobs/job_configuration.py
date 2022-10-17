@@ -252,9 +252,15 @@ class JobConfiguration(abc.ABC):
 
         for group_name in groups_with_spark_jobs:
             for group in self._submission_groups:
-                if group.name == group_name and group.submitter_params.num_processes != 1:
-                    group.submitter_params.num_processes = 1
-                    logger.info("Set num_processes=1 for group=%s for Spark jobs.", group_name)
+                if (
+                    group.name == group_name
+                    and group.submitter_params.num_parallel_processes_per_node != 1
+                ):
+                    group.submitter_params.num_parallel_processes_per_node = 1
+                    logger.info(
+                        "Set num_parallel_processes_per_node=1 for group=%s for Spark jobs.",
+                        group_name,
+                    )
 
     def check_submission_groups(self, submitter_params):
         """Check for invalid job submission group assignments.
@@ -279,7 +285,7 @@ class JobConfiguration(abc.ABC):
         group_params = (
             "try_add_blocked_jobs",
             "time_based_batching",
-            "num_processes",
+            "num_parallel_processes_per_node",
             "hpc_config",
             "per_node_batch_size",
             "singularity_params",

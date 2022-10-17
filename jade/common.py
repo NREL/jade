@@ -6,6 +6,7 @@ import os
 OUTPUT_DIR = "output"
 EVENTS_DIR = "events"
 JOBS_OUTPUT_DIR = "job-outputs"
+JOBS_STDIO_DIR = "job-stdio"
 RESULTS_DIR = "results"
 SCRIPTS_DIR = "scripts"
 STATS_DIR = "stats"

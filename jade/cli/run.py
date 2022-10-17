@@ -55,7 +55,7 @@ def run(extension, **kwargs):
     os.makedirs(job_dir, exist_ok=True)
     # Structural logging setup
     event_file = os.path.join(job_dir, "events.log")
-    setup_event_logging(event_file)
+    setup_event_logging(event_file, mode="a")
 
     # General logging setup
     log_file = os.path.join(job_dir, "run.log")

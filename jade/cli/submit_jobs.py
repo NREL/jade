@@ -54,7 +54,7 @@ def submit_jobs(
     poll_interval=None,
     resource_monitor_interval=None,
     resource_monitor_type=None,
-    num_processes=None,
+    num_parallel_processes_per_node=None,
     verbose=None,
     reports=None,
     enable_singularity=None,
@@ -89,7 +89,7 @@ def submit_jobs(
             poll_interval=poll_interval,
             resource_monitor_interval=resource_monitor_interval,
             resource_monitor_type=resource_monitor_type,
-            num_processes=num_processes,
+            num_parallel_processes_per_node=num_parallel_processes_per_node,
             verbose=verbose,
             reports=reports,
             enable_singularity=enable_singularity,
@@ -101,8 +101,11 @@ def submit_jobs(
             no_distributed_submitter=no_distributed_submitter,
         )
 
-    if params.time_based_batching and params.num_processes is None:
-        print("Error: num_processes must be set with time-based batching", file=sys.stderr)
+    if params.time_based_batching and params.num_parallel_processes_per_node is None:
+        print(
+            "Error: num_parallel_processes_per_node must be set with time-based batching",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     os.makedirs(output)
@@ -111,8 +114,8 @@ def submit_jobs(
     level = logging.DEBUG if verbose else logging.INFO
     # For some reason event logging must be setup before general logging.
     # Otherwise, the first event doesn't show up in the log.
-    setup_event_logging(event_filename)
-    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="w")
+    setup_event_logging(event_filename, mode="a")
+    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
     logger.info(get_cli_string())
 
     try:
@@ -121,3 +124,5 @@ def submit_jobs(
     except Exception:
         logger.exception("Failed to run submit_jobs")
         raise
+    finally:
+        logging.shutdown()

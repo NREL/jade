@@ -87,6 +87,7 @@ def pipeline():
 )
 @click.option(
     "-q",
+    "--num-parallel-processes-per-node",
     "--num-processes",
     default=None,
     show_default=False,
@@ -125,7 +126,7 @@ def create(
     local,
     max_nodes,
     poll_interval,
-    num_processes,
+    num_parallel_processes_per_node,
     reports,
     enable_singularity,
     container,
@@ -152,7 +153,7 @@ def create(
         generate_reports=reports,
         hpc_config=hpc_config,
         max_nodes=max_nodes,
-        num_processes=num_processes,
+        num_parallel_processes_per_node=num_parallel_processes_per_node,
         per_node_batch_size=per_node_batch_size,
         poll_interval=poll_interval,
         singularity_params=singularity_params,

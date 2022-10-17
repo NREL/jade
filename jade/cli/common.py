@@ -159,12 +159,13 @@ COMMON_SUBMITTER_OPTIONS = (
     ),
     click.option(
         "-q",
+        "--num-parallel-processes-per-node",
         "--num-processes",
-        default=SUBMITTER_PARAMS_DEFAULTS["num_processes"],
+        default=SUBMITTER_PARAMS_DEFAULTS["num_parallel_processes_per_node"],
         show_default=False,
         type=int,
         is_eager=True,
-        help="Number of processes to run in parallel; defaults to num CPUs.",
+        help="Number of processes to run in parallel on each node; defaults to num CPUs.",
     ),
     click.option(
         "--reports/--no-reports",
@@ -194,7 +195,8 @@ COMMON_SUBMITTER_OPTIONS = (
         default=SUBMITTER_PARAMS_DEFAULTS["time_based_batching"],
         show_default=True,
         help="Use estimated runtimes to create batches. Each job must have its estimated runtime "
-        "defined. Also requires --num-processes to be set. Overrides --per-node-batch-size.",
+        "defined. Also requires --num-parallel-processes-per-node to be set. "
+        "Overrides --per-node-batch-size.",
     ),
     click.option(
         "--try-add-blocked-jobs/--no-try-add-blocked-jobs",
@@ -252,7 +254,7 @@ def make_submitter_params(
     poll_interval=None,
     resource_monitor_interval=None,
     resource_monitor_type=None,
-    num_processes=None,
+    num_parallel_processes_per_node=None,
     verbose=None,
     reports=None,
     enable_singularity=None,
@@ -298,8 +300,11 @@ def make_submitter_params(
         )
         sys.exit(1)
 
-    if time_based_batching and num_processes is None:
-        print("Error: num_processes must be set with time-based batching", file=sys.stderr)
+    if time_based_batching and num_parallel_processes_per_node is None:
+        print(
+            "Error: num_parallel_processes_per_node must be set with time-based batching",
+            file=sys.stderr,
+        )
         sys.exit(1)
 
     # We added resource_monitor_type after resource_monitor_interval. The following logic
@@ -325,7 +330,7 @@ def make_submitter_params(
         generate_reports=reports,
         hpc_config=hpc_config,
         max_nodes=max_nodes,
-        num_processes=num_processes,
+        num_parallel_processes_per_node=num_parallel_processes_per_node,
         per_node_batch_size=per_node_batch_size,
         distributed_submitter=not no_distributed_submitter,
         dry_run=dry_run,
