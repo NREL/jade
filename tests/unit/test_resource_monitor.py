@@ -1,7 +1,8 @@
-import logging
 import os
 import shutil
 import tempfile
+
+import pandas as pd
 
 from jade.events import (
     EventsSummary,
@@ -32,10 +33,10 @@ def test_resource_stats():
             resource_monitor.log_resource_stats()
 
         summary = EventsSummary(tmpdir)
-        assert len(summary.list_events(EVENT_NAME_CPU_STATS)) == count
-        assert len(summary.list_events(EVENT_NAME_DISK_STATS)) == count
-        assert len(summary.list_events(EVENT_NAME_MEMORY_STATS)) == count
-        assert len(summary.list_events(EVENT_NAME_NETWORK_STATS)) == count
+        assert len(summary.get_dataframe(EVENT_NAME_CPU_STATS)) == count
+        assert len(summary.get_dataframe(EVENT_NAME_DISK_STATS)) == count
+        assert len(summary.get_dataframe(EVENT_NAME_MEMORY_STATS)) == count
+        assert len(summary.get_dataframe(EVENT_NAME_NETWORK_STATS)) == count
 
         viewers = [
             CpuStatsViewer(summary),
@@ -47,10 +48,7 @@ def test_resource_stats():
             df = viewer.get_dataframe("test")
             assert len(df) == 2
             if isinstance(viewer, MemoryStatsViewer):
-                viewer.get_dataframe("test")
-                averages = viewer._calc_batch_averages("test")
-                for field, val in averages.items():
-                    assert val == df[field].mean()
+                assert isinstance(viewer.get_dataframe("test"), pd.DataFrame)
 
         output = {}
         cmd = f"jade stats show -o {tmpdir} cpu disk mem net"

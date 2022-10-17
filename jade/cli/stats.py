@@ -10,6 +10,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import click
+import numpy as np
 from prettytable import PrettyTable
 from psutil._common import bytes2human
 
@@ -211,7 +212,16 @@ def _show_periodic_stats(stats, json_summary, output, summary_only):
             viewer.show_stats(show_all_timestamps=not summary_only)
 
     if json_summary:
-        print(json.dumps(summaries_as_dicts, indent=2))
+        print(json.dumps(summaries_as_dicts, indent=2, cls=NumpyJSONEncoder))
+
+
+class NumpyJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.int64):
+            return int(obj)
+        if isinstance(obj, np.float64):
+            return float(obj)
+        return obj
 
 
 @click.option(

@@ -53,7 +53,6 @@ def test_try_add_blocked_jobs(cleanup):
         assert ret == 0
         ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
         assert ret == 0
-        events_file = os.path.join(OUTPUT, "submit_jobs_events.log")
         events_summary = EventsSummary(OUTPUT, preload=True)
         submit_events = events_summary.list_events(EVENT_NAME_HPC_SUBMIT)
         if option == "--try-add-blocked-jobs":
