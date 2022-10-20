@@ -238,6 +238,7 @@ class JobRunner(JobManagerBase):
             max_queue_depth=num_workers,
             monitor_func=monitor_func,
             monitor_interval=resource_monitor_interval,
+            poll_interval=group.submitter_params.poll_interval,
         )
 
         logger.info("Jobs are complete. count=%s", num_jobs)

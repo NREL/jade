@@ -76,7 +76,7 @@ def test_run_generic_commands(generic_command_fixture):
 
     for cmd in cmds:
         check_run_command(cmd)
-        check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01 -t2")
+        check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.1 -t2")
 
     assert list(Path(OUTPUT).glob("*.sh"))
     assert (Path(OUTPUT) / "jade_setup.txt").read_text().strip() == "setup"
@@ -151,7 +151,7 @@ def test_job_order(generic_command_fixture):
         "--num-parallel-processes-per-node=10"
     )
     check_run_command(cmd)
-    check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.01")
+    check_run_command(f"{WAIT} --output={OUTPUT} --poll-interval=0.1")
 
     result_summary = ResultsSummary(OUTPUT)
     results = result_summary.list_results()

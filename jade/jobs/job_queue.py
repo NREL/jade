@@ -10,8 +10,8 @@ from jade.enums import Status
 logger = logging.getLogger(__name__)
 
 
-DEFAULT_POLL_INTERVAL = 1
-DEFAULT_MONITOR_INTERVAL = 30
+DEFAULT_POLL_INTERVAL = 10
+DEFAULT_MONITOR_INTERVAL = 10
 
 
 class JobQueue:
@@ -69,6 +69,8 @@ class JobQueue:
         else:
             self._monitor_interval = monitor_interval
 
+        if self._monitor_interval is not None:
+            self._poll_interval = min(self._poll_interval, self._monitor_interval)
         logger.debug(
             "queue_depth=%s poll_interval=%s monitor_interval=%s",
             self._queue_depth,
@@ -134,7 +136,7 @@ class JobQueue:
         return len(self._outstanding_jobs) >= self._queue_depth
 
     def _handle_monitor_func(self, force=False):
-        if self._monitor_func is None:
+        if self._monitor_func is None or self._monitor_interval is None:
             return
 
         needs_monitor = False

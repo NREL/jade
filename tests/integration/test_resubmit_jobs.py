@@ -59,9 +59,9 @@ def _do_cleanup():
 
 
 def test_resubmit_successful(cleanup):
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT}"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1"
     check_run_command(cmd)
-    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01 -t2")
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.1 -t2")
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_failed_results()) == 0
     assert len(summary.get_successful_results()) == NUM_COMMANDS
@@ -73,7 +73,7 @@ def test_resubmit_successful(cleanup):
     dump_data(groups, SG_FILE)
 
     check_run_command(f"{RESUBMIT_JOBS} {OUTPUT} -s {SG_FILE} --successful")
-    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
     summary = ResultsSummary(OUTPUT)
     assert len(summary.get_failed_results()) == 0
     assert len(summary.get_successful_results()) == NUM_COMMANDS
@@ -84,10 +84,10 @@ def test_resubmit_successful(cleanup):
 
 
 def test_resubmit_failed(cleanup):
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT}"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1"
     ret = run_command(cmd)
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
     assert ret == 0
 
     agg = ResultsAggregator.load(OUTPUT)
@@ -111,7 +111,7 @@ def test_resubmit_failed(cleanup):
 
     ret = run_command(f"{RESUBMIT_JOBS} {OUTPUT}")
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
     assert ret == 0
 
     summary = ResultsSummary(OUTPUT)
@@ -119,10 +119,10 @@ def test_resubmit_failed(cleanup):
 
 
 def test_resubmit_missing(cleanup):
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT}"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1"
     ret = run_command(cmd)
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
     assert ret == 0
 
     agg = ResultsAggregator.load(OUTPUT)
@@ -147,7 +147,7 @@ def test_resubmit_missing(cleanup):
 
     ret = run_command(f"{RESUBMIT_JOBS} {OUTPUT}")
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
     assert ret == 0
 
     summary = ResultsSummary(OUTPUT)
@@ -177,7 +177,7 @@ def test_resubmit_with_blocking_jobs(basic_setup):
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT}"
     ret = run_command(cmd)
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
     assert ret == 0
 
     agg = ResultsAggregator.load(OUTPUT)
@@ -216,7 +216,7 @@ def test_resubmit_with_blocking_jobs(basic_setup):
 
     ret = run_command(f"{RESUBMIT_JOBS} {OUTPUT}")
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
     assert ret == 0
 
     summary = ResultsSummary(OUTPUT)

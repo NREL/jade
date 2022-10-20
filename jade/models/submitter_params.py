@@ -52,13 +52,14 @@ class SubmitterParams(JadeBaseModel):
     poll_interval: int = Field(
         title="poll_interval",
         description="Interval in seconds on which to poll jobs for status",
-        default=60,
+        default=10,
     )
-    resource_monitor_interval: int = Field(
+    resource_monitor_interval: Optional[int] = Field(
         title="resource_monitor_interval",
-        description="Interval in seconds on which to collect resource stats. If None, aggregate"
+        description="Interval in seconds on which to collect resource stats. Disable monitoring "
+        "by setting this to None/null."
         "summaries of stats.",
-        default=1,
+        default=10,
     )
     resource_monitor_type: ResourceMonitorType = Field(
         title="resource_monitor_type",
