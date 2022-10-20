@@ -34,9 +34,18 @@ def pipeline():
 
 
 @click.command()
-@click.argument(
-    "auto-config-cmds",
-    nargs=-1,
+@click.option(
+    "-a",
+    "--auto-config-commands",
+    multiple=True,
+    help="Commands or scripts to invoke at runtime to create configs for each stage.",
+)
+@click.option(
+    "-f",
+    "--config-files",
+    multiple=True,
+    type=click.Path(exists=True),
+    help="Config files, one per stage. Mutually exclusive with --auto-config-cmds.",
 )
 @click.option(
     "-b",
@@ -119,7 +128,8 @@ def pipeline():
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
 def create(
-    auto_config_cmds,
+    config_files,
+    auto_config_commands,
     per_node_batch_size,
     config_file,
     hpc_config,
@@ -132,7 +142,9 @@ def create(
     container,
     verbose,
 ):
-    """Create a pipeline with multiple Jade configurations."""
+    """Create a pipeline with multiple Jade configurations. The configs can be specified with
+    individual config files or scripts that will be invoked at runtime to create configs based on
+    dynamic inputs."""
     if local:
         hpc_config = HpcConfig(hpc_type=HpcType.LOCAL, hpc=LocalHpcConfig())
     else:
@@ -144,6 +156,15 @@ def create(
             )
             sys.exit(1)
         hpc_config = HpcConfig(**load_data(hpc_config))
+
+    if not config_files and not auto_config_commands:
+        print("Either --config-files or --auto-config-commands must be specified", file=sys.stderr)
+        sys.exit(1)
+    if config_files and auto_config_commands:
+        print(
+            "You cannot specify both --config-files and  --auto-config-commands", file=sys.stderr
+        )
+        sys.exit(1)
 
     if enable_singularity:
         singularity_params = SingularityParams(enabled=True, container=container)
@@ -159,7 +180,12 @@ def create(
         singularity_params=singularity_params,
         verbose=verbose,
     )
-    PipelineManager.create_config(auto_config_cmds, config_file, submit_params)
+    if config_files:
+        PipelineManager.create_config_from_files(config_files, config_file, submit_params)
+    else:
+        PipelineManager.create_config_from_commands(
+            auto_config_commands, config_file, submit_params
+        )
 
 
 @click.command()

@@ -3,7 +3,6 @@
 import logging
 import os
 import shutil
-import time
 
 from jade.exceptions import ExecutionError, InvalidParameter
 from jade.jobs.job_submitter import JobSubmitter
@@ -102,14 +101,47 @@ class PipelineManager:
                 os.environ.pop("JADE_PIPELINE_STAGE_ID")
 
     @staticmethod
-    def create_config(auto_config_cmds, config_file, submit_params):
-        """Create a new PipelineConfig.
+    def create_config_from_files(config_files, pipeline_config_file, submit_params):
+        """Create a new PipelineConfig from a list of config files.
+
+        Parameters
+        ----------
+        config_files : list
+            Jade config files for each stage of the pipeline
+        pipeline_config_file : str
+        submit_params : SubmitterParams
+
+        Returns
+        -------
+        PipelineConfig
+
+        """
+        stages = []
+        for i, config_file in enumerate(config_files):
+            stage_num = i + 1
+            stages.append(
+                PipelineStage(
+                    config_file=config_file,
+                    stage_num=stage_num,
+                    submitter_params=submit_params,
+                    auto_config_cmd=None,
+                )
+            )
+
+        config = PipelineConfig(stages=stages, stage_num=1)
+        with open(pipeline_config_file, "w") as f_out:
+            f_out.write(config.json(indent=2))
+        logger.info("Created pipeline config file %s", pipeline_config_file)
+
+    @staticmethod
+    def create_config_from_commands(auto_config_cmds, pipeline_config_file, submit_params):
+        """Create a new PipelineConfig from a list of jade config commands.
 
         Parameters
         ----------
         auto_config_cmds : list
             list of commands (str) used to create Jade configs.
-        config_file : str
+        pipeline_config_file : str
         submit_params : SubmitterParams
 
         Returns
@@ -130,9 +162,9 @@ class PipelineManager:
             )
 
         config = PipelineConfig(stages=stages, stage_num=1)
-        with open(config_file, "w") as f_out:
+        with open(pipeline_config_file, "w") as f_out:
             f_out.write(config.json(indent=2))
-        logger.info("Created pipeline config file %s", config_file)
+        logger.info("Created pipeline config file %s", pipeline_config_file)
 
     def _deserialize(self):
         return PipelineConfig(**load_data(self._config_file))
@@ -165,7 +197,8 @@ class PipelineManager:
         self._serialize()
         stage = self._config.stages[self.stage_num - 1]
         os.environ["JADE_PIPELINE_STAGE_ID"] = str(self.stage_num)
-        self._run_auto_config(stage)
+        if stage.auto_config_cmd is not None:
+            self._run_auto_config(stage)
         output = self.get_stage_output_path(self.path, self.stage_num)
         ret = JobSubmitter.run_submit_jobs(
             stage.config_file,

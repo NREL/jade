@@ -10,7 +10,7 @@ from jade.models import JadeBaseModel, SubmitterParams
 class PipelineStage(JadeBaseModel):
     """Describes one stage of a pipeline."""
 
-    auto_config_cmd: str = Field(
+    auto_config_cmd: Optional[str] = Field(
         title="auto_config_cmd",
         description="command used to create the JADE configuration",
     )

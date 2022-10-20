@@ -29,7 +29,13 @@ order to provide information about completed stages and their outputs:
 
 .. code-block:: bash
 
-    $ jade pipeline create batch1-auto-config.sh batch2-auto-config.sh -c pipeline.toml
+    $ jade pipeline create -a batch1-auto-config.sh -a batch2-auto-config.sh -c pipeline.toml
+
+Alternatively, if your config files are known beforehand, you can specify them directly.
+
+.. code-block:: bash
+
+    $ jade pipeline create -f config_stage1.json -f config_stage2.json -c pipeline.toml
 
 Customize the config
 ====================
@@ -142,7 +148,7 @@ Let's create the pipeline and submit it for execution.
 
 .. code-block:: bash
 
-    $ jade pipeline create ./jade/extensions/demo/create_demo_config.sh ./jade/extensions/demo/create_merge_pred_gdp.py
+    $ jade pipeline create -a ./jade/extensions/demo/create_demo_config.sh -a ./jade/extensions/demo/create_merge_pred_gdp.py
     Created pipeline config file pipeline.toml
 
     $ jade pipeline submit pipeline.toml
