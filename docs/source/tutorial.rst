@@ -378,6 +378,8 @@ The following environment variable is available when these scripts are executed:
 
 - ``JADE_RUNTIME_OUTPUT``: output directory passed to ``jade submit-jobs``
 
+.. note:: In ``jade resubmit-jobs`` Jade will not rerun the setup command. It will re-run the teardown command.
+
 Note that the output directory contains a copy of ``config.json`` in case you need to access
 information from it.
 

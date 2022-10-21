@@ -153,6 +153,10 @@ class ResourceMonitorAggregator:
             Directory in which to record the results.
 
         """
+        if self._count == 0:
+            logger.info("Resource monitoring was disabled")
+            return
+
         for resource_type, stat_dict in self._summaries["sum"].items():
             for stat_name, val in stat_dict.items():
                 self._summaries["average"][resource_type][stat_name] = val / self._count

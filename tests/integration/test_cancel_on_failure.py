@@ -69,7 +69,7 @@ def test_cancel_on_failure_detect_by_submitter(cleanup):
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -n2 -b2"
     ret = run_command(cmd)
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01 -t 2")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1 -t 2")
     assert ret == 0
 
     summary = ResultsSummary(OUTPUT)
@@ -88,7 +88,7 @@ def test_cancel_on_failure_detect_by_runner(cleanup):
     cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -n2 -b8"
     ret = run_command(cmd)
     assert ret == 0
-    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01 -t 2")
+    ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1 -t 2")
     assert ret == 0
 
     summary = ResultsSummary(OUTPUT)

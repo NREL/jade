@@ -21,7 +21,7 @@ CONFIG_FILE = "test-config.json"
 OUTPUT = "test-output"
 SUBMIT_JOBS = f"jade submit-jobs -h {FAKE_HPC_CONFIG} -R none"
 TRY_SUBMIT_JOBS = "jade try-submit-jobs"
-WAIT = "jade wait -p 0.01"
+WAIT = "jade wait -p 0.1"
 NUM_COMMANDS = 5
 
 
@@ -49,7 +49,7 @@ def _do_cleanup():
 
 
 def test_no_distributed_submitter(cleanup):
-    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -N --no-reports"
+    cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -p 0.1 -N --no-reports"
     check_run_command(cmd)
 
     results_file = Path(OUTPUT) / RESULTS_DIR / "results_batch_1.csv"
@@ -68,6 +68,6 @@ def test_no_distributed_submitter(cleanup):
     assert len(processed_results_file.read_text().splitlines()) == 1
 
     check_run_command(f"{TRY_SUBMIT_JOBS} {OUTPUT}")
-    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.01 -t2")
+    check_run_command(f"{WAIT} --output={OUTPUT} -p 0.1 -t2")
     assert len(processed_results_file.read_text().splitlines()) == NUM_COMMANDS + 1
     assert not results_file.exists()

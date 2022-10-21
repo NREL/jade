@@ -51,7 +51,7 @@ def test_try_add_blocked_jobs(cleanup):
         cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -h {FAKE_HPC_CONFIG} -p 0.1 {option}"
         ret = run_command(cmd)
         assert ret == 0
-        ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.01")
+        ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")
         assert ret == 0
         events_summary = EventsSummary(OUTPUT, preload=True)
         submit_events = events_summary.list_events(EVENT_NAME_HPC_SUBMIT)

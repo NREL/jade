@@ -42,13 +42,18 @@ and CPU.
     $ jade show-status -o <output-dir>
 
 
+- *How can I tell Jade to run one final post-processing job once all other jobs have finished?*
+
+Define the ``teardown_command`` parameter in ``config.json``. Don't bother with defining job dependencies.
+
+
 - *I submitted 10 sets of jobs at the same time. How can I distinguish my jobs in the output of squeue?*
 
 Customize the ``job_prefix`` field in ``hpc_config.toml``. By default it is ``job`` and so you will see
 ``job_batch_1``, ``job_batch_2``, etc, in ``squeue``.
 
 
-- *Can I check what will be submitted without actually starting the jobs?*
+- *Can I check what will be submitted, and in which batch, without actually starting the jobs?*
 
 Yes. There is a ``dry run`` feature.
 

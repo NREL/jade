@@ -427,7 +427,7 @@ class Cluster:
             if job.state != JobState.DONE:
                 assert (
                     self._config.completed_jobs != self._config.num_jobs
-                ), "completed={self._config.completed_jobs}"
+                ), f"completed={self._config.completed_jobs}"
                 return False
 
         assert (
