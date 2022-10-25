@@ -3,6 +3,7 @@
 import logging
 import os
 import shutil
+import signal
 import sys
 import time
 
@@ -44,7 +45,9 @@ logger = logging.getLogger(__name__)
 @click.option("-o", "--output", default="stats", show_default=True, help="Output directory.")
 @click.pass_context
 def collect(ctx, duration, force, interval, output):
-    """Collect resource utilization stats."""
+    """Collect resource utilization stats. Stop collection by setting duration, pressing Ctrl-c,
+    or sending SIGTERM to the process ID.
+    """
     if os.path.exists(output):
         if force:
             shutil.rmtree(output)
@@ -63,16 +66,25 @@ def collect(ctx, duration, force, interval, output):
 
     show_cmd = f"jade stats show -o {output} [STATS]"
     print(f"Collecting stats. When complete run '{show_cmd}' to view stats.")
+    signal.signal(signal.SIGTERM, sigterm_handler)
     with ctx:
         try:
-            while True:
+            while g_collect_stats:
                 monitor.log_resource_stats()
                 time.sleep(interval)
                 if duration is not None and time.time() - start_time > duration:
                     print(f"Exceeded {duration} seconds. Exiting.")
                     break
         except KeyboardInterrupt:
-            pass
+            print(" Detected Ctrl-c, exiting", file=sys.stderr)
         finally:
-            print(" Detected Ctrl-c, exiting")
             EventsSummary(output)
+            print(f"Generated Parquet files in {output}/events", file=sys.stderr)
+
+
+g_collect_stats = True
+
+
+def sigterm_handler(signum, frame):
+    global g_collect_stats
+    g_collect_stats = False
