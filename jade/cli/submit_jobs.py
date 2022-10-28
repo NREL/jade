@@ -118,6 +118,14 @@ def submit_jobs(
     logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
     logger.info(get_cli_string())
 
+    if params.resource_monitor_interval is not None:
+        if params.resource_monitor_interval < params.poll_interval:
+            logger.warning(
+                "resource_monitor_interval cannot be less than poll_interval. "
+                "Reducing poll_interval"
+            )
+            params.poll_interval = params.resource_monitor_interval
+
     try:
         ret = JobSubmitter.run_submit_jobs(config_file, output, params)
         sys.exit(ret)
