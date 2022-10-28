@@ -668,9 +668,9 @@ login node.
 
 Resource Monitoring
 ===================
-JADE optionally monitors CPU, disk, memory, network, and and per-job-process
-memory utilization statistics in structured log events. There are two ways to
-collect statistics:
+JADE monitors CPU and memory utilization statistics in structured log events.
+You can also enable disk, network, and and per-job-process memory stats.
+There are two ways to collect statistics:
 
 1. ``aggregation``: Track average/min/max stats in memory on each node and
    generate a summary report at the end (default).
@@ -686,7 +686,7 @@ submitter-params``. Note the short and long forms of the option.
    $ jade submit-jobs config.json --resource-monitor-type=aggregation
    $ jade submit-jobs config.json -R aggregation
    $ jade submit-jobs config.json --resource-monitor-type=periodic
-   $ jade submit-jobs config.json -R periodic
+   $ jade submit-jobs config.json -R periodic -m cpu -m memory -m process
    $ jade submit-jobs config.json --resource-monitor-type=none
    $ jade submit-jobs config.json -R none
 
@@ -701,8 +701,8 @@ The default mode is ``aggregation`` in order to minimize storage consumption.
    ``--resource-monitor-interval`` but not ``resource-monitor-type``,
    ``periodic`` will be used. This may change in the future.
 
-By default only CPU and memory stats are collected. You can enable the others
-in the ``submitter_params.json`` file.
+Due to the number of options, it is recommended to create a
+``submitter_params.json`` file and edit the settings there.
 
 Both modes will generate ``<output-dir>/stats.txt`` and
 ``<output-dir>/stats_summary.json``.
