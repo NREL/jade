@@ -163,7 +163,6 @@ COMMON_SUBMITTER_OPTIONS = (
     click.option(
         "-m",
         "--resource-monitor-stats",
-        default=None,
         multiple=True,
         type=click.Choice([x for x in ResourceMonitorStats.__fields__]),
         help="Resource stats to monitor. Default is CPU and memory. "
@@ -331,7 +330,7 @@ def make_submitter_params(
         resource_monitor_interval = default_monitor_interval
     else:
         assert False, f"interval={resource_monitor_interval} type={resource_monitor_type}"
-    if resource_monitor_stats is None:
+    if not resource_monitor_stats:
         resource_monitor_stats = ResourceMonitorStats()
     else:
         stats = {x: True for x in resource_monitor_stats}
