@@ -61,7 +61,7 @@ def create_script(filename, text, executable=True):
         os.remove(filename)
 
     with open(filename, "w") as f_out:
-        logger.info("Writing %s", filename)
+        logger.debug("Writing %s", filename)
         f_out.write(text)
 
     if executable:
