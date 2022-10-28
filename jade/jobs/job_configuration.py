@@ -290,6 +290,7 @@ class JobConfiguration(abc.ABC):
             "per_node_batch_size",
             "singularity_params",
             "distributed_submitter",
+            "resource_monitor_stats",
         )
         user_overrides = (
             "distributed_submitter",

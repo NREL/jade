@@ -3,6 +3,7 @@ This module contains StructuredLogEvent and EventSummary classes.
 """
 
 from collections import defaultdict
+import copy
 import json
 import logging
 import os
@@ -34,6 +35,7 @@ EVENT_NAME_CPU_STATS = "cpu_stats"
 EVENT_NAME_DISK_STATS = "disk_stats"
 EVENT_NAME_MEMORY_STATS = "mem_stats"
 EVENT_NAME_NETWORK_STATS = "net_stats"
+EVENT_NAME_PROCESS_STATS = "process_stats"
 EVENT_NAME_BYTES_CONSUMED = "bytes_consumed"
 EVENT_NAME_UNHANDLED_ERROR = "unhandled_error"
 EVENT_NAME_ERROR_LOG = "log_error"
@@ -196,7 +198,15 @@ def deserialize_event(data):
 class EventsSummary:
     """Provides summary of all events."""
 
-    RESOURCE_STATS = set(("cpu_stats", "disk_stats", "mem_stats", "net_stats"))
+    RESOURCE_STATS = set(
+        (
+            EVENT_NAME_CPU_STATS,
+            EVENT_NAME_DISK_STATS,
+            EVENT_NAME_MEMORY_STATS,
+            EVENT_NAME_NETWORK_STATS,
+            EVENT_NAME_PROCESS_STATS,
+        )
+    )
 
     def __init__(self, output_dir, preload=False, optimize_resoure_stats=True):
         """
@@ -276,8 +286,14 @@ class EventsSummary:
                 dict_events = []
                 for event in events:
                     data = {"timestamp": event.timestamp, "source": event.source}
-                    data.update(event.data)
-                    dict_events.append(data)
+                    if name == EVENT_NAME_PROCESS_STATS:
+                        for process in event.data["processes"]:
+                            _data = {"timestamp": event.timestamp, "source": event.source}
+                            _data.update(process)
+                            dict_events.append(_data)
+                    else:
+                        data.update(event.data)
+                        dict_events.append(data)
                 df = pd.DataFrame.from_records(dict_events, index="timestamp")
                 filename = self._make_data_filename(name)
                 df.to_parquet(filename)

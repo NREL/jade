@@ -668,8 +668,9 @@ login node.
 
 Resource Monitoring
 ===================
-JADE optionally monitors CPU, disk, memory, and network utilization
-statistics in structured log events. There are two ways to collect statistics:
+JADE optionally monitors CPU, disk, memory, network, and and per-job-process
+memory utilization statistics in structured log events. There are two ways to
+collect statistics:
 
 1. ``aggregation``: Track average/min/max stats in memory on each node and
    generate a summary report at the end (default).
@@ -700,6 +701,9 @@ The default mode is ``aggregation`` in order to minimize storage consumption.
    ``--resource-monitor-interval`` but not ``resource-monitor-type``,
    ``periodic`` will be used. This may change in the future.
 
+By default only CPU and memory stats are collected. You can enable the others
+in the ``submitter_params.json`` file.
+
 Both modes will generate ``<output-dir>/stats.txt`` and
 ``<output-dir>/stats_summary.json``.
 
@@ -728,6 +732,7 @@ Use this CLI command to view textual tables after a run:
     $ jade stats show disk
     $ jade stats show mem
     $ jade stats show net
+    $ jade stats show proc
     $ jade stats show --summary-only
     $ jade stats show --json-summary
 

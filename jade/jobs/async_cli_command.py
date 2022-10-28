@@ -103,6 +103,9 @@ class AsyncCliCommand(AsyncJobInterface):
     def cancel_on_blocking_job_failure(self):
         return self._job.cancel_on_blocking_job_failure
 
+    def get_id(self):
+        return self._pipe.pid
+
     def set_blocking_jobs(self, jobs):
         self._job.set_blocking_jobs(jobs)
 

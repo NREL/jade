@@ -150,7 +150,8 @@ class JobQueue:
 
         if needs_monitor:
             logger.debug("Run monitor function")
-            self._monitor_func()
+            ids = {x.name: x.get_id() for x in self.outstanding_jobs}
+            self._monitor_func(ids=ids)
             self._last_monitor_time = cur_time
 
     @property
@@ -166,8 +167,8 @@ class JobQueue:
 
     def process_queue(self):
         """Process completions and submit new jobs if the queue is not full."""
-        self._handle_monitor_func()
         self._check_completions()
+        self._handle_monitor_func()
         if not self._queued_jobs:
             logger.debug("queue is empty; nothing to do")
             return

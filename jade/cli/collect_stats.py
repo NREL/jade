@@ -11,6 +11,7 @@ import click
 
 from jade.events import EventsSummary
 from jade.loggers import setup_event_logging
+from jade.models.submitter_params import ResourceMonitorStats
 from jade.resource_monitor import ResourceMonitorLogger
 from jade.utils.run_command import check_run_command
 
@@ -44,6 +45,30 @@ logger = logging.getLogger(__name__)
     help="Generate plots when collection is complete.",
 )
 @click.option(
+    "--cpu/--no-cpu", default=True, is_flag=True, show_default=True, help="Enable CPU monitoring"
+)
+@click.option(
+    "--disk/--no-disk",
+    default=True,
+    is_flag=True,
+    show_default=True,
+    help="Enable disk monitoring",
+)
+@click.option(
+    "--memory/--no-memory",
+    default=True,
+    is_flag=True,
+    show_default=True,
+    help="Enable memory monitoring",
+)
+@click.option(
+    "--network/--no-network",
+    default=True,
+    is_flag=True,
+    show_default=True,
+    help="Enable network monitoring",
+)
+@click.option(
     "-f",
     "--force",
     default=False,
@@ -52,7 +77,7 @@ logger = logging.getLogger(__name__)
     help="Delete output directory if it exists.",
 )
 @click.pass_context
-def collect(ctx, duration, interval, output, plots, force):
+def collect(ctx, duration, interval, output, plots, cpu, disk, memory, network, force):
     """Collect resource utilization stats. Stop collection by setting duration, pressing Ctrl-c,
     or sending SIGTERM to the process ID.
     """
@@ -69,7 +94,8 @@ def collect(ctx, duration, interval, output, plots, force):
     os.makedirs(output)
     event_file = os.path.join(output, "stats_events.log")
     setup_event_logging(event_file, mode="a")
-    monitor = ResourceMonitorLogger("ResourceMonitor")
+    stats = ResourceMonitorStats(cpu=cpu, disk=disk, memory=memory, network=network, process=False)
+    monitor = ResourceMonitorLogger("ResourceMonitor", stats)
     start_time = time.time()
 
     show_cmd = f"jade stats show -o {output} [STATS]"

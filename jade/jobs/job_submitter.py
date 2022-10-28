@@ -393,6 +393,7 @@ results_summary={self.get_results_summmary_report()}"""
                         f_out.write(cmd[0] + "\n\n")
                     f_out.write(output["stdout"])
                     reports.append(filename)
+                print(f"wrote output to {filename}")
 
         logger.info("Generated reports %s.", " ".join(reports))
 

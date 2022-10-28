@@ -29,6 +29,9 @@ class FakeJob(AsyncJobInterface):
     def cancel_on_blocking_job_failure(self):
         return False
 
+    def get_id(self):
+        return 0
+
     def is_complete(self):
         if self._is_complete:
             return True
@@ -105,7 +108,7 @@ def test_job_queue__run_jobs_ordering():
 def test_job_queue__monitor_func():
     has_run = []
 
-    def monitor():
+    def monitor(ids=None):
         has_run.append(1)
 
     duration = 0.1
