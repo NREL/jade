@@ -112,7 +112,7 @@ def show(stats, json_summary, output, summary_only):
     jade stats show mem
     jade stats show net
     jade stats show cpu disk mem
-    jade stats show --summary-only cpu disk mem
+    jade stats show --summary-only cpu mem proc
     jade stats show --json-summary cpu disk mem
     """
     events_path = Path(output) / EVENTS_DIR

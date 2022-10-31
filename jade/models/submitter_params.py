@@ -33,6 +33,14 @@ class ResourceMonitorStats(JadeBaseModel):
         description="Monitor per-job process utilization",
         default=False,
     )
+    include_child_processes: bool = Field(
+        description="Include stats from direct child processes in utilization for each job.",
+        default=True,
+    )
+    recurse_child_processes: bool = Field(
+        description="Recurse child processes to find all descendants..",
+        default=False,
+    )
 
 
 class SubmitterParams(JadeBaseModel):

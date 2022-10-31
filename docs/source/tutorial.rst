@@ -668,43 +668,88 @@ login node.
 
 Resource Monitoring
 ===================
-JADE monitors CPU and memory utilization statistics in structured log events.
-You can also enable disk, network, and and per-job-process memory stats.
-There are two ways to collect statistics:
+In order to maximize the compute hours you consume it is critical to understand
+the performance characteristics of your jobs. JADE helps with resorce
+monitoring tools that run in the background on each node.
+
+.. note:: Your HPC may already provide this type of information. If it makes
+   the data easily accessible, you may want to disable all JADE monitoring.
+
+Available monitors
+------------------
+
+- CPU utilization for each node (default = enabled)
+- Memory utilization for each node (default = enabled)
+- Process utilization by job (default = disabled)
+
+  - CPU and memory utilization 
+  - Include child processes (default = enabled)
+  - Search for child processes recursively (default = disabled)
+
+- Local disk utilization (default = disabled: Does not include Lustre filesystem.
+- Network utilization (default = disabled)
+
+Collection modes
+----------------
 
 1. ``aggregation``: Track average/min/max stats in memory on each node and
-   generate a summary report at the end (default).
+   generate a summary report at the end (default). Does not store data in files.
+
 2. ``periodic``: Record stats in files on each node and generate a summary
    report and interactive HTML plots at the end. The reports include
-   average/min/max stats.
+   average/min/max stats. File sizes can be large with long runtimes.
 
-You can specify the mode in ``jade submit-jobs`` or ``jade config
-submitter-params``. Note the short and long forms of the option.
+Examples
+--------
+Monitoring is highly configurable. Due to the number of options, it is
+recommended to create a ``submitter_params.json`` file and edit the settings
+there.
+
+You can specify most options in either ``jade submit-jobs`` or ``jade config
+submitter-params``.
+
+**Collect aggregated stats for CPU, memory, and per-job processes (including direct child processes)**
 
 .. code-block:: bash
 
-   $ jade submit-jobs config.json --resource-monitor-type=aggregation
-   $ jade submit-jobs config.json -R aggregation
-   $ jade submit-jobs config.json --resource-monitor-type=periodic
-   $ jade submit-jobs config.json -R periodic -m cpu -m memory -m process
-   $ jade submit-jobs config.json --resource-monitor-type=none
-   $ jade submit-jobs config.json -R none
+   $ jade config submitter-params -R aggregation -m cpu -m mem -m process
 
-The option ``--resource-monitor-interval`` or ``-r`` (in seconds) applies to both modes.
+**Collect stats for CPU, memory, and per-job processes every 5 seconds**
 
-.. note:: The periodic mode can generate large files if the compute nodes
-   run for a long time.
+.. code-block:: bash
 
-The default mode is ``aggregation`` in order to minimize storage consumption.
+   $ jade config submitter-params -R periodic -r 5 -m cpu -m mem -m process
 
-.. warning:: In order to preserve legacy behavior, if you specify
-   ``--resource-monitor-interval`` but not ``resource-monitor-type``,
-   ``periodic`` will be used. This may change in the future.
+**Collect per-job process information only for your job processes.**
 
-Due to the number of options, it is recommended to create a
-``submitter_params.json`` file and edit the settings there.
+This is more efficient than scanning for child processes. However, if your
+job is a bash script that starts another process to do the real work, that work
+won't be monitored.
 
-Both modes will generate ``<output-dir>/stats.txt`` and
+.. code-block:: bash
+
+   $ jade config submitter-params -R periodic -r 5 -m process
+
+   # Edit the newly-created submitter_params.json such that include_child_processes=false
+
+**Collect per-job process information for all processes started by your jobs, recursively.**
+
+.. code-block:: bash
+
+   $ jade config submitter-params -R periodic -r 5 -m process
+
+   # Edit the newly-created submitter_params.json such that include_child_processes=true
+   # and recurse_child_processes=true
+
+**Disable all monitoring**
+
+.. code-block:: bash
+
+   $ jade config submitter-params -R none
+
+Output files
+------------
+Both collection modes will generate ``<output-dir>/stats.txt`` and
 ``<output-dir>/stats_summary.json``.
 
 If the ``periodic`` mode is enabled:
@@ -714,6 +759,8 @@ If the ``periodic`` mode is enabled:
     $ tree output/stats
     output/stats
     ├── CpuStatsViewer__resource_monitor_batch_0.html
+    ├── ProcessStatsViewer__cpu_percent.html
+    ├── ProcessStatsViewer__rss_percent.html
     ├── DiskStatsViewer__resource_monitor_batch_0.html
     ├── MemoryStatsViewer__resource_monitor_batch_0.html
     └── NetworkStatsViewer__resource_monitor_batch_0.html
@@ -729,14 +776,10 @@ Use this CLI command to view textual tables after a run:
 
     $ jade stats show
     $ jade stats show cpu
-    $ jade stats show disk
     $ jade stats show mem
-    $ jade stats show net
     $ jade stats show proc
     $ jade stats show --summary-only
     $ jade stats show --json-summary
-
-.. note:: Reads and writes to the Lustre filesystem on the HPC are not tracked.
 
 Use the ``--json-summary`` option if you want to programmatically analyze the
 average/minimum/maximum stats for each metric type.
@@ -757,7 +800,17 @@ is how to view CPU stats for the node that ran the first batch:
 
 The directory ``<output-dir>/events`` contains Parquet files for each stat. You can
 also open these directly. Note that the ``source`` column designates the node/batch
-that generated each row.
+that generated each row. For ``process`` dataframes, the job name is in the
+``name`` column, and you should use it.
+
+.. code-block:: python
+
+   import pandas as pd
+
+   # Print max memory usage in GiB by each job.
+   df = pd.read_parquet("output/events/process_stats.parquet")
+   for name, dfp in df.groupby(by="name"):
+       print(name, dfp.rss.max() / (1024 * 1024 * 1024))
 
 Standalone Resource Monitoring
 ------------------------------

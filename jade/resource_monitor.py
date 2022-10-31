@@ -6,6 +6,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
+import plotly.graph_objects as go
 from prettytable import PrettyTable
 import psutil
 from psutil._common import bytes2human
@@ -59,6 +60,7 @@ class ResourceMonitor:
         self._last_net_check_time = None
         self._update_disk_stats(psutil.disk_io_counters())
         self._update_net_stats(psutil.net_io_counters())
+        self._cached_processes = {}  # pid to psutil.Process
 
     def _update_disk_stats(self, data):
         for stat in self.DISK_STATS:
@@ -108,17 +110,49 @@ class ResourceMonitor:
         self._update_net_stats(data)
         return stats
 
-    def get_process_stats(self, pid):
+    def _get_process(self, pid):
+        process = self._cached_processes.get(pid)
+        if process is None:
+            try:
+                process = psutil.Process(pid)
+                # Initialize CPU utilization tracking per psutil docs.
+                process.cpu_percent(interval=0.2)
+                self._cached_processes[pid] = process
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                logger.debug("Tried to construct Process for invalid pid=%s", pid)
+                return None
+
+        return process
+
+    def clear_stale_processes(self, cur_pids):
+        """Remove cached process objects that are no longer running."""
+        self._cached_processes = {
+            pid: proc for pid, proc in self._cached_processes.items() if pid in cur_pids
+        }
+
+    def get_process_stats(self, pid, include_children=True, recurse_children=False):
         """Gets current process stats. Returns None if the pid does not exist."""
-        if not psutil.pid_exists(pid):
-            return None
-        process = psutil.Process(pid)
+        children = []
+        process = self._get_process(pid)
+        if process is None:
+            return None, children
         try:
-            return {
-                "rss": process.memory_info().rss,
-            }
-        except (psutil.NoSuchProcess, psutil.ZombieProcess):
-            return None
+            with process.oneshot():
+                stats = {
+                    "rss": process.memory_info().rss,
+                    "cpu_percent": process.cpu_percent(),
+                }
+                if include_children:
+                    for child in process.children(recursive=recurse_children):
+                        cached_child = self._get_process(child.pid)
+                        if cached_child is not None:
+                            stats["cpu_percent"] += cached_child.cpu_percent()
+                            stats["rss"] += cached_child.memory_info().rss
+                            children.append(child.pid)
+                return stats, children
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            logger.debug("Tried to get process info for invalid pid=%s", pid)
+            return None, []
 
     @staticmethod
     def _mb_per_sec(num_bytes, elapsed_seconds):
@@ -133,7 +167,11 @@ class ResourceMonitor:
 class ResourceMonitorAggregator:
     """Aggregates resource utilization stats in memory."""
 
-    def __init__(self, name, stats: ResourceMonitorStats):
+    def __init__(
+        self,
+        name,
+        stats: ResourceMonitorStats,
+    ):
         self._stats = stats
         self._count = 0
         self._monitor = ResourceMonitor(name)
@@ -173,12 +211,20 @@ class ResourceMonitorAggregator:
 
     def _get_process_stats(self, pids):
         stats = {}
+        cur_pids = set()
         for name, pid in pids.items():
-            val = self._monitor.get_process_stats(pid)
-            if val is None:
-                val = {}
-            stats[name] = val
+            _stats, children = self._monitor.get_process_stats(
+                pid,
+                include_children=self._stats.include_child_processes,
+                recurse_children=self._stats.recurse_child_processes,
+            )
+            if _stats is not None:
+                stats[name] = _stats
+                cur_pids.add(pid)
+                for child in children:
+                    cur_pids.add(child)
 
+        self._monitor.clear_stale_processes(cur_pids)
         return stats
 
     def finalize(self, output_dir):
@@ -276,9 +322,17 @@ class ResourceMonitorAggregator:
 class ResourceMonitorLogger:
     """Logs resource utilization stats on periodic basis."""
 
-    def __init__(self, name, stats: ResourceMonitorStats):
+    def __init__(
+        self,
+        name,
+        stats: ResourceMonitorStats,
+        include_child_processes=True,
+        recurse_child_processes=False,
+    ):
         self._monitor = ResourceMonitor(name)
         self._stats = stats
+        self._include_child_processes = include_child_processes
+        self._recurse_child_processes = recurse_child_processes
 
     def log_cpu_stats(self):
         """Logs CPU resource stats information."""
@@ -342,11 +396,21 @@ class ResourceMonitorLogger:
 
         """
         stats = {"processes": []}
+        cur_pids = set()
         for name, pid in pids.items():
-            stat = self._monitor.get_process_stats(pid)
+            stat, children = self._monitor.get_process_stats(
+                pid,
+                include_children=self._stats.include_child_processes,
+                recurse_children=self._stats.recurse_child_processes,
+            )
             if stat is not None:  # The process could have exited.
                 stat["name"] = name
                 stats["processes"].append(stat)
+                cur_pids.add(pid)
+                for child in children:
+                    cur_pids.add(child)
+
+        self._monitor.clear_stale_processes(cur_pids)
 
         if stats["processes"]:
             log_event(
@@ -497,7 +561,7 @@ class StatsViewerBase(abc.ABC):
             if df.empty:
                 continue
             if show_all_timestamps:
-                print(tabulate(df, headers="keys", tablefmt="psql", showindex=False))
+                print(tabulate(df, headers="keys", tablefmt="psql", showindex=True))
                 print(f"Title = {self.metric()} {batch}\n")
                 print("\n", end="")
             table = PrettyTable(title=f"{self.metric()} {batch} summary")
@@ -711,6 +775,28 @@ class ProcessStatsViewer(StatsViewerBase):
 
         return stats
 
+    def plot_to_file(self, output_dir):
+        if pd.options.plotting.backend != "plotly":
+            pd.options.plotting.backend = "plotly"
+
+        exclude = self._non_plottable_columns()
+        figures = {}  # column to go.Figure
+        for name in self.iter_batch_names():
+            df = self.get_dataframe(name)
+            for name, df_name in df.groupby(by="name"):
+                for col in (x for x in df_name.columns if x not in exclude):
+                    if col not in figures:
+                        figures[col] = go.Figure()
+                    series = df_name[col]
+                    figures[col].add_trace(go.Scatter(x=series.index, y=series, name=name))
+
+        for col, fig in figures.items():
+            title = f"{self.__class__.__name__} {col}"
+            fig.update_layout(title=title)
+            filename = Path(output_dir) / f"{self.__class__.__name__}__{col}.html"
+            fig.write_html(str(filename))
+            logger.info("Generated plot in %s", filename)
+
     def show_stats(self, show_all_timestamps=True):
         text = f"{self.metric()} statistics for each job"
         print(f"\n{text}")
@@ -723,7 +809,7 @@ class ProcessStatsViewer(StatsViewerBase):
             if df.empty:
                 continue
             if show_all_timestamps:
-                print(tabulate(df, headers="keys", tablefmt="psql", showindex=False))
+                print(tabulate(df, headers="keys", tablefmt="psql", showindex=True))
                 print(f"Title = {self.metric()} {batch}\n")
                 print("\n", end="")
             for name, df_name in df.groupby(by="name"):
