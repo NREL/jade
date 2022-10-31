@@ -830,3 +830,6 @@ session on a compute node. Here's how to do it:
     2021-05-12 16:59:48,629 - INFO [jade.resource_monitor resource_monitor.py:226] : Generated plot in job-stats/stats/NetworkStatsViewer__ResourceMonitor.html
 
 Open the interactive plots in a browser.
+
+You can also use the standalone tool to monitor currently running processes
+by process ID or name. Refer to ``jade stats collect --help`` for more information.
