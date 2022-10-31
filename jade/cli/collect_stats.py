@@ -70,13 +70,6 @@ logger = logging.getLogger(__name__)
     help="Enable network monitoring",
 )
 @click.option(
-    "--process/--no-process",
-    default=True,
-    is_flag=True,
-    show_default=True,
-    help="Enable process monitoring. Also requires specifying process IDs.",
-)
-@click.option(
     "-p",
     "--process-ids",
     multiple=True,
@@ -139,7 +132,6 @@ def collect(
     disk,
     memory,
     network,
-    process,
     process_ids,
     process_ids_from_user,
     process_ids_from_substrings,
@@ -161,19 +153,9 @@ def collect(
             )
             sys.exit(1)
 
-    if not process and (process_ids or process_ids_from_user or process_ids_from_substrings):
-        print("process monitoring is disable but process ID inputs were passed", file=sys.stderr)
-        sys.exit(1)
-
+    process = bool(process_ids or process_ids_from_user or process_ids_from_substrings)
     if process_ids and (process_ids_from_user or process_ids_from_substrings):
         print("Explicit process IDs and process ID filters cannot both be passed", file=sys.stderr)
-        sys.exit(1)
-
-    if process and not (process_ids or process_ids_from_user or process_ids_from_substrings):
-        print(
-            "Some process ID option must be specified if process monitoring is enabled",
-            file=sys.stderr,
-        )
         sys.exit(1)
 
     os.makedirs(output)
