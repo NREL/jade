@@ -1,5 +1,6 @@
 """Common functions for CLI scripts"""
 
+from jade.models.submitter_params import ResourceMonitorStats
 import logging.config
 import os
 import sys
@@ -87,6 +88,20 @@ SUBMITTER_PARAMS_DEFAULTS = get_model_defaults(SubmitterParams)
 
 COMMON_SUBMITTER_OPTIONS = (
     click.option(
+        "-C",
+        "--container",
+        type=click.Path(exists=True),
+        help="Path to Singularity container",
+    ),
+    click.option(
+        "-N",
+        "--no-distributed-submitter",
+        is_flag=True,
+        default=False,
+        show_default=True,
+        help="Disable the distributed submitter",
+    ),
+    click.option(
         "-b",
         "--per-node-batch-size",
         default=SUBMITTER_PARAMS_DEFAULTS["per_node_batch_size"],
@@ -136,13 +151,30 @@ COMMON_SUBMITTER_OPTIONS = (
         help="Interval in seconds on which to poll jobs for status.",
     ),
     click.option(
+        "-q",
+        "--num-parallel-processes-per-node",
+        "--num-processes",
+        default=SUBMITTER_PARAMS_DEFAULTS["num_parallel_processes_per_node"],
+        show_default=False,
+        type=int,
+        is_eager=True,
+        help="Number of processes to run in parallel on each node; defaults to num CPUs.",
+    ),
+    click.option(
+        "-m",
+        "--resource-monitor-stats",
+        multiple=True,
+        type=click.Choice([x for x in ResourceMonitorStats.__fields__]),
+        help="Resource stats to monitor. Default is CPU and memory. "
+        "Ex: -m cpu -m memory -m process",
+    ),
+    click.option(
         "-r",
         "--resource-monitor-interval",
         default=None,
         type=int,
         show_default=True,
-        help="Interval in seconds on which to collect resource stats. Default is 1 second if "
-        "--resource-monitor-type is 'aggregation' or 'periodic'.",
+        help="Interval in seconds on which to collect resource stats. Must be >= poll-interval.",
     ),
     click.option(
         "-R",
@@ -158,16 +190,6 @@ COMMON_SUBMITTER_OPTIONS = (
         callback=_handle_resource_monitor_type,
     ),
     click.option(
-        "-q",
-        "--num-parallel-processes-per-node",
-        "--num-processes",
-        default=SUBMITTER_PARAMS_DEFAULTS["num_parallel_processes_per_node"],
-        show_default=False,
-        type=int,
-        is_eager=True,
-        help="Number of processes to run in parallel on each node; defaults to num CPUs.",
-    ),
-    click.option(
         "--reports/--no-reports",
         is_flag=True,
         default=SUBMITTER_PARAMS_DEFAULTS["generate_reports"],
@@ -181,12 +203,6 @@ COMMON_SUBMITTER_OPTIONS = (
         default=False,
         show_default=True,
         help="Add Singularity parameters and set the config to run in a container.",
-    ),
-    click.option(
-        "-C",
-        "--container",
-        type=click.Path(exists=True),
-        help="Path to container",
     ),
     click.option(
         "-t",
@@ -225,14 +241,6 @@ COMMON_SUBMITTER_OPTIONS = (
         default=SUBMITTER_PARAMS_DEFAULTS["node_shutdown_script"],
         help="Deprecated. Script to run on each after completing jobs (upload output files).",
     ),
-    click.option(
-        "-N",
-        "--no-distributed-submitter",
-        is_flag=True,
-        default=False,
-        show_default=True,
-        help="Disable the distributed submitter",
-    ),
 )
 
 
@@ -254,6 +262,7 @@ def make_submitter_params(
     poll_interval=None,
     resource_monitor_interval=None,
     resource_monitor_type=None,
+    resource_monitor_stats=None,
     num_parallel_processes_per_node=None,
     verbose=None,
     reports=None,
@@ -321,6 +330,14 @@ def make_submitter_params(
         resource_monitor_interval = default_monitor_interval
     else:
         assert False, f"interval={resource_monitor_interval} type={resource_monitor_type}"
+    if not resource_monitor_stats:
+        resource_monitor_stats = ResourceMonitorStats()
+    else:
+        stats = {x: True for x in resource_monitor_stats}
+        for field in ResourceMonitorStats.__fields__:
+            if field not in stats:
+                stats[field] = False
+        resource_monitor_stats = ResourceMonitorStats(**stats)
 
     if enable_singularity:
         singularity_params = SingularityParams(enabled=True, container=container)
@@ -339,6 +356,7 @@ def make_submitter_params(
         poll_interval=poll_interval,
         resource_monitor_interval=resource_monitor_interval,
         resource_monitor_type=resource_monitor_type,
+        resource_monitor_stats=resource_monitor_stats,
         singularity_params=singularity_params,
         time_based_batching=time_based_batching,
         try_add_blocked_jobs=try_add_blocked_jobs,

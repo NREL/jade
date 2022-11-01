@@ -54,6 +54,7 @@ def submit_jobs(
     poll_interval=None,
     resource_monitor_interval=None,
     resource_monitor_type=None,
+    resource_monitor_stats=None,
     num_parallel_processes_per_node=None,
     verbose=None,
     reports=None,
@@ -89,6 +90,7 @@ def submit_jobs(
             poll_interval=poll_interval,
             resource_monitor_interval=resource_monitor_interval,
             resource_monitor_type=resource_monitor_type,
+            resource_monitor_stats=resource_monitor_stats,
             num_parallel_processes_per_node=num_parallel_processes_per_node,
             verbose=verbose,
             reports=reports,
@@ -117,6 +119,14 @@ def submit_jobs(
     setup_event_logging(event_filename, mode="a")
     logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
     logger.info(get_cli_string())
+
+    if params.resource_monitor_interval is not None:
+        if params.resource_monitor_interval < params.poll_interval:
+            logger.warning(
+                "resource_monitor_interval cannot be less than poll_interval. "
+                "Reducing poll_interval"
+            )
+            params.poll_interval = params.resource_monitor_interval
 
     try:
         ret = JobSubmitter.run_submit_jobs(config_file, output, params)

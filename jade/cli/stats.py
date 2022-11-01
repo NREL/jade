@@ -23,11 +23,12 @@ from jade.resource_monitor import (
     DiskStatsViewer,
     MemoryStatsViewer,
     NetworkStatsViewer,
+    ProcessStatsViewer,
 )
 from jade.utils.utils import dump_data, load_data
 
 
-STATS = ("cpu", "disk", "mem", "net")
+STATS = ("cpu", "disk", "mem", "net", "proc")
 
 
 @click.group()
@@ -55,7 +56,7 @@ def plot(stats, output):
     jade stats plot disk
     jade stats plot mem
     jade stats plot net
-    jade stats plot cpu disk mem
+    jade stats plot cpu disk mem proc
     """
     events = EventsSummary(output)
 
@@ -73,6 +74,8 @@ def plot(stats, output):
             viewer = MemoryStatsViewer(events)
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
+        elif stat == "proc":
+            viewer = ProcessStatsViewer(events)
         else:
             print(f"Invalid stat={stat}", file=sys.stderr)
             sys.exit(1)
@@ -109,7 +112,7 @@ def show(stats, json_summary, output, summary_only):
     jade stats show mem
     jade stats show net
     jade stats show cpu disk mem
-    jade stats show --summary cpu disk mem
+    jade stats show --summary-only cpu mem proc
     jade stats show --json-summary cpu disk mem
     """
     events_path = Path(output) / EVENTS_DIR
@@ -137,6 +140,7 @@ def _show_summary_stats(stats, json_summary, json_files):
         DiskStatsViewer.metric(): "disk",
         MemoryStatsViewer.metric(): "mem",
         NetworkStatsViewer.metric(): "net",
+        ProcessStatsViewer.metric(): "proc",
     }
     reverse_mapping = {v: k for k, v in type_mapping.items()}
     cls_mapping = {
@@ -144,6 +148,7 @@ def _show_summary_stats(stats, json_summary, json_files):
         DiskStatsViewer.metric(): DiskStatsViewer,
         MemoryStatsViewer.metric(): MemoryStatsViewer,
         NetworkStatsViewer.metric(): NetworkStatsViewer,
+        ProcessStatsViewer.metric(): ProcessStatsViewer,
     }
     filtered = []
     for filename in json_files:
@@ -172,7 +177,11 @@ def _show_summary_stats(stats, json_summary, json_files):
                     continue
                 for batch, entries in by_type_and_batch[resource_type].items():
                     for entry in entries:
-                        table = PrettyTable(title=f"{stat_type} {batch} summary")
+                        if stat_type == "Process":
+                            tag = entry["job_name"]
+                        else:
+                            tag = batch
+                        table = PrettyTable(title=f"{stat_type} {tag} summary")
                         table.field_names = [stat] + list(entry["average"].keys())
                         row = ["Average"]
                         for field, val in entry["average"].items():
@@ -203,6 +212,8 @@ def _show_periodic_stats(stats, json_summary, output, summary_only):
             viewer = MemoryStatsViewer(events)
         elif stat == "net":
             viewer = NetworkStatsViewer(events)
+        elif stat == "proc":
+            viewer = ProcessStatsViewer(events)
         else:
             print(f"Invalid stat={stat}", file=sys.stderr)
             sys.exit(1)

@@ -228,7 +228,7 @@ class HpcManager:
 
         filename = os.path.join(directory, name + ".sh")
         intf.create_submission_script(name, script, filename, self._output)
-        logger.info("Created submission script %s", filename)
+        logger.debug("Created submission script %s", filename)
 
         if dry_run:
             logger.info("Dry run mode enabled. Return without submitting.")

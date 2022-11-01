@@ -10,8 +10,10 @@ from jade.events import (
     EVENT_NAME_DISK_STATS,
     EVENT_NAME_MEMORY_STATS,
     EVENT_NAME_NETWORK_STATS,
+    EVENT_NAME_PROCESS_STATS,
 )
 from jade.loggers import setup_event_logging
+from jade.models.submitter_params import ResourceMonitorStats
 from jade.resource_monitor import (
     ResourceMonitorLogger,
     CpuStatsViewer,
@@ -27,7 +29,8 @@ def test_resource_stats():
         event_file = os.path.join(tmpdir, "events.log")
         setup_event_logging(event_file)
 
-        resource_monitor = ResourceMonitorLogger("test")
+        stats = ResourceMonitorStats(cpu=True, disk=True, memory=True, network=True, process=True)
+        resource_monitor = ResourceMonitorLogger("test", stats)
         count = 2
         for _ in range(count):
             resource_monitor.log_resource_stats()

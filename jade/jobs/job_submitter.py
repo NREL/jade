@@ -117,7 +117,7 @@ results_summary={self.get_results_summmary_report()}"""
             logger.info("JADE version %s", jade.version.__version__)
             registry = Registry()
             loggers = registry.list_loggers()
-            logger.info("Registered modules for logging: %s", ", ".join(loggers))
+            logger.debug("Registered modules for logging: %s", ", ".join(loggers))
             self._save_repository_info(registry)
 
             ResultsAggregator.create(self._output)
@@ -393,6 +393,7 @@ results_summary={self.get_results_summmary_report()}"""
                         f_out.write(cmd[0] + "\n\n")
                     f_out.write(output["stdout"])
                     reports.append(filename)
+                print(f"wrote output to {filename}")
 
         logger.info("Generated reports %s.", " ".join(reports))
 

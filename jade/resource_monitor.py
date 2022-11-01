@@ -6,6 +6,7 @@ from collections import defaultdict
 from pathlib import Path
 
 import pandas as pd
+import plotly.graph_objects as go
 from prettytable import PrettyTable
 import psutil
 from psutil._common import bytes2human
@@ -18,9 +19,11 @@ from jade.events import (
     EVENT_NAME_DISK_STATS,
     EVENT_NAME_MEMORY_STATS,
     EVENT_NAME_NETWORK_STATS,
+    EVENT_NAME_PROCESS_STATS,
     StructuredLogEvent,
 )
 from jade.loggers import log_event
+from jade.models.submitter_params import ResourceMonitorStats
 from jade.utils.utils import dump_data
 
 
@@ -57,6 +60,7 @@ class ResourceMonitor:
         self._last_net_check_time = None
         self._update_disk_stats(psutil.disk_io_counters())
         self._update_net_stats(psutil.net_io_counters())
+        self._cached_processes = {}  # pid to psutil.Process
 
     def _update_disk_stats(self, data):
         for stat in self.DISK_STATS:
@@ -106,6 +110,50 @@ class ResourceMonitor:
         self._update_net_stats(data)
         return stats
 
+    def _get_process(self, pid):
+        process = self._cached_processes.get(pid)
+        if process is None:
+            try:
+                process = psutil.Process(pid)
+                # Initialize CPU utilization tracking per psutil docs.
+                process.cpu_percent(interval=0.2)
+                self._cached_processes[pid] = process
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
+                logger.debug("Tried to construct Process for invalid pid=%s", pid)
+                return None
+
+        return process
+
+    def clear_stale_processes(self, cur_pids):
+        """Remove cached process objects that are no longer running."""
+        self._cached_processes = {
+            pid: proc for pid, proc in self._cached_processes.items() if pid in cur_pids
+        }
+
+    def get_process_stats(self, pid, include_children=True, recurse_children=False):
+        """Gets current process stats. Returns None if the pid does not exist."""
+        children = []
+        process = self._get_process(pid)
+        if process is None:
+            return None, children
+        try:
+            with process.oneshot():
+                stats = {
+                    "rss": process.memory_info().rss,
+                    "cpu_percent": process.cpu_percent(),
+                }
+                if include_children:
+                    for child in process.children(recursive=recurse_children):
+                        cached_child = self._get_process(child.pid)
+                        if cached_child is not None:
+                            stats["cpu_percent"] += cached_child.cpu_percent()
+                            stats["rss"] += cached_child.memory_info().rss
+                            children.append(child.pid)
+                return stats, children
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            logger.debug("Tried to get process info for invalid pid=%s", pid)
+            return None, []
+
     @staticmethod
     def _mb_per_sec(num_bytes, elapsed_seconds):
         return float(num_bytes) / ONE_MB / elapsed_seconds
@@ -119,7 +167,12 @@ class ResourceMonitor:
 class ResourceMonitorAggregator:
     """Aggregates resource utilization stats in memory."""
 
-    def __init__(self, name):
+    def __init__(
+        self,
+        name,
+        stats: ResourceMonitorStats,
+    ):
+        self._stats = stats
         self._count = 0
         self._monitor = ResourceMonitor(name)
         self._last_stats = self._get_stats()
@@ -136,13 +189,43 @@ class ResourceMonitorAggregator:
                 self._summaries["minimum"][resource_type][stat_name] = sys.maxsize
                 self._summaries["sum"][resource_type][stat_name] = 0.0
 
-    def _get_stats(self):
-        return {
-            CpuStatsViewer.metric(): self._monitor.get_cpu_stats(),
-            DiskStatsViewer.metric(): self._monitor.get_disk_stats(),
-            MemoryStatsViewer.metric(): self._monitor.get_memory_stats(),
-            NetworkStatsViewer.metric(): self._monitor.get_network_stats(),
+        self._process_summaries = {
+            "average": defaultdict(dict),
+            "maximum": defaultdict(dict),
+            "minimum": defaultdict(dict),
+            "sum": defaultdict(dict),
         }
+        self._process_sample_count = {}
+
+    def _get_stats(self):
+        data = {}
+        if self._stats.cpu:
+            data[CpuStatsViewer.metric()] = self._monitor.get_cpu_stats()
+        if self._stats.disk:
+            data[DiskStatsViewer.metric()] = self._monitor.get_disk_stats()
+        if self._stats.memory:
+            data[MemoryStatsViewer.metric()] = self._monitor.get_memory_stats()
+        if self._stats.network:
+            data[NetworkStatsViewer.metric()] = self._monitor.get_network_stats()
+        return data
+
+    def _get_process_stats(self, pids):
+        stats = {}
+        cur_pids = set()
+        for name, pid in pids.items():
+            _stats, children = self._monitor.get_process_stats(
+                pid,
+                include_children=self._stats.include_child_processes,
+                recurse_children=self._stats.recurse_child_processes,
+            )
+            if _stats is not None:
+                stats[name] = _stats
+                cur_pids.add(pid)
+                for child in children:
+                    cur_pids.add(child)
+
+        self._monitor.clear_stale_processes(cur_pids)
+        return stats
 
     def finalize(self, output_dir):
         """Finalize the stat summaries and record the results.
@@ -175,6 +258,24 @@ class ResourceMonitorAggregator:
                 summary[stat_type] = self._summaries[stat_type][resource_type]
             stat_summaries.append(summary)
 
+        for process_name, stat_dict in self._process_summaries["sum"].items():
+            for stat_name, val in stat_dict.items():
+                self._process_summaries["average"][process_name][stat_name] = (
+                    val / self._process_sample_count[process_name]
+                )
+
+        self._process_summaries.pop("sum")
+        for process_name, samples in self._process_sample_count.items():
+            summary = {
+                "batch": self.name,
+                "job_name": process_name,
+                "samples": samples,
+                "type": ProcessStatsViewer.metric(),
+            }
+            for stat_type in self._process_summaries.keys():
+                summary[stat_type] = self._process_summaries[stat_type][process_name]
+            stat_summaries.append(summary)
+
         path = Path(output_dir) / STATS_DIR
         filename = path / f"{self.name}_resource_stats.json"
         dump_data(stat_summaries, filename)
@@ -184,7 +285,7 @@ class ResourceMonitorAggregator:
         """Return the name of the monitor."""
         return self._monitor.name
 
-    def update_resource_stats(self):
+    def update_resource_stats(self, ids=None):
         """Update resource stats information as structured job events for the current interval."""
         cur_stats = self._get_stats()
         for resource_type, stat_dict in self._last_stats.items():
@@ -195,6 +296,25 @@ class ResourceMonitorAggregator:
                 elif val < self._summaries["minimum"][resource_type][stat_name]:
                     self._summaries["minimum"][resource_type][stat_name] = val
                 self._summaries["sum"][resource_type][stat_name] += val
+
+        if self._stats.process:
+            cur_process_stats = self._get_process_stats(ids)
+            for process_name, stat_dict in cur_process_stats.items():
+                if process_name in self._process_summaries["maximum"]:
+                    for stat_name, val in stat_dict.items():
+                        if val > self._process_summaries["maximum"][process_name][stat_name]:
+                            self._process_summaries["maximum"][process_name][stat_name] = val
+                        elif val < self._process_summaries["minimum"][process_name][stat_name]:
+                            self._process_summaries["minimum"][process_name][stat_name] = val
+                        self._process_summaries["sum"][process_name][stat_name] += val
+                    self._process_sample_count[process_name] += 1
+                else:
+                    for stat_name, val in stat_dict.items():
+                        self._process_summaries["maximum"][process_name][stat_name] = val
+                        self._process_summaries["minimum"][process_name][stat_name] = val
+                        self._process_summaries["sum"][process_name][stat_name] = val
+                    self._process_sample_count[process_name] = 1
+
         self._count += 1
         self._last_stats = cur_stats
 
@@ -202,8 +322,17 @@ class ResourceMonitorAggregator:
 class ResourceMonitorLogger:
     """Logs resource utilization stats on periodic basis."""
 
-    def __init__(self, name):
+    def __init__(
+        self,
+        name,
+        stats: ResourceMonitorStats,
+        include_child_processes=True,
+        recurse_child_processes=False,
+    ):
         self._monitor = ResourceMonitor(name)
+        self._stats = stats
+        self._include_child_processes = include_child_processes
+        self._recurse_child_processes = recurse_child_processes
 
     def log_cpu_stats(self):
         """Logs CPU resource stats information."""
@@ -257,12 +386,62 @@ class ResourceMonitorLogger:
             )
         )
 
-    def log_resource_stats(self):
-        """Logs resource stats information as structured job events for the current interval."""
-        self.log_cpu_stats()
-        self.log_disk_stats()
-        self.log_memory_stats()
-        self.log_network_stats()
+    def log_process_stats(self, pids):
+        """Log stats for each process.
+
+        Parameters
+        ----------
+        ids : dict, defaults to None
+            Maps job name to process ID.
+
+        """
+        stats = {"processes": []}
+        cur_pids = set()
+        for name, pid in pids.items():
+            stat, children = self._monitor.get_process_stats(
+                pid,
+                include_children=self._stats.include_child_processes,
+                recurse_children=self._stats.recurse_child_processes,
+            )
+            if stat is not None:  # The process could have exited.
+                stat["name"] = name
+                stats["processes"].append(stat)
+                cur_pids.add(pid)
+                for child in children:
+                    cur_pids.add(child)
+
+        self._monitor.clear_stale_processes(cur_pids)
+
+        if stats["processes"]:
+            log_event(
+                StructuredLogEvent(
+                    source=self.name,
+                    category=EVENT_CATEGORY_RESOURCE_UTIL,
+                    name=EVENT_NAME_PROCESS_STATS,
+                    message="Process stats update",
+                    **stats,
+                )
+            )
+
+    def log_resource_stats(self, ids=None):
+        """Logs resource stats information as structured job events for the current interval.
+
+        Parameters
+        ----------
+        ids : dict, defaults to None
+            Maps job name to process ID.
+
+        """
+        if self._stats.cpu:
+            self.log_cpu_stats()
+        if self._stats.disk:
+            self.log_disk_stats()
+        if self._stats.memory:
+            self.log_memory_stats()
+        if self._stats.network:
+            self.log_network_stats()
+        if self._stats.process and ids is not None:
+            self.log_process_stats(ids)
 
     @property
     def name(self):
@@ -320,9 +499,10 @@ class StatsViewerBase(abc.ABC):
         if pd.options.plotting.backend != "plotly":
             pd.options.plotting.backend = "plotly"
 
+        exclude = self._non_plottable_columns()
         for name in self.iter_batch_names():
             df = self.get_dataframe(name)
-            cols = [x for x in df.columns if x != "source"]
+            cols = [x for x in df.columns if x not in exclude]
             title = f"{self.__class__.__name__} {name}"
             fig = df[cols].plot(title=title)
             filename = Path(output_dir) / f"{self.__class__.__name__}__{name}.html"
@@ -333,6 +513,11 @@ class StatsViewerBase(abc.ABC):
     @abc.abstractmethod
     def metric():
         """Return the metric."""
+
+    @staticmethod
+    def _non_plottable_columns():
+        """Return the columns that cannot be plotted."""
+        return {"source"}
 
     def show_stats(self, show_all_timestamps=True):
         """Show statistics"""
@@ -376,7 +561,7 @@ class StatsViewerBase(abc.ABC):
             if df.empty:
                 continue
             if show_all_timestamps:
-                print(tabulate(df, headers="keys", tablefmt="psql", showindex=False))
+                print(tabulate(df, headers="keys", tablefmt="psql", showindex=True))
                 print(f"Title = {self.metric()} {batch}\n")
                 print("\n", end="")
             table = PrettyTable(title=f"{self.metric()} {batch} summary")
@@ -543,3 +728,120 @@ class NetworkStatsViewer(StatsViewerBase):
             "packets_sent",
         )
         self.show_stat_totals(stats_to_total)
+
+
+class ProcessStatsViewer(StatsViewerBase):
+    """Shows process statistics"""
+
+    def __init__(self, events):
+        super().__init__(events, EVENT_NAME_PROCESS_STATS)
+
+    @staticmethod
+    def metric():
+        return "Process"
+
+    @staticmethod
+    def _non_plottable_columns():
+        """Return the columns that cannot be plotted."""
+        return {"name", "source"}
+
+    def get_stats_summary(self):
+        """Return a list of objects describing summaries of all stats.
+
+        Returns
+        -------
+        list
+            list of dicts
+
+        """
+        stats = []
+        for _, df in self._df_by_batch.items():
+            if df.empty:
+                continue
+            for name, df_name in df.groupby(by="name"):
+                entry = {
+                    "type": self.metric(),
+                    "name": name,
+                    "average": {},
+                    "minimum": {},
+                    "maximum": {},
+                }
+                exclude = ("timestamp", "source")
+                cols = [x for x in df_name.columns if x not in exclude]
+                entry["average"].update(df_name[cols].mean().to_dict())
+                entry["minimum"].update(df_name[cols].min().to_dict())
+                entry["maximum"].update(df_name[cols].max().to_dict())
+                stats.append(entry)
+
+        return stats
+
+    def plot_to_file(self, output_dir):
+        if pd.options.plotting.backend != "plotly":
+            pd.options.plotting.backend = "plotly"
+
+        exclude = self._non_plottable_columns()
+        figures = {}  # column to go.Figure
+        for name in self.iter_batch_names():
+            df = self.get_dataframe(name)
+            for pname, df_name in df.groupby(by="name"):
+                for col in (x for x in df_name.columns if x not in exclude):
+                    if col not in figures:
+                        figures[col] = go.Figure()
+                    series = df_name[col]
+                    trace_name = f"{name} {pname}".replace("resource_monitor_", "")
+                    figures[col].add_trace(go.Scatter(x=series.index, y=series, name=trace_name))
+
+        for col, fig in figures.items():
+            title = f"{self.__class__.__name__} {col}"
+            fig.update_layout(title=title)
+            filename = Path(output_dir) / f"{self.__class__.__name__}__{col}.html"
+            fig.write_html(str(filename))
+            logger.info("Generated plot in %s", filename)
+
+    def show_stats(self, show_all_timestamps=True):
+        text = f"{self.metric()} statistics for each job"
+        print(f"\n{text}")
+        print("=" * len(text) + "\n")
+        self._show_stats(show_all_timestamps=show_all_timestamps)
+
+    def _show_stats(self, show_all_timestamps=True):
+        avg_across_processes = pd.DataFrame()
+        for batch, df in self._df_by_batch.items():
+            if df.empty:
+                continue
+            if show_all_timestamps:
+                print(tabulate(df, headers="keys", tablefmt="psql", showindex=True))
+                print(f"Title = {self.metric()} {batch}\n")
+                print("\n", end="")
+            for name, df_name in df.groupby(by="name"):
+                table = PrettyTable(title=f"{self.metric()} {name} summary")
+                row = ["Average"]
+                exclude = ("timestamp", "source", "name")
+                cols = [x for x in df_name.columns if x not in exclude]
+                table.field_names = ["stat"] + cols
+                average = df_name[cols].mean()
+                avg_across_processes[name] = average
+                for field, val in average.to_dict().items():
+                    if field not in exclude:
+                        row.append(self.get_printable_value(field, val))
+                table.add_row(row)
+                row = ["Minimum"]
+                for field, val in df_name.min().to_dict().items():
+                    if field not in exclude:
+                        row.append(self.get_printable_value(field, val))
+                table.add_row(row)
+                row = ["Maximum"]
+                for field, val in df_name.max().to_dict().items():
+                    if field not in exclude:
+                        row.append(self.get_printable_value(field, val))
+                table.add_row(row)
+                print(table)
+                print("\n", end="")
+
+        table = PrettyTable(title=f"{self.metric()} averages per interval across processes")
+        averages = avg_across_processes.transpose().mean().to_dict()
+        table.field_names = list(averages.keys())
+        row = [self.get_printable_value(k, v) for k, v in averages.items()]
+        table.add_row(row)
+        print(table)
+        print("\n", end="")

@@ -221,11 +221,15 @@ class JobRunner(JobManagerBase):
         monitor_type = group.submitter_params.resource_monitor_type
         resource_aggregator = None
         if monitor_type == ResourceMonitorType.AGGREGATION:
-            resource_aggregator = ResourceMonitorAggregator(name)
+            resource_aggregator = ResourceMonitorAggregator(
+                name, group.submitter_params.resource_monitor_stats
+            )
             monitor_func = resource_aggregator.update_resource_stats
             resource_monitor_interval = group.submitter_params.resource_monitor_interval
         elif monitor_type == ResourceMonitorType.PERIODIC:
-            resource_monitor = ResourceMonitorLogger(name)
+            resource_monitor = ResourceMonitorLogger(
+                name, group.submitter_params.resource_monitor_stats
+            )
             monitor_func = resource_monitor.log_resource_stats
             resource_monitor_interval = group.submitter_params.resource_monitor_interval
         elif monitor_type == ResourceMonitorType.NONE:

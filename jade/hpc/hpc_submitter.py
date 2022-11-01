@@ -529,6 +529,9 @@ class AsyncHpcSubmitter(AsyncJobInterface):
         self._is_complete = status in (HpcJobStatus.COMPLETE, HpcJobStatus.NONE)
         return self._is_complete
 
+    def get_id(self):
+        return self.job_id
+
     @property
     def job_id(self):
         return self._job_id

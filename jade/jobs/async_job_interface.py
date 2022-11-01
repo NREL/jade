@@ -16,6 +16,16 @@ class AsyncJobInterface(abc.ABC):
         """Cancel the job if a blocking job fails."""
 
     @abc.abstractmethod
+    def get_id(self):
+        """Return the ID of the job.
+
+        Returns
+        -------
+        int
+
+        """
+
+    @abc.abstractmethod
     def is_complete(self):
         """Return True if the job is complete.
 
