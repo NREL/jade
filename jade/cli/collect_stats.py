@@ -243,7 +243,7 @@ def find_process_ids(user, substrings):
                 continue
             found_substring = False
             for substring in substrings:
-                if substring in process.cmdline():
+                if substring in " ".join(process.cmdline()):
                     found_substring = True
             if not found_substring:
                 continue
