@@ -783,12 +783,13 @@ class ProcessStatsViewer(StatsViewerBase):
         figures = {}  # column to go.Figure
         for name in self.iter_batch_names():
             df = self.get_dataframe(name)
-            for name, df_name in df.groupby(by="name"):
+            for pname, df_name in df.groupby(by="name"):
                 for col in (x for x in df_name.columns if x not in exclude):
                     if col not in figures:
                         figures[col] = go.Figure()
                     series = df_name[col]
-                    figures[col].add_trace(go.Scatter(x=series.index, y=series, name=name))
+                    trace_name = f"{name} {pname}".replace("resource_monitor_", "")
+                    figures[col].add_trace(go.Scatter(x=series.index, y=series, name=trace_name))
 
         for col, fig in figures.items():
             title = f"{self.__class__.__name__} {col}"
