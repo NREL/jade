@@ -1,0 +1,121 @@
+{
+  "jobs_directory": null,
+  "configuration_module": "jade.extensions.generic_command.generic_command_configuration",
+  "configuration_class": "GenericCommandConfiguration",
+  "format_version": "v0.2.0",
+  "user_data": {
+    "overall_key_1": "overall_val_1",
+    "overall_key_2": "overall_val_2"
+  },
+  "submission_groups": [],
+  "setup_command": null,
+  "teardown_command": "python postprocess.py",
+  "node_setup_command": null,
+  "node_teardown_command": null,
+  "jobs": [
+    {
+      "name": "job_1",
+      "command": "julia sim.jl 1",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_1": "val_1"
+      },
+      "job_id": 1,
+      "extension": "generic_command"
+    },
+    {
+      "name": "job_2",
+      "command": "julia sim.jl 2",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_2": "val_2"
+      },
+      "job_id": 2,
+      "extension": "generic_command"
+    },
+    {
+      "name": "job_3",
+      "command": "julia sim.jl 3",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_3": "val_3"
+      },
+      "job_id": 3,
+      "extension": "generic_command"
+    },
+    {
+      "name": "job_4",
+      "command": "julia sim.jl 4",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_4": "val_4"
+      },
+      "job_id": 4,
+      "extension": "generic_command"
+    },
+    {
+      "name": "job_5",
+      "command": "julia sim.jl 5",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_5": "val_5"
+      },
+      "job_id": 5,
+      "extension": "generic_command"
+    },
+    {
+      "name": "job_6",
+      "command": "julia sim.jl 6",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_6": "val_6"
+      },
+      "job_id": 6,
+      "extension": "generic_command"
+    },
+    {
+      "name": "job_7",
+      "command": "julia sim.jl 7",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_7": "val_7"
+      },
+      "job_id": 7,
+      "extension": "generic_command"
+    },
+    {
+      "name": "job_8",
+      "command": "julia sim.jl 8",
+      "blocked_by": [],
+      "cancel_on_blocking_job_failure": false,
+      "estimated_run_minutes": null,
+      "submission_group": "default",
+      "ext": {
+        "key_8": "val_8"
+      },
+      "job_id": 8,
+      "extension": "generic_command"
+    }
+  ]
+}
