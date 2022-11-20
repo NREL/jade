@@ -14,6 +14,7 @@ from jade.common import (
     CONFIG_FILE,
     OUTPUT_DIR,
     RESULTS_FILE,
+    STATS_SUMMARY_FILE,
 )
 from jade.enums import Status, ResourceMonitorType
 from jade.events import (
@@ -374,9 +375,11 @@ results_summary={self.get_results_summmary_report()}"""
         ]
         if resource_monitor_type != ResourceMonitorType.NONE:
             commands.append((f"jade stats show -o {directory} --summary-only", "stats.txt"))
-            commands.append((f"jade stats show -o {directory} -j", "stats_summary.json"))
+            commands.append((f"jade stats show -o {directory} -j", STATS_SUMMARY_FILE))
         if resource_monitor_type == ResourceMonitorType.PERIODIC:
             commands.append((f"jade stats plot -o {directory}", None))
+        # This must come after stats commands.
+        commands.append((f"jade db ingest-results {directory}", None))
 
         reports = []
         for cmd in commands:

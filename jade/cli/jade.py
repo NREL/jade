@@ -20,6 +20,7 @@ from jade.cli.show_events import show_events
 from jade.cli.show_results import show_results
 from jade.cli.show_status import show_status
 from jade.cli.spark import spark
+from jade.cli.db import db
 from jade.cli.stats import stats
 from jade.cli.submit_jobs import submit_jobs
 from jade.cli.try_submit_jobs import try_submit_jobs
@@ -53,6 +54,7 @@ cli.add_command(auto_config)
 cli.add_command(cancel_jobs)
 cli.add_command(cluster)
 cli.add_command(config)
+cli.add_command(db)
 cli.add_command(hpc_jobs)
 cli.add_command(pipeline)
 cli.add_command(prune_files)
