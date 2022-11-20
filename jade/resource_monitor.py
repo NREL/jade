@@ -755,18 +755,19 @@ class ProcessStatsViewer(StatsViewerBase):
 
         """
         stats = []
-        for _, df in self._df_by_batch.items():
+        for batch, df in self._df_by_batch.items():
             if df.empty:
                 continue
             for name, df_name in df.groupby(by="name"):
                 entry = {
                     "type": self.metric(),
                     "name": name,
+                    "batch": batch,
                     "average": {},
                     "minimum": {},
                     "maximum": {},
                 }
-                exclude = ("timestamp", "source")
+                exclude = ("timestamp", "source", "name")
                 cols = [x for x in df_name.columns if x not in exclude]
                 entry["average"].update(df_name[cols].mean().to_dict())
                 entry["minimum"].update(df_name[cols].min().to_dict())
