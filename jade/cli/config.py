@@ -11,7 +11,6 @@ import click
 from prettytable import PrettyTable
 
 from jade.cli.common import COMMON_SUBMITTER_OPTIONS, add_options, make_submitter_params
-from jade.cli.spark import spark
 from jade.jobs.cluster import Cluster
 from jade.common import CONFIG_FILE
 from jade.extensions.generic_command import GenericCommandConfiguration, GenericCommandParameters
@@ -553,7 +552,6 @@ config.add_command(assign_blocked_by)
 config.add_command(hpc)
 config.add_command(show)
 config.add_command(_filter)
-config.add_command(spark)
 config.add_command(submitter_params)
 config.add_command(save_submission_groups)
 config.add_command(add_submission_group)
