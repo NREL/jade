@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 
+from jade.common import STATS_SUMMARY_FILE
 from jade.extensions.generic_command import GenericCommandInputs
 from jade.extensions.generic_command import GenericCommandConfiguration
 from jade.extensions.generic_command import GenericCommandParameters
@@ -169,7 +170,7 @@ def test_job_order(generic_command_fixture):
     stats_text = Path(OUTPUT) / "stats.txt"
     assert stats_text.exists()
     assert "Average" in stats_text.read_text()
-    stats_json = Path(OUTPUT) / "stats_summary.json"
+    stats_json = Path(OUTPUT) / STATS_SUMMARY_FILE
     assert stats_json.exists()
     stats = load_data(stats_json)
     assert stats

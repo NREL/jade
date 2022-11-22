@@ -2,6 +2,7 @@
 
 import logging
 import os
+import socket
 import sys
 
 import click
@@ -38,9 +39,17 @@ logger = logging.getLogger(__name__)
     help="include individual job status",
 )
 @click.option(
+    "-n",
+    "--no-prompts",
+    is_flag=True,
+    default=False,
+    show_default=True,
+    help="Do not prompt to confirm to run try-submit-jobs if the submission is incomplete.",
+)
+@click.option(
     "--verbose", is_flag=True, default=False, show_default=True, help="Enable verbose log output."
 )
-def show_status(output, job_status, verbose):
+def show_status(output, job_status, no_prompts, verbose):
     """Shows the status of active HPC jobs."""
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(__name__, None, console_level=level)
@@ -96,6 +105,25 @@ def show_status(output, job_status, verbose):
             )
             run_new_submitter = True
         if run_new_submitter:
+            if not no_prompts:
+                while True:
+                    resp = input(
+                        f"""\n'jade try-submit-jobs' must be run. If all jobs are complete then
+this will generate reports, which may consume lots of compute resources, 
+especially if you are collecting periodic resource utilization stats. 
+You may not want to run this command on the login node. You are currently
+logged into hostname={socket.gethostname()}.
+
+Continue? [N] >>> """
+                    ).lower()
+                    if resp in ("n", ""):
+                        print("Exiting", file=sys.stderr)
+                        sys.exit(0)
+                    elif resp == "y":
+                        break
+                    else:
+                        print(f"\nERROR: Did not understand input={resp}")
+
             try_submit_cmd = f"jade try-submit-jobs {output}"
             if verbose:
                 try_submit_cmd += " --verbose"

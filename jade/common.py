@@ -1,18 +1,18 @@
 """Common definitions for the jade package."""
 
-import os
 
-
-OUTPUT_DIR = "output"
+ANALYSIS_DIR = "analysis"
+CONFIG_FILE = "config.json"
+DEFAULT_SUBMISSION_GROUP = "default"
 EVENTS_DIR = "events"
+HPC_CONFIG_FILE = "hpc_config.toml"
 JOBS_OUTPUT_DIR = "job-outputs"
 JOBS_STDIO_DIR = "job-stdio"
+OUTPUT_DIR = "output"
+POST_PROCESSING_CONFIG_FILE = "post-config.json"
+RESULTS_DB_FILE = "results.db"
 RESULTS_DIR = "results"
+RESULTS_FILE = "results.json"
 SCRIPTS_DIR = "scripts"
 STATS_DIR = "stats"
-CONFIG_FILE = "config.json"
-RESULTS_FILE = "results.json"
-ANALYSIS_DIR = "analysis"
-POST_PROCESSING_CONFIG_FILE = "post-config.json"
-HPC_CONFIG_FILE = "hpc_config.toml"
-DEFAULT_SUBMISSION_GROUP = "default"
+STATS_SUMMARY_FILE = "stats_summary.json"

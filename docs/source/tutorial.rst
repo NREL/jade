@@ -494,6 +494,9 @@ Or only the ones that failed
 
     $ jade show-results --failed
 
+JADE stores all results in a SQLite database. You can also use it to view results. Please refer to
+:ref:`results_queries` for examples.
+
 Failed or Missing Jobs
 ======================
 If some jobs fail because of a walltime timeout or code/data error then you can
@@ -603,6 +606,8 @@ and ``<output-dir>/job_output_<HPC job ID>.o``. You may need to match JADE job I
 files.
 
 To help with this JADE records the HPC job ID for each job in ``results.txt`` (or ``jade show-results``).
+
+You can also refer to :ref:`results_queries`. The ``result`` table includes this information.
 
 Events
 ------
