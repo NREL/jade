@@ -395,6 +395,11 @@ Note that the following environment variables are available when these scripts a
 
 .. note:: You can also set these parameters programmatically when constructing ``GenericCommandConfiguration``.
 
+Example configurations
+----------------------
+Check out https://github.com/NREL/jade/tree/main/examples for examples using features discussed
+above.
+
 Job Execution
 =============
 

@@ -1,0 +1,43 @@
+{
+  "generate_reports": true,
+  "hpc_config": {
+    "hpc_type": "slurm",
+    "job_prefix": "job",
+    "hpc": {
+      "account": "account",
+      "partition": null,
+      "reservation": null,
+      "qos": null,
+      "walltime": "04:00:00",
+      "gres": null,
+      "mem": null,
+      "tmp": null,
+      "nodes": 1,
+      "ntasks": null,
+      "ntasks_per_node": null
+    }
+  },
+  "max_nodes": null,
+  "num_parallel_processes_per_node": 4,
+  "per_node_batch_size": 8,
+  "node_setup_script": null,
+  "node_shutdown_script": null,
+  "poll_interval": 10,
+  "resource_monitor_interval": 10,
+  "resource_monitor_type": "aggregation",
+  "resource_monitor_stats": {
+    "cpu": true,
+    "disk": false,
+    "memory": true,
+    "network": false,
+    "process": false,
+    "include_child_processes": true,
+    "recurse_child_processes": false
+  },
+  "try_add_blocked_jobs": true,
+  "time_based_batching": false,
+  "dry_run": false,
+  "verbose": false,
+  "singularity_params": null,
+  "distributed_submitter": true
+}
