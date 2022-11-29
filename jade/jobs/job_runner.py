@@ -32,17 +32,17 @@ class JobRunner(JobManagerBase):
 
     def __init__(
         self,
-        config_file,
+        config,
         output,
         batch_id=0,
     ):
-        super(JobRunner, self).__init__(config_file, output)
+        super(JobRunner, self).__init__(config, output)
         self._handle_submission_groups()
         group = self.config.get_default_submission_group()
-        config = group.submitter_params.hpc_config
-        self._intf = HpcManager.create_hpc_interface(config)
+        hpc_config = group.submitter_params.hpc_config
+        self._intf = HpcManager.create_hpc_interface(hpc_config)
         self._node_id = self._intf.get_node_id()
-        self._intf_type = config.hpc_type
+        self._intf_type = hpc_config.hpc_type
         self._batch_id = batch_id
         self._event_filename = os.path.join(
             output,

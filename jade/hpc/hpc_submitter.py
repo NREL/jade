@@ -87,7 +87,7 @@ class HpcSubmitter:
         config["jobs"] = jobs
         suffix = f"_batch_{self._batch_index}"
         self._batch_index += 1
-        new_config_file = self._config_file.replace(".json", f"{suffix}.json")
+        new_config_file = str(self._config_file).replace(".json", f"{suffix}.json")
         dump_data(config, new_config_file, cls=ExtendedJSONEncoder)
         logger.info(
             "Created split config file %s with %s jobs", new_config_file, len(config["jobs"])

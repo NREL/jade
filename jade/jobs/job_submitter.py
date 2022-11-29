@@ -1,13 +1,13 @@
 """Provides ability to run jobs locally or on HPC."""
 
-from collections import OrderedDict
 import datetime
 import fileinput
 import importlib
 import logging
 import os
-import shutil
 import time
+from collections import OrderedDict
+from pathlib import Path
 
 import jade
 from jade.common import (
@@ -34,7 +34,7 @@ from jade.hpc.common import HpcType
 from jade.hpc.hpc_manager import HpcManager
 from jade.hpc.hpc_submitter import HpcSubmitter
 from jade.jobs.cluster import Cluster
-from jade.jobs.job_configuration_factory import create_config_from_previous_run
+from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.jobs.job_manager_base import JobManagerBase
 from jade.jobs.job_runner import JobRunner
 from jade.jobs.results_aggregator import ResultsAggregator
@@ -58,32 +58,29 @@ class JobSubmitter(JobManagerBase):
         """Internal constructor. Callers should use create() or load()."""
         super().__init__(config_file, output)
         self._hpc = None
-        self._config_file = config_file
         self._is_new = is_new
 
     @classmethod
-    def create(cls, config_file, params: SubmitterParams, output=OUTPUT_DIR):
+    def create(cls, config, output=OUTPUT_DIR):
         """Creates a new instance.
 
         Parameters
         ----------
-        config_file : JobConfiguration
-            configuration for simulation
-        params: SubmitterParams
+        config : JobConfiguration
         output : str
             Output directory
 
         """
-        main_file = os.path.join(output, CONFIG_FILE)
-        shutil.copyfile(config_file, main_file)
-        mgr = cls(main_file, output, True)
-        mgr.run_checks(params)
+        mgr = cls(config, output, True)
+        mgr.run_checks()
+        config.dump(Path(output) / CONFIG_FILE, indent=2)
         return mgr
 
     @classmethod
     def load(cls, output):
         """Loads an instance from an existing directory."""
-        return cls(os.path.join(output, CONFIG_FILE), output, False)
+        config = create_config_from_file(Path(output) / CONFIG_FILE)
+        return cls(config, output, False)
 
     def __repr__(self):
         return f"""num_jobs={self.get_num_jobs()}
@@ -151,7 +148,7 @@ results_summary={self.get_results_summmary_report()}"""
         self._hpc = HpcManager(groups, self._output)
 
         if self._hpc.hpc_type == HpcType.LOCAL or force_local:
-            runner = JobRunner(self._config_file, output=self._output)
+            runner = JobRunner(self._config, output=self._output)
             num_parallel_processes_per_node = (
                 group.submitter_params.num_parallel_processes_per_node
             )
@@ -417,32 +414,34 @@ results_summary={self.get_results_summmary_report()}"""
         logger.debug("jobs are still pending")
         return False
 
-    def run_checks(self, params: SubmitterParams):
+    def run_checks(self):
         """Checks the configuration for errors. May mutate the config."""
-        self._config.check_job_dependencies(params)
-        self._config.check_submission_groups(params)
+        self._config.check_submission_groups()
+        for group in self._config.submission_groups:
+            if group.submitter_params.per_node_batch_size == 0:
+                self._config.check_job_estimated_run_minutes(group.name)
+        self._config.check_job_dependencies()
         self._config.check_job_runtimes()
         self._config.check_spark_config()
 
     @staticmethod
-    def run_submit_jobs(config_file, output, params, pipeline_stage_num=None):
+    def run_submit_jobs(config, output, local=False, dry_run=False, pipeline_stage_num=None):
         """Allows submission from an existing Python process."""
         os.makedirs(output, exist_ok=True)
 
-        mgr = JobSubmitter.create(config_file, params, output=output)
+        mgr = JobSubmitter.create(config, output=output)
         cluster = Cluster.create(
             output,
             mgr.config,
             pipeline_stage_num=pipeline_stage_num,
         )
 
-        local = params.hpc_config.hpc_type == HpcType.LOCAL
         ret = 1
         try:
             status = mgr.submit_jobs(cluster, force_local=local)
             if status == Status.IN_PROGRESS:
                 check_cmd = f"jade show-status -o {output}"
-                if not params.dry_run:
+                if not dry_run:
                     print(f"Jobs are in progress. Run '{check_cmd}' for updates.")
                 ret = 0
             else:

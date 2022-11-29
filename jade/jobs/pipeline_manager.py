@@ -1,5 +1,6 @@
 """Manages the execution of a pipeline of JADE configurations."""
 
+from jade.jobs.job_configuration_factory import create_config_from_file
 import logging
 import os
 import shutil
@@ -200,10 +201,12 @@ class PipelineManager:
         if stage.auto_config_cmd is not None:
             self._run_auto_config(stage)
         output = self.get_stage_output_path(self.path, self.stage_num)
+        config = create_config_from_file(stage.config_file)
+        if not config.submission_groups:
+            config.assign_default_submission_group(stage.submitter_params)
         ret = JobSubmitter.run_submit_jobs(
-            stage.config_file,
+            config,
             output,
-            stage.submitter_params,
             pipeline_stage_num=self.stage_num,
         )
         if ret != 0:

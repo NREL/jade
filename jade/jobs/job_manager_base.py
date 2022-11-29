@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 
 from jade.jobs.cluster import Cluster
-from jade.common import JOBS_OUTPUT_DIR, JOBS_STDIO_DIR, RESULTS_DIR, STATS_DIR
+from jade.common import JOBS_OUTPUT_DIR, JOBS_STDIO_DIR, RESULTS_DIR, STATS_DIR, CONFIG_FILE
 from jade.jobs.job_configuration_factory import create_config_from_file
 
 
@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 class JobManagerBase(abc.ABC):
     """Base class for managing jobs."""
 
-    def __init__(self, config_file, output_dir):
-        self._config = create_config_from_file(config_file)
-        self._config_file = config_file
+    def __init__(self, config, output_dir):
+        self._config = config
+        self._config_file = Path(output_dir) / CONFIG_FILE
         self._output = output_dir
         self._jobs_output = os.path.join(self._output, JOBS_OUTPUT_DIR)
         self._jobs_stdio_dir = os.path.join(self._output, JOBS_STDIO_DIR)

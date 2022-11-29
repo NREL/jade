@@ -181,12 +181,8 @@ class JobConfiguration(abc.ABC):
         """
         return sorted(list(self._user_data.keys()))
 
-    def check_job_dependencies(self, submitter_params):
+    def check_job_dependencies(self):
         """Check for impossible conditions with job dependencies.
-
-        Parameters
-        ----------
-        submitter_params : SubmitterParams
 
         Raises
         ------
@@ -194,25 +190,27 @@ class JobConfiguration(abc.ABC):
             Raised if job dependencies have an impossible condition.
 
         """
-        requires_estimated_time = submitter_params.per_node_batch_size == 0
-
         # This currently only checks that all jobs defined as blocking exist.
         # It does not look for deadlocks.
 
         job_names = set()
         blocking_jobs = set()
-        missing_estimate = []
         for job in self.iter_jobs():
             job_names.add(job.name)
             blocking_jobs.update(job.get_blocking_jobs())
-            if requires_estimated_time and job.estimated_run_minutes is None:
-                missing_estimate.append(job.name)
 
         missing_jobs = blocking_jobs.difference(job_names)
         if missing_jobs:
             for job in missing_jobs:
                 logger.error("%s is blocking a job but does not exist", job)
             raise InvalidConfiguration("job ordering definitions are invalid")
+
+    def check_job_estimated_run_minutes(self, group_name):
+        """Check that estimated_run_minutes is set for all jobs in a group."""
+        missing_estimate = []
+        for job in self.iter_jobs():
+            if job.submission_group == group_name and job.estimated_run_minutes is None:
+                missing_estimate.append(job.name)
 
         if missing_estimate:
             for job in missing_estimate:
@@ -262,13 +260,9 @@ class JobConfiguration(abc.ABC):
                         group_name,
                     )
 
-    def check_submission_groups(self, submitter_params):
+    def check_submission_groups(self):
         """Check for invalid job submission group assignments.
         Make a default group if none are defined and assign it to each job.
-
-        Parameters
-        ----------
-        submitter_params : SubmitterParams
 
         Raises
         ------
@@ -276,12 +270,7 @@ class JobConfiguration(abc.ABC):
             Raised if submission group assignments are invalid.
 
         """
-        groups = self.submission_groups
-        if not groups:
-            self._assign_default_submission_group(submitter_params)
-            return
-
-        first_group = next(iter(groups))
+        first_group = next(iter(self.submission_groups))
         group_params = (
             "try_add_blocked_jobs",
             "time_based_batching",
@@ -307,7 +296,7 @@ class JobConfiguration(abc.ABC):
         assert sorted(list(fields)) == sorted(SubmitterParams.__fields__), sorted(list(fields))
         hpc_type = first_group.submitter_params.hpc_config.hpc_type
         group_names = set()
-        for group in groups:
+        for group in self.submission_groups:
             if group.name in group_names:
                 raise InvalidConfiguration(f"submission group {group.name} is listed twice")
             group_names.add(group.name)
@@ -319,10 +308,10 @@ class JobConfiguration(abc.ABC):
                 if this_val != first_val:
                     raise InvalidConfiguration(f"{param} must be the same in all groups")
             for param in user_overrides:
-                user_val = getattr(submitter_params, param)
+                user_val = getattr(group.submitter_params, param)
                 setattr(group.submitter_params, param, user_val)
             for param in user_override_if_not_set:
-                user_val = getattr(submitter_params, param)
+                user_val = getattr(group.submitter_params, param)
                 group_val = getattr(group.submitter_params, param)
                 if group_val is None:
                     setattr(group.submitter_params, param, user_val)
@@ -348,7 +337,7 @@ class JobConfiguration(abc.ABC):
         for name, count in sorted(group_counts.items()):
             logger.info("Submission group %s has %s jobs", name, count)
 
-    def _assign_default_submission_group(self, submitter_params):
+    def assign_default_submission_group(self, submitter_params):
         default_name = "default"
         group = SubmissionGroup(name=default_name, submitter_params=submitter_params)
         for job in self.iter_jobs():

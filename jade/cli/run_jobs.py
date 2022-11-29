@@ -1,5 +1,6 @@
 """CLI to start a SLURM cluster."""
 
+from jade.jobs.job_configuration_factory import create_config_from_file
 import logging
 import os
 import re
@@ -48,7 +49,8 @@ def run_jobs(config_file, distributed_submitter, output, num_parallel_processes_
     batch_id = match.group(1)
     os.makedirs(output, exist_ok=True)
 
-    mgr = JobRunner(config_file, output=output, batch_id=batch_id)
+    config = create_config_from_file(config_file)
+    mgr = JobRunner(config, output=output, batch_id=batch_id)
 
     # Logging has to get enabled after the JobRunner is created because we need the node ID
     # is what makes the file unique.

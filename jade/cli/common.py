@@ -339,6 +339,14 @@ def make_submitter_params(
                 stats[field] = False
         resource_monitor_stats = ResourceMonitorStats(**stats)
 
+    if resource_monitor_interval is not None:
+        if resource_monitor_interval < poll_interval:
+            logger.warning(
+                "resource_monitor_interval cannot be less than poll_interval. "
+                "Reducing poll_interval"
+            )
+            poll_interval = resource_monitor_interval
+
     if enable_singularity:
         singularity_params = SingularityParams(enabled=True, container=container)
     else:

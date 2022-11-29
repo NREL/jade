@@ -40,12 +40,10 @@ def test_job_configuration__check_job_dependencies_blocking(job_fixture):
         config.add_job(job_param)
     assert config.get_num_jobs() == 1
 
-    hpc_config = HpcConfig(**load_data(FAKE_HPC_CONFIG))
-    params = SubmitterParams(hpc_config=hpc_config)
     job = config.get_job("1")
     job.blocked_by.add("10")
     with pytest.raises(InvalidConfiguration):
-        config.check_job_dependencies(params)
+        config.check_job_dependencies()
 
     # While we have this setup, verify that submit-jobs calls this function.
     config.dump(CONFIG_FILE)
@@ -66,8 +64,9 @@ def test_job_configuration__check_job_dependencies_estimate(job_fixture):
 
     hpc_config = HpcConfig(**load_data(FAKE_HPC_CONFIG))
     params = SubmitterParams(hpc_config=hpc_config, per_node_batch_size=0)
+    config.assign_default_submission_group(params)
     with pytest.raises(InvalidConfiguration):
-        config.check_job_dependencies(params)
+        config.check_job_estimated_run_minutes("default")
 
 
 def test_job_configuration__shuffle_jobs(job_fixture):
