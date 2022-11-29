@@ -439,6 +439,13 @@ While jobs are running you can check status with this command:
 The status is updated when each compute node starts or completes its execution
 of a batch, so this status may not be current.
 
+Each job runner will log a message when it starts a job. Run this command to
+follow all job starts:
+
+.. code-block:: bash
+
+   $ tail -f $(ls output/run_jobs_batch_*.log | grep -v events) | grep "Started job"
+
 Each job runner will log completions to its own file, so you can see live job
 completions with this command. Note that these files are cleared each time a
 submitter processes them.

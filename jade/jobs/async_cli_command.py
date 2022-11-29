@@ -164,5 +164,6 @@ class AsyncCliCommand(AsyncJobInterface):
         self._stderr_fp = open(stderr_filename, "w")
         self._pipe = subprocess.Popen(cmd, env=env, stdout=self._stdout_fp, stderr=self._stderr_fp)
         self._is_pending = True
+        logger.info("Started job name=%s hpc_job_id=%s", self._job.name, self._hpc_job_id)
         logger.debug("Submitted %s", self._cli_cmd)
         return Status.GOOD
