@@ -23,12 +23,16 @@ WAIT = "jade wait"
 
 @pytest.fixture
 def cleanup():
+    def _cleanup():
+        for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT):
+            if os.path.isdir(path):
+                shutil.rmtree(path)
+            elif os.path.exists(path):
+                os.remove(path)
+
+    _cleanup()
     yield
-    for path in (TEST_FILENAME, CONFIG_FILE, OUTPUT):
-        if os.path.isdir(path):
-            shutil.rmtree(path)
-        elif os.path.exists(path):
-            os.remove(path)
+    _cleanup()
 
 
 def test_try_add_blocked_jobs(cleanup):
@@ -48,7 +52,7 @@ def test_try_add_blocked_jobs(cleanup):
     config.dump(CONFIG_FILE)
 
     for option in ("--try-add-blocked-jobs", "--no-try-add-blocked-jobs"):
-        cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} -h {FAKE_HPC_CONFIG} -p 0.1 {option}"
+        cmd = f"{SUBMIT_JOBS} {CONFIG_FILE} --output={OUTPUT} --force -h {FAKE_HPC_CONFIG} -p 0.1 {option}"
         ret = run_command(cmd)
         assert ret == 0
         ret = run_command(f"{WAIT} --output={OUTPUT} -p 0.1")

@@ -9,6 +9,7 @@ import click
 
 from jade.common import OUTPUT_DIR
 from jade.cli.common import COMMON_SUBMITTER_OPTIONS, add_options, make_submitter_params
+from jade.jobs.job_configuration_factory import create_config_from_file
 from jade.jobs.job_submitter import JobSubmitter
 from jade.loggers import setup_logging, setup_event_logging
 from jade.hpc.common import HpcType
@@ -78,7 +79,20 @@ def submit_jobs(
             )
             sys.exit(1)
 
-    if submitter_params is not None:
+    os.makedirs(output)
+    filename = os.path.join(output, "submit_jobs.log")
+    event_filename = os.path.join(output, "submit_jobs_events.log")
+    level = logging.DEBUG if verbose else logging.INFO
+    # For some reason event logging must be setup before general logging.
+    # Otherwise, the first event doesn't show up in the log.
+    setup_event_logging(event_filename, mode="a")
+    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
+    logger.info(get_cli_string())
+
+    config = create_config_from_file(config_file)
+    if config.submission_groups:
+        params = config.submission_groups[0].submitter_params
+    elif submitter_params is not None:
         params = SubmitterParams(**load_data(submitter_params))
     else:
         params = make_submitter_params(
@@ -103,33 +117,26 @@ def submit_jobs(
             no_distributed_submitter=no_distributed_submitter,
         )
 
-    if params.time_based_batching and params.num_parallel_processes_per_node is None:
-        print(
-            "Error: num_parallel_processes_per_node must be set with time-based batching",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+    if not config.submission_groups:
+        config.assign_default_submission_group(params)
 
-    os.makedirs(output)
-    filename = os.path.join(output, "submit_jobs.log")
-    event_filename = os.path.join(output, "submit_jobs_events.log")
-    level = logging.DEBUG if verbose else logging.INFO
-    # For some reason event logging must be setup before general logging.
-    # Otherwise, the first event doesn't show up in the log.
-    setup_event_logging(event_filename, mode="a")
-    logger = setup_logging(__name__, filename, file_level=level, console_level=level, mode="a")
-    logger.info(get_cli_string())
-
-    if params.resource_monitor_interval is not None:
-        if params.resource_monitor_interval < params.poll_interval:
-            logger.warning(
-                "resource_monitor_interval cannot be less than poll_interval. "
-                "Reducing poll_interval"
-            )
-            params.poll_interval = params.resource_monitor_interval
+    for group in config.submission_groups:
+        params = group.submitter_params
+        if params.resource_monitor_interval is not None:
+            if params.resource_monitor_interval < params.poll_interval:
+                logger.warning(
+                    "resource_monitor_interval cannot be less than poll_interval. "
+                    "Reducing poll_interval"
+                )
+                params.poll_interval = params.resource_monitor_interval
 
     try:
-        ret = JobSubmitter.run_submit_jobs(config_file, output, params)
+        ret = JobSubmitter.run_submit_jobs(
+            config,
+            output,
+            local=params.hpc_config.hpc_type == HpcType.LOCAL,
+            dry_run=params.dry_run,
+        )
         sys.exit(ret)
     except Exception:
         logger.exception("Failed to run submit_jobs")
