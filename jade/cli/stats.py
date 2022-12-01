@@ -178,7 +178,7 @@ def _show_summary_stats(stats, json_summary, json_files):
                 for batch, entries in by_type_and_batch[resource_type].items():
                     for entry in entries:
                         if stat_type == "Process":
-                            tag = entry["job_name"]
+                            tag = entry["name"]
                         else:
                             tag = batch
                         table = PrettyTable(title=f"{stat_type} {tag} summary")

@@ -268,7 +268,7 @@ class ResourceMonitorAggregator:
         for process_name, samples in self._process_sample_count.items():
             summary = {
                 "batch": self.name,
-                "job_name": process_name,
+                "name": process_name,
                 "samples": samples,
                 "type": ProcessStatsViewer.metric(),
             }
