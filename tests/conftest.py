@@ -27,9 +27,3 @@ def test_data_dir():
 @pytest.fixture
 def example_output():
     return os.path.join(os.path.dirname(__file__), "data", "example_output")
-
-
-@pytest.fixture
-def temporary_directory():
-    with tempfile.TemporaryDirectory() as tmpdir:
-        yield Path(tmpdir)

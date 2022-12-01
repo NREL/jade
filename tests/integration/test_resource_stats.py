@@ -6,16 +6,16 @@ from jade.utils.run_command import check_run_command
 SUBMIT_JOBS = "jade submit-jobs -f -l -m cpu -m memory -m process -m disk -m network"
 
 
-def test_resource_stats(temporary_directory):
-    script = temporary_directory / "sleep.sh"
+def test_resource_stats(tmp_path):
+    script = tmp_path / "sleep.sh"
     script.write_text("sleep 3\n")
-    commands_file = temporary_directory / "commands.txt"
+    commands_file = tmp_path / "commands.txt"
     commands_file.write_text(f"bash {script}\n")
-    config_file = temporary_directory / "config.json"
+    config_file = tmp_path / "config.json"
     check_run_command(f"jade config create {commands_file} -c {config_file}")
 
     for mode in ("aggregation", "periodic"):
-        output_dir = temporary_directory / "output-dir"
+        output_dir = tmp_path / "output-dir"
         cmd = f"{SUBMIT_JOBS} {config_file} -p 1 -R {mode} -r 1 -o {output_dir}"
         check_run_command(cmd)
         db_file = output_dir / "results.db"
