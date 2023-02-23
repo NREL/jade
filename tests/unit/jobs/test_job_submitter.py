@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 import pytest
 
@@ -24,9 +24,9 @@ def test_jobs_submitter__find_error_log_messages(example_output):
 def cleanup(example_output):
     def delete_files():
         for filename in ("errors.txt", "results.txt", "stats.txt"):
-            path = os.path.join(example_output, filename)
-            if os.path.exists(path):
-                os.remove(path)
+            path = Path(example_output) / filename
+            if path.exists():
+                path.unlink()
 
     delete_files()
     yield
@@ -37,5 +37,5 @@ def test_jobs_submitter__generate_reports(example_output, cleanup):
     ret = JobSubmitter.generate_reports(example_output, True)
     assert ret == 0
     for filename in ("errors.txt", "results.txt", "stats.txt"):
-        path = os.path.join(example_output, filename)
-        assert os.path.exists(path)
+        path = Path(example_output) / filename
+        assert path.exists()
