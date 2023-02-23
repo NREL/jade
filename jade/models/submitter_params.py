@@ -38,7 +38,7 @@ class ResourceMonitorStats(JadeBaseModel):
         default=True,
     )
     recurse_child_processes: bool = Field(
-        description="Recurse child processes to find all descendants..",
+        description="Recurse child processes to find all descendants.",
         default=False,
     )
 
