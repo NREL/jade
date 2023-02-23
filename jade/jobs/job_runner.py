@@ -95,16 +95,17 @@ class JobRunner(JobManagerBase):
             config_file = self._config.serialize_for_execution(scratch_dir, are_inputs_local)
             jobs = self._generate_jobs(config_file, verbose)
 
-            os.environ["JADE_RUNTIME_OUTPUT"] = self._output
-            os.environ["JADE_SUBMISSION_GROUP"] = self._config.get_default_submission_group().name
+            env = os.environ.copy()
+            env["JADE_RUNTIME_OUTPUT"] = self._output
+            env["JADE_SUBMISSION_GROUP"] = self._config.get_default_submission_group().name
             # Setting node_setup_script and node_shutdown_script are obsolete and will
             # eventually be deleted.
             group = self._config.get_default_submission_group()
             if group.submitter_params.node_setup_script is not None:
                 cmd = f"{group.submitter_params.node_setup_script} {config_file} {self._output}"
-                check_run_command(cmd)
+                check_run_command(cmd, env=env)
             elif self._config.node_setup_command is not None:
-                check_run_command(self._config.node_setup_command)
+                check_run_command(self._config.node_setup_command, env=env)
 
             result = self._run_jobs(
                 jobs, num_parallel_processes_per_node=num_parallel_processes_per_node
@@ -112,12 +113,12 @@ class JobRunner(JobManagerBase):
 
             if group.submitter_params.node_shutdown_script:
                 cmd = f"{group.submitter_params.node_shutdown_script} {config_file} {self._output}"
-                ret2 = run_command(cmd)
+                ret2 = run_command(cmd, env=env)
                 if ret2 != 0:
                     logger.error("Failed to run node shutdown script %s: %s", cmd, ret2)
             elif self._config.node_teardown_command is not None:
                 start = time.time()
-                ret2 = run_command(self._config.node_teardown_script)
+                ret2 = run_command(self._config.node_teardown_script, env=env)
                 if ret2 != 0:
                     logger.error(
                         "Failed to run node shutdown script %s: %s",
