@@ -96,7 +96,7 @@ class JobRunner(JobManagerBase):
             jobs = self._generate_jobs(config_file, verbose)
 
             env = os.environ.copy()
-            env["JADE_RUNTIME_OUTPUT"] = self._output
+            env["JADE_RUNTIME_OUTPUT"] = str(self._output)
             env["JADE_SUBMISSION_GROUP"] = self._config.get_default_submission_group().name
             # Setting node_setup_script and node_shutdown_script are obsolete and will
             # eventually be deleted.

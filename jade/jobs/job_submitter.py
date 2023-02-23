@@ -136,7 +136,7 @@ results_summary={self.get_results_summmary_report()}"""
 
             if self._config.setup_command is not None:
                 env = os.environ.copy()
-                env["JADE_RUNTIME_OUTPUT"] = self._output
+                env["JADE_RUNTIME_OUTPUT"] = str(self._output)
                 cmd = self._config.setup_command
                 logger.info("Running setup command: %s", cmd)
                 check_run_command(self._config.setup_command, env=env)
@@ -192,7 +192,7 @@ results_summary={self.get_results_summmary_report()}"""
 
         if self._config.teardown_command is not None:
             env = os.environ.copy()
-            env["JADE_RUNTIME_OUTPUT"] = self._output
+            env["JADE_RUNTIME_OUTPUT"] = str(self._output)
             cmd = self._config.teardown_command
             logger.info("Running teardown command: %s", cmd)
             start = time.time()
