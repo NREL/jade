@@ -157,6 +157,7 @@ class AsyncCliCommand(AsyncJobInterface):
         # Disable posix if on Windows.
         cmd = shlex.split(self._cli_cmd, posix="win" not in sys.platform)
         env = os.environ.copy()
+        env["JADE_RUNTIME_OUTPUT"] = str(self._output)
         env["JADE_JOB_NAME"] = self.name
         stdout_filename = self._output / JOBS_STDIO_DIR / f"{self._job.name}.o"
         stderr_filename = self._output / JOBS_STDIO_DIR / f"{self._job.name}.e"

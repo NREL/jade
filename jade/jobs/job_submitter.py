@@ -134,11 +134,12 @@ results_summary={self.get_results_summmary_report()}"""
             )
             log_event(event)
 
-            os.environ["JADE_RUNTIME_OUTPUT"] = self._output
             if self._config.setup_command is not None:
-                cmd = f"JADE_RUNTIME_OUTPUT={self._output} {self._config.setup_command}"
+                env = os.environ.copy()
+                env["JADE_RUNTIME_OUTPUT"] = str(self._output)
+                cmd = self._config.setup_command
                 logger.info("Running setup command: %s", cmd)
-                check_run_command(self._config.setup_command)
+                check_run_command(self._config.setup_command, env=env)
         else:
             self._handle_submission_groups()
 
@@ -190,10 +191,12 @@ results_summary={self.get_results_summmary_report()}"""
         self.write_results_summary(RESULTS_FILE, missing_jobs)
 
         if self._config.teardown_command is not None:
-            cmd = f"JADE_RUNTIME_OUTPUT={self._output} {self._config.teardown_command}"
+            env = os.environ.copy()
+            env["JADE_RUNTIME_OUTPUT"] = str(self._output)
+            cmd = self._config.teardown_command
             logger.info("Running teardown command: %s", cmd)
             start = time.time()
-            ret = run_command(self._config.teardown_command)
+            ret = run_command(self._config.teardown_command, env=env)
             if ret != 0:
                 logger.error("Failed to run teardown command: %s", ret)
             logger.info("Teardown command duration = %s seconds", time.time() - start)
@@ -383,7 +386,7 @@ results_summary={self.get_results_summmary_report()}"""
             output = {}
             ret = run_command(cmd[0], output=output)
             if ret != 0:
-                logger.error("Failed to run [%s]: %s: %s", cmd, ret, output["stderr"])
+                logger.error("Failed to run [%s]: %s: %s", cmd[0], ret, output["stderr"])
                 continue
 
             if cmd[1] is not None:

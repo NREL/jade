@@ -183,7 +183,7 @@ class ResourceMonitorAggregator:
             "sum": defaultdict(dict),
         }
         for resource_type, stat_dict in self._last_stats.items():
-            for stat_name, val in stat_dict.items():
+            for stat_name in stat_dict:
                 self._summaries["average"][resource_type][stat_name] = 0.0
                 self._summaries["maximum"][resource_type][stat_name] = 0.0
                 self._summaries["minimum"][resource_type][stat_name] = sys.maxsize
@@ -290,7 +290,6 @@ class ResourceMonitorAggregator:
         cur_stats = self._get_stats()
         for resource_type, stat_dict in self._last_stats.items():
             for stat_name, val in stat_dict.items():
-                val = cur_stats[resource_type][stat_name]
                 if val > self._summaries["maximum"][resource_type][stat_name]:
                     self._summaries["maximum"][resource_type][stat_name] = val
                 elif val < self._summaries["minimum"][resource_type][stat_name]:
@@ -592,8 +591,11 @@ class StatsViewerBase(abc.ABC):
         averages = avg_across_batches.transpose().mean().to_dict()
         table.field_names = list(averages.keys())
         row = [self.get_printable_value(k, v) for k, v in averages.items()]
-        table.add_row(row)
-        print(table)
+        if row:
+            table.add_row(row)
+            print(table)
+        else:
+            print("No events are stored")
         print("\n", end="")
 
     def show_stat_totals(self, stats_to_total):
@@ -843,6 +845,9 @@ class ProcessStatsViewer(StatsViewerBase):
         averages = avg_across_processes.transpose().mean().to_dict()
         table.field_names = list(averages.keys())
         row = [self.get_printable_value(k, v) for k, v in averages.items()]
-        table.add_row(row)
-        print(table)
+        if row:
+            table.add_row(row)
+            print(table)
+        else:
+            print("No events are stored")
         print("\n", end="")
