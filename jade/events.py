@@ -3,11 +3,9 @@ This module contains StructuredLogEvent and EventSummary classes.
 """
 
 from collections import defaultdict
-import copy
 import json
 import logging
 import os
-import re
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -15,12 +13,10 @@ from pathlib import Path
 import pandas as pd
 from prettytable import PrettyTable
 
-from jade.common import JOBS_OUTPUT_DIR
+from jade.common import JOBS_OUTPUT_DIR, EVENTS_DIR
 from jade.exceptions import InvalidConfiguration
 from jade.utils.utils import dump_data, load_data
 
-
-EVENT_DIR = "events"
 
 EVENTS_FILENAME = "events.json"
 
@@ -223,7 +219,7 @@ class EventsSummary:
         self._optimize_resource_stats = optimize_resoure_stats
         self._events = defaultdict(list)
         self._output_dir = output_dir
-        self._event_dir = Path(output_dir) / EVENT_DIR
+        self._event_dir = Path(output_dir) / EVENTS_DIR
         self._event_dir.mkdir(exist_ok=True)
         self._job_outputs_dir = os.path.join(output_dir, JOBS_OUTPUT_DIR)
         event_files = list(self._event_dir.iterdir())

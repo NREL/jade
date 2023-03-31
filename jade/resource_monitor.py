@@ -288,7 +288,7 @@ class ResourceMonitorAggregator:
     def update_resource_stats(self, ids=None):
         """Update resource stats information as structured job events for the current interval."""
         cur_stats = self._get_stats()
-        for resource_type, stat_dict in self._last_stats.items():
+        for resource_type, stat_dict in cur_stats.items():
             for stat_name, val in stat_dict.items():
                 if val > self._summaries["maximum"][resource_type][stat_name]:
                     self._summaries["maximum"][resource_type][stat_name] = val

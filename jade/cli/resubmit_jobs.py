@@ -7,7 +7,7 @@ from pathlib import Path
 
 import click
 
-from jade.common import CONFIG_FILE
+from jade.common import CONFIG_FILE, EVENTS_DIR
 from jade.enums import Status
 from jade.jobs.cluster import Cluster
 from jade.jobs.job_configuration_factory import create_config_from_file
@@ -111,6 +111,12 @@ def resubmit_jobs(output, failed, missing, successful, submission_groups_file, v
     updated_blocking_jobs_by_name = _update_with_blocking_jobs(jobs_to_resubmit, output)
     _reset_results(output, jobs_to_resubmit)
     cluster.prepare_for_resubmission(jobs_to_resubmit, updated_blocking_jobs_by_name)
+    events_dir = Path(output) / EVENTS_DIR
+    for path in list(events_dir.iterdir()):
+        # These files will get regenerated. It would be better to only generate events for new
+        # compute node batches, but the code in events.py doesn't support that.
+        # TODO
+        path.unlink()
 
     ret = 1
     try:

@@ -1,4 +1,4 @@
-"""CLI to run jobs."""
+"""CLI to collect and process resource stats."""
 
 import logging
 import os
