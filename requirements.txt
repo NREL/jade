@@ -6,7 +6,7 @@ plotly
 prettytable
 psutil
 pyarrow
-pydantic
+pydantic~=1.10.11
 requests
 tabulate
 toml>=0.10.0
