@@ -50,7 +50,7 @@ def test_read_dataframe__json():
         df1.to_json(temp.name, orient="index", date_unit="ns")
         df2 = read_dataframe(temp.name, orient="index", date_unit="ns")
         df2.index.name = "timestamp"
-        assert_frame_equal(df1, df2, check_less_precise=True)
+        assert_frame_equal(df1, df2)
 
 
 def test_read_dataframe__feather():
