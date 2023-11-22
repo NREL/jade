@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 
 from jade.utils.utils import load_data
 

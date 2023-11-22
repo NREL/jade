@@ -3,7 +3,7 @@
 import enum
 from typing import List, Optional, Set, Union
 
-from pydantic import Field
+from pydantic.v1 import Field
 
 from jade.models.base import JadeBaseModel
 

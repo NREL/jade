@@ -2,7 +2,7 @@
 
 import os
 
-from pydantic import ValidationError
+from pydantic.v1.error_wrappers import ValidationError
 import pytest
 
 from jade.common import OUTPUT_DIR

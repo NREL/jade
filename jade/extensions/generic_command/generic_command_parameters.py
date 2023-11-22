@@ -5,7 +5,7 @@ from collections import namedtuple
 from pathlib import Path
 from typing import Dict, List, Optional, Set
 
-from pydantic import Field, validator
+from pydantic.v1 import Field, validator
 
 from jade.models import JadeBaseModel
 from jade.models.spark import SparkConfigModel, SparkContainerModel

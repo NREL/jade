@@ -3,7 +3,7 @@
 import re
 from typing import Optional, Union, List
 
-from pydantic import Field, validator, root_validator, validator
+from pydantic.v1 import Field, validator, root_validator, validator
 
 from jade.hpc.common import HpcType
 from jade.models.base import JadeBaseModel

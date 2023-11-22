@@ -6,7 +6,7 @@ import sys
 
 import click
 
-import jade.version
+import jade
 from jade.cli.auto_config import auto_config
 from jade.cli.cancel_jobs import cancel_jobs
 from jade.cli.config import config
@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 
 def _show_version(_, __, version):
     if version:
-        print(f"JADE version {jade.version.__version__}")
+        print(f"JADE version {jade.__version__}")
         sys.exit(0)
     return version
 

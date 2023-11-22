@@ -16,7 +16,7 @@ import sys
 from dateutil.parser import parse
 
 import toml
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 
 from jade.exceptions import InvalidParameter
 from jade.utils.timing_utils import timed_debug

@@ -45,7 +45,7 @@ from jade.result import serialize_results, ResultsSummary
 from jade.utils.repository_info import RepositoryInfo
 from jade.utils.subprocess_manager import check_run_command, run_command
 from jade.utils.utils import dump_data, get_directory_size_bytes
-import jade.version
+import jade
 
 
 logger = logging.getLogger(__name__)
@@ -112,7 +112,7 @@ results_summary={self.get_results_summmary_report()}"""
         """
         if self._is_new:
             logger.info("Submit %s jobs for execution.", self._config.get_num_jobs())
-            logger.info("JADE version %s", jade.version.__version__)
+            logger.info("JADE version %s", jade.__version__)
             registry = Registry()
             loggers = registry.list_loggers()
             logger.debug("Registered modules for logging: %s", ", ".join(loggers))
@@ -243,7 +243,7 @@ results_summary={self.get_results_summmary_report()}"""
     def write_results_summary(self, filename, missing_jobs):
         """Write the results to filename in the output directory."""
         data = OrderedDict()
-        data["jade_version"] = jade.version.__version__
+        data["jade_version"] = jade.__version__
         now = datetime.datetime.now()
         data["timestamp"] = now.strftime("%m/%d/%Y %H:%M:%S")
         data["base_directory"] = os.getcwd()

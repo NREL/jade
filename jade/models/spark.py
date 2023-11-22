@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Dict, List, Set
 
-from pydantic import Field, root_validator
+from pydantic.v1 import Field, root_validator
 
 from jade.models import JadeBaseModel
 
