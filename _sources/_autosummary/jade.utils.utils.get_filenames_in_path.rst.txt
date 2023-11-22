@@ -1,0 +1,6 @@
+jade.utils.utils.get\_filenames\_in\_path
+=========================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: get_filenames_in_path

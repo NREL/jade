@@ -1,0 +1,31 @@
+jade.cli.run\_spark\_cluster
+============================
+
+.. automodule:: jade.cli.run_spark_cluster
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      run_cluster_master
+      run_worker
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

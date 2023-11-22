@@ -1,0 +1,6 @@
+jade.cli.common.proceed\_with\_user\_permission
+===============================================
+
+.. currentmodule:: jade.cli.common
+
+.. autofunction:: proceed_with_user_permission

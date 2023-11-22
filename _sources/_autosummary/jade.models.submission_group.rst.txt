@@ -1,0 +1,38 @@
+jade.models.submission\_group
+=============================
+
+.. automodule:: jade.models.submission_group
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      make_submission_group_lookup
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      SubmissionGroup
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+jade.cli.run\_spark\_cluster.run\_worker
+========================================
+
+.. currentmodule:: jade.cli.run_spark_cluster
+
+.. autofunction:: run_worker

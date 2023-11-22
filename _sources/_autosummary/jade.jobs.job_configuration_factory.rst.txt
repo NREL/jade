@@ -1,0 +1,33 @@
+jade.jobs.job\_configuration\_factory
+=====================================
+
+.. automodule:: jade.jobs.job_configuration_factory
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      create_config_from_file
+      create_config_from_previous_run
+      deserialize_config
+      upgrade_config_file
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

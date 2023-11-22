@@ -1,0 +1,23 @@
+jade.cli.cancel\_jobs
+=====================
+
+.. automodule:: jade.cli.cancel_jobs
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

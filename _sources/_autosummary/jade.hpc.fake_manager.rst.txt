@@ -1,0 +1,31 @@
+jade.hpc.fake\_manager
+======================
+
+.. automodule:: jade.hpc.fake_manager
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      FakeManager
+   
+   
+
+   
+   
+   
+
+
+

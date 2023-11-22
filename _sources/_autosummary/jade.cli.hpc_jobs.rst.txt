@@ -1,0 +1,30 @@
+jade.cli.hpc\_jobs
+==================
+
+.. automodule:: jade.cli.hpc_jobs
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_nrel_eagle_aus
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

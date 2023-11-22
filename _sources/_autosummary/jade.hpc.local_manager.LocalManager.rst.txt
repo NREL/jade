@@ -1,0 +1,46 @@
+jade.hpc.local\_manager.LocalManager
+====================================
+
+.. currentmodule:: jade.hpc.local_manager
+
+.. autoclass:: LocalManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LocalManager.am_i_manager
+      ~LocalManager.cancel_job
+      ~LocalManager.check_status
+      ~LocalManager.check_statuses
+      ~LocalManager.check_storage_configuration
+      ~LocalManager.create_cluster
+      ~LocalManager.create_local_cluster
+      ~LocalManager.create_submission_script
+      ~LocalManager.get_config
+      ~LocalManager.get_current_job_id
+      ~LocalManager.get_job_stats
+      ~LocalManager.get_local_scratch
+      ~LocalManager.get_node_id
+      ~LocalManager.get_num_cpus
+      ~LocalManager.list_active_nodes
+      ~LocalManager.log_environment_variables
+      ~LocalManager.submit
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LocalManager.USER
+   
+   

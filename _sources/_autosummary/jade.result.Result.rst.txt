@@ -1,0 +1,39 @@
+jade.result.Result
+==================
+
+.. currentmodule:: jade.result
+
+.. autoclass:: Result
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Result.count
+      ~Result.index
+      ~Result.is_canceled
+      ~Result.is_failed
+      ~Result.is_successful
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Result.completion_time
+      ~Result.exec_time_s
+      ~Result.hpc_job_id
+      ~Result.name
+      ~Result.return_code
+      ~Result.status
+   
+   

@@ -1,0 +1,6 @@
+jade.events.deserialize\_event
+==============================
+
+.. currentmodule:: jade.events
+
+.. autofunction:: deserialize_event

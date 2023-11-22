@@ -1,0 +1,45 @@
+jade.models.jobs.Job
+====================
+
+.. currentmodule:: jade.models.jobs
+
+.. autoclass:: Job
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Job.construct
+      ~Job.copy
+      ~Job.dict
+      ~Job.from_orm
+      ~Job.json
+      ~Job.load
+      ~Job.parse_file
+      ~Job.parse_obj
+      ~Job.parse_raw
+      ~Job.schema
+      ~Job.schema_json
+      ~Job.update_forward_refs
+      ~Job.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Job.name
+      ~Job.blocked_by
+      ~Job.cancel_on_blocking_job_failure
+      ~Job.state
+   
+   

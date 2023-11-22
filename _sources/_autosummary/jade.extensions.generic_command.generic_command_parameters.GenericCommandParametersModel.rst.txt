@@ -1,0 +1,56 @@
+jade.extensions.generic\_command.generic\_command\_parameters.GenericCommandParametersModel
+===========================================================================================
+
+.. currentmodule:: jade.extensions.generic_command.generic_command_parameters
+
+.. autoclass:: GenericCommandParametersModel
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GenericCommandParametersModel.construct
+      ~GenericCommandParametersModel.copy
+      ~GenericCommandParametersModel.dict
+      ~GenericCommandParametersModel.from_orm
+      ~GenericCommandParametersModel.handle_append_output_dir
+      ~GenericCommandParametersModel.handle_blocked_by
+      ~GenericCommandParametersModel.json
+      ~GenericCommandParametersModel.load
+      ~GenericCommandParametersModel.parse_file
+      ~GenericCommandParametersModel.parse_obj
+      ~GenericCommandParametersModel.parse_raw
+      ~GenericCommandParametersModel.schema
+      ~GenericCommandParametersModel.schema_json
+      ~GenericCommandParametersModel.update_forward_refs
+      ~GenericCommandParametersModel.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GenericCommandParametersModel.name
+      ~GenericCommandParametersModel.use_multi_node_manager
+      ~GenericCommandParametersModel.spark_config
+      ~GenericCommandParametersModel.command
+      ~GenericCommandParametersModel.blocked_by
+      ~GenericCommandParametersModel.cancel_on_blocking_job_failure
+      ~GenericCommandParametersModel.estimated_run_minutes
+      ~GenericCommandParametersModel.submission_group
+      ~GenericCommandParametersModel.append_job_name
+      ~GenericCommandParametersModel.append_output_dir
+      ~GenericCommandParametersModel.ext
+      ~GenericCommandParametersModel.job_id
+      ~GenericCommandParametersModel.extension
+   
+   

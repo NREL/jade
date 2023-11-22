@@ -1,0 +1,28 @@
+jade.hpc.common.HpcJobStatus
+============================
+
+.. currentmodule:: jade.hpc.common
+
+.. autoclass:: HpcJobStatus
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcJobStatus.UNKNOWN
+      ~HpcJobStatus.NONE
+      ~HpcJobStatus.QUEUED
+      ~HpcJobStatus.RUNNING
+      ~HpcJobStatus.COMPLETE
+   
+   

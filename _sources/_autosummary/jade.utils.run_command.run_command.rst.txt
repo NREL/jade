@@ -1,0 +1,6 @@
+jade.utils.run\_command.run\_command
+====================================
+
+.. currentmodule:: jade.utils.run_command
+
+.. autofunction:: run_command

@@ -1,0 +1,33 @@
+jade.loggers
+============
+
+.. automodule:: jade.loggers
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      close_event_logging
+      log_event
+      setup_event_logging
+      setup_logging
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,48 @@
+jade.hpc.fake\_manager.FakeManager
+==================================
+
+.. currentmodule:: jade.hpc.fake_manager
+
+.. autoclass:: FakeManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FakeManager.am_i_manager
+      ~FakeManager.cancel_job
+      ~FakeManager.check_status
+      ~FakeManager.check_statuses
+      ~FakeManager.check_storage_configuration
+      ~FakeManager.create_cluster
+      ~FakeManager.create_local_cluster
+      ~FakeManager.create_submission_script
+      ~FakeManager.get_config
+      ~FakeManager.get_current_job_id
+      ~FakeManager.get_job_stats
+      ~FakeManager.get_local_scratch
+      ~FakeManager.get_node_id
+      ~FakeManager.get_num_cpus
+      ~FakeManager.list_active_nodes
+      ~FakeManager.log_environment_variables
+      ~FakeManager.submit
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FakeManager.JOB_ID_FILE
+      ~FakeManager.LOCK_FILE
+      ~FakeManager.USER
+   
+   

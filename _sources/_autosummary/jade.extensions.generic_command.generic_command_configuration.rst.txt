@@ -1,0 +1,31 @@
+jade.extensions.generic\_command.generic\_command\_configuration
+================================================================
+
+.. automodule:: jade.extensions.generic_command.generic_command_configuration
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      GenericCommandConfiguration
+   
+   
+
+   
+   
+   
+
+
+

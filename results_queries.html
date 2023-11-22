@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Results Queries &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Frequently Asked Questions" href="faq.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Results Queries</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/results_queries.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="results-queries">
+<span id="id1"></span><h1>Results Queries<a class="headerlink" href="#results-queries" title="Link to this heading">¶</a></h1>
+<p>JADE stores job results, events, and summaries of resource utilization stats (if enabled) in a
+SQLite database at <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/results.db</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This feature was added in v0.9.4. If you ran your jobs with an earlier version,
+you can still generate this file with <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">db</span> <span class="pre">ingest-results</span> <span class="pre">&lt;output-dir&gt;</span></code></p>
+</div>
+<p>The information in the database is redundant with information in other files, such as
+<code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/results.txt</span></code>. However, using the database can make it easier to filter and join
+tables. For example, you may want to include job runtimes, HPC job IDs, and per-process CPU and
+memory stats in the same table.</p>
+<p>Below are some example queries. All examples assume that you start sqlite3 with this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>sqlite3<span class="w"> </span>-header<span class="w"> </span>-column<span class="w"> </span>&lt;output-dir&gt;/results.db
+</pre></div>
+</div>
+<section id="show-available-tables">
+<h2>Show available tables<a class="headerlink" href="#show-available-tables" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sqlite&gt;<span class="w"> </span>.tables
+</pre></div>
+</div>
+</section>
+<section id="view-job-results">
+<h2>View job results<a class="headerlink" href="#view-job-results" title="Link to this heading">¶</a></h2>
+<section id="show-all-results">
+<h3>Show all results<a class="headerlink" href="#show-all-results" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sqlite&gt;<span class="w"> </span>SELECT<span class="w"> </span>*<span class="w"> </span>FROM<span class="w"> </span>result<span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="show-only-failed-results">
+<h3>Show only failed results<a class="headerlink" href="#show-only-failed-results" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sqlite&gt;<span class="w"> </span>SELECT<span class="w"> </span>*<span class="w"> </span>FROM<span class="w"> </span>result<span class="w"> </span>WHERE<span class="w"> </span>return_code<span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="show-only-missing-timed-out-jobs">
+<h3>Show only missing/timed-out jobs<a class="headerlink" href="#show-only-missing-timed-out-jobs" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sqlite&gt;<span class="w"> </span>SELECT<span class="w"> </span>*<span class="w"> </span>FROM<span class="w"> </span>result<span class="w"> </span>WHERE<span class="w"> </span><span class="nv">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;missing&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="view-all-cpu-and-memory-usage-by-each-job">
+<h2>View all CPU and memory usage by each job<a class="headerlink" href="#view-all-cpu-and-memory-usage-by-each-job" title="Link to this heading">¶</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This requires that you enabled ‘process’ in ‘resource_monitor_stats’ in the submission
+parameters.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sqlite&gt;<span class="w"> </span>SELECT<span class="w"> </span>*<span class="w"> </span>from<span class="w"> </span>process<span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="view-maximum-cpu-and-memory-usage-by-each-job">
+<h2>View maximum CPU and memory usage by each job<a class="headerlink" href="#view-maximum-cpu-and-memory-usage-by-each-job" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sqlite&gt;<span class="w"> </span>SELECT
+<span class="w">    </span>name
+<span class="w">    </span>,cpu_percent<span class="w"> </span>AS<span class="w"> </span>max_cpu_percent
+<span class="w">    </span>,rss<span class="w"> </span>/<span class="w"> </span><span class="o">(</span><span class="m">1024</span>*1024*1024<span class="o">)</span><span class="w"> </span>AS<span class="w"> </span>max_mem_gb
+<span class="w">    </span>FROM<span class="w"> </span>process
+<span class="w">    </span>WHERE<span class="w"> </span><span class="nv">stat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;maximum&#39;</span>
+<span class="w">    </span>ORDER<span class="w"> </span>BY<span class="w"> </span>name<span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">
+<h2>View successful job runtimes in hours along with per-job resource utilization<a class="headerlink" href="#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sqlite&gt;<span class="w"> </span>SELECT
+<span class="w">    </span>result.name
+<span class="w">    </span>,exec_time_s<span class="w"> </span>/<span class="w"> </span><span class="o">(</span><span class="m">60</span>*60<span class="o">)</span><span class="w"> </span>AS<span class="w"> </span>exec_time_h
+<span class="w">    </span>,hpc_job_id
+<span class="w">    </span>,process.cpu_percent<span class="w"> </span>AS<span class="w"> </span>max_cpu_percent
+<span class="w">    </span>,process.rss<span class="w"> </span>/<span class="w"> </span><span class="o">(</span><span class="m">1024</span>*1024*1024<span class="o">)</span><span class="w"> </span>AS<span class="w"> </span>max_mem_gb
+<span class="w">    </span>,bytes_consumed.bytes_consumed
+<span class="w">    </span>FROM<span class="w"> </span>result
+<span class="w">    </span>JOIN<span class="w"> </span>process
+<span class="w">    </span>ON<span class="w"> </span>result.name<span class="w"> </span><span class="o">=</span><span class="w"> </span>process.name
+<span class="w">    </span>JOIN<span class="w"> </span>bytes_consumed
+<span class="w">    </span>ON<span class="w"> </span>result.name<span class="w"> </span><span class="o">=</span><span class="w"> </span>bytes_consumed.source
+<span class="w">    </span>WHERE
+<span class="w">        </span>result.return_code<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span>
+<span class="w">        </span>AND<span class="w"> </span>process.stat<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;maximum&#39;</span>
+<span class="w">    </span>ORDER<span class="w"> </span>BY<span class="w"> </span>result.name<span class="p">;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">bytes_consumed</span></code> is only valid if you configure your jobs to use the JADE runtime
+output directory.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="Frequently Asked Questions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

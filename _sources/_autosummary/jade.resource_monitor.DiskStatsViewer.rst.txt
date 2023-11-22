@@ -1,0 +1,31 @@
+jade.resource\_monitor.DiskStatsViewer
+======================================
+
+.. currentmodule:: jade.resource_monitor
+
+.. autoclass:: DiskStatsViewer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DiskStatsViewer.get_dataframe
+      ~DiskStatsViewer.get_printable_value
+      ~DiskStatsViewer.get_stats_summary
+      ~DiskStatsViewer.iter_batch_names
+      ~DiskStatsViewer.metric
+      ~DiskStatsViewer.plot_to_file
+      ~DiskStatsViewer.show_stat_totals
+      ~DiskStatsViewer.show_stats
+   
+   
+
+   
+   
+   

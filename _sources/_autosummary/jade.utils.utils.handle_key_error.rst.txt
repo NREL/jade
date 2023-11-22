@@ -1,0 +1,6 @@
+jade.utils.utils.handle\_key\_error
+===================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: handle_key_error

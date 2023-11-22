@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Results Queries" href="results_queries.html" />
+    <link rel="prev" title="Quick Start Guide" href="quickstart.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tutorial</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/tutorial.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading">¶</a></h1>
+<p>This page describes how to use the JADE package to create, modify, and run
+jobs locally or on an HPC.</p>
+<section id="cli-commands">
+<h2>CLI Commands<a class="headerlink" href="#cli-commands" title="Link to this heading">¶</a></h2>
+<p>All CLI commands documented in this page have a hierarchical nature. There are
+group commands followed by subcommands. You can enter <code class="docutils literal notranslate"><span class="pre">--help</span></code> at any level.
+For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>--help
+$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>--help
+$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>hpc<span class="w"> </span>--help
+</pre></div>
+</div>
+</section>
+<section id="hpc-configuration">
+<h2>HPC Configuration<a class="headerlink" href="#hpc-configuration" title="Link to this heading">¶</a></h2>
+<p>This section only applies if you run your jobs on an HPC.</p>
+<p>Change to a directory on the shared filesystem (such as /scratch on Eagle).
+JADE uses the filesystem for internal synchronization.</p>
+<section id="hpc-parameters">
+<h3>HPC Parameters<a class="headerlink" href="#hpc-parameters" title="Link to this heading">¶</a></h3>
+<p>You must define your HPC configuration in a settings file. Run this command
+customized to your parameters.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>hpc<span class="w"> </span>-a<span class="w"> </span>my-project<span class="w"> </span>-p<span class="w"> </span>short<span class="w"> </span>-t<span class="w"> </span>slurm<span class="w"> </span>-w<span class="w"> </span><span class="s2">&quot;4:00:00&quot;</span><span class="w"> </span>-c<span class="w"> </span>hpc.toml
+Created<span class="w"> </span>HPC<span class="w"> </span>config<span class="w"> </span>file<span class="w"> </span>hpc_config.toml
+</pre></div>
+</div>
+<p>All parameters have defaults, and so you can run <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">config</span> <span class="pre">hpc</span></code> and then
+edit the file afterwards.</p>
+<p>The following parameters are optional when running on NREL’s HPC (Eagle):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">partition</span></code>: If not specified then the HPC will decide the partition based
+on the wall time value (recommended unless you are using the <code class="docutils literal notranslate"><span class="pre">debug</span></code>
+partition).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mem</span></code>: If specified then the HPC will only
+provide nodes that have at least this amount of memory.  Refer to the HPC
+documentation for supported formats. On Eagle: “80GB”, “150GB”.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tmp</span></code>: If specified then the HPC will only provide nodes that have at least this
+amount of storage space as scratch space. Refer to the HPC documentation for
+supported formats. On Eagle: “500GB”, “2TB”.</p></li>
+</ul>
+<p>JADE was primarily designed to maximize use of compute node CPUs when running
+jobs that only require a single node. Given that objective, the default value
+of <code class="docutils literal notranslate"><span class="pre">nodes</span></code> is <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+<p>JADE also supports setting <code class="docutils literal notranslate"><span class="pre">nodes</span></code>, <code class="docutils literal notranslate"><span class="pre">ntasks</span></code>, and <code class="docutils literal notranslate"><span class="pre">ntasks_per_node</span></code> to
+allow users to run multi-node jobs. Refer to the HPC documentation and ensure
+each job is compatible with the settings. Note that each job will be run on
+every node simultaneously.</p>
+<p>Refer to <a class="reference internal" href="submission_strategies.html#multi-node-job-strategy"><span class="std std-ref">Jobs that require multiple nodes</span></a> for an example of how to use JADE’s
+multi-node feature.</p>
+<p>Refer to <a class="reference internal" href="data_models.html#model-slurm-config"><span class="std std-ref">SlurmConfig</span></a> for a full list of parameters available
+on NREL’s Eagle HPC with SLURM.</p>
+<p>JADE will name each HPC job with this format: <code class="docutils literal notranslate"><span class="pre">&lt;job_prefix&gt;_batch_N</span></code> where
+<code class="docutils literal notranslate"><span class="pre">job_prefix</span></code> is defined in <code class="docutils literal notranslate"><span class="pre">hpc_config.toml</span></code> and <code class="docutils literal notranslate"><span class="pre">N</span></code> is each batch index.
+Customize <code class="docutils literal notranslate"><span class="pre">job_prefix</span></code> if you will be running multiple JADE batches and want
+to be able to distinguish them.</p>
+</section>
+<section id="submission-groups">
+<h3>Submission Groups<a class="headerlink" href="#submission-groups" title="Link to this heading">¶</a></h3>
+<p>If you need different parameters for different jobs then you can separately
+define submission groups in the configuration. Refer to
+<a class="reference internal" href="submission_strategies.html#submission-group-strategy"><span class="std std-ref">Jobs that require different submission parameters</span></a> for more information.</p>
+</section>
+<section id="lustre-filesystem">
+<h3>Lustre Filesystem<a class="headerlink" href="#lustre-filesystem" title="Link to this heading">¶</a></h3>
+<p>If you are running on a Lustre filesystem then you should consider whether to
+configure the Lustre stripe count. This can be beneficial if the the files you
+create will be large or if many clients will be accessing them concurrently.</p>
+<p>References:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="http://wiki.lustre.org/Configuring_Lustre_File_Striping">http://wiki.lustre.org/Configuring_Lustre_File_Striping</a></p></li>
+<li><p><a class="reference external" href="https://www.nics.tennessee.edu/computing-resources/file-systems/lustre-striping-guide">https://www.nics.tennessee.edu/computing-resources/file-systems/lustre-striping-guide</a></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This example Lustre filesystem command will only work if the directory is
+empty.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>lfs<span class="w"> </span>setstripe<span class="w"> </span>-c<span class="w"> </span><span class="m">16</span><span class="w"> </span>&lt;run-directory&gt;
+</pre></div>
+</div>
+</section>
+</section>
+<section id="configure-jobs">
+<h2>Configure Jobs<a class="headerlink" href="#configure-jobs" title="Link to this heading">¶</a></h2>
+<p>Create a text file with a list of commands, one per line.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>commands.txt
+bash<span class="w"> </span>my_script.sh<span class="w"> </span>ARG1
+bash<span class="w"> </span>my_script.sh<span class="w"> </span>ARG2
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Commands are not run through a shell, so you cannot use special
+shell characters. You can workaround this by putting your command in a
+shell script.</p>
+</div>
+<section id="job-commands">
+<h3>Job Commands<a class="headerlink" href="#job-commands" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>create<span class="w"> </span>commands.txt<span class="w"> </span>-c<span class="w"> </span>config.json
+Created<span class="w"> </span>configuration<span class="w"> </span>with<span class="w"> </span><span class="m">2</span><span class="w"> </span>jobs.
+Dumped<span class="w"> </span>configuration<span class="w"> </span>to<span class="w"> </span>config.json.
+</pre></div>
+</div>
+<p>JADE created <code class="docutils literal notranslate"><span class="pre">config.json</span></code> with one definition per job. You can edit this
+file to customize execution behavior.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can assign custom job names. This can make it easier to inspect results.</p>
+</div>
+<p>Refer to <a class="reference internal" href="job_configuration.html#model-generic-command-parameters"><span class="std std-ref">GenericCommandParameters</span></a> for a full list of
+configurable parameters.</p>
+</section>
+<section id="add-blocking-jobs">
+<h3>Add blocking jobs<a class="headerlink" href="#add-blocking-jobs" title="Link to this heading">¶</a></h3>
+<p>A common use case is to include a post-processing job as the last job, and then make all
+other jobs blocked by it. Here is one way to do that. This assumes that there are 5 jobs
+and the last job is the post-processing job.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Job indexes are 0-based.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>assign-blocked-by<span class="w"> </span>config.json<span class="w"> </span><span class="m">4</span><span class="w"> </span>-o<span class="w"> </span>new-config.json
+
+<span class="c1"># These alternatives are identical.</span>
+$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>assign-blocked-by<span class="w"> </span>config.json<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="o">{</span><span class="m">0</span>..3<span class="o">}</span><span class="w"> </span>-o<span class="w"> </span>new-config.json
+$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>assign-blocked-by<span class="w"> </span>config.json<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="m">3</span><span class="w"> </span>-o<span class="w"> </span>new-config.json
+</pre></div>
+</div>
+<p>Tip: Use this command to see the job indexes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>show<span class="w"> </span>config.json
+</pre></div>
+</div>
+</section>
+<section id="create-a-config-programmatically">
+<h3>Create a config programmatically<a class="headerlink" href="#create-a-config-programmatically" title="Link to this heading">¶</a></h3>
+<p>If you are setting many custom parameters, it may be more convenient to create the
+JADE configuration programmatically. An example is below. This will make the following customizations:</p>
+<ul class="simple">
+<li><p>Make a final post-processing job dependent on the other jobs.</p></li>
+<li><p>Set a custom name for each job.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jade.extensions.generic_command</span> <span class="kn">import</span> <span class="n">GenericCommandConfiguration</span><span class="p">,</span> <span class="n">GenericCommandParameters</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">GenericCommandConfiguration</span><span class="p">()</span>
+<span class="n">base_cmd</span> <span class="o">=</span> <span class="s2">&quot;bash my_script.sh&quot;</span>
+<span class="n">regular_job_names</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">):</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">base_cmd</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;job_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">job</span> <span class="o">=</span> <span class="n">GenericCommandParameters</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="n">cmd</span><span class="p">,</span>
+        <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">add_job</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+    <span class="n">regular_job_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="n">post_process_job</span> <span class="o">=</span> <span class="n">GenericCommandParameters</span><span class="p">(</span>
+    <span class="n">command</span><span class="o">=</span><span class="s2">&quot;bash run_post_process.sh&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;post_process&quot;</span><span class="p">,</span>
+    <span class="n">blocked_by</span><span class="o">=</span><span class="n">regular_job_names</span><span class="p">,</span>
+    <span class="n">cancel_on_blocking_job_failure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">config</span><span class="o">.</span><span class="n">add_job</span><span class="p">(</span><span class="n">post_process_job</span><span class="p">)</span>
+<span class="n">config_file</span> <span class="o">=</span> <span class="s2">&quot;config.json&quot;</span>
+<span class="n">config</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here is the result:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ jade config show config.json
+Num jobs: 4
++-------+--------------+--------------------------+------------------------+
+| index |     name     |         command          | blocked_by (job names) |
++-------+--------------+--------------------------+------------------------+
+|   0   |    job_1     |   bash my_script.sh 1    |                        |
+|   1   |    job_2     |   bash my_script.sh 2    |                        |
+|   2   |    job_3     |   bash my_script.sh 3    |                        |
+|   3   | post_process | bash run_post_process.sh |  job_1, job_2, job_3   |
++-------+--------------+--------------------------+------------------------+
+</pre></div>
+</div>
+</section>
+<section id="job-ordering">
+<h3>Job Ordering<a class="headerlink" href="#job-ordering" title="Link to this heading">¶</a></h3>
+<p>Each job defines a <code class="docutils literal notranslate"><span class="pre">blocked_by</span></code> field. If you want to guarantee that job ID
+2 doesn’t run until job ID 1 completes then add that ID to the field.</p>
+<p>If a job that is blocking another job fails then JADE will still run the
+blocked job by default. This may not be what you want. You can optionally set
+<code class="docutils literal notranslate"><span class="pre">cancel_on_blocking_job_failure</span></code> to cause those blocked jobs to be canceled.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;job_cli_command1&gt;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;blocked_by&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">},</span>
+<span class="p">{</span>
+  <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;job_cli_command2&gt;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="s2">&quot;blocked_by&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">},</span>
+<span class="p">{</span>
+  <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;job_cli_command3&gt;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+  <span class="s2">&quot;blocked_by&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+  <span class="s2">&quot;cancel_on_blocking_job_failure&quot;</span><span class="p">:</span> <span class="n">false</span>
+<span class="p">},</span>
+<span class="p">{</span>
+  <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;job_cli_command4&gt;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+  <span class="s2">&quot;blocked_by&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+  <span class="s2">&quot;cancel_on_blocking_job_failure&quot;</span><span class="p">:</span> <span class="n">true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="show-job-summary">
+<h3>Show Job Summary<a class="headerlink" href="#show-job-summary" title="Link to this heading">¶</a></h3>
+<p>In order to view a summary of your jobs in a table:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>show<span class="w"> </span>config.json
+
+Num<span class="w"> </span>jobs:<span class="w"> </span><span class="m">4</span>
++-------+------+----------------+---------------------------+
+<span class="p">|</span><span class="w"> </span>index<span class="w"> </span><span class="p">|</span><span class="w"> </span>name<span class="w"> </span><span class="p">|</span><span class="w">    </span><span class="nb">command</span><span class="w">     </span><span class="p">|</span><span class="w">   </span>blocked_by<span class="w"> </span><span class="o">(</span>job<span class="w"> </span>names<span class="o">)</span><span class="w">  </span><span class="p">|</span>
++-------+------+----------------+---------------------------+
+<span class="p">|</span><span class="w">   </span><span class="m">0</span><span class="w">   </span><span class="p">|</span><span class="w">  </span><span class="m">1</span><span class="w">   </span><span class="p">|</span><span class="w"> </span>julia<span class="w"> </span>run.jl<span class="w"> </span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w">                           </span><span class="p">|</span>
+<span class="p">|</span><span class="w">   </span><span class="m">1</span><span class="w">   </span><span class="p">|</span><span class="w">  </span><span class="m">2</span><span class="w">   </span><span class="p">|</span><span class="w"> </span>julia<span class="w"> </span>run.jl<span class="w"> </span><span class="m">2</span><span class="w"> </span><span class="p">|</span><span class="w">            </span><span class="m">1</span><span class="w">              </span><span class="p">|</span>
+<span class="p">|</span><span class="w">   </span><span class="m">2</span><span class="w">   </span><span class="p">|</span><span class="w">  </span><span class="m">3</span><span class="w">   </span><span class="p">|</span><span class="w"> </span>julia<span class="w"> </span>run.jl<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="p">|</span><span class="w">            </span><span class="m">1</span><span class="w">              </span><span class="p">|</span>
+<span class="p">|</span><span class="w">   </span><span class="m">3</span><span class="w">   </span><span class="p">|</span><span class="w">  </span><span class="m">4</span><span class="w">   </span><span class="p">|</span><span class="w"> </span>julia<span class="w"> </span>run.jl<span class="w"> </span><span class="m">4</span><span class="w"> </span><span class="p">|</span><span class="w">           </span><span class="m">2</span>,<span class="w"> </span><span class="m">3</span><span class="w">            </span><span class="p">|</span>
++-------+------+----------------+---------------------------+
+</pre></div>
+</div>
+</section>
+</section>
+<section id="cli-execution">
+<h2>CLI Execution<a class="headerlink" href="#cli-execution" title="Link to this heading">¶</a></h2>
+<p>Jade provides a CLI utility to start jobs.</p>
+<section id="submit-jobs">
+<h3>submit-jobs<a class="headerlink" href="#submit-jobs" title="Link to this heading">¶</a></h3>
+<p>Start execution of jobs defined in a configuration file.  If executed on HPC
+this will submit the jobs to the HPC queue. Otherwise, it will run the jobs
+locally.</p>
+<p>It’s important to understand how JADE submits HPC jobs in order to optimize
+your performance.  JADE divides the jobs created by the user into batches.  It
+makes one HPC node submission for each batch. Once running on a node it runs in
+parallel a number of worker processes equal to the number of CPUs on that node
+(36 on Eagle).</p>
+<p>Parameters to keep in mind:</p>
+<ul class="simple">
+<li><p><strong>Number of jobs</strong>: Number of jobs created by the user.</p></li>
+<li><p><strong>Max nodes</strong>: Max number of job submissions (batches) to run in parallel.
+Default is unbounded.</p></li>
+<li><p><strong>Per-node batch size</strong>: Number of jobs to run on one node in one batch.</p></li>
+<li><p><strong>Allocation time</strong>: How long it takes to acquire a node. Dependent on the
+HPC queue chosen and the priority given.</p></li>
+<li><p><strong>Average job runtime</strong>: How long it takes a job to complete.</p></li>
+<li><p><strong>HPC config file</strong>: Customized HPC parameters like walltime and partition</p></li>
+<li><p><strong>Time-based batching</strong>: If jobs have variable runtimes then it is better to
+define those runtimes in the config file and then use the
+<code class="docutils literal notranslate"><span class="pre">--time-based-batching</span></code> flag to let JADE create variable-sized batches.
+Mutually exclusive with –per-node-batch-size.</p></li>
+</ul>
+<p>If the jobs have a short duration and it takes a long time to acquire a
+node then you may want to maximize the value of per_node_batch_size. Conversely,
+if the time to acquire a node is short then you can lower per_node_batch_size in
+order to run on more nodes in parallel.</p>
+<p>Refer to <a class="reference internal" href="submission_strategies.html#submission-strategies"><span class="std std-ref">Job Submission Strategies</span></a> for a description of how to handle
+specific use cases.</p>
+<p>Note that you can set different parameters for different batches if you define
+submission groups. Refer to <a class="reference internal" href="submission_strategies.html#submission-group-strategy"><span class="std std-ref">Jobs that require different submission parameters</span></a> for more
+information.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can enable <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> to check how the batches will be created
+without actually submitting any jobs.</p>
+</div>
+<p>Examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Use defaults.
+$ jade submit-jobs config.json
+
+# Specify options.
+$ jade submit-jobs config.json \
+    --output=output \
+    --per-node-batch-size=500 \
+    --hpc-config=hpc_config.toml
+</pre></div>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span> <span class="pre">--help</span></code> to see all command options and defaults.</p>
+<p>To aid with repeated runs you can pass these parameters in a config file.
+Generate the defaults with</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>submitter-params
+
+Created<span class="w"> </span>submitter<span class="w"> </span>parameter<span class="w"> </span>file<span class="w"> </span>submitter_params.toml
+</pre></div>
+</div>
+<p>And then pass this file to <code class="docutils literal notranslate"><span class="pre">submit-jobs</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json<span class="w"> </span>-s<span class="w"> </span>submitter_params.toml
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>By default HPC nodes are requested at normal priority. Set qos=high in
+hpc_config.toml to get faster allocations at twice the cost.</p>
+</div>
+</section>
+<section id="output-directory">
+<h3>Output Directory<a class="headerlink" href="#output-directory" title="Link to this heading">¶</a></h3>
+<p>JADE stores all of its configuration information and log files in the output
+directory specified by the <code class="docutils literal notranslate"><span class="pre">submit-jobs</span></code> command. JADE makes this directory
+available to jobs in the environment variable <code class="docutils literal notranslate"><span class="pre">JADE_RUNTIME_OUTPUT</span></code>. JADE
+also makes each job name available in the environment variable
+<code class="docutils literal notranslate"><span class="pre">JADE_JOB_NAME</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Job names are either job_id cast as a string or the optional name field in config.json.</p>
+</div>
+<p>This enables you to collect all job output files in a common location. JADE
+automatically creates <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/job-outputs</span></code> for this purpose.</p>
+<p>Your job can store its output files in <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/job-outputs/&lt;job-name&gt;</span></code></p>
+<p>Suppose your actual job command accepts a parameter for an output directory like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>run_my_simulation<span class="w"> </span>-o<span class="w"> </span>my-output-folder<span class="w"> </span>--arg1<span class="w"> </span>X<span class="w"> </span>--arg2<span class="w"> </span>Y
+</pre></div>
+</div>
+<p>Here is an example JADE wrapper script that forwards the runtime directory to your
+program. It will also forward the rest of the arguments.</p>
+<blockquote>
+<div><p>#!/bin/bash
+run_my_simulation -o $JADE_RUNTIME_OUTPUT/job-outputs/$JADE_JOB_NAME $&#64;</p>
+</div></blockquote>
+<p>The command given to JADE would be <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">jade_wrapper.sh</span> <span class="pre">--arg1</span> <span class="pre">X</span> <span class="pre">--arg2</span> <span class="pre">Y</span></code>.</p>
+</section>
+<section id="setup-and-teardown-scripts">
+<h3>Setup and teardown scripts<a class="headerlink" href="#setup-and-teardown-scripts" title="Link to this heading">¶</a></h3>
+<p>JADE supports the ability to run a setup script before running any jobs as well as a teardown
+script after all jobs finish. Define the parameters <code class="docutils literal notranslate"><span class="pre">setup_command</span></code> and <code class="docutils literal notranslate"><span class="pre">teardown_command</span></code>
+in <code class="docutils literal notranslate"><span class="pre">config.json</span></code>.</p>
+<p>JADE will run the <code class="docutils literal notranslate"><span class="pre">setup_command</span></code> on the node where you run <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code>, so be
+careful if this task will consume lots of computing resources. You may want to submit from
+a debug node instead of a login node.</p>
+<p>JADE will run the <code class="docutils literal notranslate"><span class="pre">teardown_command</span></code> on the last node to finish its jobs. It will run the
+command regardless of whether jobs pass or fail. Be sure to account for impacts to the
+per-node walltime timeout.</p>
+<p>The following environment variable is available when these scripts are executed:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">JADE_RUNTIME_OUTPUT</span></code>: output directory passed to <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code></p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">resubmit-jobs</span></code> Jade will not rerun the setup command. It will re-run the teardown command.</p>
+</div>
+<p>Note that the output directory contains a copy of <code class="docutils literal notranslate"><span class="pre">config.json</span></code> in case you need to access
+information from it.</p>
+<p>When running on an HPC you might want to copy input files to each compute node
+before running jobs and then upload output data afterwards. Define the parameters
+<code class="docutils literal notranslate"><span class="pre">node_setup_command</span></code> and <code class="docutils literal notranslate"><span class="pre">node_teardown_command</span></code> in <code class="docutils literal notranslate"><span class="pre">config.json</span></code>. JADE will run those
+commands before and after running each node’s batch of jobs.</p>
+<p>Note that the following environment variables are available when these scripts are executed:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">JADE_RUNTIME_OUTPUT</span></code>: This is the output directory passed to <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">JADE_SUBMISSION_GROUP</span></code>: This is the name of the submission group for the node.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can also set these parameters programmatically when constructing <code class="docutils literal notranslate"><span class="pre">GenericCommandConfiguration</span></code>.</p>
+</div>
+</section>
+<section id="example-configurations">
+<h3>Example configurations<a class="headerlink" href="#example-configurations" title="Link to this heading">¶</a></h3>
+<p>Check out <a class="reference external" href="https://github.com/NREL/jade/tree/main/examples">https://github.com/NREL/jade/tree/main/examples</a> for examples using features discussed
+above.</p>
+</section>
+</section>
+<section id="job-execution">
+<h2>Job Execution<a class="headerlink" href="#job-execution" title="Link to this heading">¶</a></h2>
+<section id="hpc">
+<h3>HPC<a class="headerlink" href="#hpc" title="Link to this heading">¶</a></h3>
+<p>The job submitter runs in a distributed fashion across the login node and all
+compute nodes that get allocated.</p>
+<ol class="arabic simple">
+<li><p>User initiates execution by running <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code> on the login node.</p></li>
+<li><p>JADE submits as many batches as possible and then exits. Jobs can be blocked
+by ordering requirements or the user-specified max-node limit.</p></li>
+<li><p>HPC queueing system allocates a compute node for a batch of jobs and starts
+the JADE job runner process.</p></li>
+<li><p>Both before and after running a batch of jobs the job runner will run
+<code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">try-submit-jobs</span></code>. If it finds newly-unblocked jobs then it will
+submit them in a new batch. This will occur on every allocated compute node.</p></li>
+<li><p>When a submitter detects that all jobs are complete it will summarize
+results and mark the configuration as complete.</p></li>
+</ol>
+<p>The JADE processes synchronize their activity with status files and a file lock
+in the output directory.</p>
+<p>Refer to <a class="reference internal" href="distributed_submission.html#distributed-submission-workflow"><span class="std std-ref">Distributed Submission Workflow</span></a> for a diagram of this process.</p>
+</section>
+<section id="local">
+<h3>Local<a class="headerlink" href="#local" title="Link to this heading">¶</a></h3>
+<p>JADE runs all jobs at the specified queue depth until they all complete.</p>
+</section>
+</section>
+<section id="job-status">
+<h2>Job Status<a class="headerlink" href="#job-status" title="Link to this heading">¶</a></h2>
+<p>While jobs are running you can check status with this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>show-status<span class="w"> </span>-o<span class="w"> </span>output
+</pre></div>
+</div>
+<p>The status is updated when each compute node starts or completes its execution
+of a batch, so this status may not be current.</p>
+<p>Each job runner will log a message when it starts a job. Run this command to
+follow all job starts:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span><span class="k">$(</span>ls<span class="w"> </span>output/run_jobs_batch_*.log<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-v<span class="w"> </span>events<span class="k">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;Started job&quot;</span>
+</pre></div>
+</div>
+<p>Each job runner will log completions to its own file, so you can see live job
+completions with this command. Note that these files are cleared each time a
+submitter processes them.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tail<span class="w"> </span>-F<span class="w"> </span>output/results/results_batch_1.csv
+<span class="c1"># This will follow all files that exist, not ones yet to be created.</span>
+$<span class="w"> </span>tail<span class="w"> </span>-F<span class="w"> </span>output/results/results_batch_*.csv
+</pre></div>
+</div>
+<p>Check processed jobs in this file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find out how many have completed.</span>
+$<span class="w"> </span>wc<span class="w"> </span>-l<span class="w"> </span>output/processed_results.csv
+
+<span class="c1"># Follow updates.</span>
+$<span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span>output/processed_results.csv
+</pre></div>
+</div>
+<p>Every submitter will log to the same file, so you can monitor submission status
+with this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span>output/submit-jobs.log
+</pre></div>
+</div>
+<p>You can also trigger a full status update by manually trying to submit new
+jobs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>try-submit-jobs<span class="w"> </span>output
+$<span class="w"> </span>jade<span class="w"> </span>show-status<span class="w"> </span>-o<span class="w"> </span>output
+</pre></div>
+</div>
+</section>
+<section id="canceling-jobs">
+<h2>Canceling Jobs<a class="headerlink" href="#canceling-jobs" title="Link to this heading">¶</a></h2>
+<p>You can cancel all jobs running in a submission with this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>cancel-jobs<span class="w"> </span>output
+</pre></div>
+</div>
+</section>
+<section id="job-results">
+<h2>Job Results<a class="headerlink" href="#job-results" title="Link to this heading">¶</a></h2>
+<p>Once execution is complete you can view the results of the jobs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>show-results<span class="w"> </span>--output<span class="o">=</span>output
+</pre></div>
+</div>
+<p>Or only the ones that failed</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>show-results<span class="w"> </span>--failed
+</pre></div>
+</div>
+<p>JADE stores all results in a SQLite database. You can also use it to view results. Please refer to
+<a class="reference internal" href="results_queries.html#results-queries"><span class="std std-ref">Results Queries</span></a> for examples.</p>
+</section>
+<section id="failed-or-missing-jobs">
+<h2>Failed or Missing Jobs<a class="headerlink" href="#failed-or-missing-jobs" title="Link to this heading">¶</a></h2>
+<p>If some jobs fail because of a walltime timeout or code/data error then you can
+resubmit those specific jobs without re-running all the jobs that passed.</p>
+<p>Jobs that timeout will be reported as missing.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can resubmit with different submission parameters, such as walltime,
+if you run <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">config</span> <span class="pre">save-submission-groups</span> <span class="pre">output</span></code>,
+edit the resulting file, and then pass it to <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">resubmit-jobs</span></code> with <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">&lt;file&gt;</span></code></p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>resubmit-jobs<span class="w"> </span>--missing<span class="w"> </span>--failed<span class="w"> </span>output
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This command is currently not supported in local mode.</p>
+</div>
+</section>
+<section id="hpc-job-information">
+<h2>HPC Job information<a class="headerlink" href="#hpc-job-information" title="Link to this heading">¶</a></h2>
+<section id="hours-used">
+<h3>Hours Used<a class="headerlink" href="#hours-used" title="Link to this heading">¶</a></h3>
+<p>Run this command after your jobs finish to see how many node hours you used.
+Note that you can pass multiple output directories to accumulate jobs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>hpc-jobs<span class="w"> </span>show-times<span class="w"> </span>output-dir*
+
++------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+<span class="p">|</span><span class="w"> </span>hpc_job_id<span class="w"> </span><span class="p">|</span><span class="w">         </span>name<span class="w">        </span><span class="p">|</span><span class="w">        </span>start<span class="w">        </span><span class="p">|</span><span class="w">         </span>end<span class="w">         </span><span class="p">|</span><span class="w">  </span>state<span class="w">   </span><span class="p">|</span><span class="w">  </span>account<span class="w">   </span><span class="p">|</span><span class="w"> </span>partition<span class="w"> </span><span class="p">|</span><span class="w">  </span>qos<span class="w">   </span><span class="p">|</span>
++------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+<span class="p">|</span><span class="w">  </span><span class="m">9040969</span><span class="w">   </span><span class="p">|</span><span class="w">   </span>P11U_CBA_batch_1<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">18</span>:58:17<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">19</span>:01:32<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>distcosts3<span class="w"> </span><span class="p">|</span><span class="w">   </span>short<span class="w">   </span><span class="p">|</span><span class="w"> </span>normal<span class="w"> </span><span class="p">|</span>
+<span class="p">|</span><span class="w">  </span><span class="m">9040970</span><span class="w">   </span><span class="p">|</span><span class="w">   </span>P11U_CBA_batch_2<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">18</span>:58:17<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">19</span>:02:04<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>distcosts3<span class="w"> </span><span class="p">|</span><span class="w">   </span>short<span class="w">   </span><span class="p">|</span><span class="w"> </span>normal<span class="w"> </span><span class="p">|</span>
+<span class="p">|</span><span class="w">  </span><span class="m">9040971</span><span class="w">   </span><span class="p">|</span><span class="w">   </span>P11U_CBA_batch_3<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">18</span>:58:17<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">19</span>:02:39<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>distcosts3<span class="w"> </span><span class="p">|</span><span class="w">   </span>short<span class="w">   </span><span class="p">|</span><span class="w"> </span>normal<span class="w"> </span><span class="p">|</span>
+<span class="p">|</span><span class="w">  </span><span class="m">9040972</span><span class="w">   </span><span class="p">|</span><span class="w">   </span>P11U_CBA_batch_4<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">18</span>:58:17<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">19</span>:01:17<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>distcosts3<span class="w"> </span><span class="p">|</span><span class="w">   </span>short<span class="w">   </span><span class="p">|</span><span class="w"> </span>normal<span class="w"> </span><span class="p">|</span>
+<span class="p">|</span><span class="w">  </span><span class="m">9040973</span><span class="w">   </span><span class="p">|</span><span class="w">   </span>P11U_CBA_batch_5<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">18</span>:58:17<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">19</span>:01:22<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>distcosts3<span class="w"> </span><span class="p">|</span><span class="w">   </span>short<span class="w">   </span><span class="p">|</span><span class="w"> </span>normal<span class="w"> </span><span class="p">|</span>
+<span class="p">|</span><span class="w">  </span><span class="m">9041184</span><span class="w">   </span><span class="p">|</span><span class="w"> </span>P11U_CBA_pp_batch_1<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">19</span>:10:26<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2022</span>-04-15<span class="w"> </span><span class="m">19</span>:15:13<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="nb">complete</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>distcosts3<span class="w"> </span><span class="p">|</span><span class="w">   </span>short<span class="w">   </span><span class="p">|</span><span class="w"> </span>normal<span class="w"> </span><span class="p">|</span>
++------------+---------------------+---------------------+---------------------+----------+------------+-----------+--------+
+
+Total<span class="w"> </span><span class="nv">duration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>day,<span class="w"> </span><span class="m">2</span>:25:13
+Total<span class="w"> </span><span class="nv">hours</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">26</span>.42
+Total<span class="w"> </span><span class="nv">AUs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">79</span>.26
+</pre></div>
+</div>
+</section>
+<section id="active-job-ids">
+<h3>Active Job IDs<a class="headerlink" href="#active-job-ids" title="Link to this heading">¶</a></h3>
+<p>You may want to run HPC-specific commands on job IDs to perform some action not directly supported by JADE.
+You can run this command to see the active HPC job IDs (pending or running).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>hpc-jobs<span class="w"> </span>list-active-ids<span class="w"> </span>&lt;output-dir&gt;
+</pre></div>
+</div>
+<p>Suppose you want to change the walltime value for each pending job. This example will work if your HPC
+uses SLURM. (This will only work on pending jobs.)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="k">for</span><span class="w"> </span>x<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="sb">`</span>jade<span class="w"> </span>hpc-jobs<span class="w"> </span>list-active-ids<span class="w"> </span>&lt;output-dir&gt;<span class="sb">`</span><span class="p">;</span><span class="w"> </span><span class="k">do</span><span class="w"> </span>scontrol<span class="w"> </span>update<span class="w"> </span><span class="nv">jobid</span><span class="o">=</span><span class="nv">$x</span><span class="w"> </span><span class="nv">TimeLimit</span><span class="o">=</span><span class="s2">&quot;24:00:00&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">done</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="debugging">
+<h2>Debugging<a class="headerlink" href="#debugging" title="Link to this heading">¶</a></h2>
+<p>By default JADE generates report files that summarize what happened. Refer to
+<code class="docutils literal notranslate"><span class="pre">results.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">errors.txt</span></code>, <code class="docutils literal notranslate"><span class="pre">stats.txt</span></code>, and <code class="docutils literal notranslate"><span class="pre">stats_summary.json</span></code>.
+The results file shows whether each job passed or failed.  The errors file
+shows unhandled errors that JADE detected as well as known errors that it
+parsed from log files.</p>
+<p>Here are the log files that JADE generates. Open these to dig deeper.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">submit_jobs.log</span></code>: HPC-related information, such as the job ID and status</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_jobs.log</span></code>: information about JADE starting and stopping jobs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">job-stdio</span></code>: Jade logs stdout and stderr from each job to this directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">job_output_&lt;HPC</span> <span class="pre">job</span> <span class="pre">ID&gt;.e</span></code>: The HPC logs stdout and stderr to this file.
+You will see output for HPC software and the operating system. Look here to
+debug unexpected crashes or hangs.</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>find<span class="w"> </span>output<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.log&quot;</span><span class="w"> </span>-o<span class="w"> </span>-name<span class="w"> </span><span class="s2">&quot;*.e&quot;</span>
+output/J1__3__1.15__1.0__deployment1.dss/logs/deployment1.dss_simulation.log
+output/J1__3__1.15__1.0__deployment1.dss/pydss-project/Logs/pydss-project_deployment1.dss.log
+output/submit_jobs.log
+output/job_output_1151157.e
+</pre></div>
+</div>
+<p>Python crashes will print <code class="docutils literal notranslate"><span class="pre">Traceback</span></code> to stderr, so that is a good string
+to search for.</p>
+<p>SLURM error strings:  <code class="docutils literal notranslate"><span class="pre">srun</span></code>, <code class="docutils literal notranslate"><span class="pre">slurmstepd</span></code>, <code class="docutils literal notranslate"><span class="pre">DUE</span> <span class="pre">TO</span> <span class="pre">TIME</span> <span class="pre">LIMIT</span></code></p>
+<p>Useful grep commands</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># find error keywords in log and stderr files</span>
+$<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;WARNING\|ERROR&quot;</span><span class="w"> </span>output/*log
+$<span class="w"> </span>grep<span class="w"> </span>-n<span class="w"> </span><span class="s2">&quot;srun\|slurmstepd\|Traceback&quot;</span><span class="w"> </span>output/*.e
+
+<span class="c1"># From the stats_summary, check max memory usage (in %) per node, in the form of sorted values.</span>
+<span class="c1"># This could inform the num_parallel_processes_per_node setting.</span>
+$<span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;\bpercent\b&quot;</span><span class="w"> </span>output/stats_summary.json<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">&#39;{print $2}&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>-n
+</pre></div>
+</div>
+<section id="matching-jade-jobs-with-hpc-logs">
+<h3>Matching JADE jobs with HPC logs<a class="headerlink" href="#matching-jade-jobs-with-hpc-logs" title="Link to this heading">¶</a></h3>
+<p>As mentioned above the HPC system captures stderr and stdout in <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/job_output_&lt;HPC</span> <span class="pre">job</span> <span class="pre">ID&gt;.e</span></code>
+and <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/job_output_&lt;HPC</span> <span class="pre">job</span> <span class="pre">ID&gt;.o</span></code>. You may need to match JADE job IDs/names with these
+files.</p>
+<p>To help with this JADE records the HPC job ID for each job in <code class="docutils literal notranslate"><span class="pre">results.txt</span></code> (or <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">show-results</span></code>).</p>
+<p>You can also refer to <a class="reference internal" href="results_queries.html#results-queries"><span class="std std-ref">Results Queries</span></a>. The <code class="docutils literal notranslate"><span class="pre">result</span></code> table includes this information.</p>
+</section>
+<section id="events">
+<h3>Events<a class="headerlink" href="#events" title="Link to this heading">¶</a></h3>
+<p>If your extension implements JADE structured log events then you may want to
+view what events were logged.</p>
+<p>JADE will also log any unhandled exceptions here.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>show-events
+$<span class="w"> </span>jade<span class="w"> </span>show-events<span class="w"> </span>-c<span class="w"> </span>Error
+</pre></div>
+</div>
+</section>
+<section id="filtering-jobs">
+<h3>Filtering jobs<a class="headerlink" href="#filtering-jobs" title="Link to this heading">¶</a></h3>
+<p>You may want to debug a subset of the jobs.</p>
+<p>Filter the first job into a new config file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>filter<span class="w"> </span>config.json<span class="w"> </span><span class="m">0</span><span class="w"> </span>-o<span class="w"> </span>new_config.json
+</pre></div>
+</div>
+<p>Filter ranges of indices of jobs into a new config file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>filter<span class="w"> </span>config.json<span class="w"> </span><span class="o">{</span><span class="m">0</span>..4<span class="o">}</span><span class="w"> </span><span class="o">{</span><span class="m">10</span>:14<span class="o">}</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">25</span><span class="w"> </span>-o<span class="w"> </span>new_config.json
+</pre></div>
+</div>
+</section>
+<section id="deadlocks">
+<h3>Deadlocks<a class="headerlink" href="#deadlocks" title="Link to this heading">¶</a></h3>
+<p>While it should be very rare, it is possible that JADE gets deadlocked and
+stops submitting jobs. When a compute node finishes a batch of jobs it acquires
+a file lock in order to update status and attempt to submit new jobs. This
+should usually take at most a few seconds. If a walltime timeout occurs while
+this lock is held and the JADE process is terminated then no other node will be
+able to promote itself to submitter and jobs will be stuck.</p>
+<p>We plan to add code to detect this condition in the future. If this occurs
+you can fix it manually by deleting the lock file and restarting jobs. This is
+safe if you know that no new jobs were submitted. It is unsafe if one or more
+jobs were submitted but not recorded. Restarting the jobs could result in the
+same jobs being run multiple times.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>rm<span class="w"> </span>&lt;output-dir&gt;/cluster_config.json.lock
+$<span class="w"> </span>jade<span class="w"> </span>try-submit-jobs<span class="w"> </span>&lt;output-dir&gt;
+</pre></div>
+</div>
+<p>If you would like to avoid the possibility of this happening then you can
+pass <code class="docutils literal notranslate"><span class="pre">--no-distributed-submitter</span></code> to <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code>. That will prevent
+each compute node from updating status or looking for unblocked jobs to submit.
+You will need to run the command <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">try-submit-jobs</span></code> yourself to do this.</p>
+<p>If you enable periodic resource utilization collection in this mode, be aware
+of the fact that once JADE detects that all jobs are complete it will
+aggregate the stats and generate plots in that process. This is
+resource-intensive and you may not want to run <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">try-submit-jobs</span></code> on the
+login node.</p>
+</section>
+</section>
+<section id="resource-monitoring">
+<span id="id1"></span><h2>Resource Monitoring<a class="headerlink" href="#resource-monitoring" title="Link to this heading">¶</a></h2>
+<p>In order to maximize the compute hours you consume it is critical to understand
+the performance characteristics of your jobs. JADE helps with resorce
+monitoring tools that run in the background on each node.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Your HPC may already provide this type of information. If it makes
+the data easily accessible, you may want to disable all JADE monitoring.</p>
+</div>
+<section id="available-monitors">
+<h3>Available monitors<a class="headerlink" href="#available-monitors" title="Link to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>CPU utilization for each node (default = enabled)</p></li>
+<li><p>Memory utilization for each node (default = enabled)</p></li>
+<li><p>Process utilization by job (default = disabled)</p>
+<ul>
+<li><p>CPU and memory utilization</p></li>
+<li><p>Include child processes (default = enabled)</p></li>
+<li><p>Search for child processes recursively (default = disabled)</p></li>
+</ul>
+</li>
+<li><p>Local disk utilization (default = disabled: Does not include Lustre filesystem.</p></li>
+<li><p>Network utilization (default = disabled)</p></li>
+</ul>
+</section>
+<section id="collection-modes">
+<h3>Collection modes<a class="headerlink" href="#collection-modes" title="Link to this heading">¶</a></h3>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">aggregation</span></code>: Track average/min/max stats in memory on each node and
+generate a summary report at the end (default). Does not store data in files.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">periodic</span></code>: Record stats in files on each node and generate a summary
+report and interactive HTML plots at the end. The reports include
+average/min/max stats. File sizes can be large with long runtimes.</p></li>
+</ol>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h3>
+<p>Monitoring is highly configurable. Due to the number of options, it is
+recommended to create a <code class="docutils literal notranslate"><span class="pre">submitter_params.json</span></code> file and edit the settings
+there.</p>
+<p>You can specify most options in either <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code> or <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">config</span>
+<span class="pre">submitter-params</span></code>.</p>
+<p><strong>Collect aggregated stats for CPU, memory, and per-job processes (including direct child processes)</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>submitter-params<span class="w"> </span>-R<span class="w"> </span>aggregation<span class="w"> </span>-m<span class="w"> </span>cpu<span class="w"> </span>-m<span class="w"> </span>mem<span class="w"> </span>-m<span class="w"> </span>process
+</pre></div>
+</div>
+<p><strong>Collect stats for CPU, memory, and per-job processes every 5 seconds</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>submitter-params<span class="w"> </span>-R<span class="w"> </span>periodic<span class="w"> </span>-r<span class="w"> </span><span class="m">5</span><span class="w"> </span>-m<span class="w"> </span>cpu<span class="w"> </span>-m<span class="w"> </span>mem<span class="w"> </span>-m<span class="w"> </span>process
+</pre></div>
+</div>
+<p><strong>Collect per-job process information only for your job processes.</strong></p>
+<p>This is more efficient than scanning for child processes. However, if your
+job is a bash script that starts another process to do the real work, that work
+won’t be monitored.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>submitter-params<span class="w"> </span>-R<span class="w"> </span>periodic<span class="w"> </span>-r<span class="w"> </span><span class="m">5</span><span class="w"> </span>-m<span class="w"> </span>process
+
+<span class="c1"># Edit the newly-created submitter_params.json such that include_child_processes=false</span>
+</pre></div>
+</div>
+<p><strong>Collect per-job process information for all processes started by your jobs, recursively.</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>submitter-params<span class="w"> </span>-R<span class="w"> </span>periodic<span class="w"> </span>-r<span class="w"> </span><span class="m">5</span><span class="w"> </span>-m<span class="w"> </span>process
+
+<span class="c1"># Edit the newly-created submitter_params.json such that include_child_processes=true</span>
+<span class="c1"># and recurse_child_processes=true</span>
+</pre></div>
+</div>
+<p><strong>Disable all monitoring</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>submitter-params<span class="w"> </span>-R<span class="w"> </span>none
+</pre></div>
+</div>
+</section>
+<section id="output-files">
+<h3>Output files<a class="headerlink" href="#output-files" title="Link to this heading">¶</a></h3>
+<p>Both collection modes will generate <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/stats.txt</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/stats_summary.json</span></code>.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">periodic</span></code> mode is enabled:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tree<span class="w"> </span>output/stats
+output/stats
+├──<span class="w"> </span>CpuStatsViewer__resource_monitor_batch_0.html
+├──<span class="w"> </span>ProcessStatsViewer__cpu_percent.html
+├──<span class="w"> </span>ProcessStatsViewer__rss_percent.html
+├──<span class="w"> </span>DiskStatsViewer__resource_monitor_batch_0.html
+├──<span class="w"> </span>MemoryStatsViewer__resource_monitor_batch_0.html
+└──<span class="w"> </span>NetworkStatsViewer__resource_monitor_batch_0.html
+</pre></div>
+</div>
+<figure class="align-default">
+<img alt="_images/cpu.png" src="_images/cpu.png" />
+</figure>
+<figure class="align-default">
+<img alt="_images/memory.png" src="_images/memory.png" />
+</figure>
+<p>Use this CLI command to view textual tables after a run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>show
+$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>show<span class="w"> </span>cpu
+$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>show<span class="w"> </span>mem
+$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>show<span class="w"> </span>proc
+$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>show<span class="w"> </span>--summary-only
+$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>show<span class="w"> </span>--json-summary
+</pre></div>
+</div>
+<p>Use the <code class="docutils literal notranslate"><span class="pre">--json-summary</span></code> option if you want to programmatically analyze the
+average/minimum/maximum stats for each metric type.</p>
+<p>The stats can also be provided as pandas.DataFrame objects. For example, here
+is how to view CPU stats for the node that ran the first batch:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jade.events</span> <span class="kn">import</span> <span class="n">EventsSummary</span><span class="p">,</span> <span class="n">EVENT_NAME_CPU_STATS</span>
+<span class="kn">from</span> <span class="nn">jade.resource_monitor</span> <span class="kn">import</span> <span class="n">CpuStatsViewer</span>
+
+<span class="n">summary</span> <span class="o">=</span> <span class="n">EventsSummary</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">)</span>
+<span class="n">viewer</span> <span class="o">=</span> <span class="n">CpuStatsViewer</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">viewer</span><span class="o">.</span><span class="n">iter_batch_names</span><span class="p">():</span>
+    <span class="n">cpu_df</span> <span class="o">=</span> <span class="n">viewer</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cpu_df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The directory <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/events</span></code> contains Parquet files for each stat. You can
+also open these directly. Note that the <code class="docutils literal notranslate"><span class="pre">source</span></code> column designates the node/batch
+that generated each row. For <code class="docutils literal notranslate"><span class="pre">process</span></code> dataframes, the job name is in the
+<code class="docutils literal notranslate"><span class="pre">name</span></code> column, and you should use it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="c1"># Print max memory usage in GiB by each job.</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s2">&quot;output/events/process_stats.parquet&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">dfp</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">dfp</span><span class="o">.</span><span class="n">rss</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="standalone-resource-monitoring">
+<h3>Standalone Resource Monitoring<a class="headerlink" href="#standalone-resource-monitoring" title="Link to this heading">¶</a></h3>
+<p>The same resource monitoring functionality is available as a standalone script.
+This can be useful to debug your application on your own system or in an interactive
+session on a compute node. Here’s how to do it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>collect<span class="w"> </span>--interval<span class="o">=</span><span class="m">1</span><span class="w"> </span>--output<span class="o">=</span>job-stats
+<span class="c1"># Run your application in a separate terminal.</span>
+<span class="c1"># Press Ctrl-c when your application is finished.</span>
+$<span class="w"> </span>jade<span class="w"> </span>stats<span class="w"> </span>plot<span class="w"> </span>--output<span class="o">=</span>job-stats
+<span class="m">2021</span>-05-12<span class="w"> </span><span class="m">16</span>:59:48,367<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.resource_monitor<span class="w"> </span>resource_monitor.py:226<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Generated<span class="w"> </span>plot<span class="w"> </span><span class="k">in</span><span class="w"> </span>job-stats/stats/CpuStatsViewer__ResourceMonitor.html
+<span class="m">2021</span>-05-12<span class="w"> </span><span class="m">16</span>:59:48,462<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.resource_monitor<span class="w"> </span>resource_monitor.py:226<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Generated<span class="w"> </span>plot<span class="w"> </span><span class="k">in</span><span class="w"> </span>job-stats/stats/DiskStatsViewer__ResourceMonitor.html
+<span class="m">2021</span>-05-12<span class="w"> </span><span class="m">16</span>:59:48,541<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.resource_monitor<span class="w"> </span>resource_monitor.py:226<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Generated<span class="w"> </span>plot<span class="w"> </span><span class="k">in</span><span class="w"> </span>job-stats/stats/MemoryStatsViewer__ResourceMonitor.html
+<span class="m">2021</span>-05-12<span class="w"> </span><span class="m">16</span>:59:48,629<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.resource_monitor<span class="w"> </span>resource_monitor.py:226<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Generated<span class="w"> </span>plot<span class="w"> </span><span class="k">in</span><span class="w"> </span>job-stats/stats/NetworkStatsViewer__ResourceMonitor.html
+</pre></div>
+</div>
+<p>Open the interactive plots in a browser.</p>
+<p>You can also use the standalone tool to monitor currently running processes
+by process ID or name. Refer to <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">stats</span> <span class="pre">collect</span> <span class="pre">--help</span></code> for more information.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quickstart.html" class="btn btn-neutral float-left" title="Quick Start Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="results_queries.html" class="btn btn-neutral float-right" title="Results Queries" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

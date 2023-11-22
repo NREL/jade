@@ -1,0 +1,37 @@
+jade.jobs.results\_aggregator.ResultsAggregator
+===============================================
+
+.. currentmodule:: jade.jobs.results_aggregator
+
+.. autoclass:: ResultsAggregator
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ResultsAggregator.append
+      ~ResultsAggregator.append_result
+      ~ResultsAggregator.clear_results_for_resubmission
+      ~ResultsAggregator.clear_unsuccessful_results
+      ~ResultsAggregator.create
+      ~ResultsAggregator.create_files
+      ~ResultsAggregator.get_results
+      ~ResultsAggregator.get_results_unsafe
+      ~ResultsAggregator.list_results
+      ~ResultsAggregator.load
+      ~ResultsAggregator.load_node_results
+      ~ResultsAggregator.load_node_results_file
+      ~ResultsAggregator.move_results
+      ~ResultsAggregator.process_results
+   
+   
+
+   
+   
+   

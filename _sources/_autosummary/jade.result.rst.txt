@@ -1,0 +1,42 @@
+jade.result
+===========
+
+.. automodule:: jade.result
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      deserialize_result
+      deserialize_results
+      serialize_result
+      serialize_results
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      Result
+      ResultsSummary
+   
+   
+
+   
+   
+   
+
+
+

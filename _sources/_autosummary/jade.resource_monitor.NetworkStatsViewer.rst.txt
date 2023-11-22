@@ -1,0 +1,31 @@
+jade.resource\_monitor.NetworkStatsViewer
+=========================================
+
+.. currentmodule:: jade.resource_monitor
+
+.. autoclass:: NetworkStatsViewer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NetworkStatsViewer.get_dataframe
+      ~NetworkStatsViewer.get_printable_value
+      ~NetworkStatsViewer.get_stats_summary
+      ~NetworkStatsViewer.iter_batch_names
+      ~NetworkStatsViewer.metric
+      ~NetworkStatsViewer.plot_to_file
+      ~NetworkStatsViewer.show_stat_totals
+      ~NetworkStatsViewer.show_stats
+   
+   
+
+   
+   
+   

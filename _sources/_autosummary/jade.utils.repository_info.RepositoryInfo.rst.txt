@@ -1,0 +1,28 @@
+jade.utils.repository\_info.RepositoryInfo
+==========================================
+
+.. currentmodule:: jade.utils.repository_info
+
+.. autoclass:: RepositoryInfo
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RepositoryInfo.current_branch
+      ~RepositoryInfo.last_commit
+      ~RepositoryInfo.status
+      ~RepositoryInfo.summary
+      ~RepositoryInfo.write_diff_patch
+   
+   
+
+   
+   
+   

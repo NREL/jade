@@ -1,0 +1,6 @@
+jade.utils.timing\_utils.get\_time\_duration\_string
+====================================================
+
+.. currentmodule:: jade.utils.timing_utils
+
+.. autofunction:: get_time_duration_string

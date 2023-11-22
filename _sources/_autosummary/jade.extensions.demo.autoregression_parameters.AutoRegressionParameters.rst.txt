@@ -1,0 +1,40 @@
+jade.extensions.demo.autoregression\_parameters.AutoRegressionParameters
+========================================================================
+
+.. currentmodule:: jade.extensions.demo.autoregression_parameters
+
+.. autoclass:: AutoRegressionParameters
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AutoRegressionParameters.deserialize
+      ~AutoRegressionParameters.get_blocking_jobs
+      ~AutoRegressionParameters.is_spark_job
+      ~AutoRegressionParameters.remove_blocking_job
+      ~AutoRegressionParameters.serialize
+      ~AutoRegressionParameters.set_blocking_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AutoRegressionParameters.DELIMITER
+      ~AutoRegressionParameters.cancel_on_blocking_job_failure
+      ~AutoRegressionParameters.estimated_run_minutes
+      ~AutoRegressionParameters.extension
+      ~AutoRegressionParameters.name
+      ~AutoRegressionParameters.submission_group
+   
+   

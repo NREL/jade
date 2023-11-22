@@ -1,0 +1,6 @@
+jade.cli.common.make\_submitter\_params
+=======================================
+
+.. currentmodule:: jade.cli.common
+
+.. autofunction:: make_submitter_params

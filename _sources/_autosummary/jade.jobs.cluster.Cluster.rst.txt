@@ -1,0 +1,65 @@
+jade.jobs.cluster.Cluster
+=========================
+
+.. currentmodule:: jade.jobs.cluster
+
+.. autoclass:: Cluster
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Cluster.all_jobs_submitted
+      ~Cluster.am_i_submitter
+      ~Cluster.are_all_jobs_complete
+      ~Cluster.complete_hpc_job_id
+      ~Cluster.create
+      ~Cluster.delete_files_internal
+      ~Cluster.demote_from_submitter
+      ~Cluster.deserialize
+      ~Cluster.deserialize_jobs
+      ~Cluster.deserialize_submission_groups
+      ~Cluster.do_action_under_lock
+      ~Cluster.get_config_file
+      ~Cluster.get_job_status_file
+      ~Cluster.get_lock_file
+      ~Cluster.get_status_summary
+      ~Cluster.has_submitter
+      ~Cluster.is_canceled
+      ~Cluster.is_complete
+      ~Cluster.iter_hpc_job_ids
+      ~Cluster.iter_jobs
+      ~Cluster.mark_canceled
+      ~Cluster.mark_complete
+      ~Cluster.prepare_for_resubmission
+      ~Cluster.promote_to_submitter
+      ~Cluster.serialize
+      ~Cluster.serialize_jobs
+      ~Cluster.serialize_submission_groups
+      ~Cluster.update_job_status
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Cluster.CLUSTER_CONFIG_FILE
+      ~Cluster.CONFIG_VERSION_FILE
+      ~Cluster.JOB_STATUS_FILE
+      ~Cluster.JOB_STATUS_VERSION_FILE
+      ~Cluster.LOCK_FILE
+      ~Cluster.SUBMITTER_GROUP_FILE
+      ~Cluster.config
+      ~Cluster.config_file
+      ~Cluster.job_status
+   
+   

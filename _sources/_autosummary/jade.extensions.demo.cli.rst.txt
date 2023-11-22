@@ -1,0 +1,31 @@
+jade.extensions.demo.cli
+========================
+
+.. automodule:: jade.extensions.demo.cli
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      auto_config
+      run
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

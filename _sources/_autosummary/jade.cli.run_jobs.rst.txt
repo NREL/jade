@@ -1,0 +1,23 @@
+jade.cli.run\_jobs
+==================
+
+.. automodule:: jade.cli.run_jobs
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

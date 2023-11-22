@@ -1,0 +1,31 @@
+jade.utils.custom\_click\_options
+=================================
+
+.. automodule:: jade.utils.custom_click_options
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      CustomOptions
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+jade.utils.utils.output\_to\_file
+=================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: output_to_file

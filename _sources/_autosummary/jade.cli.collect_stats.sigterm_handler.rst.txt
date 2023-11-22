@@ -1,0 +1,6 @@
+jade.cli.collect\_stats.sigterm\_handler
+========================================
+
+.. currentmodule:: jade.cli.collect_stats
+
+.. autofunction:: sigterm_handler

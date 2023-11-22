@@ -1,0 +1,26 @@
+jade.enums.ResourceMonitorType
+==============================
+
+.. currentmodule:: jade.enums
+
+.. autoclass:: ResourceMonitorType
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ResourceMonitorType.AGGREGATION
+      ~ResourceMonitorType.PERIODIC
+      ~ResourceMonitorType.NONE
+   
+   

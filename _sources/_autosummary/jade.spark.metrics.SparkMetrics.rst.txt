@@ -1,0 +1,31 @@
+jade.spark.metrics.SparkMetrics
+===============================
+
+.. currentmodule:: jade.spark.metrics
+
+.. autoclass:: SparkMetrics
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SparkMetrics.generate_metrics
+      ~SparkMetrics.list_applications
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SparkMetrics.METRICS_FILE
+   
+   

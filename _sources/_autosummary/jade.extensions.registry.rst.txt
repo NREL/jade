@@ -1,0 +1,32 @@
+jade.extensions.registry
+========================
+
+.. automodule:: jade.extensions.registry
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      ExtensionClassType
+      Registry
+   
+   
+
+   
+   
+   
+
+
+

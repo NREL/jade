@@ -1,0 +1,6 @@
+jade.models.get\_model\_defaults
+================================
+
+.. currentmodule:: jade.models
+
+.. autofunction:: get_model_defaults

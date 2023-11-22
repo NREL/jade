@@ -1,0 +1,6 @@
+jade.cli.db.create\_event\_table
+================================
+
+.. currentmodule:: jade.cli.db
+
+.. autofunction:: create_event_table

@@ -1,0 +1,36 @@
+jade.models.base.JadeBaseModel
+==============================
+
+.. currentmodule:: jade.models.base
+
+.. autoclass:: JadeBaseModel
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JadeBaseModel.construct
+      ~JadeBaseModel.copy
+      ~JadeBaseModel.dict
+      ~JadeBaseModel.from_orm
+      ~JadeBaseModel.json
+      ~JadeBaseModel.load
+      ~JadeBaseModel.parse_file
+      ~JadeBaseModel.parse_obj
+      ~JadeBaseModel.parse_raw
+      ~JadeBaseModel.schema
+      ~JadeBaseModel.schema_json
+      ~JadeBaseModel.update_forward_refs
+      ~JadeBaseModel.validate
+   
+   
+
+   
+   
+   

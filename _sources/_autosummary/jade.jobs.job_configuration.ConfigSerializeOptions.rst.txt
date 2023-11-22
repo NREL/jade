@@ -1,0 +1,26 @@
+jade.jobs.job\_configuration.ConfigSerializeOptions
+===================================================
+
+.. currentmodule:: jade.jobs.job_configuration
+
+.. autoclass:: ConfigSerializeOptions
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ConfigSerializeOptions.JOBS
+      ~ConfigSerializeOptions.JOB_NAMES
+      ~ConfigSerializeOptions.NO_JOB_INFO
+   
+   

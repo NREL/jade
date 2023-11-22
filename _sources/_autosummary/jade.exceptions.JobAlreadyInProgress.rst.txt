@@ -1,0 +1,6 @@
+jade.exceptions.JobAlreadyInProgress
+====================================
+
+.. currentmodule:: jade.exceptions
+
+.. autoexception:: JobAlreadyInProgress

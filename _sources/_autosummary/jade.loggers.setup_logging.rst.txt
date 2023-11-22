@@ -1,0 +1,6 @@
+jade.loggers.setup\_logging
+===========================
+
+.. currentmodule:: jade.loggers
+
+.. autofunction:: setup_logging

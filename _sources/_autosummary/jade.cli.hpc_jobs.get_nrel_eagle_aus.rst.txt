@@ -1,0 +1,6 @@
+jade.cli.hpc\_jobs.get\_nrel\_eagle\_aus
+========================================
+
+.. currentmodule:: jade.cli.hpc_jobs
+
+.. autofunction:: get_nrel_eagle_aus

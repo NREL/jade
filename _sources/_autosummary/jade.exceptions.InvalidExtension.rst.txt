@@ -1,0 +1,6 @@
+jade.exceptions.InvalidExtension
+================================
+
+.. currentmodule:: jade.exceptions
+
+.. autoexception:: InvalidExtension

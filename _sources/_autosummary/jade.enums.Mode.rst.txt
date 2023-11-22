@@ -1,0 +1,25 @@
+jade.enums.Mode
+===============
+
+.. currentmodule:: jade.enums
+
+.. autoclass:: Mode
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Mode.PARALLEL
+      ~Mode.SEQUENTIAL
+   
+   

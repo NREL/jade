@@ -1,0 +1,6 @@
+jade.utils.utils.get\_directory\_size\_bytes
+============================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: get_directory_size_bytes

@@ -1,0 +1,31 @@
+jade.spark.metrics
+==================
+
+.. automodule:: jade.spark.metrics
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      SparkMetrics
+   
+   
+
+   
+   
+   
+
+
+

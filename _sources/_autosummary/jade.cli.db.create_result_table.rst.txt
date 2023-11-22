@@ -1,0 +1,6 @@
+jade.cli.db.create\_result\_table
+=================================
+
+.. currentmodule:: jade.cli.db
+
+.. autofunction:: create_result_table

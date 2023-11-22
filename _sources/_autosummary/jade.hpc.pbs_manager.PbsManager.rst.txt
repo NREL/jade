@@ -1,0 +1,46 @@
+jade.hpc.pbs\_manager.PbsManager
+================================
+
+.. currentmodule:: jade.hpc.pbs_manager
+
+.. autoclass:: PbsManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PbsManager.am_i_manager
+      ~PbsManager.cancel_job
+      ~PbsManager.check_status
+      ~PbsManager.check_statuses
+      ~PbsManager.check_storage_configuration
+      ~PbsManager.create_cluster
+      ~PbsManager.create_local_cluster
+      ~PbsManager.create_submission_script
+      ~PbsManager.get_config
+      ~PbsManager.get_current_job_id
+      ~PbsManager.get_job_stats
+      ~PbsManager.get_local_scratch
+      ~PbsManager.get_node_id
+      ~PbsManager.get_num_cpus
+      ~PbsManager.list_active_nodes
+      ~PbsManager.log_environment_variables
+      ~PbsManager.submit
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PbsManager.USER
+   
+   

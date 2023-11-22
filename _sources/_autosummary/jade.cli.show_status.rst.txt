@@ -1,0 +1,23 @@
+jade.cli.show\_status
+=====================
+
+.. automodule:: jade.cli.show_status
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,26 @@
+jade.utils.timing\_utils.TimerStats
+===================================
+
+.. currentmodule:: jade.utils.timing_utils
+
+.. autoclass:: TimerStats
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TimerStats.get_stats
+      ~TimerStats.log_stats
+      ~TimerStats.update
+   
+   
+
+   
+   
+   

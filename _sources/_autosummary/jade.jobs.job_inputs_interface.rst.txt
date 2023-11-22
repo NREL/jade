@@ -1,0 +1,31 @@
+jade.jobs.job\_inputs\_interface
+================================
+
+.. automodule:: jade.jobs.job_inputs_interface
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      JobInputsInterface
+   
+   
+
+   
+   
+   
+
+
+

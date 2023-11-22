@@ -1,0 +1,30 @@
+jade.spark
+==========
+
+.. automodule:: jade.spark
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   jade.spark.metrics
+

@@ -1,0 +1,6 @@
+jade.jobs.job\_analysis.get\_result
+===================================
+
+.. currentmodule:: jade.jobs.job_analysis
+
+.. autofunction:: get_result

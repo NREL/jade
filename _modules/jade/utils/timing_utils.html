@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jade.utils.timing_utils &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=82662543"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href="../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jade.utils.timing_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jade.utils.timing_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for timing measurements.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="timed_info">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.timed_info.html#jade.utils.timing_utils.timed_info">[docs]</a>
+<span class="k">def</span> <span class="nf">timed_info</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to measure and logger.info a function&#39;s execution time.&quot;&quot;&quot;</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">timed_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_timed</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">timed_</span></div>
+
+
+
+<div class="viewcode-block" id="timed_debug">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.timed_debug.html#jade.utils.timing_utils.timed_debug">[docs]</a>
+<span class="k">def</span> <span class="nf">timed_debug</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to measure and logger.debug a function&#39;s execution time.&quot;&quot;&quot;</span>
+
+    <span class="nd">@functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">timed_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_timed</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">timed_</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_timed</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">log_func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="n">log_func</span><span class="p">(</span><span class="s2">&quot;execution-time=</span><span class="si">%s</span><span class="s2"> func=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">get_time_duration_string</span><span class="p">(</span><span class="n">total</span><span class="p">),</span> <span class="n">func</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="get_time_duration_string">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.get_time_duration_string.html#jade.utils.timing_utils.get_time_duration_string">[docs]</a>
+<span class="k">def</span> <span class="nf">get_time_duration_string</span><span class="p">(</span><span class="n">seconds</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns a string with the time converted to reasonable units.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">seconds</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2"> s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">seconds</span> <span class="o">&gt;=</span> <span class="mf">0.001</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2"> ms&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">seconds</span> <span class="o">&gt;=</span> <span class="mf">0.000001</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2"> us&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000000</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">seconds</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;0 s&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.3f}</span><span class="s2"> ns&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seconds</span> <span class="o">*</span> <span class="mi">1000000000</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">val</span></div>
+
+
+
+<div class="viewcode-block" id="TimerStats">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStats.html#jade.utils.timing_utils.TimerStats">[docs]</a>
+<span class="k">class</span> <span class="nc">TimerStats</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Tracks timing stats for one code block.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_avg</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<div class="viewcode-block" id="TimerStats.get_stats">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStats.html#jade.utils.timing_utils.TimerStats.get_stats">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the current stats summary.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">avg</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min</span><span class="p">,</span>
+            <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max</span><span class="p">,</span>
+            <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_total</span><span class="p">,</span>
+            <span class="s2">&quot;avg&quot;</span><span class="p">:</span> <span class="n">avg</span><span class="p">,</span>
+            <span class="s2">&quot;count&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="TimerStats.log_stats">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStats.html#jade.utils.timing_utils.TimerStats.log_stats">[docs]</a>
+    <span class="k">def</span> <span class="nf">log_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log a summary of the stats.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No stats have been recorded for </span><span class="si">%s</span><span class="s2">.&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;total=</span><span class="si">{:.3f}</span><span class="s2">s avg=</span><span class="si">{:.3f}</span><span class="s2">ms max=</span><span class="si">{:.3f}</span><span class="s2">ms min=</span><span class="si">{:.3f}</span><span class="s2">ms count=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">[</span><span class="s2">&quot;total&quot;</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;avg&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;max&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;min&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;count&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;TimerStats summary: </span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TimerStats.update">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStats.html#jade.utils.timing_utils.TimerStats.update">[docs]</a>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the stats with a new timing.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_total</span> <span class="o">+=</span> <span class="n">duration</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max</span> <span class="o">=</span> <span class="n">duration</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">duration</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_min</span> <span class="o">=</span> <span class="n">duration</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Timer">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.Timer.html#jade.utils.timing_utils.Timer">[docs]</a>
+<span class="k">class</span> <span class="nc">Timer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Times a code block.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_stats</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer_stat</span> <span class="o">=</span> <span class="n">timer_stats</span><span class="o">.</span><span class="n">get_stat</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timer_stat</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_start</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="track_timing">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.track_timing.html#jade.utils.timing_utils.track_timing">[docs]</a>
+<span class="k">def</span> <span class="nf">track_timing</span><span class="p">(</span><span class="n">collector</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to track statistics on a function&#39;s execution time.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    collector : TimerStatsCollector</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">wrap</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">timed_</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_timed_func</span><span class="p">(</span><span class="n">collector</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">timed_</span>
+
+    <span class="k">return</span> <span class="n">wrap</span></div>
+
+
+
+<span class="k">def</span> <span class="nf">_timed_func</span><span class="p">(</span><span class="n">timer_stats</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">Timer</span><span class="p">(</span><span class="n">timer_stats</span><span class="p">,</span> <span class="n">func</span><span class="o">.</span><span class="vm">__qualname__</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="TimerStatsCollector">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStatsCollector.html#jade.utils.timing_utils.TimerStatsCollector">[docs]</a>
+<span class="k">class</span> <span class="nc">TimerStatsCollector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collects statistics for timed code segments.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="TimerStatsCollector.clear">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStatsCollector.html#jade.utils.timing_utils.TimerStatsCollector.clear">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear all stats.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TimerStatsCollector.get_stat">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStatsCollector.html#jade.utils.timing_utils.TimerStatsCollector.get_stat">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a TimerStats.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        TimerStats</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">register_stat</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="TimerStatsCollector.log_stats">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStatsCollector.html#jade.utils.timing_utils.TimerStatsCollector.log_stats">[docs]</a>
+    <span class="k">def</span> <span class="nf">log_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Log statistics for all tracked stats.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        clear : bool</span>
+<span class="sd">            If True, clear all stats.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">stat</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">stat</span><span class="o">.</span><span class="n">log_stats</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="TimerStatsCollector.register_stat">
+<a class="viewcode-back" href="../../../_autosummary/jade.utils.timing_utils.TimerStatsCollector.html#jade.utils.timing_utils.TimerStatsCollector.register_stat">[docs]</a>
+    <span class="k">def</span> <span class="nf">register_stat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register tracking of a new stat.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        TimerStats</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">TimerStats</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stats</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">stat</span>
+        <span class="k">return</span> <span class="n">stat</span></div>
+</div>
+
+
+
+<span class="n">timer_stats_collector</span> <span class="o">=</span> <span class="n">TimerStatsCollector</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

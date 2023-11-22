@@ -1,0 +1,47 @@
+jade.models.singularity.SingularityParams
+=========================================
+
+.. currentmodule:: jade.models.singularity
+
+.. autoclass:: SingularityParams
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SingularityParams.check_container
+      ~SingularityParams.construct
+      ~SingularityParams.copy
+      ~SingularityParams.dict
+      ~SingularityParams.from_orm
+      ~SingularityParams.json
+      ~SingularityParams.load
+      ~SingularityParams.parse_file
+      ~SingularityParams.parse_obj
+      ~SingularityParams.parse_raw
+      ~SingularityParams.schema
+      ~SingularityParams.schema_json
+      ~SingularityParams.update_forward_refs
+      ~SingularityParams.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SingularityParams.enabled
+      ~SingularityParams.container
+      ~SingularityParams.load_command
+      ~SingularityParams.run_command
+      ~SingularityParams.setup_commands
+   
+   

@@ -1,0 +1,41 @@
+jade.hpc.hpc\_submitter.AsyncHpcSubmitter
+=========================================
+
+.. currentmodule:: jade.hpc.hpc_submitter
+
+.. autoclass:: AsyncHpcSubmitter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AsyncHpcSubmitter.cancel
+      ~AsyncHpcSubmitter.create_from_id
+      ~AsyncHpcSubmitter.get_blocking_jobs
+      ~AsyncHpcSubmitter.get_id
+      ~AsyncHpcSubmitter.is_complete
+      ~AsyncHpcSubmitter.remove_blocking_job
+      ~AsyncHpcSubmitter.run
+      ~AsyncHpcSubmitter.set_blocking_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AsyncHpcSubmitter.cancel_on_blocking_job_failure
+      ~AsyncHpcSubmitter.hpc_manager
+      ~AsyncHpcSubmitter.job_id
+      ~AsyncHpcSubmitter.name
+      ~AsyncHpcSubmitter.return_code
+   
+   

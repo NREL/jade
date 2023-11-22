@@ -1,0 +1,43 @@
+jade.extensions.registry.Registry
+=================================
+
+.. currentmodule:: jade.extensions.registry
+
+.. autoclass:: Registry
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Registry.add_logger
+      ~Registry.get_extension_class
+      ~Registry.is_registered
+      ~Registry.iter_extensions
+      ~Registry.list_extensions
+      ~Registry.list_loggers
+      ~Registry.register_demo_extension
+      ~Registry.register_extension
+      ~Registry.remove_logger
+      ~Registry.reset_defaults
+      ~Registry.show_extensions
+      ~Registry.show_loggers
+      ~Registry.unregister_extension
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Registry.FORMAT_VERSION
+      ~Registry.registry_filename
+   
+   

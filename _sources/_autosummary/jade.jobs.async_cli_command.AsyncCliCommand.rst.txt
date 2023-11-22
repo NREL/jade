@@ -1,0 +1,39 @@
+jade.jobs.async\_cli\_command.AsyncCliCommand
+=============================================
+
+.. currentmodule:: jade.jobs.async_cli_command
+
+.. autoclass:: AsyncCliCommand
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AsyncCliCommand.cancel
+      ~AsyncCliCommand.get_blocking_jobs
+      ~AsyncCliCommand.get_id
+      ~AsyncCliCommand.is_complete
+      ~AsyncCliCommand.remove_blocking_job
+      ~AsyncCliCommand.run
+      ~AsyncCliCommand.set_blocking_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AsyncCliCommand.cancel_on_blocking_job_failure
+      ~AsyncCliCommand.job
+      ~AsyncCliCommand.name
+      ~AsyncCliCommand.return_code
+   
+   

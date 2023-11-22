@@ -1,0 +1,45 @@
+jade.models.jobs.JobStatus
+==========================
+
+.. currentmodule:: jade.models.jobs
+
+.. autoclass:: JobStatus
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobStatus.construct
+      ~JobStatus.copy
+      ~JobStatus.dict
+      ~JobStatus.from_orm
+      ~JobStatus.json
+      ~JobStatus.load
+      ~JobStatus.parse_file
+      ~JobStatus.parse_obj
+      ~JobStatus.parse_raw
+      ~JobStatus.schema
+      ~JobStatus.schema_json
+      ~JobStatus.update_forward_refs
+      ~JobStatus.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobStatus.jobs
+      ~JobStatus.hpc_job_ids
+      ~JobStatus.batch_index
+      ~JobStatus.version
+   
+   

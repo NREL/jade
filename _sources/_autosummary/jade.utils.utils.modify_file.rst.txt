@@ -1,0 +1,6 @@
+jade.utils.utils.modify\_file
+=============================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: modify_file

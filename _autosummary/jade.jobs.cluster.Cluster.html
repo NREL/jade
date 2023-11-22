@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jade.jobs.cluster.Cluster &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/documentation_options.js?v=82662543"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jade.jobs.cluster.ConfigVersionMismatch" href="jade.jobs.cluster.ConfigVersionMismatch.html" />
+    <link rel="prev" title="jade.jobs.cluster" href="jade.jobs.cluster.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home page</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="jade.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="jade.html">jade</a></li>
+          <li class="breadcrumb-item"><a href="jade.jobs.html">jade.jobs</a></li>
+          <li class="breadcrumb-item"><a href="jade.jobs.cluster.html">jade.jobs.cluster</a></li>
+      <li class="breadcrumb-item active">jade.jobs.cluster.Cluster</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/jade.jobs.cluster.Cluster.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="jade-jobs-cluster-cluster">
+<h1>jade.jobs.cluster.Cluster<a class="headerlink" href="#jade-jobs-cluster-cluster" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">jade.jobs.cluster.</span></span><span class="sig-name descname"><span class="pre">Cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lock_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents the state of the nodes running jobs.</p>
+<p>Internal constructor. Use create() or deserialize().</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.all_jobs_submitted" title="jade.jobs.cluster.Cluster.all_jobs_submitted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_jobs_submitted</span></code></a>()</p></td>
+<td><p>Return true if all jobs have been submitted.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.am_i_submitter" title="jade.jobs.cluster.Cluster.am_i_submitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">am_i_submitter</span></code></a>()</p></td>
+<td><p>Return True if the current system is the submitter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.are_all_jobs_complete" title="jade.jobs.cluster.Cluster.are_all_jobs_complete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">are_all_jobs_complete</span></code></a>()</p></td>
+<td><p>Return True if all jobs are complete.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.complete_hpc_job_id" title="jade.jobs.cluster.Cluster.complete_hpc_job_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">complete_hpc_job_id</span></code></a>(job_id)</p></td>
+<td><p>Complete an HPC job.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.create" title="jade.jobs.cluster.Cluster.create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create</span></code></a>(path, jade_config[, pipeline_stage_num])</p></td>
+<td><p>Create a new instance of a Cluster.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">delete_files_internal</span></code>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.demote_from_submitter" title="jade.jobs.cluster.Cluster.demote_from_submitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">demote_from_submitter</span></code></a>([serialize])</p></td>
+<td><p>Clear the submitter, which must be the current system.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.deserialize" title="jade.jobs.cluster.Cluster.deserialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize</span></code></a>(path[, ...])</p></td>
+<td><p>Deserialize an existing Cluster from a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.deserialize_jobs" title="jade.jobs.cluster.Cluster.deserialize_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize_jobs</span></code></a>()</p></td>
+<td><p>Deserialize the current job status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.deserialize_submission_groups" title="jade.jobs.cluster.Cluster.deserialize_submission_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">deserialize_submission_groups</span></code></a>(directory)</p></td>
+<td><p>Return the submission groups being used by the cluster.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.do_action_under_lock" title="jade.jobs.cluster.Cluster.do_action_under_lock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">do_action_under_lock</span></code></a>(path, func, *args, **kwargs)</p></td>
+<td><p>Run a function while holding the lock.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.get_config_file" title="jade.jobs.cluster.Cluster.get_config_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_config_file</span></code></a>(path)</p></td>
+<td><p>Return the path to the cluster config file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.get_job_status_file" title="jade.jobs.cluster.Cluster.get_job_status_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_job_status_file</span></code></a>(path)</p></td>
+<td><p>Return the path to the job status file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.get_lock_file" title="jade.jobs.cluster.Cluster.get_lock_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_lock_file</span></code></a>(path)</p></td>
+<td><p>Return the path to the lock file for the cluster config.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.get_status_summary" title="jade.jobs.cluster.Cluster.get_status_summary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_status_summary</span></code></a>([include_jobs])</p></td>
+<td><p>Return a dict that summarizes current status.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.has_submitter" title="jade.jobs.cluster.Cluster.has_submitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">has_submitter</span></code></a>()</p></td>
+<td><p>Return True if the config has a submitter assigned.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.is_canceled" title="jade.jobs.cluster.Cluster.is_canceled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_canceled</span></code></a>()</p></td>
+<td><p>Return True if the submission is canceled.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.is_complete" title="jade.jobs.cluster.Cluster.is_complete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_complete</span></code></a>()</p></td>
+<td><p>Return True if the submission is complete.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.iter_hpc_job_ids" title="jade.jobs.cluster.Cluster.iter_hpc_job_ids"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_hpc_job_ids</span></code></a>()</p></td>
+<td><p>Yields each Job.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.iter_jobs" title="jade.jobs.cluster.Cluster.iter_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">iter_jobs</span></code></a>([state])</p></td>
+<td><p>Yields each Job.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.mark_canceled" title="jade.jobs.cluster.Cluster.mark_canceled"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mark_canceled</span></code></a>()</p></td>
+<td><p>Mark the submission as being canceled.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.mark_complete" title="jade.jobs.cluster.Cluster.mark_complete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mark_complete</span></code></a>()</p></td>
+<td><p>Mark the submission as being complete.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.prepare_for_resubmission" title="jade.jobs.cluster.Cluster.prepare_for_resubmission"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_for_resubmission</span></code></a>(jobs_to_resubmit, ...)</p></td>
+<td><p>Reset the state of the cluster for resubmission of jobs.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.promote_to_submitter" title="jade.jobs.cluster.Cluster.promote_to_submitter"><code class="xref py py-obj docutils literal notranslate"><span class="pre">promote_to_submitter</span></code></a>([serialize])</p></td>
+<td><p>Promote the current system to submitter.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.serialize" title="jade.jobs.cluster.Cluster.serialize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize</span></code></a>(reason)</p></td>
+<td><p>Serialize the config to a file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.serialize_jobs" title="jade.jobs.cluster.Cluster.serialize_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize_jobs</span></code></a>(reason)</p></td>
+<td><p>Serialize the job status to a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.serialize_submission_groups" title="jade.jobs.cluster.Cluster.serialize_submission_groups"><code class="xref py py-obj docutils literal notranslate"><span class="pre">serialize_submission_groups</span></code></a>(directory)</p></td>
+<td><p>Serialize the submission groups so that they can be read without acquiring a lock.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.update_job_status" title="jade.jobs.cluster.Cluster.update_job_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update_job_status</span></code></a>(submitted_jobs, ...)</p></td>
+<td><p>Update the job status in the config file.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">CLUSTER_CONFIG_FILE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">CONFIG_VERSION_FILE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">JOB_STATUS_FILE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">JOB_STATUS_VERSION_FILE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LOCK_FILE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SUBMITTER_GROUP_FILE</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.config" title="jade.jobs.cluster.Cluster.config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config</span></code></a></p></td>
+<td><p>Return the ClusterConfig</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.config_file" title="jade.jobs.cluster.Cluster.config_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">config_file</span></code></a></p></td>
+<td><p>Return the path to the cluster config file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.jobs.cluster.Cluster.job_status" title="jade.jobs.cluster.Cluster.job_status"><code class="xref py py-obj docutils literal notranslate"><span class="pre">job_status</span></code></a></p></td>
+<td><p>Return the JobStatus</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.create">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jade_config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="jade.jobs.job_configuration.JobConfiguration.html#jade.jobs.job_configuration.JobConfiguration" title="jade.jobs.job_configuration.JobConfiguration"><span class="pre">JobConfiguration</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">pipeline_stage_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.create" title="Link to this definition">¶</a></dt>
+<dd><p>Create a new instance of a Cluster. Promotes itself to submitter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Base directory for a JADE submission</p></li>
+<li><p><strong>jade_config</strong> (<a class="reference internal" href="jade.jobs.job_configuration.JobConfiguration.html#jade.jobs.job_configuration.JobConfiguration" title="jade.jobs.job_configuration.JobConfiguration"><em>JobConfiguration</em></a>) – </p></li>
+<li><p><strong>pipeline_stage_num</strong> (<em>None</em><em> | </em><em>int</em>) – True if the config is one stage of a pipeline</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.deserialize">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_promote_to_submitter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deserialize_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.deserialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.deserialize" title="Link to this definition">¶</a></dt>
+<dd><p>Deserialize an existing Cluster from a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Base directory for a JADE submission</p></li>
+<li><p><strong>try_promote_to_submitter</strong> (<em>bool</em>) – Attempt to promote to submitter</p></li>
+<li><p><strong>deserialize_jobs</strong> (<em>bool</em>) – Deserialize current job status</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>cluster and a bool indicating whether promotion occurred</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.are_all_jobs_complete">
+<span class="sig-name descname"><span class="pre">are_all_jobs_complete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.are_all_jobs_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.are_all_jobs_complete" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if all jobs are complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.all_jobs_submitted">
+<span class="sig-name descname"><span class="pre">all_jobs_submitted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.all_jobs_submitted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.all_jobs_submitted" title="Link to this definition">¶</a></dt>
+<dd><p>Return true if all jobs have been submitted.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.am_i_submitter">
+<span class="sig-name descname"><span class="pre">am_i_submitter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.am_i_submitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.am_i_submitter" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the current system is the submitter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.complete_hpc_job_id">
+<span class="sig-name descname"><span class="pre">complete_hpc_job_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.complete_hpc_job_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.complete_hpc_job_id" title="Link to this definition">¶</a></dt>
+<dd><p>Complete an HPC job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.config">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config</span></span><a class="headerlink" href="#jade.jobs.cluster.Cluster.config" title="Link to this definition">¶</a></dt>
+<dd><p>Return the ClusterConfig</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.config_file">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">config_file</span></span><a class="headerlink" href="#jade.jobs.cluster.Cluster.config_file" title="Link to this definition">¶</a></dt>
+<dd><p>Return the path to the cluster config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.demote_from_submitter">
+<span class="sig-name descname"><span class="pre">demote_from_submitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serialize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.demote_from_submitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.demote_from_submitter" title="Link to this definition">¶</a></dt>
+<dd><p>Clear the submitter, which must be the current system.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.deserialize_jobs">
+<span class="sig-name descname"><span class="pre">deserialize_jobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.deserialize_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.deserialize_jobs" title="Link to this definition">¶</a></dt>
+<dd><p>Deserialize the current job status.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.do_action_under_lock">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">do_action_under_lock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.do_action_under_lock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.do_action_under_lock" title="Link to this definition">¶</a></dt>
+<dd><p>Run a function while holding the lock.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.get_config_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_config_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.get_config_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.get_config_file" title="Link to this definition">¶</a></dt>
+<dd><p>Return the path to the cluster config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Base directory for a JADE submission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.get_job_status_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_job_status_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.get_job_status_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.get_job_status_file" title="Link to this definition">¶</a></dt>
+<dd><p>Return the path to the job status file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Base directory for a JADE submission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.get_lock_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_lock_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.get_lock_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.get_lock_file" title="Link to this definition">¶</a></dt>
+<dd><p>Return the path to the lock file for the cluster config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Base directory for a JADE submission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.get_status_summary">
+<span class="sig-name descname"><span class="pre">get_status_summary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_jobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.get_status_summary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.get_status_summary" title="Link to this definition">¶</a></dt>
+<dd><p>Return a dict that summarizes current status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>include_jobs</strong> (<em>bool</em>) – Whether to include individual job status</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.has_submitter">
+<span class="sig-name descname"><span class="pre">has_submitter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.has_submitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.has_submitter" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the config has a submitter assigned.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.iter_jobs">
+<span class="sig-name descname"><span class="pre">iter_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.iter_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.iter_jobs" title="Link to this definition">¶</a></dt>
+<dd><p>Yields each Job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="jade.models.jobs.JobState.html#jade.models.jobs.JobState" title="jade.models.jobs.JobState"><em>JobState</em></a>) – If not None, only return jobs that match this state.</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Job</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.iter_hpc_job_ids">
+<span class="sig-name descname"><span class="pre">iter_hpc_job_ids</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.iter_hpc_job_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.iter_hpc_job_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Yields each Job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Yields<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>str</em> – HPC job ID</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.job_status">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">job_status</span></span><a class="headerlink" href="#jade.jobs.cluster.Cluster.job_status" title="Link to this definition">¶</a></dt>
+<dd><p>Return the JobStatus</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.is_canceled">
+<span class="sig-name descname"><span class="pre">is_canceled</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.is_canceled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.is_canceled" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the submission is canceled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.is_complete">
+<span class="sig-name descname"><span class="pre">is_complete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.is_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.is_complete" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the submission is complete.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.mark_canceled">
+<span class="sig-name descname"><span class="pre">mark_canceled</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.mark_canceled"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.mark_canceled" title="Link to this definition">¶</a></dt>
+<dd><p>Mark the submission as being canceled.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.mark_complete">
+<span class="sig-name descname"><span class="pre">mark_complete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.mark_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.mark_complete" title="Link to this definition">¶</a></dt>
+<dd><p>Mark the submission as being complete.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.prepare_for_resubmission">
+<span class="sig-name descname"><span class="pre">prepare_for_resubmission</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobs_to_resubmit</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_blocking_jobs_by_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.prepare_for_resubmission"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.prepare_for_resubmission" title="Link to this definition">¶</a></dt>
+<dd><p>Reset the state of the cluster for resubmission of jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobs_to_resubmit</strong> (<em>set</em>) – job names that will be resubmitted</p></li>
+<li><p><strong>updated_blocking_jobs_by_name</strong> (<em>dict</em>) – contains the blocking jobs for each job to be resubmitted</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.promote_to_submitter">
+<span class="sig-name descname"><span class="pre">promote_to_submitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">serialize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.promote_to_submitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.promote_to_submitter" title="Link to this definition">¶</a></dt>
+<dd><p>Promote the current system to submitter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns True if promotion was successful</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.serialize">
+<span class="sig-name descname"><span class="pre">serialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.serialize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.serialize" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the config to a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.serialize_jobs">
+<span class="sig-name descname"><span class="pre">serialize_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reason</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.serialize_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.serialize_jobs" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the job status to a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.serialize_submission_groups">
+<span class="sig-name descname"><span class="pre">serialize_submission_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.serialize_submission_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.serialize_submission_groups" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the submission groups so that they can be read without
+acquiring a lock.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>directory</strong> (<em>Path</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.deserialize_submission_groups">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">deserialize_submission_groups</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.deserialize_submission_groups"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.deserialize_submission_groups" title="Link to this definition">¶</a></dt>
+<dd><p>Return the submission groups being used by the cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>directory</strong> (<em>Path</em>) – </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>list of SubmissionGroup</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.jobs.cluster.Cluster.update_job_status">
+<span class="sig-name descname"><span class="pre">update_job_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">submitted_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">blocked_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">canceled_jobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">completed_job_names</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hpc_job_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_index</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/jobs/cluster.html#Cluster.update_job_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.jobs.cluster.Cluster.update_job_status" title="Link to this definition">¶</a></dt>
+<dd><p>Update the job status in the config file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>submitted_jobs</strong> (<em>list</em>) – list of Job</p></li>
+<li><p><strong>blocked_jobs</strong> (<em>list</em>) – list of Job</p></li>
+<li><p><strong>canceled_jobs</strong> (<em>list</em>) – list of Job</p></li>
+<li><p><strong>completed_job_names</strong> (<em>set</em>) – set of str</p></li>
+<li><p><strong>hpc_job_ids</strong> (<em>list</em>) – list of str of newly submitted job IDs</p></li>
+<li><p><strong>batch_index</strong> (<em>int</em>) – next batch index</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="jade.jobs.cluster.html" class="btn btn-neutral float-left" title="jade.jobs.cluster" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jade.jobs.cluster.ConfigVersionMismatch.html" class="btn btn-neutral float-right" title="jade.jobs.cluster.ConfigVersionMismatch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

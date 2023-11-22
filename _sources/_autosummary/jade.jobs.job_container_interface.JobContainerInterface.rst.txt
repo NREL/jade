@@ -1,0 +1,30 @@
+jade.jobs.job\_container\_interface.JobContainerInterface
+=========================================================
+
+.. currentmodule:: jade.jobs.job_container_interface
+
+.. autoclass:: JobContainerInterface
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobContainerInterface.add_job
+      ~JobContainerInterface.clear
+      ~JobContainerInterface.get_job
+      ~JobContainerInterface.get_jobs
+      ~JobContainerInterface.list_jobs
+      ~JobContainerInterface.remove_job
+      ~JobContainerInterface.shuffle
+   
+   
+
+   
+   
+   

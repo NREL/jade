@@ -1,0 +1,6 @@
+jade.utils.utils.standardize\_timestamp
+=======================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: standardize_timestamp

@@ -1,0 +1,33 @@
+jade.hpc.common.HpcJobInfo
+==========================
+
+.. currentmodule:: jade.hpc.common
+
+.. autoclass:: HpcJobInfo
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HpcJobInfo.count
+      ~HpcJobInfo.index
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcJobInfo.job_id
+      ~HpcJobInfo.name
+      ~HpcJobInfo.status
+   
+   

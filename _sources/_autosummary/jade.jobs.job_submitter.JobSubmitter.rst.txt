@@ -1,0 +1,43 @@
+jade.jobs.job\_submitter.JobSubmitter
+=====================================
+
+.. currentmodule:: jade.jobs.job_submitter
+
+.. autoclass:: JobSubmitter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobSubmitter.cancel_jobs
+      ~JobSubmitter.create
+      ~JobSubmitter.find_error_log_messages
+      ~JobSubmitter.generate_reports
+      ~JobSubmitter.get_batch_post_process_config
+      ~JobSubmitter.get_completed_results
+      ~JobSubmitter.get_num_jobs
+      ~JobSubmitter.get_results_summmary
+      ~JobSubmitter.get_results_summmary_report
+      ~JobSubmitter.load
+      ~JobSubmitter.run_checks
+      ~JobSubmitter.run_submit_jobs
+      ~JobSubmitter.submit_jobs
+      ~JobSubmitter.write_results_summary
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobSubmitter.config
+   
+   

@@ -1,0 +1,6 @@
+jade.extensions.demo.create\_merge\_pred\_gdp.main
+==================================================
+
+.. currentmodule:: jade.extensions.demo.create_merge_pred_gdp
+
+.. autofunction:: main

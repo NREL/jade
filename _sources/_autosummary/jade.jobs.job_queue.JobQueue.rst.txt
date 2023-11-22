@@ -1,0 +1,35 @@
+jade.jobs.job\_queue.JobQueue
+=============================
+
+.. currentmodule:: jade.jobs.job_queue
+
+.. autoclass:: JobQueue
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobQueue.is_full
+      ~JobQueue.process_queue
+      ~JobQueue.run
+      ~JobQueue.run_jobs
+      ~JobQueue.submit
+      ~JobQueue.wait
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobQueue.outstanding_jobs
+   
+   

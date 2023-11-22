@@ -1,0 +1,6 @@
+jade.utils.utils.get\_cli\_string
+=================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: get_cli_string

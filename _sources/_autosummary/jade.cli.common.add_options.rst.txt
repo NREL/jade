@@ -1,0 +1,6 @@
+jade.cli.common.add\_options
+============================
+
+.. currentmodule:: jade.cli.common
+
+.. autofunction:: add_options

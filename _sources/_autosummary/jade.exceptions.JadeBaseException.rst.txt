@@ -1,0 +1,6 @@
+jade.exceptions.JadeBaseException
+=================================
+
+.. currentmodule:: jade.exceptions
+
+.. autoexception:: JadeBaseException

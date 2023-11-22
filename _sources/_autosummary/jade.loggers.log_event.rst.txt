@@ -1,0 +1,6 @@
+jade.loggers.log\_event
+=======================
+
+.. currentmodule:: jade.loggers
+
+.. autofunction:: log_event

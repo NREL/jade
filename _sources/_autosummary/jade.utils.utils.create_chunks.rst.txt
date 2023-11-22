@@ -1,0 +1,6 @@
+jade.utils.utils.create\_chunks
+===============================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: create_chunks

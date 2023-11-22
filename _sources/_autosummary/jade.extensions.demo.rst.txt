@@ -1,0 +1,36 @@
+jade.extensions.demo
+====================
+
+.. automodule:: jade.extensions.demo
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   jade.extensions.demo.autoregression_configuration
+   jade.extensions.demo.autoregression_execution
+   jade.extensions.demo.autoregression_inputs
+   jade.extensions.demo.autoregression_parameters
+   jade.extensions.demo.cli
+   jade.extensions.demo.create_merge_pred_gdp
+   jade.extensions.demo.merge_pred_gdp
+

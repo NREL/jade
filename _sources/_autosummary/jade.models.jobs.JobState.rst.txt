@@ -1,0 +1,26 @@
+jade.models.jobs.JobState
+=========================
+
+.. currentmodule:: jade.models.jobs
+
+.. autoclass:: JobState
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobState.NOT_SUBMITTED
+      ~JobState.SUBMITTED
+      ~JobState.DONE
+   
+   

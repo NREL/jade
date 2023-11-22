@@ -1,0 +1,27 @@
+jade.extensions.registry.ExtensionClassType
+===========================================
+
+.. currentmodule:: jade.extensions.registry
+
+.. autoclass:: ExtensionClassType
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ExtensionClassType.CLI
+      ~ExtensionClassType.CONFIGURATION
+      ~ExtensionClassType.EXECUTION
+      ~ExtensionClassType.PARAMETERS
+   
+   

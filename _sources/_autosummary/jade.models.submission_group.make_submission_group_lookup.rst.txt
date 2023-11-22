@@ -1,0 +1,6 @@
+jade.models.submission\_group.make\_submission\_group\_lookup
+=============================================================
+
+.. currentmodule:: jade.models.submission_group
+
+.. autofunction:: make_submission_group_lookup

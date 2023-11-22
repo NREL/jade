@@ -1,0 +1,29 @@
+jade.enums.EnumEncoder
+======================
+
+.. currentmodule:: jade.enums
+
+.. autoclass:: EnumEncoder
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~EnumEncoder.dump_enum
+      ~EnumEncoder.dump_inline_table
+      ~EnumEncoder.dump_list
+      ~EnumEncoder.dump_sections
+      ~EnumEncoder.dump_value
+      ~EnumEncoder.get_empty_table
+   
+   
+
+   
+   
+   

@@ -1,0 +1,25 @@
+jade.hpc.common.HpcQos
+======================
+
+.. currentmodule:: jade.hpc.common
+
+.. autoclass:: HpcQos
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcQos.LOW
+      ~HpcQos.HIGH
+   
+   

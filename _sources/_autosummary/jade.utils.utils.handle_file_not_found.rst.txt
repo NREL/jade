@@ -1,0 +1,6 @@
+jade.utils.utils.handle\_file\_not\_found
+=========================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: handle_file_not_found

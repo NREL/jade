@@ -1,0 +1,44 @@
+﻿jade
+====
+
+.. automodule:: jade
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   jade.cli
+   jade.common
+   jade.enums
+   jade.events
+   jade.exceptions
+   jade.extensions
+   jade.hpc
+   jade.jobs
+   jade.loggers
+   jade.models
+   jade.resource_monitor
+   jade.result
+   jade.spark
+   jade.utils
+   jade.version
+

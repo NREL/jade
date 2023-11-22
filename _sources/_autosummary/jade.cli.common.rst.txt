@@ -1,0 +1,33 @@
+jade.cli.common
+===============
+
+.. automodule:: jade.cli.common
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      add_options
+      handle_enum_input
+      make_submitter_params
+      proceed_with_user_permission
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

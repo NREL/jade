@@ -1,0 +1,27 @@
+jade.hpc.common.HpcType
+=======================
+
+.. currentmodule:: jade.hpc.common
+
+.. autoclass:: HpcType
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcType.LOCAL
+      ~HpcType.PBS
+      ~HpcType.SLURM
+      ~HpcType.FAKE
+   
+   

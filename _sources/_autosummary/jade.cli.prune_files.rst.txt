@@ -1,0 +1,23 @@
+jade.cli.prune\_files
+=====================
+
+.. automodule:: jade.cli.prune_files
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

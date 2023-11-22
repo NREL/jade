@@ -1,0 +1,6 @@
+jade.jobs.job\_configuration\_factory.create\_config\_from\_previous\_run
+=========================================================================
+
+.. currentmodule:: jade.jobs.job_configuration_factory
+
+.. autofunction:: create_config_from_previous_run

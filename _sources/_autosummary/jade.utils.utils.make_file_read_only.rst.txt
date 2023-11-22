@@ -1,0 +1,6 @@
+jade.utils.utils.make\_file\_read\_only
+=======================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: make_file_read_only

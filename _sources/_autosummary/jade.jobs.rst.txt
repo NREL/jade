@@ -1,0 +1,49 @@
+jade.jobs
+=========
+
+.. automodule:: jade.jobs
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   jade.jobs.analysis_execution_base
+   jade.jobs.async_cli_command
+   jade.jobs.async_job_interface
+   jade.jobs.cluster
+   jade.jobs.job_analysis
+   jade.jobs.job_configuration
+   jade.jobs.job_configuration_factory
+   jade.jobs.job_container_by_key
+   jade.jobs.job_container_by_name
+   jade.jobs.job_container_interface
+   jade.jobs.job_execution_interface
+   jade.jobs.job_inputs_interface
+   jade.jobs.job_manager_base
+   jade.jobs.job_parameters_interface
+   jade.jobs.job_post_process
+   jade.jobs.job_queue
+   jade.jobs.job_runner
+   jade.jobs.job_submitter
+   jade.jobs.pipeline_manager
+   jade.jobs.results_aggregator
+

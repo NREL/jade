@@ -1,0 +1,6 @@
+jade.jobs.job\_configuration\_factory.upgrade\_config\_file
+===========================================================
+
+.. currentmodule:: jade.jobs.job_configuration_factory
+
+.. autofunction:: upgrade_config_file

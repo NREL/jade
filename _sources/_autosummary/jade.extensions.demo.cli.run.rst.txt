@@ -1,0 +1,6 @@
+jade.extensions.demo.cli.run
+============================
+
+.. currentmodule:: jade.extensions.demo.cli
+
+.. autofunction:: run

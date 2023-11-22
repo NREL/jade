@@ -1,0 +1,28 @@
+jade.jobs.job\_post\_process.JobPostProcess
+===========================================
+
+.. currentmodule:: jade.jobs.job_post_process
+
+.. autoclass:: JobPostProcess
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobPostProcess.dump_config
+      ~JobPostProcess.load_config_from_file
+      ~JobPostProcess.run
+      ~JobPostProcess.serialize
+      ~JobPostProcess.show_results
+   
+   
+
+   
+   
+   

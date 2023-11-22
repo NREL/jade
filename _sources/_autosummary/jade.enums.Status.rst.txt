@@ -1,0 +1,26 @@
+jade.enums.Status
+=================
+
+.. currentmodule:: jade.enums
+
+.. autoclass:: Status
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Status.GOOD
+      ~Status.ERROR
+      ~Status.IN_PROGRESS
+   
+   

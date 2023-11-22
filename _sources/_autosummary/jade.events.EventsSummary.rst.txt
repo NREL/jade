@@ -1,0 +1,41 @@
+jade.events.EventsSummary
+=========================
+
+.. currentmodule:: jade.events
+
+.. autoclass:: EventsSummary
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~EventsSummary.get_bytes_consumed
+      ~EventsSummary.get_config_exec_time
+      ~EventsSummary.get_dataframe
+      ~EventsSummary.iter_events
+      ~EventsSummary.list_events
+      ~EventsSummary.list_unique_categories
+      ~EventsSummary.list_unique_names
+      ~EventsSummary.show_event_categories
+      ~EventsSummary.show_event_names
+      ~EventsSummary.show_events
+      ~EventsSummary.show_events_in_category
+      ~EventsSummary.to_json
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~EventsSummary.RESOURCE_STATS
+   
+   

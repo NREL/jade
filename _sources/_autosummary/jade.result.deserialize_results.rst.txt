@@ -1,0 +1,6 @@
+jade.result.deserialize\_results
+================================
+
+.. currentmodule:: jade.result
+
+.. autofunction:: deserialize_results

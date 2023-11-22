@@ -1,0 +1,31 @@
+jade.utils.repository\_info
+===========================
+
+.. automodule:: jade.utils.repository_info
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      RepositoryInfo
+   
+   
+
+   
+   
+   
+
+
+

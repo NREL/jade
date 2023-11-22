@@ -1,0 +1,6 @@
+jade.jobs.job\_configuration\_factory.deserialize\_config
+=========================================================
+
+.. currentmodule:: jade.jobs.job_configuration_factory
+
+.. autofunction:: deserialize_config

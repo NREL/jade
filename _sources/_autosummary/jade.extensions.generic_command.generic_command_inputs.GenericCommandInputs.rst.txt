@@ -1,0 +1,31 @@
+jade.extensions.generic\_command.generic\_command\_inputs.GenericCommandInputs
+==============================================================================
+
+.. currentmodule:: jade.extensions.generic_command.generic_command_inputs
+
+.. autoclass:: GenericCommandInputs
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GenericCommandInputs.get_available_parameters
+      ~GenericCommandInputs.iter_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GenericCommandInputs.base_directory
+   
+   

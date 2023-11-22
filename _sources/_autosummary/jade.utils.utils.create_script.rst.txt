@@ -1,0 +1,6 @@
+jade.utils.utils.create\_script
+===============================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: create_script

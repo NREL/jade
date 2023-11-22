@@ -1,0 +1,69 @@
+jade.extensions.generic\_command.generic\_command\_configuration.GenericCommandConfiguration
+============================================================================================
+
+.. currentmodule:: jade.extensions.generic_command.generic_command_configuration
+
+.. autoclass:: GenericCommandConfiguration
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GenericCommandConfiguration.add_job
+      ~GenericCommandConfiguration.add_user_data
+      ~GenericCommandConfiguration.append_submission_group
+      ~GenericCommandConfiguration.assign_default_submission_group
+      ~GenericCommandConfiguration.auto_config
+      ~GenericCommandConfiguration.check_job_dependencies
+      ~GenericCommandConfiguration.check_job_estimated_run_minutes
+      ~GenericCommandConfiguration.check_job_runtimes
+      ~GenericCommandConfiguration.check_spark_config
+      ~GenericCommandConfiguration.check_submission_groups
+      ~GenericCommandConfiguration.clear
+      ~GenericCommandConfiguration.create_from_result
+      ~GenericCommandConfiguration.deserialize
+      ~GenericCommandConfiguration.dump
+      ~GenericCommandConfiguration.dumps
+      ~GenericCommandConfiguration.get_default_submission_group
+      ~GenericCommandConfiguration.get_job
+      ~GenericCommandConfiguration.get_num_jobs
+      ~GenericCommandConfiguration.get_submission_group
+      ~GenericCommandConfiguration.get_user_data
+      ~GenericCommandConfiguration.iter_jobs
+      ~GenericCommandConfiguration.job_execution_class
+      ~GenericCommandConfiguration.job_parameters_class
+      ~GenericCommandConfiguration.list_jobs
+      ~GenericCommandConfiguration.list_user_data_keys
+      ~GenericCommandConfiguration.reconfigure_jobs
+      ~GenericCommandConfiguration.remove_job
+      ~GenericCommandConfiguration.remove_user_data
+      ~GenericCommandConfiguration.serialize
+      ~GenericCommandConfiguration.serialize_for_execution
+      ~GenericCommandConfiguration.serialize_jobs
+      ~GenericCommandConfiguration.show_jobs
+      ~GenericCommandConfiguration.shuffle_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GenericCommandConfiguration.FILENAME_DELIMITER
+      ~GenericCommandConfiguration.FORMAT_VERSION
+      ~GenericCommandConfiguration.job_global_config
+      ~GenericCommandConfiguration.node_setup_command
+      ~GenericCommandConfiguration.node_teardown_command
+      ~GenericCommandConfiguration.setup_command
+      ~GenericCommandConfiguration.submission_groups
+      ~GenericCommandConfiguration.teardown_command
+   
+   

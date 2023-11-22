@@ -1,0 +1,46 @@
+jade.hpc.slurm\_manager.SlurmManager
+====================================
+
+.. currentmodule:: jade.hpc.slurm_manager
+
+.. autoclass:: SlurmManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SlurmManager.am_i_manager
+      ~SlurmManager.cancel_job
+      ~SlurmManager.check_status
+      ~SlurmManager.check_statuses
+      ~SlurmManager.check_storage_configuration
+      ~SlurmManager.create_cluster
+      ~SlurmManager.create_local_cluster
+      ~SlurmManager.create_submission_script
+      ~SlurmManager.get_config
+      ~SlurmManager.get_current_job_id
+      ~SlurmManager.get_job_stats
+      ~SlurmManager.get_local_scratch
+      ~SlurmManager.get_node_id
+      ~SlurmManager.get_num_cpus
+      ~SlurmManager.list_active_nodes
+      ~SlurmManager.log_environment_variables
+      ~SlurmManager.submit
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SlurmManager.USER
+   
+   

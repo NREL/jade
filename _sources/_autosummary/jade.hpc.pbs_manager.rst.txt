@@ -1,0 +1,31 @@
+jade.hpc.pbs\_manager
+=====================
+
+.. automodule:: jade.hpc.pbs_manager
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      PbsManager
+   
+   
+
+   
+   
+   
+
+
+

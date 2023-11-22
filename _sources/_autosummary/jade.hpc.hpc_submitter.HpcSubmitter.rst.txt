@@ -1,0 +1,30 @@
+jade.hpc.hpc\_submitter.HpcSubmitter
+====================================
+
+.. currentmodule:: jade.hpc.hpc_submitter
+
+.. autoclass:: HpcSubmitter
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HpcSubmitter.run
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcSubmitter.LOCK_FILENAME
+   
+   

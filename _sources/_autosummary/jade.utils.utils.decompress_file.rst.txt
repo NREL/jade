@@ -1,0 +1,6 @@
+jade.utils.utils.decompress\_file
+=================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: decompress_file

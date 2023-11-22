@@ -1,0 +1,68 @@
+jade.extensions.demo.autoregression\_configuration.AutoRegressionConfiguration
+==============================================================================
+
+.. currentmodule:: jade.extensions.demo.autoregression_configuration
+
+.. autoclass:: AutoRegressionConfiguration
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AutoRegressionConfiguration.add_job
+      ~AutoRegressionConfiguration.add_user_data
+      ~AutoRegressionConfiguration.append_submission_group
+      ~AutoRegressionConfiguration.assign_default_submission_group
+      ~AutoRegressionConfiguration.check_job_dependencies
+      ~AutoRegressionConfiguration.check_job_estimated_run_minutes
+      ~AutoRegressionConfiguration.check_job_runtimes
+      ~AutoRegressionConfiguration.check_spark_config
+      ~AutoRegressionConfiguration.check_submission_groups
+      ~AutoRegressionConfiguration.clear
+      ~AutoRegressionConfiguration.create_from_result
+      ~AutoRegressionConfiguration.deserialize
+      ~AutoRegressionConfiguration.dump
+      ~AutoRegressionConfiguration.dumps
+      ~AutoRegressionConfiguration.get_default_submission_group
+      ~AutoRegressionConfiguration.get_job
+      ~AutoRegressionConfiguration.get_num_jobs
+      ~AutoRegressionConfiguration.get_submission_group
+      ~AutoRegressionConfiguration.get_user_data
+      ~AutoRegressionConfiguration.iter_jobs
+      ~AutoRegressionConfiguration.job_execution_class
+      ~AutoRegressionConfiguration.job_parameters_class
+      ~AutoRegressionConfiguration.list_jobs
+      ~AutoRegressionConfiguration.list_user_data_keys
+      ~AutoRegressionConfiguration.reconfigure_jobs
+      ~AutoRegressionConfiguration.remove_job
+      ~AutoRegressionConfiguration.remove_user_data
+      ~AutoRegressionConfiguration.serialize
+      ~AutoRegressionConfiguration.serialize_for_execution
+      ~AutoRegressionConfiguration.serialize_jobs
+      ~AutoRegressionConfiguration.show_jobs
+      ~AutoRegressionConfiguration.shuffle_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AutoRegressionConfiguration.FILENAME_DELIMITER
+      ~AutoRegressionConfiguration.FORMAT_VERSION
+      ~AutoRegressionConfiguration.job_global_config
+      ~AutoRegressionConfiguration.node_setup_command
+      ~AutoRegressionConfiguration.node_teardown_command
+      ~AutoRegressionConfiguration.setup_command
+      ~AutoRegressionConfiguration.submission_groups
+      ~AutoRegressionConfiguration.teardown_command
+   
+   

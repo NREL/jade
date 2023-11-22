@@ -1,0 +1,6 @@
+jade.cli.collect\_stats.find\_process\_ids
+==========================================
+
+.. currentmodule:: jade.cli.collect_stats
+
+.. autofunction:: find_process_ids

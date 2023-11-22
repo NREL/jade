@@ -1,0 +1,6 @@
+jade.jobs.cluster.ConfigVersionMismatch
+=======================================
+
+.. currentmodule:: jade.jobs.cluster
+
+.. autoexception:: ConfigVersionMismatch

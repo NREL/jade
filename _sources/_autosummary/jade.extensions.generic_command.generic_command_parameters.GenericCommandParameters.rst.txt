@@ -1,0 +1,42 @@
+jade.extensions.generic\_command.generic\_command\_parameters.GenericCommandParameters
+======================================================================================
+
+.. currentmodule:: jade.extensions.generic_command.generic_command_parameters
+
+.. autoclass:: GenericCommandParameters
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GenericCommandParameters.deserialize
+      ~GenericCommandParameters.get_blocking_jobs
+      ~GenericCommandParameters.is_spark_job
+      ~GenericCommandParameters.remove_blocking_job
+      ~GenericCommandParameters.serialize
+      ~GenericCommandParameters.set_blocking_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GenericCommandParameters.DELIMITER
+      ~GenericCommandParameters.cancel_on_blocking_job_failure
+      ~GenericCommandParameters.command
+      ~GenericCommandParameters.estimated_run_minutes
+      ~GenericCommandParameters.extension
+      ~GenericCommandParameters.model
+      ~GenericCommandParameters.name
+      ~GenericCommandParameters.submission_group
+   
+   

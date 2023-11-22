@@ -1,0 +1,38 @@
+jade.extensions.demo.autoregression\_execution
+==============================================
+
+.. automodule:: jade.extensions.demo.autoregression_execution
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      autoregression_analysis
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      AutoRegressionExecution
+   
+   
+
+   
+   
+   
+
+
+

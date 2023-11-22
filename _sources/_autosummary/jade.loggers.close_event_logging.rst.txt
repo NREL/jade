@@ -1,0 +1,6 @@
+jade.loggers.close\_event\_logging
+==================================
+
+.. currentmodule:: jade.loggers
+
+.. autofunction:: close_event_logging

@@ -1,0 +1,31 @@
+jade.resource\_monitor.ProcessStatsViewer
+=========================================
+
+.. currentmodule:: jade.resource_monitor
+
+.. autoclass:: ProcessStatsViewer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ProcessStatsViewer.get_dataframe
+      ~ProcessStatsViewer.get_printable_value
+      ~ProcessStatsViewer.get_stats_summary
+      ~ProcessStatsViewer.iter_batch_names
+      ~ProcessStatsViewer.metric
+      ~ProcessStatsViewer.plot_to_file
+      ~ProcessStatsViewer.show_stat_totals
+      ~ProcessStatsViewer.show_stats
+   
+   
+
+   
+   
+   

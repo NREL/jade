@@ -1,0 +1,23 @@
+jade.extensions.demo.merge\_pred\_gdp
+=====================================
+
+.. automodule:: jade.extensions.demo.merge_pred_gdp
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

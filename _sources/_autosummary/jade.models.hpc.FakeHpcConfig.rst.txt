@@ -1,0 +1,42 @@
+jade.models.hpc.FakeHpcConfig
+=============================
+
+.. currentmodule:: jade.models.hpc
+
+.. autoclass:: FakeHpcConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FakeHpcConfig.construct
+      ~FakeHpcConfig.copy
+      ~FakeHpcConfig.dict
+      ~FakeHpcConfig.from_orm
+      ~FakeHpcConfig.json
+      ~FakeHpcConfig.load
+      ~FakeHpcConfig.parse_file
+      ~FakeHpcConfig.parse_obj
+      ~FakeHpcConfig.parse_raw
+      ~FakeHpcConfig.schema
+      ~FakeHpcConfig.schema_json
+      ~FakeHpcConfig.update_forward_refs
+      ~FakeHpcConfig.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FakeHpcConfig.walltime
+   
+   

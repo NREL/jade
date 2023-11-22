@@ -1,0 +1,6 @@
+jade.utils.utils.rotate\_filenames
+==================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: rotate_filenames

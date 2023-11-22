@@ -1,0 +1,6 @@
+jade.utils.utils.aggregate\_data\_from\_files
+=============================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: aggregate_data_from_files

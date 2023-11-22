@@ -1,0 +1,23 @@
+jade.cli.resubmit\_jobs
+=======================
+
+.. automodule:: jade.cli.resubmit_jobs
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

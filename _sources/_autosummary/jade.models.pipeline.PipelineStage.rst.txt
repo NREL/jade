@@ -1,0 +1,47 @@
+jade.models.pipeline.PipelineStage
+==================================
+
+.. currentmodule:: jade.models.pipeline
+
+.. autoclass:: PipelineStage
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PipelineStage.construct
+      ~PipelineStage.copy
+      ~PipelineStage.dict
+      ~PipelineStage.from_orm
+      ~PipelineStage.json
+      ~PipelineStage.load
+      ~PipelineStage.parse_file
+      ~PipelineStage.parse_obj
+      ~PipelineStage.parse_raw
+      ~PipelineStage.schema
+      ~PipelineStage.schema_json
+      ~PipelineStage.update_forward_refs
+      ~PipelineStage.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PipelineStage.auto_config_cmd
+      ~PipelineStage.config_file
+      ~PipelineStage.stage_num
+      ~PipelineStage.path
+      ~PipelineStage.return_code
+      ~PipelineStage.submitter_params
+   
+   

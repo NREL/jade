@@ -1,0 +1,6 @@
+jade.exceptions.InvalidConfiguration
+====================================
+
+.. currentmodule:: jade.exceptions
+
+.. autoexception:: InvalidConfiguration

@@ -1,0 +1,31 @@
+jade.jobs.analysis\_execution\_base
+===================================
+
+.. automodule:: jade.jobs.analysis_execution_base
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      AnalysisExecutionBase
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+jade.exceptions.UserAbort
+=========================
+
+.. currentmodule:: jade.exceptions
+
+.. autoexception:: UserAbort

@@ -1,0 +1,40 @@
+jade.result.ResultsSummary
+==========================
+
+.. currentmodule:: jade.result
+
+.. autoclass:: ResultsSummary
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ResultsSummary.get_canceled_results
+      ~ResultsSummary.get_failed_results
+      ~ResultsSummary.get_missing_jobs
+      ~ResultsSummary.get_result
+      ~ResultsSummary.get_results_by_type
+      ~ResultsSummary.get_successful_result
+      ~ResultsSummary.get_successful_results
+      ~ResultsSummary.list_results
+      ~ResultsSummary.show_results
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ResultsSummary.base_directory
+      ~ResultsSummary.missing_jobs
+      ~ResultsSummary.results
+   
+   

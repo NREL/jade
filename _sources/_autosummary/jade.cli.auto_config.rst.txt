@@ -1,0 +1,23 @@
+jade.cli.auto\_config
+=====================
+
+.. automodule:: jade.cli.auto_config
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

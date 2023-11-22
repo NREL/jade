@@ -1,0 +1,6 @@
+jade.exceptions.InvalidParameter
+================================
+
+.. currentmodule:: jade.exceptions
+
+.. autoexception:: InvalidParameter

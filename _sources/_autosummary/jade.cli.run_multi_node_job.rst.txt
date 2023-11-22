@@ -1,0 +1,31 @@
+jade.cli.run\_multi\_node\_job
+==============================
+
+.. automodule:: jade.cli.run_multi_node_job
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      run_manager
+      run_worker
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

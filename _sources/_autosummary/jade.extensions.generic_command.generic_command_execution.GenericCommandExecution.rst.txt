@@ -1,0 +1,35 @@
+jade.extensions.generic\_command.generic\_command\_execution.GenericCommandExecution
+====================================================================================
+
+.. currentmodule:: jade.extensions.generic_command.generic_command_execution
+
+.. autoclass:: GenericCommandExecution
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GenericCommandExecution.collect_results
+      ~GenericCommandExecution.create
+      ~GenericCommandExecution.generate_command
+      ~GenericCommandExecution.list_results_files
+      ~GenericCommandExecution.post_process
+      ~GenericCommandExecution.run
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GenericCommandExecution.results_directory
+   
+   

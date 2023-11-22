@@ -1,0 +1,25 @@
+jade.hpc.hpc\_submitter.HpcStatusCollector
+==========================================
+
+.. currentmodule:: jade.hpc.hpc_submitter
+
+.. autoclass:: HpcStatusCollector
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HpcStatusCollector.check_status
+      ~HpcStatusCollector.get_statuses
+   
+   
+
+   
+   
+   

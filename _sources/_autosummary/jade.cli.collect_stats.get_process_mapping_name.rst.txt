@@ -1,0 +1,6 @@
+jade.cli.collect\_stats.get\_process\_mapping\_name
+===================================================
+
+.. currentmodule:: jade.cli.collect_stats
+
+.. autofunction:: get_process_mapping_name

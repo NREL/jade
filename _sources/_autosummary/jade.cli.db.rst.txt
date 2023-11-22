@@ -1,0 +1,32 @@
+jade.cli.db
+===========
+
+.. automodule:: jade.cli.db
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      create_event_table
+      create_resource_stats_table
+      create_result_table
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

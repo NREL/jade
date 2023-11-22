@@ -1,0 +1,6 @@
+jade.loggers.setup\_event\_logging
+==================================
+
+.. currentmodule:: jade.loggers
+
+.. autofunction:: setup_event_logging

@@ -1,0 +1,31 @@
+jade.resource\_monitor.CpuStatsViewer
+=====================================
+
+.. currentmodule:: jade.resource_monitor
+
+.. autoclass:: CpuStatsViewer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CpuStatsViewer.get_dataframe
+      ~CpuStatsViewer.get_printable_value
+      ~CpuStatsViewer.get_stats_summary
+      ~CpuStatsViewer.iter_batch_names
+      ~CpuStatsViewer.metric
+      ~CpuStatsViewer.plot_to_file
+      ~CpuStatsViewer.show_stat_totals
+      ~CpuStatsViewer.show_stats
+   
+   
+
+   
+   
+   

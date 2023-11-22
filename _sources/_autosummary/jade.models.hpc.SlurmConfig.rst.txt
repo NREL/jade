@@ -1,0 +1,55 @@
+jade.models.hpc.SlurmConfig
+===========================
+
+.. currentmodule:: jade.models.hpc
+
+.. autoclass:: SlurmConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SlurmConfig.check_gpus
+      ~SlurmConfig.construct
+      ~SlurmConfig.copy
+      ~SlurmConfig.dict
+      ~SlurmConfig.from_orm
+      ~SlurmConfig.handle_allocation
+      ~SlurmConfig.handle_nodes_and_tasks
+      ~SlurmConfig.json
+      ~SlurmConfig.load
+      ~SlurmConfig.parse_file
+      ~SlurmConfig.parse_obj
+      ~SlurmConfig.parse_raw
+      ~SlurmConfig.schema
+      ~SlurmConfig.schema_json
+      ~SlurmConfig.update_forward_refs
+      ~SlurmConfig.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SlurmConfig.account
+      ~SlurmConfig.partition
+      ~SlurmConfig.reservation
+      ~SlurmConfig.qos
+      ~SlurmConfig.walltime
+      ~SlurmConfig.gres
+      ~SlurmConfig.mem
+      ~SlurmConfig.tmp
+      ~SlurmConfig.nodes
+      ~SlurmConfig.ntasks
+      ~SlurmConfig.ntasks_per_node
+   
+   

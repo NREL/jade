@@ -1,0 +1,32 @@
+jade.models.pipeline
+====================
+
+.. automodule:: jade.models.pipeline
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      PipelineConfig
+      PipelineStage
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+jade.utils.dataframe\_utils.write\_dataframe
+============================================
+
+.. currentmodule:: jade.utils.dataframe_utils
+
+.. autofunction:: write_dataframe

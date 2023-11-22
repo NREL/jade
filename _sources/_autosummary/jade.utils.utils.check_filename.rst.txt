@@ -1,0 +1,6 @@
+jade.utils.utils.check\_filename
+================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: check_filename

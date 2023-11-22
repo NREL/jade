@@ -1,0 +1,31 @@
+jade.extensions.generic\_command.cli
+====================================
+
+.. automodule:: jade.extensions.generic_command.cli
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      auto_config
+      run
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

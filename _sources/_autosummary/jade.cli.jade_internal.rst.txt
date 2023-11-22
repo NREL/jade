@@ -1,0 +1,23 @@
+jade.cli.jade\_internal
+=======================
+
+.. automodule:: jade.cli.jade_internal
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

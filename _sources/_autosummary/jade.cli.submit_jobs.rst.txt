@@ -1,0 +1,23 @@
+jade.cli.submit\_jobs
+=====================
+
+.. automodule:: jade.cli.submit_jobs
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

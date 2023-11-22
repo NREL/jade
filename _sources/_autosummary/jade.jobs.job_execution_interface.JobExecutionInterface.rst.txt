@@ -1,0 +1,35 @@
+jade.jobs.job\_execution\_interface.JobExecutionInterface
+=========================================================
+
+.. currentmodule:: jade.jobs.job_execution_interface
+
+.. autoclass:: JobExecutionInterface
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobExecutionInterface.collect_results
+      ~JobExecutionInterface.create
+      ~JobExecutionInterface.generate_command
+      ~JobExecutionInterface.list_results_files
+      ~JobExecutionInterface.post_process
+      ~JobExecutionInterface.run
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobExecutionInterface.results_directory
+   
+   

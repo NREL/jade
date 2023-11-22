@@ -1,0 +1,36 @@
+jade.exceptions
+===============
+
+.. automodule:: jade.exceptions
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Exceptions
+
+   .. autosummary::
+      :toctree:
+   
+      ExecutionError
+      InvalidConfiguration
+      InvalidExtension
+      InvalidParameter
+      JadeBaseException
+      JobAlreadyInProgress
+      UserAbort
+   
+   
+
+
+

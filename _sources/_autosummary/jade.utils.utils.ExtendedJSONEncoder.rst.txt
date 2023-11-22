@@ -1,0 +1,33 @@
+jade.utils.utils.ExtendedJSONEncoder
+====================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autoclass:: ExtendedJSONEncoder
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ExtendedJSONEncoder.default
+      ~ExtendedJSONEncoder.encode
+      ~ExtendedJSONEncoder.iterencode
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ExtendedJSONEncoder.item_separator
+      ~ExtendedJSONEncoder.key_separator
+   
+   

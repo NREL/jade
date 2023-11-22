@@ -1,0 +1,42 @@
+jade.jobs.pipeline\_manager.PipelineManager
+===========================================
+
+.. currentmodule:: jade.jobs.pipeline_manager
+
+.. autoclass:: PipelineManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PipelineManager.create
+      ~PipelineManager.create_config_from_commands
+      ~PipelineManager.create_config_from_files
+      ~PipelineManager.get_stage_config_file_name
+      ~PipelineManager.get_stage_config_file_path
+      ~PipelineManager.get_stage_output_name
+      ~PipelineManager.get_stage_output_path
+      ~PipelineManager.load
+      ~PipelineManager.submit_next_stage
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PipelineManager.CONFIG_FILENAME
+      ~PipelineManager.config
+      ~PipelineManager.path
+      ~PipelineManager.stage_num
+      ~PipelineManager.stages
+   
+   

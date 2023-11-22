@@ -1,0 +1,31 @@
+jade.jobs.job\_runner
+=====================
+
+.. automodule:: jade.jobs.job_runner
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      JobRunner
+   
+   
+
+   
+   
+   
+
+
+

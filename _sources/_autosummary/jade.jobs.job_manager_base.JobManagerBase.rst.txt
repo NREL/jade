@@ -1,0 +1,34 @@
+jade.jobs.job\_manager\_base.JobManagerBase
+===========================================
+
+.. currentmodule:: jade.jobs.job_manager_base
+
+.. autoclass:: JobManagerBase
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobManagerBase.get_batch_post_process_config
+      ~JobManagerBase.get_completed_results
+      ~JobManagerBase.get_num_jobs
+      ~JobManagerBase.get_results_summmary
+      ~JobManagerBase.get_results_summmary_report
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobManagerBase.config
+   
+   

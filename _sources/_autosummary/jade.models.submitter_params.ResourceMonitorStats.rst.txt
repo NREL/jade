@@ -1,0 +1,48 @@
+jade.models.submitter\_params.ResourceMonitorStats
+==================================================
+
+.. currentmodule:: jade.models.submitter_params
+
+.. autoclass:: ResourceMonitorStats
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ResourceMonitorStats.construct
+      ~ResourceMonitorStats.copy
+      ~ResourceMonitorStats.dict
+      ~ResourceMonitorStats.from_orm
+      ~ResourceMonitorStats.json
+      ~ResourceMonitorStats.load
+      ~ResourceMonitorStats.parse_file
+      ~ResourceMonitorStats.parse_obj
+      ~ResourceMonitorStats.parse_raw
+      ~ResourceMonitorStats.schema
+      ~ResourceMonitorStats.schema_json
+      ~ResourceMonitorStats.update_forward_refs
+      ~ResourceMonitorStats.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ResourceMonitorStats.cpu
+      ~ResourceMonitorStats.disk
+      ~ResourceMonitorStats.memory
+      ~ResourceMonitorStats.network
+      ~ResourceMonitorStats.process
+      ~ResourceMonitorStats.include_child_processes
+      ~ResourceMonitorStats.recurse_child_processes
+   
+   

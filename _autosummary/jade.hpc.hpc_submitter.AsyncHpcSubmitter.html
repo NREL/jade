@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jade.hpc.hpc_submitter.AsyncHpcSubmitter &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/documentation_options.js?v=82662543"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="jade.hpc.hpc_submitter.HpcStatusCollector" href="jade.hpc.hpc_submitter.HpcStatusCollector.html" />
+    <link rel="prev" title="jade.hpc.hpc_submitter" href="jade.hpc.hpc_submitter.html" />
+    <link href="../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home page</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="jade.html">API reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="jade.html">jade</a></li>
+          <li class="breadcrumb-item"><a href="jade.hpc.html">jade.hpc</a></li>
+          <li class="breadcrumb-item"><a href="jade.hpc.hpc_submitter.html">jade.hpc.hpc_submitter</a></li>
+      <li class="breadcrumb-item active">jade.hpc.hpc_submitter.AsyncHpcSubmitter</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="jade-hpc-hpc-submitter-asynchpcsubmitter">
+<h1>jade.hpc.hpc_submitter.AsyncHpcSubmitter<a class="headerlink" href="#jade-hpc-hpc-submitter-asynchpcsubmitter" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">jade.hpc.hpc_submitter.</span></span><span class="sig-name descname"><span class="pre">AsyncHpcSubmitter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hpc_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_collector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">run_script</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">submission_group</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dry_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="jade.jobs.async_job_interface.AsyncJobInterface.html#jade.jobs.async_job_interface.AsyncJobInterface" title="jade.jobs.async_job_interface.AsyncJobInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncJobInterface</span></code></a></p>
+<p>Used to submit batches of jobs to multiple nodes, one at a time.</p>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cancel</span></code></a>()</p></td>
+<td><p>Cancel the job.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.create_from_id" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.create_from_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_from_id</span></code></a>(hpc_manager, ...)</p></td>
+<td><p>Create an instance of a job_id in order to check status.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_blocking_jobs" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_blocking_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_blocking_jobs</span></code></a>()</p></td>
+<td><p>Return the job names blocking this job.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_id" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_id</span></code></a>()</p></td>
+<td><p>Return the ID of the job.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.is_complete" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.is_complete"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_complete</span></code></a>()</p></td>
+<td><p>Return True if the job is complete.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.remove_blocking_job" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.remove_blocking_job"><code class="xref py py-obj docutils literal notranslate"><span class="pre">remove_blocking_job</span></code></a>(name)</p></td>
+<td><p>Remove the name from the job's blocking list.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.run" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.run"><code class="xref py py-obj docutils literal notranslate"><span class="pre">run</span></code></a>()</p></td>
+<td><p>Run the job.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.set_blocking_jobs" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.set_blocking_jobs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_blocking_jobs</span></code></a>(jobs)</p></td>
+<td><p>Set the blocking jobs.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel_on_blocking_job_failure" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel_on_blocking_job_failure"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cancel_on_blocking_job_failure</span></code></a></p></td>
+<td><p>Cancel the job if a blocking job fails.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.hpc_manager" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.hpc_manager"><code class="xref py py-obj docutils literal notranslate"><span class="pre">hpc_manager</span></code></a></p></td>
+<td><p>Return the HpcManager object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">job_id</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.name" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Return the job name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.return_code" title="jade.hpc.hpc_submitter.AsyncHpcSubmitter.return_code"><code class="xref py py-obj docutils literal notranslate"><span class="pre">return_code</span></code></a></p></td>
+<td><p>Returns the return code of the job.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel">
+<span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel" title="Link to this definition">¶</a></dt>
+<dd><p>Cancel the job.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel_on_blocking_job_failure">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cancel_on_blocking_job_failure</span></span><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel_on_blocking_job_failure" title="Link to this definition">¶</a></dt>
+<dd><p>Cancel the job if a blocking job fails.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.create_from_id">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_from_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hpc_manager</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_collector</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.create_from_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.create_from_id" title="Link to this definition">¶</a></dt>
+<dd><p>Create an instance of a job_id in order to check status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>job_id</strong> (<em>str</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.hpc_manager">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hpc_manager</span></span><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.hpc_manager" title="Link to this definition">¶</a></dt>
+<dd><p>Return the HpcManager object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="jade.hpc.hpc_manager.HpcManager.html#jade.hpc.hpc_manager.HpcManager" title="jade.hpc.hpc_manager.HpcManager">HpcManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.is_complete">
+<span class="sig-name descname"><span class="pre">is_complete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.is_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.is_complete" title="Link to this definition">¶</a></dt>
+<dd><p>Return True if the job is complete.</p>
+<p>Note: this must be called until the job actually completes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="jade.exceptions.ExecutionError.html#jade.exceptions.ExecutionError" title="jade.exceptions.ExecutionError"><strong>ExecutionError</strong></a> – Raised if statuses cannot be retrieved.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_id">
+<span class="sig-name descname"><span class="pre">get_id</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.get_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_id" title="Link to this definition">¶</a></dt>
+<dd><p>Return the ID of the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.name" title="Link to this definition">¶</a></dt>
+<dd><p>Return the job name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.return_code">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">return_code</span></span><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.return_code" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the return code of the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>0 means success, otherwise failure</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.run" title="Link to this definition">¶</a></dt>
+<dd><p>Run the job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns GOOD if the job was successfully started.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="jade.enums.Status.html#jade.enums.Status" title="jade.enums.Status">Status</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_blocking_jobs">
+<span class="sig-name descname"><span class="pre">get_blocking_jobs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.get_blocking_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_blocking_jobs" title="Link to this definition">¶</a></dt>
+<dd><p>Return the job names blocking this job.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Empty set means that the job is not blocked.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.remove_blocking_job">
+<span class="sig-name descname"><span class="pre">remove_blocking_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.remove_blocking_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.remove_blocking_job" title="Link to this definition">¶</a></dt>
+<dd><p>Remove the name from the job’s blocking list.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of job that is now finished</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="jade.hpc.hpc_submitter.AsyncHpcSubmitter.set_blocking_jobs">
+<span class="sig-name descname"><span class="pre">set_blocking_jobs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/jade/hpc/hpc_submitter.html#AsyncHpcSubmitter.set_blocking_jobs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#jade.hpc.hpc_submitter.AsyncHpcSubmitter.set_blocking_jobs" title="Link to this definition">¶</a></dt>
+<dd><p>Set the blocking jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>jobs</strong> (<em>set</em>) – names that are blocking</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="jade.hpc.hpc_submitter.html" class="btn btn-neutral float-left" title="jade.hpc.hpc_submitter" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jade.hpc.hpc_submitter.HpcStatusCollector.html" class="btn btn-neutral float-right" title="jade.hpc.hpc_submitter.HpcStatusCollector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

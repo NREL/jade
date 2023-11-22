@@ -1,0 +1,6 @@
+jade.utils.dataframe\_utils.read\_dataframes\_by\_substrings
+============================================================
+
+.. currentmodule:: jade.utils.dataframe_utils
+
+.. autofunction:: read_dataframes_by_substrings

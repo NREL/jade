@@ -1,0 +1,31 @@
+jade.extensions.demo.autoregression\_inputs
+===========================================
+
+.. automodule:: jade.extensions.demo.autoregression_inputs
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      AutoRegressionInputs
+   
+   
+
+   
+   
+   
+
+
+

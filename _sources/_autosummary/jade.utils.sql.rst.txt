@@ -1,0 +1,31 @@
+jade.utils.sql
+==============
+
+.. automodule:: jade.utils.sql
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      insert_rows
+      make_table
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

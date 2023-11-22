@@ -1,0 +1,6 @@
+jade.utils.utils.rmtree
+=======================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: rmtree

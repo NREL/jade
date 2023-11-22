@@ -1,0 +1,6 @@
+jade.result.serialize\_result
+=============================
+
+.. currentmodule:: jade.result
+
+.. autofunction:: serialize_result

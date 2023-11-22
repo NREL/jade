@@ -1,0 +1,6 @@
+jade.utils.utils.get\_filenames\_by\_ext
+========================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: get_filenames_by_ext

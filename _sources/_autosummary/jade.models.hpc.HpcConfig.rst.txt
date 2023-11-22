@@ -1,0 +1,46 @@
+jade.models.hpc.HpcConfig
+=========================
+
+.. currentmodule:: jade.models.hpc
+
+.. autoclass:: HpcConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HpcConfig.assign_hpc
+      ~HpcConfig.construct
+      ~HpcConfig.copy
+      ~HpcConfig.dict
+      ~HpcConfig.from_orm
+      ~HpcConfig.get_num_gpus
+      ~HpcConfig.json
+      ~HpcConfig.load
+      ~HpcConfig.parse_file
+      ~HpcConfig.parse_obj
+      ~HpcConfig.parse_raw
+      ~HpcConfig.schema
+      ~HpcConfig.schema_json
+      ~HpcConfig.update_forward_refs
+      ~HpcConfig.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcConfig.hpc_type
+      ~HpcConfig.job_prefix
+      ~HpcConfig.hpc
+   
+   

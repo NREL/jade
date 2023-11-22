@@ -1,0 +1,6 @@
+jade.utils.dataframe\_utils.read\_dataframe
+===========================================
+
+.. currentmodule:: jade.utils.dataframe_utils
+
+.. autofunction:: read_dataframe

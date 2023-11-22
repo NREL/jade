@@ -1,0 +1,31 @@
+jade.utils.run\_command
+=======================
+
+.. automodule:: jade.utils.run_command
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      check_run_command
+      run_command
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

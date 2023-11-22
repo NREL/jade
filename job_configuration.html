@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JADE Configuration &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Data Models" href="data_models.html" />
+    <link rel="prev" title="Frequently Asked Questions" href="faq.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">JADE Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/job_configuration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="jade-configuration">
+<h1>JADE Configuration<a class="headerlink" href="#jade-configuration" title="Link to this heading">¶</a></h1>
+<p>This page describes the options available in a JADE configuration for generic
+CLI commands (<code class="docutils literal notranslate"><span class="pre">config.json</span></code>). Most options also apply to other extensions.</p>
+<section id="main-level">
+<h2>Main Level<a class="headerlink" href="#main-level" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">user_data</span></code>: Any global data that you would like to be available to jobs at
+runtime. Must be serializable in JSON format.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">submission_groups</span></code>: Optional array of <a class="reference internal" href="data_models.html#model-submission-group"><span class="std std-ref">SubmissionGroup</span></a>
+objects.  Allows submitting jobs with differing batch sizes and HPC
+parameters. If set, each job must be assigned to a group.  Refer to
+<a class="reference internal" href="#submission-group-behaviors"><span class="std std-ref">Submission Group Behaviors</span></a> for additional information.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">jobs</span></code>: Array of job definitions. See below.</p></li>
+</ul>
+</section>
+<section id="per-job-definition">
+<h2>Per-Job Definition<a class="headerlink" href="#per-job-definition" title="Link to this heading">¶</a></h2>
+<p>Each object in the array of <code class="docutils literal notranslate"><span class="pre">jobs</span></code> at the main level must be an instance
+of GenericCommandParameters.</p>
+<section id="genericcommandparameters">
+<span id="model-generic-command-parameters"></span><h3>GenericCommandParameters<a class="headerlink" href="#genericcommandparameters" title="Link to this heading">¶</a></h3>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>Property</p></td>
+<td><p>Type</p></td>
+<td><p>Description</p></td>
+<td><p>Required</p></td>
+<td><p>Default</p></td>
+</tr>
+<tr class="row-even"><td><p>name</p></td>
+<td><p>string</p></td>
+<td><p>If not set Jade will use the job_id converted to a string. Must be unique.</p></td>
+<td><p>False</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>use_multi_node_manager</p></td>
+<td><p>boolean</p></td>
+<td><p>If true JADE will run this job with its multi-node manager.</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>spark_config</p></td>
+<td><p>Any</p></td>
+<td><p>If enabled JADE will run this job on a Spark cluster.</p></td>
+<td><p>False</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>command</p></td>
+<td><p>string</p></td>
+<td><p>Command that can be invoked in a terminal (shell characters not allowed)</p></td>
+<td><p>True</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>blocked_by</p></td>
+<td><p>array</p></td>
+<td><p>Array of job names that must complete before this one can start.</p></td>
+<td><p>False</p></td>
+<td><p>[]</p></td>
+</tr>
+<tr class="row-odd"><td><p>cancel_on_blocking_job_failure</p></td>
+<td><p>boolean</p></td>
+<td><p>If true JADE will cancel this job if any of its blocking jobs fail.</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>estimated_run_minutes</p></td>
+<td><p>integer</p></td>
+<td><p>JADE will use this value along with num-parallel-processes-per-node and walltime to build per-node batches of jobs if time-based-batching is enabled.</p></td>
+<td><p>False</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>submission_group</p></td>
+<td><p>string</p></td>
+<td><p>Optional name of a submission group</p></td>
+<td><p>False</p></td>
+<td><p>default</p></td>
+</tr>
+<tr class="row-even"><td><p>append_job_name</p></td>
+<td><p>boolean</p></td>
+<td><p>If true JADE will append –jade-job-name=X where X is the job’s name.</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-odd"><td><p>append_output_dir</p></td>
+<td><p>boolean</p></td>
+<td><p>If true JADE will append –jade-runtime-output=X where X is the output directory specified in jade submit-jobs.</p></td>
+<td><p>False</p></td>
+<td><p>False</p></td>
+</tr>
+<tr class="row-even"><td><p>ext</p></td>
+<td><p>object</p></td>
+<td><p>User-defined extension data to be used at runtime. Must be serializable in JSON format.</p></td>
+<td><p>False</p></td>
+<td><p>{}</p></td>
+</tr>
+<tr class="row-odd"><td><p>job_id</p></td>
+<td><p>integer</p></td>
+<td><p>Unique job identifier, generated by JADE</p></td>
+<td><p>False</p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p>extension</p></td>
+<td><p>string</p></td>
+<td><p>job extension type, generated by JADE</p></td>
+<td><p>False</p></td>
+<td><p>generic_command</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="submission-group-behaviors">
+<span id="id1"></span><h2>Submission Group Behaviors<a class="headerlink" href="#submission-group-behaviors" title="Link to this heading">¶</a></h2>
+<p>JADE implements these behaviors when submission groups are defined.</p>
+<p>JADE will raise an exception if the following parameters are not the same
+across all submission groups:</p>
+<ul class="simple">
+<li><p>max_nodes</p></li>
+<li><p>poll_interval</p></li>
+</ul>
+<p>JADE will override the following parameters in the submission groups with
+parameters specified on the command line for <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code>:</p>
+<ul class="simple">
+<li><p>dry_run</p></li>
+<li><p>generate_reports</p></li>
+<li><p>resource_monitor_interval</p></li>
+<li><p>verbose</p></li>
+</ul>
+<p>The following parameters are completely controlled by the group:</p>
+<ul class="simple">
+<li><p>hpc_config</p></li>
+<li><p>num_processes</p></li>
+<li><p>per_node_batch_size</p></li>
+<li><p>time_based_batching</p></li>
+<li><p>try_add_blocked_jobs</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="data_models.html">Data Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_models.html#hpcconfig">HpcConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_models.html#slurmconfig">SlurmConfig</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_models.html#submitterparams">SubmitterParams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_models.html#submissiongroup">SubmissionGroup</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="Frequently Asked Questions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="data_models.html" class="btn btn-neutral float-right" title="Data Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+jade.cli.collect\_stats
+=======================
+
+.. automodule:: jade.cli.collect_stats
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      find_process_ids
+      get_process_id_mapping
+      get_process_mapping_name
+      sigterm_handler
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

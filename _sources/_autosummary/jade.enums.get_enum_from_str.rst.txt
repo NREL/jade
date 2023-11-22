@@ -1,0 +1,6 @@
+jade.enums.get\_enum\_from\_str
+===============================
+
+.. currentmodule:: jade.enums
+
+.. autofunction:: get_enum_from_str

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Singularity Containers &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Distributed Submission Workflow" href="distributed_submission.html" />
+    <link rel="prev" title="Spark Jobs" href="spark_jobs.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Singularity Containers</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/singularity_containers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="singularity-containers">
+<h1>Singularity Containers<a class="headerlink" href="#singularity-containers" title="Link to this heading">¶</a></h1>
+<p>If you are not familiar with Singularity containers please refer to
+<a class="reference external" href="https://sylabs.io/guides/3.8/user-guide/introduction.html#why-use-singularityce">https://sylabs.io/guides/3.8/user-guide/introduction.html#why-use-singularityce</a></p>
+<p>Here are some important takeaways:</p>
+<ol class="arabic simple">
+<li><p>HPC systems do not typically allow Docker containers because of security
+concerns. Running Docker requires root access but Singularity containers do
+not.</p></li>
+<li><p>Singularity can convert Docker images to its own format, so you can create
+containers with Docker tools and base images, and then convert them for use
+on an HPC.</p></li>
+<li><p>Containers are much more portable than environment modules.</p></li>
+</ol>
+<p>Here is how you can use Singularity containers with JADE:</p>
+<ol class="arabic simple">
+<li><p>Wrap your Singularity commands in a bash script and make that script your
+JADE job.</p></li>
+</ol>
+<p>Your users won’t have to install your application and its dependencies but they
+will still have to install JADE (and likely some Python virtual environment).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>wrapper-script.sh
+<span class="c1">#!/bin/bash</span>
+module<span class="w"> </span>load<span class="w"> </span>singularity-container
+singularity<span class="w"> </span>run<span class="w"> </span>path-to-container<span class="w"> </span>actual-job-script<span class="w"> </span><span class="nv">$1</span>
+
+$<span class="w"> </span>cat<span class="w"> </span>commands.txt
+bash<span class="w"> </span>wrapper-script.sh<span class="w"> </span><span class="m">1</span>
+bash<span class="w"> </span>wrapper-script.sh<span class="w"> </span><span class="m">2</span>
+bash<span class="w"> </span>wrapper-script.sh<span class="w"> </span><span class="m">3</span>
+
+$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>create<span class="w"> </span>commands.txt
+</pre></div>
+</div>
+<ol class="arabic" start="2">
+<li><p>Package JADE with your application in a Singularity container. Assuming your
+HPC provides an installation of Singularity, your users won’t have to
+install anything. Setting this up is more complex than #1 but it can be
+useful if you want to provide your users one thing to run.</p>
+<p>The rest of this page describes one way to do this.</p>
+</li>
+</ol>
+<section id="building-a-container-that-can-be-used-for-hpc-submissions">
+<h2>Building a container that can be used for HPC submissions<a class="headerlink" href="#building-a-container-that-can-be-used-for-hpc-submissions" title="Link to this heading">¶</a></h2>
+<p>There are plenty of instructions on the internet on how to build a Docker or
+Singularity container and this page won’t replicate them. This is one opinion
+on a strategy.</p>
+<ol class="arabic simple">
+<li><p>Install Docker on your computer and create a container, hopefully starting
+from a base image that has most of what you want. Anyone will be able to use
+this image on a personal computer or an HPC.</p></li>
+<li><p>Save the image to a tarfile and upload it to your HPC.</p></li>
+<li><p>Convert the image to a writable Singularity container with a command like
+this:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>singularity<span class="w"> </span>build<span class="w"> </span>--sandbox<span class="w"> </span>my-container<span class="w"> </span>docker-archive://my-container.tar
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Test the container in writable mode.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>singularity<span class="w"> </span>shell<span class="w"> </span>--writable<span class="w"> </span>my-container
+</pre></div>
+</div>
+<ol class="arabic" start="5">
+<li><p>Determine all of the required bind mounts. It’s likely that commands for the
+HPC queueing system (i.e. SLURM) will not work. Here is a helpful <a class="reference external" href="https://info.gwdg.de/wiki/doku.php?id=wiki:hpc:usage_of_slurm_within_a_singularity_container">website</a>.</p>
+<p>Here is a working example that you can put in your Dockerfile for use
+on NREL’s HPC.</p>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This sets <code class="docutils literal notranslate"><span class="pre">$PATH</span></code> on the Docker container but not Singularity.
+You still need to append to the path inside your Singularity container.</p>
+</div>
+<div class="highlight-docker notranslate"><div class="highlight"><pre><span></span><span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;export LD_LIBRARY_PATH=/usr/lib64:/nopt/slurm/current/lib64/slurm:</span><span class="nv">$LD_LIBRARY_PATH</span><span class="s2">&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="nv">$HOME</span>/.bashrc
+<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;export PATH=</span><span class="nv">$PATH</span><span class="s2">:/nopt/slurm/current/bin&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span><span class="nv">$HOME</span>/.bashrc
+<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;slurm:x:989:989:SLURM workload manager:/var/lib/slurm:/bin/bash&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/passwd
+<span class="k">RUN</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;slurm:x:989:&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/group
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Whenever the HPC queueing system allocates a node and starts your process it
+will first try to change to the directory in which the submission occurred.
+So, it’s important that this directory is a bind mount passed when you start
+the container. The recommended place to run jobs on NREL’s HPC is
+/scratch/&lt;username&gt;, so /scratch should always be mounted there.</p></li>
+<li><p>Adjust the appropriate settings in your compute node startup script:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>module<span class="w"> </span>load<span class="w"> </span>singularity-container
+<span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/usr/lib64:/nopt/slurm/current/lib64/slurm:<span class="nv">$LD_LIBRARY_PATH</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/nopt/slurm/current/bin
+bash<span class="w"> </span>my-script.sh
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li><p>Make sure that you can run your application, <code class="docutils literal notranslate"><span class="pre">jade</span></code>, and the HPC
+executables.</p></li>
+<li><p>Once everything is working, create a read-only image for your users wth a
+command like this:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>singularity<span class="w"> </span>build<span class="w"> </span>my-container.sif<span class="w"> </span>my-container
+</pre></div>
+</div>
+<p>Note that you can skip step #4 if you already know the container will work.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>singularity<span class="w"> </span>build<span class="w"> </span>my-container.sif<span class="w"> </span>docker-archive://my-container.tar
+</pre></div>
+</div>
+</section>
+<section id="running-a-container-that-includes-jade">
+<h2>Running a container that includes JADE<a class="headerlink" href="#running-a-container-that-includes-jade" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Change to the recommended HPC runtime directory (on NREL’s HPC:
+<code class="docutils literal notranslate"><span class="pre">/scratch/&lt;username/</span></code>).</p></li>
+<li><p>Load the Singularity module.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>module<span class="w"> </span>load<span class="w"> </span>singularity-container
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Start your container. Be sure to bind-mount your current directory. Here is
+an NREL example:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>singularity<span class="w"> </span>shell<span class="w"> </span>-B<span class="w"> </span>/scratch:/scratch<span class="w"> </span>-B<span class="w"> </span>/projects:/projects<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-B<span class="w"> </span>/nopt,/usr/lib64/libreadline.so.6,/usr/lib64/libhistory.so.6,/usr/lib64/libtinfo.so.5,/var/run/munge,/usr/lib64/libmunge.so.2,/run/munge<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>/scratch/&lt;username&gt;/my-container.sif
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p>Add SLURM executables to the system path (this may go away in the future).</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span>/usr/lib64:/nopt/slurm/current/lib64/slurm:<span class="nv">$LD_LIBRARY_PATH</span><span class="s2">&quot;</span>
+<span class="s2">export PATH=</span><span class="nv">$PATH</span><span class="s2">:/nopt/slurm/current/bin&quot;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Setup your JADE configuration to work with your container.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>submitter-params<span class="w"> </span>-S<span class="w"> </span>-C<span class="w"> </span>&lt;path-to-container&gt;<span class="w"> </span>-c<span class="w"> </span>submitter_params.json
+</pre></div>
+</div>
+<ol class="arabic simple" start="6">
+<li><p>Edit <code class="docutils literal notranslate"><span class="pre">submitter_params.json</span></code> to ensure that all Singularity-parameters are
+correct and JADE can correctly start your container on each compute node.</p></li>
+<li><p>Submit your JADE jobs from within the container.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>-s<span class="w"> </span>submitter-params.json<span class="w"> </span>config.json<span class="w"> </span>-o<span class="w"> </span>my-output-dir
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="spark_jobs.html" class="btn btn-neutral float-left" title="Spark Jobs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="distributed_submission.html" class="btn btn-neutral float-right" title="Distributed Submission Workflow" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

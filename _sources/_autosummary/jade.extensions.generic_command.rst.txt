@@ -1,0 +1,34 @@
+jade.extensions.generic\_command
+================================
+
+.. automodule:: jade.extensions.generic_command
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+
+.. autosummary::
+   :toctree:
+   :template: custom-module-template.rst
+   :recursive:
+
+   jade.extensions.generic_command.cli
+   jade.extensions.generic_command.generic_command_configuration
+   jade.extensions.generic_command.generic_command_execution
+   jade.extensions.generic_command.generic_command_inputs
+   jade.extensions.generic_command.generic_command_parameters
+

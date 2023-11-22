@@ -1,0 +1,6 @@
+jade.utils.utils.make\_directory\_read\_only
+============================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: make_directory_read_only

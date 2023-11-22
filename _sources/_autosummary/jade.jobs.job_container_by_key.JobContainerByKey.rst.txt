@@ -1,0 +1,31 @@
+jade.jobs.job\_container\_by\_key.JobContainerByKey
+===================================================
+
+.. currentmodule:: jade.jobs.job_container_by_key
+
+.. autoclass:: JobContainerByKey
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobContainerByKey.add_job
+      ~JobContainerByKey.clear
+      ~JobContainerByKey.get_job
+      ~JobContainerByKey.get_job_by_key
+      ~JobContainerByKey.get_jobs
+      ~JobContainerByKey.list_jobs
+      ~JobContainerByKey.remove_job
+      ~JobContainerByKey.shuffle
+   
+   
+
+   
+   
+   

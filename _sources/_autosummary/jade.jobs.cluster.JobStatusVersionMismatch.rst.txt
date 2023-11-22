@@ -1,0 +1,6 @@
+jade.jobs.cluster.JobStatusVersionMismatch
+==========================================
+
+.. currentmodule:: jade.jobs.cluster
+
+.. autoexception:: JobStatusVersionMismatch

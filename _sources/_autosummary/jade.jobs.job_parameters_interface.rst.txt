@@ -1,0 +1,31 @@
+jade.jobs.job\_parameters\_interface
+====================================
+
+.. automodule:: jade.jobs.job_parameters_interface
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      JobParametersInterface
+   
+   
+
+   
+   
+   
+
+
+

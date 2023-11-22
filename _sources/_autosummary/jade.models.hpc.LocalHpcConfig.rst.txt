@@ -1,0 +1,36 @@
+jade.models.hpc.LocalHpcConfig
+==============================
+
+.. currentmodule:: jade.models.hpc
+
+.. autoclass:: LocalHpcConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LocalHpcConfig.construct
+      ~LocalHpcConfig.copy
+      ~LocalHpcConfig.dict
+      ~LocalHpcConfig.from_orm
+      ~LocalHpcConfig.json
+      ~LocalHpcConfig.load
+      ~LocalHpcConfig.parse_file
+      ~LocalHpcConfig.parse_obj
+      ~LocalHpcConfig.parse_raw
+      ~LocalHpcConfig.schema
+      ~LocalHpcConfig.schema_json
+      ~LocalHpcConfig.update_forward_refs
+      ~LocalHpcConfig.validate
+   
+   
+
+   
+   
+   

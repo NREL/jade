@@ -1,0 +1,33 @@
+jade.cli.stats.NumpyJSONEncoder
+===============================
+
+.. currentmodule:: jade.cli.stats
+
+.. autoclass:: NumpyJSONEncoder
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NumpyJSONEncoder.default
+      ~NumpyJSONEncoder.encode
+      ~NumpyJSONEncoder.iterencode
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NumpyJSONEncoder.item_separator
+      ~NumpyJSONEncoder.key_separator
+   
+   

@@ -1,0 +1,23 @@
+jade.cli.show\_events
+=====================
+
+.. automodule:: jade.cli.show_events
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

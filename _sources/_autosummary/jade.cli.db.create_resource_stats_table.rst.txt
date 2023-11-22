@@ -1,0 +1,6 @@
+jade.cli.db.create\_resource\_stats\_table
+==========================================
+
+.. currentmodule:: jade.cli.db
+
+.. autofunction:: create_resource_stats_table

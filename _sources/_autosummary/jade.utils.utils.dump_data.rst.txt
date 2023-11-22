@@ -1,0 +1,6 @@
+jade.utils.utils.dump\_data
+===========================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: dump_data

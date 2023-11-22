@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Batch Pipeline &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Spark Jobs" href="spark_jobs.html" />
+    <link rel="prev" title="Job Submission Strategies" href="submission_strategies.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Batch Pipeline</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/pipeline.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="batch-pipeline">
+<span id="batch-pipeline-label"></span><h1>Batch Pipeline<a class="headerlink" href="#batch-pipeline" title="Link to this heading">¶</a></h1>
+<p>After all jobs in a batch complete you may want to run additional code to
+process the results. You can use the <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">pipeline</span></code> command for this
+purpose.</p>
+<p>JADE will run <code class="docutils literal notranslate"><span class="pre">submit-jobs</span></code> on a series of config files sequentially. Each
+stage has the option of reading the outputs of previous stages.</p>
+<p>To create the pipeline the user must provide a list of scripts that will be
+used to create the JADE config file for each stage.</p>
+<section id="create-the-pipeline">
+<h2>Create the pipeline<a class="headerlink" href="#create-the-pipeline" title="Link to this heading">¶</a></h2>
+<p>The user must provide a script that will create the JADE configuration for each
+stage in the pipeline.</p>
+<p>Before invoking each script JADE sets the following environment variables in
+order to provide information about completed stages and their outputs:</p>
+<ul class="simple">
+<li><p>JADE_PIPELINE_OUTPUT_DIR:  main output directory containing all stage outputs</p></li>
+<li><p>JADE_PIPELINE_STATUS_FILE:  path to file containing stage-specific,
+information including output directories</p></li>
+<li><p>JADE_PIPELINE_STAGE_ID:  current stage ID</p></li>
+</ul>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>pipeline<span class="w"> </span>create<span class="w"> </span>-a<span class="w"> </span>batch1-auto-config.sh<span class="w"> </span>-a<span class="w"> </span>batch2-auto-config.sh<span class="w"> </span>-c<span class="w"> </span>pipeline.toml
+</pre></div>
+</div>
+<p>Alternatively, if your config files are known beforehand, you can specify them directly.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>pipeline<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>config_stage1.json<span class="w"> </span>-f<span class="w"> </span>config_stage2.json<span class="w"> </span>-c<span class="w"> </span>pipeline.toml
+</pre></div>
+</div>
+</section>
+<section id="customize-the-config">
+<h2>Customize the config<a class="headerlink" href="#customize-the-config" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pipeline.toml</span></code> will have default values for each <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code>
+command. You may may want to override the max-nodes or per-node-batch-size
+parameters for each stage.</p>
+</section>
+<section id="submit-the-pipeline">
+<h2>Submit the pipeline<a class="headerlink" href="#submit-the-pipeline" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>pipeline<span class="w"> </span>submit<span class="w"> </span>pipeline.toml<span class="w"> </span>-o<span class="w"> </span>pipeline-output
+</pre></div>
+</div>
+</section>
+<section id="check-status">
+<h2>Check status<a class="headerlink" href="#check-status" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>pipeline<span class="w"> </span>status<span class="w"> </span>-o<span class="w"> </span>pipeline-output
+</pre></div>
+</div>
+</section>
+<section id="example">
+<h2>Example<a class="headerlink" href="#example" title="Link to this heading">¶</a></h2>
+<p>Let’s use the extension <code class="docutils literal notranslate"><span class="pre">demo</span></code> as an example. This extension performs
+auto-regression analysis for the <code class="docutils literal notranslate"><span class="pre">gdp</span></code> values for several countries. In each
+job (or country), it reads a CSV file containing <code class="docutils literal notranslate"><span class="pre">gdp</span></code> values, and generates
+a new CSV file <code class="docutils literal notranslate"><span class="pre">result.csv</span></code> containing <code class="docutils literal notranslate"><span class="pre">pred_gdp</span></code> values.</p>
+<p>Suppose that we want to merge each job’s output file into one file once all
+jobs are complete.</p>
+<p>The first step is to write a script to produce the summary file. Here’s how to
+to run the demo extension on test data.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>auto-config<span class="w"> </span>demo<span class="w"> </span>tests/data/demo<span class="w"> </span>-c<span class="w"> </span>config.json
+$<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json
+$<span class="w"> </span>tree<span class="w"> </span>output
+output
+├──<span class="w"> </span>config.json
+├──<span class="w"> </span>diff.patch
+├──<span class="w"> </span>job-outputs
+│<span class="w">   </span>├──<span class="w"> </span>australia
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>events.log
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.csv
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.png
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>run.log
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>summary.toml
+│<span class="w">   </span>├──<span class="w"> </span>brazil
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>events.log
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.csv
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.png
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>run.log
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>summary.toml
+│<span class="w">   </span>└──<span class="w"> </span>united_states
+│<span class="w">       </span>├──<span class="w"> </span>events.log
+│<span class="w">       </span>├──<span class="w"> </span>result.csv
+│<span class="w">       </span>├──<span class="w"> </span>result.png
+│<span class="w">       </span>├──<span class="w"> </span>run.log
+│<span class="w">       </span>└──<span class="w"> </span>summary.toml
+├──<span class="w"> </span>results.json
+└──<span class="w"> </span>submit_jobs.log
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please note that, we use datasets <code class="docutils literal notranslate"><span class="pre">tests/data/gdp</span></code> which contains only 3 countries.</p>
+</div>
+<p>The content of <code class="docutils literal notranslate"><span class="pre">result.csv</span></code> looks similar this,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>year,gdp,pred_gdp
+<span class="m">1960</span>,543300000000,
+<span class="m">1961</span>,563300000000,
+<span class="m">1962</span>,605100000000,
+...
+<span class="m">2016</span>,18707188235000,19406250376876.492
+<span class="m">2017</span>,19485393853000,20519007253667.656
+<span class="m">2018</span>,20494100000000,20672861935684.523
+</pre></div>
+</div>
+<p>Our post-processing task is to collect <code class="docutils literal notranslate"><span class="pre">result.csv</span></code> files from all jobs, extract <code class="docutils literal notranslate"><span class="pre">pred_gdp</span></code> column from
+each <code class="docutils literal notranslate"><span class="pre">result.csv</span></code> file, and aggregate them in one CSV file. The script
+<code class="docutils literal notranslate"><span class="pre">jade/extensions/demo/merge_pred_gdp.py</span></code> writes this result to <code class="docutils literal notranslate"><span class="pre">pred_gdp.csv</span></code>.</p>
+<p>Now let’s automate this workflow in a JADE pipeline using two stages.</p>
+<p>The first stage will use the <code class="docutils literal notranslate"><span class="pre">demo</span></code> extension. The script <code class="docutils literal notranslate"><span class="pre">jade/extensions/demo/create_demo_config.sh</span></code>
+creates its config file.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>cat<span class="w"> </span>jade/extensions/demo/create_demo_config.sh
+<span class="c1">#!/bin/bash</span>
+jade<span class="w"> </span>auto-config<span class="w"> </span>demo<span class="w"> </span>tests/data/demo<span class="w"> </span>-c<span class="w"> </span>config-stage1.json
+</pre></div>
+</div>
+<p>The second stage will use the <code class="docutils literal notranslate"><span class="pre">generic_command</span></code> extension. We will create a
+config that runs one “generic_command” - the script above to post-process the
+results.</p>
+<p>The script to create the stage 1 configuration is
+<a class="reference internal" href="_autosummary/jade.extensions.demo.create_merge_pred_gdp.html#module-jade.extensions.demo.create_merge_pred_gdp" title="jade.extensions.demo.create_merge_pred_gdp"><code class="xref py py-mod docutils literal notranslate"><span class="pre">jade.extensions.demo.create_merge_pred_gdp</span></code></a>.</p>
+<p>Note that this script reads the environment variable JADE_PIPELINE_STATUS_FILE
+to find out the output directory name of the first stage as well as its own
+output directory.</p>
+<p>Let’s create the pipeline and submit it for execution.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>pipeline<span class="w"> </span>create<span class="w"> </span>-a<span class="w"> </span>./jade/extensions/demo/create_demo_config.sh<span class="w"> </span>-a<span class="w"> </span>./jade/extensions/demo/create_merge_pred_gdp.py
+Created<span class="w"> </span>pipeline<span class="w"> </span>config<span class="w"> </span>file<span class="w"> </span>pipeline.toml
+
+$<span class="w"> </span>jade<span class="w"> </span>pipeline<span class="w"> </span>submit<span class="w"> </span>pipeline.toml
+</pre></div>
+</div>
+<p>Let’s take a look at the <code class="docutils literal notranslate"><span class="pre">output</span></code> directory. You’ll notice that per-country
+results are in <code class="docutils literal notranslate"><span class="pre">output-stage1</span></code> and the summary file <code class="docutils literal notranslate"><span class="pre">pred_gdb.csv</span></code> is in
+<code class="docutils literal notranslate"><span class="pre">output-stage1</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>tree<span class="w"> </span>output
+output
+├──<span class="w"> </span>config-stage1.json
+├──<span class="w"> </span>config-stage2.json
+├──<span class="w"> </span>output-stage1
+│<span class="w">   </span>├──<span class="w"> </span>config.json
+│<span class="w">   </span>├──<span class="w"> </span>diff.patch
+│<span class="w">   </span>├──<span class="w"> </span>job-outputs
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>australia
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>events.log
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.csv
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.png
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>run.log
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>summary.toml
+│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>brazil
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>events.log
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.csv
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>result.png
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>├──<span class="w"> </span>run.log
+│<span class="w">   </span>│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>summary.toml
+│<span class="w">   </span>│<span class="w">   </span>└──<span class="w"> </span>united_states
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>events.log
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>result.csv
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>result.png
+│<span class="w">   </span>│<span class="w">       </span>├──<span class="w"> </span>run.log
+│<span class="w">   </span>│<span class="w">       </span>└──<span class="w"> </span>summary.toml
+│<span class="w">   </span>├──<span class="w"> </span>results.json
+│<span class="w">   </span>└──<span class="w"> </span>submit_jobs.log
+├──<span class="w"> </span>output-stage2
+│<span class="w">   </span>├──<span class="w"> </span>config.json
+│<span class="w">   </span>├──<span class="w"> </span>diff.patch
+│<span class="w">   </span>├──<span class="w"> </span>job-outputs
+│<span class="w">   </span>├──<span class="w"> </span>pred_gdp.csv
+│<span class="w">   </span>├──<span class="w"> </span>results.json
+│<span class="w">   </span>└──<span class="w"> </span>submit_jobs.log
+├──<span class="w"> </span>pipeline_status.toml
+├──<span class="w"> </span>pipeline_submit.log
+└──<span class="w"> </span>pipeline.toml
+</pre></div>
+</div>
+<p>In <code class="docutils literal notranslate"><span class="pre">pred_gdp.csv</span></code>, you’ll see the content:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">year</span><span class="p">,</span><span class="n">brazil</span><span class="p">,</span><span class="n">australia</span><span class="p">,</span><span class="n">united_states</span>
+<span class="mi">1960</span><span class="p">,,,</span>
+<span class="mi">1961</span><span class="p">,,,</span>
+<span class="mi">1962</span><span class="p">,,,</span>
+<span class="o">...</span>
+<span class="mi">2016</span><span class="p">,</span><span class="mf">2080587377798.5112</span><span class="p">,</span><span class="mf">1258003336600.582</span><span class="p">,</span><span class="mf">19406250376876.49</span>
+<span class="mi">2017</span><span class="p">,</span><span class="mf">1827457759144.0063</span><span class="p">,</span><span class="mf">1438897367269.8796</span><span class="p">,</span><span class="mf">20519007253667.656</span>
+<span class="mi">2018</span><span class="p">,</span><span class="mf">1995335978627.933</span><span class="p">,</span><span class="mf">2154574393156.4248</span><span class="p">,</span><span class="mf">20672861935684.523</span>
+</pre></div>
+</div>
+<p>Done!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="submission_strategies.html" class="btn btn-neutral float-left" title="Job Submission Strategies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spark_jobs.html" class="btn btn-neutral float-right" title="Spark Jobs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

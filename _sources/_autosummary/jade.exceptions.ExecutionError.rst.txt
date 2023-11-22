@@ -1,0 +1,6 @@
+jade.exceptions.ExecutionError
+==============================
+
+.. currentmodule:: jade.exceptions
+
+.. autoexception:: ExecutionError

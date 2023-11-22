@@ -1,0 +1,60 @@
+jade.models.spark.SparkConfigModel
+==================================
+
+.. currentmodule:: jade.models.spark
+
+.. autoclass:: SparkConfigModel
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SparkConfigModel.construct
+      ~SparkConfigModel.copy
+      ~SparkConfigModel.dict
+      ~SparkConfigModel.from_orm
+      ~SparkConfigModel.get_run_user_script
+      ~SparkConfigModel.get_spark_script
+      ~SparkConfigModel.get_start_history_server
+      ~SparkConfigModel.get_start_master
+      ~SparkConfigModel.get_start_worker
+      ~SparkConfigModel.get_stop_history_server
+      ~SparkConfigModel.get_stop_master
+      ~SparkConfigModel.get_stop_worker
+      ~SparkConfigModel.handle_legacy_values
+      ~SparkConfigModel.json
+      ~SparkConfigModel.load
+      ~SparkConfigModel.parse_file
+      ~SparkConfigModel.parse_obj
+      ~SparkConfigModel.parse_raw
+      ~SparkConfigModel.schema
+      ~SparkConfigModel.schema_json
+      ~SparkConfigModel.update_forward_refs
+      ~SparkConfigModel.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SparkConfigModel.collect_worker_logs
+      ~SparkConfigModel.conf_dir
+      ~SparkConfigModel.container
+      ~SparkConfigModel.enabled
+      ~SparkConfigModel.master_node_memory_overhead_gb
+      ~SparkConfigModel.node_memory_overhead_gb
+      ~SparkConfigModel.run_user_script_inside_container
+      ~SparkConfigModel.use_tmpfs_for_scratch
+      ~SparkConfigModel.alt_scratch
+      ~SparkConfigModel.worker_memory_gb
+   
+   

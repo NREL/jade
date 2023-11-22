@@ -1,0 +1,23 @@
+jade.version
+============
+
+.. automodule:: jade.version
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

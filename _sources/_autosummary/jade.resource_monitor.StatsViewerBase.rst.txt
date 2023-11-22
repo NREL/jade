@@ -1,0 +1,31 @@
+jade.resource\_monitor.StatsViewerBase
+======================================
+
+.. currentmodule:: jade.resource_monitor
+
+.. autoclass:: StatsViewerBase
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StatsViewerBase.get_dataframe
+      ~StatsViewerBase.get_printable_value
+      ~StatsViewerBase.get_stats_summary
+      ~StatsViewerBase.iter_batch_names
+      ~StatsViewerBase.metric
+      ~StatsViewerBase.plot_to_file
+      ~StatsViewerBase.show_stat_totals
+      ~StatsViewerBase.show_stats
+   
+   
+
+   
+   
+   

@@ -1,0 +1,36 @@
+jade.jobs.analysis\_execution\_base.AnalysisExecutionBase
+=========================================================
+
+.. currentmodule:: jade.jobs.analysis_execution_base
+
+.. autoclass:: AnalysisExecutionBase
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AnalysisExecutionBase.collect_results
+      ~AnalysisExecutionBase.create
+      ~AnalysisExecutionBase.generate_command
+      ~AnalysisExecutionBase.get_analysis_dir
+      ~AnalysisExecutionBase.list_results_files
+      ~AnalysisExecutionBase.post_process
+      ~AnalysisExecutionBase.run
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AnalysisExecutionBase.results_directory
+   
+   

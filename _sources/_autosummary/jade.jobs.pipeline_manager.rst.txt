@@ -1,0 +1,31 @@
+jade.jobs.pipeline\_manager
+===========================
+
+.. automodule:: jade.jobs.pipeline_manager
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      PipelineManager
+   
+   
+
+   
+   
+   
+
+
+

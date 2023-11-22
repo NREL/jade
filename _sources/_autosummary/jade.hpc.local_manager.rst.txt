@@ -1,0 +1,31 @@
+jade.hpc.local\_manager
+=======================
+
+.. automodule:: jade.hpc.local_manager
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      LocalManager
+   
+   
+
+   
+   
+   
+
+
+

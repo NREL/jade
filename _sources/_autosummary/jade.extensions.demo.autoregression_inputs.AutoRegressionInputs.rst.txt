@@ -1,0 +1,32 @@
+jade.extensions.demo.autoregression\_inputs.AutoRegressionInputs
+================================================================
+
+.. currentmodule:: jade.extensions.demo.autoregression_inputs
+
+.. autoclass:: AutoRegressionInputs
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AutoRegressionInputs.get_available_parameters
+      ~AutoRegressionInputs.iter_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AutoRegressionInputs.INPUTS_FILE
+      ~AutoRegressionInputs.base_directory
+   
+   

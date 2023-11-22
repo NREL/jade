@@ -1,0 +1,31 @@
+jade.resource\_monitor.ResourceMonitorAggregator
+================================================
+
+.. currentmodule:: jade.resource_monitor
+
+.. autoclass:: ResourceMonitorAggregator
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ResourceMonitorAggregator.finalize
+      ~ResourceMonitorAggregator.update_resource_stats
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ResourceMonitorAggregator.name
+   
+   

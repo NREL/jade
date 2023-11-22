@@ -1,0 +1,39 @@
+jade.jobs.job\_analysis
+=======================
+
+.. automodule:: jade.jobs.job_analysis
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      get_result
+      get_successful_result
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      JobAnalysis
+   
+   
+
+   
+   
+   
+
+
+

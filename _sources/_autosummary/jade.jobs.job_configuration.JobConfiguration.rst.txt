@@ -1,0 +1,68 @@
+jade.jobs.job\_configuration.JobConfiguration
+=============================================
+
+.. currentmodule:: jade.jobs.job_configuration
+
+.. autoclass:: JobConfiguration
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobConfiguration.add_job
+      ~JobConfiguration.add_user_data
+      ~JobConfiguration.append_submission_group
+      ~JobConfiguration.assign_default_submission_group
+      ~JobConfiguration.check_job_dependencies
+      ~JobConfiguration.check_job_estimated_run_minutes
+      ~JobConfiguration.check_job_runtimes
+      ~JobConfiguration.check_spark_config
+      ~JobConfiguration.check_submission_groups
+      ~JobConfiguration.clear
+      ~JobConfiguration.create_from_result
+      ~JobConfiguration.deserialize
+      ~JobConfiguration.dump
+      ~JobConfiguration.dumps
+      ~JobConfiguration.get_default_submission_group
+      ~JobConfiguration.get_job
+      ~JobConfiguration.get_num_jobs
+      ~JobConfiguration.get_submission_group
+      ~JobConfiguration.get_user_data
+      ~JobConfiguration.iter_jobs
+      ~JobConfiguration.job_execution_class
+      ~JobConfiguration.job_parameters_class
+      ~JobConfiguration.list_jobs
+      ~JobConfiguration.list_user_data_keys
+      ~JobConfiguration.reconfigure_jobs
+      ~JobConfiguration.remove_job
+      ~JobConfiguration.remove_user_data
+      ~JobConfiguration.serialize
+      ~JobConfiguration.serialize_for_execution
+      ~JobConfiguration.serialize_jobs
+      ~JobConfiguration.show_jobs
+      ~JobConfiguration.shuffle_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobConfiguration.FILENAME_DELIMITER
+      ~JobConfiguration.FORMAT_VERSION
+      ~JobConfiguration.job_global_config
+      ~JobConfiguration.node_setup_command
+      ~JobConfiguration.node_teardown_command
+      ~JobConfiguration.setup_command
+      ~JobConfiguration.submission_groups
+      ~JobConfiguration.teardown_command
+   
+   

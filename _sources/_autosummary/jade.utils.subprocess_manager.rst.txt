@@ -1,0 +1,31 @@
+jade.utils.subprocess\_manager
+==============================
+
+.. automodule:: jade.utils.subprocess_manager
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      SubprocessManager
+   
+   
+
+   
+   
+   
+
+
+

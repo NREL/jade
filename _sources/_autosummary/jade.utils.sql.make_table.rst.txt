@@ -1,0 +1,6 @@
+jade.utils.sql.make\_table
+==========================
+
+.. currentmodule:: jade.utils.sql
+
+.. autofunction:: make_table

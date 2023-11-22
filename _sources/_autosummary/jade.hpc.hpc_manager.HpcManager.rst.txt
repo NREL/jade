@@ -1,0 +1,40 @@
+jade.hpc.hpc\_manager.HpcManager
+================================
+
+.. currentmodule:: jade.hpc.hpc_manager
+
+.. autoclass:: HpcManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HpcManager.am_i_manager
+      ~HpcManager.cancel_job
+      ~HpcManager.check_status
+      ~HpcManager.check_statuses
+      ~HpcManager.create_hpc_interface
+      ~HpcManager.get_hpc_config
+      ~HpcManager.get_job_stats
+      ~HpcManager.get_local_scratch
+      ~HpcManager.get_manager_node
+      ~HpcManager.list_active_nodes
+      ~HpcManager.submit
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcManager.hpc_type
+   
+   

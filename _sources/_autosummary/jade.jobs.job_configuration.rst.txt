@@ -1,0 +1,32 @@
+jade.jobs.job\_configuration
+============================
+
+.. automodule:: jade.jobs.job_configuration
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      ConfigSerializeOptions
+      JobConfiguration
+   
+   
+
+   
+   
+   
+
+
+

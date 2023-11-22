@@ -1,0 +1,46 @@
+jade.hpc.hpc\_manager\_interface.HpcManagerInterface
+====================================================
+
+.. currentmodule:: jade.hpc.hpc_manager_interface
+
+.. autoclass:: HpcManagerInterface
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HpcManagerInterface.am_i_manager
+      ~HpcManagerInterface.cancel_job
+      ~HpcManagerInterface.check_status
+      ~HpcManagerInterface.check_statuses
+      ~HpcManagerInterface.check_storage_configuration
+      ~HpcManagerInterface.create_cluster
+      ~HpcManagerInterface.create_local_cluster
+      ~HpcManagerInterface.create_submission_script
+      ~HpcManagerInterface.get_config
+      ~HpcManagerInterface.get_current_job_id
+      ~HpcManagerInterface.get_job_stats
+      ~HpcManagerInterface.get_local_scratch
+      ~HpcManagerInterface.get_node_id
+      ~HpcManagerInterface.get_num_cpus
+      ~HpcManagerInterface.list_active_nodes
+      ~HpcManagerInterface.log_environment_variables
+      ~HpcManagerInterface.submit
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcManagerInterface.USER
+   
+   

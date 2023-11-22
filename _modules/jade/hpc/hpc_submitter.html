@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>jade.hpc.hpc_submitter &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/documentation_options.js?v=82662543"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link href="../../../_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">jade.hpc.hpc_submitter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for jade.hpc.hpc_submitter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Controls submission of jobs to HPC nodes.&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">from</span> <span class="nn">jade.enums</span> <span class="kn">import</span> <span class="n">JobCompletionStatus</span><span class="p">,</span> <span class="n">Status</span>
+<span class="kn">from</span> <span class="nn">jade.events</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">StructuredLogEvent</span><span class="p">,</span>
+    <span class="n">EVENT_CATEGORY_HPC</span><span class="p">,</span>
+    <span class="n">EVENT_NAME_HPC_SUBMIT</span><span class="p">,</span>
+    <span class="n">EVENT_NAME_HPC_JOB_ASSIGNED</span><span class="p">,</span>
+    <span class="n">EVENT_NAME_HPC_JOB_STATE_CHANGE</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">jade.exceptions</span> <span class="kn">import</span> <span class="n">InvalidConfiguration</span>
+<span class="kn">from</span> <span class="nn">jade.hpc.common</span> <span class="kn">import</span> <span class="n">HpcJobStatus</span><span class="p">,</span> <span class="n">HpcType</span>
+<span class="kn">from</span> <span class="nn">jade.hpc.hpc_manager</span> <span class="kn">import</span> <span class="n">HpcManager</span>
+<span class="kn">from</span> <span class="nn">jade.jobs.async_job_interface</span> <span class="kn">import</span> <span class="n">AsyncJobInterface</span>
+<span class="kn">from</span> <span class="nn">jade.jobs.cluster</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span> <span class="nn">jade.jobs.job_configuration</span> <span class="kn">import</span> <span class="n">JobConfiguration</span>
+<span class="kn">from</span> <span class="nn">jade.jobs.job_queue</span> <span class="kn">import</span> <span class="n">JobQueue</span>
+<span class="kn">from</span> <span class="nn">jade.jobs.results_aggregator</span> <span class="kn">import</span> <span class="n">ResultsAggregator</span>
+<span class="kn">from</span> <span class="nn">jade.loggers</span> <span class="kn">import</span> <span class="n">log_event</span>
+<span class="kn">from</span> <span class="nn">jade.models</span> <span class="kn">import</span> <span class="n">JobState</span>
+<span class="kn">from</span> <span class="nn">jade.models.submission_group</span> <span class="kn">import</span> <span class="n">make_submission_group_lookup</span>
+<span class="kn">from</span> <span class="nn">jade.result</span> <span class="kn">import</span> <span class="n">Result</span>
+<span class="kn">from</span> <span class="nn">jade.utils.timing_utils</span> <span class="kn">import</span> <span class="n">timed_debug</span>
+<span class="kn">from</span> <span class="nn">jade.utils.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">aggregate_data_from_files</span><span class="p">,</span>
+    <span class="n">dump_data</span><span class="p">,</span>
+    <span class="n">create_script</span><span class="p">,</span>
+    <span class="n">ExtendedJSONEncoder</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HpcSubmitter">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.HpcSubmitter.html#jade.hpc.hpc_submitter.HpcSubmitter">[docs]</a>
+<span class="k">class</span> <span class="nc">HpcSubmitter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Submits batches of jobs to HPC. Manages job ordering.&quot;&quot;&quot;</span>
+
+    <span class="n">LOCK_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;submitter.lock&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">JobConfiguration</span><span class="p">,</span> <span class="n">config_file</span><span class="p">,</span> <span class="n">cluster</span><span class="p">:</span> <span class="n">Cluster</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span> <span class="o">=</span> <span class="n">config</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_submission_groups</span> <span class="o">=</span> <span class="n">make_submission_group_lookup</span><span class="p">(</span><span class="n">cluster</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">submission_groups</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config_file</span> <span class="o">=</span> <span class="n">config_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_base_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_index</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">job_status</span><span class="o">.</span><span class="n">batch_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span> <span class="o">=</span> <span class="n">cluster</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hpc_mgr</span> <span class="o">=</span> <span class="n">HpcManager</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_submission_groups</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">output</span>
+
+        <span class="c1"># Limitation: these settings apply to all groups in aggregate.</span>
+        <span class="c1"># This could be made more flexible if needed.</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_submission_groups</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_nodes</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">max_nodes</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_nodes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_nodes</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">maxsize</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">poll_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status_collector</span> <span class="o">=</span> <span class="n">HpcStatusCollector</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hpc_mgr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_run_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config_file</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#!/bin/bash&quot;</span><span class="p">]</span>
+        <span class="n">sing_params</span> <span class="o">=</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">singularity_params</span>
+        <span class="k">if</span> <span class="n">sing_params</span> <span class="ow">and</span> <span class="n">sing_params</span><span class="o">.</span><span class="n">enabled</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">+=</span> <span class="n">sing_params</span><span class="o">.</span><span class="n">setup_commands</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">distributed_submitter</span><span class="p">:</span>
+            <span class="n">dsub</span> <span class="o">=</span> <span class="s2">&quot;--distributed-submitter&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dsub</span> <span class="o">=</span> <span class="s2">&quot;--no-distributed-submitter&quot;</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;jade-internal run-jobs </span><span class="si">{</span><span class="n">config_file</span><span class="si">}</span><span class="s2"> --output=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">dsub</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">num_parallel_processes_per_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; --num-parallel-processes-per-node=</span><span class="si">{</span><span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">num_parallel_processes_per_node</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="n">command</span> <span class="o">+=</span> <span class="s2">&quot; --verbose&quot;</span>
+
+        <span class="n">text</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">create_script</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_async_submitter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jobs</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_base_config</span><span class="p">)</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">jobs</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;_batch_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_batch_index</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_batch_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">new_config_file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config_file</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.json&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">)</span>
+        <span class="n">dump_data</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">new_config_file</span><span class="p">,</span> <span class="bp">cls</span><span class="o">=</span><span class="n">ExtendedJSONEncoder</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Created split config file </span><span class="si">%s</span><span class="s2"> with </span><span class="si">%s</span><span class="s2"> jobs&quot;</span><span class="p">,</span> <span class="n">new_config_file</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">])</span>
+        <span class="p">)</span>
+
+        <span class="n">run_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;run</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.sh&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_create_run_script</span><span class="p">(</span><span class="n">new_config_file</span><span class="p">,</span> <span class="n">run_script</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">)</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">hpc_config</span><span class="o">.</span><span class="n">job_prefix</span> <span class="o">+</span> <span class="n">suffix</span>
+        <span class="k">return</span> <span class="n">AsyncHpcSubmitter</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_hpc_mgr</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_status_collector</span><span class="p">,</span>
+            <span class="n">run_script</span><span class="p">,</span>
+            <span class="n">name</span><span class="p">,</span>
+            <span class="n">submission_group</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span>
+            <span class="n">dry_run</span><span class="o">=</span><span class="n">dry_run</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="HpcSubmitter.run">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.HpcSubmitter.html#jade.hpc.hpc_submitter.HpcSubmitter.run">[docs]</a>
+    <span class="nd">@timed_debug</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Try to submit batches of jobs to the HPC.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            Returns True if all jobs are complete.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">starting_batch_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_index</span>
+        <span class="c1"># TODO: consider whether we need to save the real job names</span>
+        <span class="n">hpc_submitters</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">AsyncHpcSubmitter</span><span class="o">.</span><span class="n">create_from_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hpc_mgr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status_collector</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">iter_hpc_job_ids</span><span class="p">()</span>
+        <span class="p">]</span>
+
+        <span class="n">queue</span> <span class="o">=</span> <span class="n">JobQueue</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_nodes</span><span class="p">,</span>
+            <span class="n">existing_jobs</span><span class="o">=</span><span class="n">hpc_submitters</span><span class="p">,</span>
+            <span class="n">poll_interval</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Statuses may have changed since we last ran.</span>
+        <span class="c1"># Persistent network errors could cause this submitter to fail.</span>
+        <span class="c1"># Another submitter will try again later (unless this is the last submitter).</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">process_queue</span><span class="p">()</span>
+        <span class="n">completed_job_names</span><span class="p">,</span> <span class="n">canceled_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_completed_jobs</span><span class="p">()</span>
+
+        <span class="n">lock_file</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">LOCK_FILENAME</span>
+        <span class="k">if</span> <span class="n">lock_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">lock_file</span><span class="si">}</span><span class="s2"> exists. A previous submitter crashed in an unknown state.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">lock_file</span><span class="o">.</span><span class="n">touch</span><span class="p">()</span>
+
+        <span class="c1"># Start submitting jobs. If any unexpected exception prevents us from updating the</span>
+        <span class="c1"># status file, leave the lock_file in place and intentionally cause a deadlock.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">blocked_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">submitted_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">submission_groups</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">queue</span><span class="o">.</span><span class="n">is_full</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_submit_batches</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">blocked_jobs</span><span class="p">,</span> <span class="n">submitted_jobs</span><span class="p">)</span>
+
+            <span class="n">num_submissions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_index</span> <span class="o">-</span> <span class="n">starting_batch_index</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;num_batches=</span><span class="si">%s</span><span class="s2"> num_submitted=</span><span class="si">%s</span><span class="s2"> num_blocked=</span><span class="si">%s</span><span class="s2"> new_completions=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="n">num_submissions</span><span class="p">,</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">submitted_jobs</span><span class="p">),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">blocked_jobs</span><span class="p">),</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">completed_job_names</span><span class="p">),</span>
+            <span class="p">)</span>
+
+            <span class="n">hpc_job_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">job_id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">queue</span><span class="o">.</span><span class="n">outstanding_jobs</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_update_status</span><span class="p">(</span>
+                <span class="n">submitted_jobs</span><span class="p">,</span>
+                <span class="n">blocked_jobs</span><span class="p">,</span>
+                <span class="n">canceled_jobs</span><span class="p">,</span>
+                <span class="n">hpc_job_ids</span><span class="p">,</span>
+                <span class="n">completed_job_names</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">is_complete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span><span class="p">()</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lock_file</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">is_complete</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span>
+                <span class="s2">&quot;An exception occurred while the submitter was active. &quot;</span>
+                <span class="s2">&quot;The state of the cluster is unknown. A deadlock will occur.&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_update_status</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">submitted_jobs</span><span class="p">,</span> <span class="n">blocked_jobs</span><span class="p">,</span> <span class="n">canceled_jobs</span><span class="p">,</span> <span class="n">hpc_job_ids</span><span class="p">,</span> <span class="n">completed_job_names</span>
+    <span class="p">):</span>
+        <span class="n">hpc_job_changes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">job_status</span><span class="o">.</span><span class="n">hpc_job_ids</span> <span class="o">!=</span> <span class="n">hpc_job_ids</span>
+        <span class="k">if</span> <span class="n">completed_job_names</span> <span class="ow">or</span> <span class="n">submitted_jobs</span> <span class="ow">or</span> <span class="n">blocked_jobs</span> <span class="ow">or</span> <span class="n">hpc_job_changes</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">update_job_status</span><span class="p">(</span>
+                <span class="n">submitted_jobs</span><span class="p">,</span>
+                <span class="n">blocked_jobs</span><span class="p">,</span>
+                <span class="n">canceled_jobs</span><span class="p">,</span>
+                <span class="n">completed_job_names</span><span class="p">,</span>
+                <span class="n">hpc_job_ids</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_batch_index</span><span class="p">,</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_submit_batches</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">blocked_jobs</span><span class="p">,</span> <span class="n">submitted_jobs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">queue</span><span class="o">.</span><span class="n">is_full</span><span class="p">()</span>
+        <span class="n">num_submitted_jobs</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">_submitted_jobs</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># only exists for the check at the end</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">time_based_batching</span>
+            <span class="ow">or</span> <span class="s2">&quot;JADE_SKIP_SORT_BY_TIME&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span>
+        <span class="p">):</span>
+            <span class="n">available_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_available_jobs</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">available_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_available_jobs_by_time</span><span class="p">(</span><span class="n">submission_group</span><span class="p">)</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">queue</span><span class="o">.</span><span class="n">is_full</span><span class="p">()</span> <span class="ow">and</span> <span class="n">available_jobs</span><span class="p">:</span>
+            <span class="n">batch</span><span class="p">,</span> <span class="n">available_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_batch</span><span class="p">(</span>
+                <span class="n">available_jobs</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">_submitted_jobs</span><span class="p">,</span> <span class="n">blocked_jobs</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_jobs</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_submit_batch</span><span class="p">(</span><span class="n">queue</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+                <span class="n">num_submitted_jobs</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">num_jobs</span>
+
+        <span class="k">assert</span> <span class="n">num_submitted_jobs</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span>
+            <span class="n">_submitted_jobs</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">num_submitted_jobs</span><span class="si">}</span><span class="s2"> / </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">_submitted_jobs</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">submitted_jobs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_submitted_jobs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_available_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">):</span>
+        <span class="n">available_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">iter_jobs</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">JobState</span><span class="o">.</span><span class="n">NOT_SUBMITTED</span><span class="p">):</span>
+            <span class="n">jade_job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">jade_job</span><span class="o">.</span><span class="n">submission_group</span> <span class="o">==</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="n">available_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">available_jobs</span>
+
+    <span class="k">def</span> <span class="nf">_get_available_jobs_by_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">):</span>
+        <span class="n">available_jobs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">job_order</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">iter_jobs</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">JobState</span><span class="o">.</span><span class="n">NOT_SUBMITTED</span><span class="p">):</span>
+            <span class="n">jade_job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">jade_job</span><span class="o">.</span><span class="n">submission_group</span> <span class="o">==</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+                <span class="n">job_order</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">jade_job</span><span class="o">.</span><span class="n">estimated_run_minutes</span><span class="p">))</span>
+                <span class="n">available_jobs</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+        <span class="n">job_order</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Sorted jobs by estimated_run_minutes.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">available_jobs</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">job_order</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_make_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">available_jobs</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">submitted_jobs</span><span class="p">,</span> <span class="n">blocked_jobs</span><span class="p">):</span>
+        <span class="n">blocked_jobs_by_name</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">submitted_jobs_by_name</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="n">_BatchJobs</span><span class="p">(</span><span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">try_add_blocked_jobs</span><span class="p">:</span>
+            <span class="c1"># Allow multiple rounds in case the user listed blocked jobs before</span>
+            <span class="c1"># their blocking jobs in the config file.</span>
+            <span class="n">max_iterations</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_jobs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_iterations</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">highest_index</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">available_jobs</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">highest_index</span><span class="p">:</span>
+                    <span class="n">highest_index</span> <span class="o">=</span> <span class="n">i</span>
+                <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">submitted_jobs_by_name</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">jade_job</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get_job</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">batch</span><span class="o">.</span><span class="n">is_job_blocked</span><span class="p">(</span><span class="n">job</span><span class="p">):</span>
+                    <span class="n">blocked_jobs_by_name</span><span class="p">[</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">jade_job</span><span class="o">.</span><span class="n">set_blocking_jobs</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">blocked_by</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">batch</span><span class="o">.</span><span class="n">try_append</span><span class="p">(</span><span class="n">jade_job</span><span class="p">):</span>
+                        <span class="n">submitted_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+                        <span class="n">submitted_jobs_by_name</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                        <span class="n">blocked_jobs_by_name</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># Need to look at this job in the next round.</span>
+                        <span class="n">highest_index</span> <span class="o">-=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">batch</span><span class="o">.</span><span class="n">is_ready_to_submit</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">submitted_jobs_by_name</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_jobs</span><span class="p">):</span>
+                    <span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="k">if</span> <span class="n">done</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">blocked_jobs_by_name</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">blocked_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">highest_index</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">available_jobs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">not_checked</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">not_checked</span> <span class="o">=</span> <span class="n">available_jobs</span><span class="p">[</span><span class="n">highest_index</span> <span class="o">+</span> <span class="mi">1</span> <span class="p">:]</span>
+        <span class="k">return</span> <span class="n">batch</span><span class="p">,</span> <span class="n">not_checked</span>
+
+    <span class="k">def</span> <span class="nf">_submit_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queue</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">async_submitter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_async_submitter</span><span class="p">(</span>
+            <span class="n">batch</span><span class="o">.</span><span class="n">serialize</span><span class="p">(),</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">dry_run</span><span class="o">=</span><span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">dry_run</span>
+        <span class="p">)</span>
+        <span class="n">queue</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">async_submitter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_submission_event</span><span class="p">(</span><span class="n">submission_group</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">is_complete</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">are_all_jobs_complete</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_complete</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">job_status</span><span class="o">.</span><span class="n">hpc_job_ids</span><span class="p">:</span>
+            <span class="c1"># TODO: need to implement persistent recording of fake status</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hpc_mgr</span><span class="o">.</span><span class="n">hpc_type</span> <span class="o">!=</span> <span class="n">HpcType</span><span class="o">.</span><span class="n">FAKE</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;Some jobs are not complete but there are no active HPC job IDs. &quot;</span>
+                    <span class="s2">&quot;Force completion.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">is_complete</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">return</span> <span class="n">is_complete</span>
+
+    <span class="k">def</span> <span class="nf">_log_submission_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">submission_group</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">StructuredLogEvent</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">hpc_config</span><span class="o">.</span><span class="n">job_prefix</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">EVENT_CATEGORY_HPC</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">EVENT_NAME_HPC_SUBMIT</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Submitted HPC batch&quot;</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="n">batch</span><span class="o">.</span><span class="n">num_jobs</span><span class="p">,</span>
+            <span class="n">per_node_batch_size</span><span class="o">=</span><span class="n">submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">per_node_batch_size</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">log_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_cancel_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">,</span> <span class="n">aggregator</span><span class="p">):</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">JobState</span><span class="o">.</span><span class="n">DONE</span>
+        <span class="n">job</span><span class="o">.</span><span class="n">blocked_by</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">Result</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">JobCompletionStatus</span><span class="o">.</span><span class="n">CANCELED</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">hpc_job_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">aggregator</span><span class="o">.</span><span class="n">append_result</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Canceled job </span><span class="si">%s</span><span class="s2"> because one of its blocking jobs failed.&quot;</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_update_completed_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">newly_completed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">canceled_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># If jobs fail and are configured to cancel blocked jobs, we may need to run this</span>
+        <span class="c1"># loop many times to cancel the entire chain.</span>
+        <span class="n">aggregator</span> <span class="o">=</span> <span class="n">ResultsAggregator</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">)</span>
+        <span class="n">need_to_rerun</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">new_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="n">need_to_rerun</span><span class="p">:</span>
+            <span class="n">need_to_rerun</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">failed_jobs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="n">aggregator</span><span class="o">.</span><span class="n">process_results</span><span class="p">(),</span> <span class="n">new_results</span><span class="p">):</span>
+                <span class="n">newly_completed</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">return_code</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">failed_jobs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">new_results</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Detected completion of jobs: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">newly_completed</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Detected failed jobs: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">failed_jobs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cluster</span><span class="o">.</span><span class="n">iter_jobs</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">JobState</span><span class="o">.</span><span class="n">NOT_SUBMITTED</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">blocked_by</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">job</span><span class="o">.</span><span class="n">cancel_on_blocking_job_failure</span> <span class="ow">and</span> <span class="n">job</span><span class="o">.</span><span class="n">blocked_by</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
+                        <span class="n">failed_jobs</span>
+                    <span class="p">):</span>
+                        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cancel_job</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">aggregator</span><span class="p">)</span>
+                        <span class="n">canceled_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+                        <span class="n">new_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+                        <span class="n">need_to_rerun</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">job</span><span class="o">.</span><span class="n">blocked_by</span><span class="o">.</span><span class="n">difference_update</span><span class="p">(</span><span class="n">newly_completed</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">newly_completed</span><span class="p">,</span> <span class="n">canceled_jobs</span></div>
+
+
+
+<span class="k">class</span> <span class="nc">_BatchJobs</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper class to manage jobs in a batch.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_estimated_batch_time</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_processes</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">num_parallel_processes_per_node</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_per_node_batch_size</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">per_node_batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_based_batching</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">time_based_batching</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_try_add_blocked_jobs</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">try_add_blocked_jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_ready_to_submit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_based_batching</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_batch_time</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get_wall_time</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_processes</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_batch_time</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">try_append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the job is appended to the batch.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># This is probably too simplistic and could be made more robust.</span>
+        <span class="c1"># It does assume that if time_based_batching is enabled, jobs are sorted by</span>
+        <span class="c1"># estimated_run_minutes in ascending order. Once one job is too long, all other</span>
+        <span class="c1"># jobs will be too long.</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_based_batching</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_estimated_batch_time</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">estimated_run_minutes</span><span class="p">)</span>
+            <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_batch_time</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_ready_to_submit</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">job</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_based_batching</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_estimated_batch_time</span> <span class="o">+=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">minutes</span><span class="o">=</span><span class="n">job</span><span class="o">.</span><span class="n">estimated_run_minutes</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_jobs</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_per_node_batch_size</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_ready_to_submit</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">are_blocking_jobs_present</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking_jobs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if all blocking jobs are already in the batch.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">blocking_jobs</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_names</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">is_job_blocked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the job is blocked.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        job : Job</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">job</span><span class="o">.</span><span class="n">blocked_by</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_try_add_blocked_jobs</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">are_blocking_jobs_present</span><span class="p">(</span><span class="n">job</span><span class="o">.</span><span class="n">blocked_by</span><span class="p">):</span>
+            <span class="c1"># JobRunner will manage the execution ordering on the compute node.</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">is_ready_to_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if the batch has enough jobs to submit.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ready_to_submit</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">num_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the number of jobs in the batch.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize all jobs in the batch.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            list of dict</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">serialize</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jobs</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="AsyncHpcSubmitter">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter">[docs]</a>
+<span class="k">class</span> <span class="nc">AsyncHpcSubmitter</span><span class="p">(</span><span class="n">AsyncJobInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Used to submit batches of jobs to multiple nodes, one at a time.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">hpc_manager</span><span class="p">,</span>
+        <span class="n">status_collector</span><span class="p">,</span>
+        <span class="n">run_script</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">,</span>
+        <span class="n">submission_group</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">,</span>
+        <span class="n">job_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">dry_run</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgr</span> <span class="o">=</span> <span class="n">hpc_manager</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_status_collector</span> <span class="o">=</span> <span class="n">status_collector</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_run_script</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">run_script</span><span class="p">)</span> <span class="k">if</span> <span class="n">run_script</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_submission_group</span> <span class="o">=</span> <span class="n">submission_group</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span> <span class="o">=</span> <span class="n">job_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_output</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="c1"># Re-enable this if we ever keep a submitter active and polling again.</span>
+        <span class="c1"># self._last_status = HpcJobStatus.NONE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dry_run</span> <span class="o">=</span> <span class="n">dry_run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.cancel">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.cancel">[docs]</a>
+    <span class="k">def</span> <span class="nf">cancel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mgr</span><span class="o">.</span><span class="n">cancel_job</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cancel_on_blocking_job_failure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.create_from_id">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.create_from_id">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">create_from_id</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">hpc_manager</span><span class="p">,</span> <span class="n">status_collector</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create an instance of a job_id in order to check status.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        job_id : str</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">hpc_manager</span><span class="p">,</span> <span class="n">status_collector</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">job_id</span><span class="o">=</span><span class="n">job_id</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hpc_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the HpcManager object.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        HpcManager</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mgr</span>
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.is_complete">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.is_complete">[docs]</a>
+    <span class="k">def</span> <span class="nf">is_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_status_collector</span><span class="o">.</span><span class="n">check_status</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span><span class="p">)</span>
+        <span class="c1"># if status != self._last_status:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;HPC job ID </span><span class="si">%s</span><span class="s2"> status=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+        <span class="c1">#    event = StructuredLogEvent(</span>
+        <span class="c1">#        source=self._name,</span>
+        <span class="c1">#        category=EVENT_CATEGORY_HPC,</span>
+        <span class="c1">#        name=EVENT_NAME_HPC_JOB_STATE_CHANGE,</span>
+        <span class="c1">#        message=&quot;HPC job state change&quot;,</span>
+        <span class="c1">#        job_id=self._job_id,</span>
+        <span class="c1">#        old_state=self._last_status.value,</span>
+        <span class="c1">#        new_state=status.value,</span>
+        <span class="c1">#    )</span>
+        <span class="c1">#    log_event(event)</span>
+        <span class="c1">#    self._last_status = status</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span> <span class="o">=</span> <span class="n">status</span> <span class="ow">in</span> <span class="p">(</span><span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">COMPLETE</span><span class="p">,</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span></div>
+
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.get_id">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_id">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">job_id</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">job_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">return_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span>
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.run">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_submission_group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">sing_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">singularity_params</span>
+        <span class="k">if</span> <span class="n">sing_params</span> <span class="ow">and</span> <span class="n">sing_params</span><span class="o">.</span><span class="n">enabled</span><span class="p">:</span>
+            <span class="n">script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_singularity_command</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_script</span>
+        <span class="n">job_id</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mgr</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">script</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_submission_group</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">dry_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_dry_run</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="o">!=</span> <span class="n">Status</span><span class="o">.</span><span class="n">GOOD</span><span class="p">:</span>
+            <span class="c1"># TODO: cancel or fail all jobs in the batch</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Failed to submit name=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_return_code</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_complete</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">return</span> <span class="n">Status</span><span class="o">.</span><span class="n">ERROR</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span> <span class="o">=</span> <span class="n">job_id</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">StructuredLogEvent</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">EVENT_CATEGORY_HPC</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">EVENT_NAME_HPC_JOB_ASSIGNED</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;HPC job assigned&quot;</span><span class="p">,</span>
+            <span class="n">job_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">log_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Assigned job_ID=</span><span class="si">%s</span><span class="s2"> name=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Status</span><span class="o">.</span><span class="n">GOOD</span></div>
+
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.get_blocking_jobs">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.get_blocking_jobs">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_blocking_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.remove_blocking_job">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.remove_blocking_job">[docs]</a>
+    <span class="k">def</span> <span class="nf">remove_blocking_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="AsyncHpcSubmitter.set_blocking_jobs">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.AsyncHpcSubmitter.html#jade.hpc.hpc_submitter.AsyncHpcSubmitter.set_blocking_jobs">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_blocking_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jobs</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="kc">False</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_make_singularity_command</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_submission_group</span><span class="o">.</span><span class="n">submitter_params</span><span class="o">.</span><span class="n">singularity_params</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="o">.</span><span class="n">run_command</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidConfiguration</span><span class="p">(</span><span class="s2">&quot;Singularity command cannot be empty.&quot;</span><span class="p">)</span>
+        <span class="n">container_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">container</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">run_command</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">container_path</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_script</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">sing_script</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_script</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_run_script</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+            <span class="s2">&quot;run&quot;</span><span class="p">,</span> <span class="s2">&quot;singularity&quot;</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">params</span><span class="o">.</span><span class="n">load_command</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">cmd</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">create_script</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">sing_script</span><span class="p">),</span> <span class="n">text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sing_script</span></div>
+
+
+
+<div class="viewcode-block" id="HpcStatusCollector">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.HpcStatusCollector.html#jade.hpc.hpc_submitter.HpcStatusCollector">[docs]</a>
+<span class="k">class</span> <span class="nc">HpcStatusCollector</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collects status for all user jobs.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hpc_mgr</span><span class="p">,</span> <span class="n">poll_interval</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hpc_mgr</span> <span class="o">=</span> <span class="n">hpc_mgr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span> <span class="o">=</span> <span class="n">poll_interval</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_poll_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_statuses</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="HpcStatusCollector.check_status">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.HpcStatusCollector.html#jade.hpc.hpc_submitter.HpcStatusCollector.check_status">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the status for job_id.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        job_id : str</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        HpcJobStatus</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ExecutionError</span>
+<span class="sd">            Raised if statuses cannot be retrieved.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cur_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_poll_time</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">cur_time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_poll_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_poll_interval</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Collect new statuses.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_statuses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hpc_mgr</span><span class="o">.</span><span class="n">check_statuses</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_last_poll_time</span> <span class="o">=</span> <span class="n">cur_time</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_statuses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">HpcJobStatus</span><span class="o">.</span><span class="n">NONE</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HpcStatusCollector.get_statuses">
+<a class="viewcode-back" href="../../../_autosummary/jade.hpc.hpc_submitter.HpcStatusCollector.html#jade.hpc.hpc_submitter.HpcStatusCollector.get_statuses">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_statuses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return outstanding statuses</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            list of HpcJobStatus</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_statuses</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

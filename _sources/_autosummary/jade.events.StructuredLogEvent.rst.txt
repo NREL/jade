@@ -1,0 +1,28 @@
+jade.events.StructuredLogEvent
+==============================
+
+.. currentmodule:: jade.events
+
+.. autoclass:: StructuredLogEvent
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StructuredLogEvent.base_field_names
+      ~StructuredLogEvent.deserialize
+      ~StructuredLogEvent.field_names
+      ~StructuredLogEvent.to_dict
+      ~StructuredLogEvent.values
+   
+   
+
+   
+   
+   

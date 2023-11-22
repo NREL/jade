@@ -1,0 +1,38 @@
+jade.jobs.async\_job\_interface.AsyncJobInterface
+=================================================
+
+.. currentmodule:: jade.jobs.async_job_interface
+
+.. autoclass:: AsyncJobInterface
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AsyncJobInterface.cancel
+      ~AsyncJobInterface.get_blocking_jobs
+      ~AsyncJobInterface.get_id
+      ~AsyncJobInterface.is_complete
+      ~AsyncJobInterface.remove_blocking_job
+      ~AsyncJobInterface.run
+      ~AsyncJobInterface.set_blocking_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AsyncJobInterface.cancel_on_blocking_job_failure
+      ~AsyncJobInterface.name
+      ~AsyncJobInterface.return_code
+   
+   

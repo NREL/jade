@@ -1,0 +1,38 @@
+jade.hpc.common.HpcJobStats
+===========================
+
+.. currentmodule:: jade.hpc.common
+
+.. autoclass:: HpcJobStats
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~HpcJobStats.count
+      ~HpcJobStats.index
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~HpcJobStats.account
+      ~HpcJobStats.end
+      ~HpcJobStats.hpc_job_id
+      ~HpcJobStats.name
+      ~HpcJobStats.partition
+      ~HpcJobStats.qos
+      ~HpcJobStats.start
+      ~HpcJobStats.state
+   
+   

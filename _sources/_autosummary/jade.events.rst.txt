@@ -1,0 +1,40 @@
+jade.events
+===========
+
+.. automodule:: jade.events
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      deserialize_event
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      EventsSummary
+      StructuredErrorLogEvent
+      StructuredLogEvent
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Spark Jobs &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Singularity Containers" href="singularity_containers.html" />
+    <link rel="prev" title="Batch Pipeline" href="pipeline.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_usage.html">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_usage.html#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Spark Jobs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/spark_jobs.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="spark-jobs">
+<h1>Spark Jobs<a class="headerlink" href="#spark-jobs" title="Link to this heading">¶</a></h1>
+<p>JADE has functionality to create an ephemeral Spark cluster on HPC compute nodes and then run one
+or more jobs on that cluster.</p>
+<p><strong>Prerequisite</strong>: The Spark software must be installed inside a Singularity container.</p>
+<section id="setup">
+<h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Create a Docker container with Spark installed. Here is an <a class="reference external" href="https://github.com/NREL/jade/blob/main/jade/spark/Dockerfile">example</a>. That image includes
+Nvidia GPU support. Note that this container uses Python 3.8 and Spark 3.2.1. You may hit
+incompatibilities if you run jobs against the cluster with different versions.</p></li>
+<li><p>Convert that container to Singularity and copy the image to the HPC’s shared file system.</p></li>
+<li><p>Follow the normal steps to create your Jade configuration, such as with <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">config</span> <span class="pre">create</span>
+<span class="pre">commands.txt</span></code>. The commands should be the scripts that you want to run against the Spark
+cluster including any command-line arguments. <strong>Note</strong>: Jade will append two positional
+arguments to your command line arguments: the spark cluster (<code class="docutils literal notranslate"><span class="pre">spark://&lt;node_name&gt;:7077</span></code>) and the
+job output directory. Here is an example script:</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!/bin/bash
+<span class="nv">SPARK_CLUSTER</span><span class="o">=</span><span class="nv">$1</span>
+spark-submit<span class="w"> </span>--master<span class="o">=</span><span class="si">${</span><span class="nv">SPARK_CLUSTER</span><span class="si">}</span><span class="w"> </span>run_query.py
+</pre></div>
+</div>
+<ol class="arabic" start="4">
+<li><p>Create your HPC config file with <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">config</span> <span class="pre">hpc</span> <span class="pre">-c</span> <span class="pre">hpc_config.toml</span></code>. Set <code class="docutils literal notranslate"><span class="pre">nodes</span></code> in
+<code class="docutils literal notranslate"><span class="pre">hpc_config.toml</span></code> to be the number of compute nodes you want to participate in the Spark
+cluster. Spark will perform poorly if its scratch file space is on slow storage. You should
+specify requirements here that give you nodes with fast internal storage. On NREL’s Eagle
+HPC cluster that is only the big-memory and GPU nodes. Alternatively, you can use nodes’ tmpfs
+for scratch space or another directory altogether as described below.</p></li>
+<li><p>If you want Spark to use GPUs, add GPU requirements to <code class="docutils literal notranslate"><span class="pre">hpc_config.toml</span></code>. This example on Eagle
+will acquire nodes with two GPUs: <code class="docutils literal notranslate"><span class="pre">gres=gpu:2</span></code>. Jade will detect this setting and add the
+appropriate Spark settings.</p></li>
+<li><p>Run the command below to update the configuration with Spark parameters. Refer to <code class="docutils literal notranslate"><span class="pre">--help</span></code> for
+additional options. This will produce global spark configuration files in <code class="docutils literal notranslate"><span class="pre">./spark/conf</span></code> that you
+can customize. Refer to Spark documentation for help with the parameters.</p>
+<p>One parameter that you should customize is <code class="docutils literal notranslate"><span class="pre">spark.sql.shuffle.partititons</span></code> in
+<code class="docutils literal notranslate"><span class="pre">spark/conf/spark-defaults.conf</span></code>.
+Jade sets them to the total number of cores in the cluster by default.  This
+<a class="reference external" href="https://www.youtube.com/watch?v=daXEp4HmS-E&amp;t=4251s">video</a> offers an equation that works
+well: <code class="docutils literal notranslate"><span class="pre">num_partitions</span> <span class="pre">=</span> <span class="pre">max_shufffle_write_size</span> <span class="pre">/</span> <span class="pre">target_partition_size</span></code>.</p>
+<p>You will have to run your job once to determine <code class="docutils literal notranslate"><span class="pre">max_shuffle_write_size</span></code>. You can find it on
+the Spark UI <code class="docutils literal notranslate"><span class="pre">Stages</span></code> tab in the <code class="docutils literal notranslate"><span class="pre">Shuffle</span> <span class="pre">Write</span></code> column. Your <code class="docutils literal notranslate"><span class="pre">target_partition_size</span></code>
+should be between 128 - 200 MB.</p>
+<p>The minimum <code class="docutils literal notranslate"><span class="pre">partitions</span></code> value should be the total number of cores in the cluster unless you
+want to leave some cores available for other jobs that may be running simultaneously.</p>
+<p>Note that you can also customize any of these settings in your script that calls <code class="docutils literal notranslate"><span class="pre">spark-submit</span></code>
+or <code class="docutils literal notranslate"><span class="pre">pyspark</span></code>.</p>
+</li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ jade spark config -c &lt;path-to-container&gt; -h hpc_config.toml --update-config-file=config.json
+</pre></div>
+</div>
+<ol class="arabic simple" start="7">
+<li><p>If you set a custom memory requirement in your <code class="docutils literal notranslate"><span class="pre">hpc_config.toml</span></code> then Jade will increase the
+<code class="docutils literal notranslate"><span class="pre">spark.executor.memory</span></code> value in <code class="docutils literal notranslate"><span class="pre">spark/conf/spark-defaults.conf</span></code>. The default value is
+intended to maximize memory for 7 executors on each compute node. Customize as needed.</p></li>
+<li><p>View the changes to your <code class="docutils literal notranslate"><span class="pre">config.json</span></code> if desired.</p></li>
+<li><p>If you are using compute nodes with slow internal storage, consider setting <code class="docutils literal notranslate"><span class="pre">use_tmpfs_for_scratch</span></code>
+to true. Note that this reduces available worker memory by half and you’ll need to adjust
+<code class="docutils literal notranslate"><span class="pre">spark.executor.memory</span></code> accordingly. You can set the option in <code class="docutils literal notranslate"><span class="pre">config.json</span></code> or by passing
+<code class="docutils literal notranslate"><span class="pre">-U</span></code> to the <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">spark</span> <span class="pre">config</span></code> command.</p></li>
+<li><p>Similar to the previous point, you can specify <code class="docutils literal notranslate"><span class="pre">alt_scratch</span></code> to use your own scratch directory.
+On Eagle you may get decent performance if you specify a directory in <code class="docutils literal notranslate"><span class="pre">/scratch/&lt;username&gt;</span></code>.
+Be sure to clean up this up periodically because Spark will write lots of data during shuffles.</p></li>
+<li><p>Consider whether you want your jobs to be run inside or outside the container (default is outside).</p></li>
+</ol>
+<blockquote>
+<div><p>Jade will run each job inside the container if the <code class="docutils literal notranslate"><span class="pre">run_user_script_inside_container</span></code> option is
+set to true. You can set the option for each job in <code class="docutils literal notranslate"><span class="pre">config.json</span></code> or by passing <code class="docutils literal notranslate"><span class="pre">-r</span></code> to
+the <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">spark</span> <span class="pre">config</span></code> command. If you do run your script outside of the container, Jade will
+still set Spark environment variables to point to your local, customizable Spark config
+directory.</p>
+</div></blockquote>
+<ol class="arabic simple" start="12">
+<li><p>Set <code class="docutils literal notranslate"><span class="pre">collect_worker_logs</span></code> to true if your jobs are getting logs of errors. These can grow large.</p></li>
+<li><p>Submit the jobs with <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span> <span class="pre">config.json</span></code>. Jade will create a new cluster for each
+job, running them sequentially.</p></li>
+</ol>
+</section>
+<section id="run-scripts-manually">
+<h2>Run scripts manually<a class="headerlink" href="#run-scripts-manually" title="Link to this heading">¶</a></h2>
+<p>In some cases you may prefer that JADE setup the cluster and then go to sleep while you ssh to a compute
+node and run scripts manually.</p>
+<ol class="arabic simple">
+<li><p>Make a script called <code class="docutils literal notranslate"><span class="pre">sleep.sh</span></code> with the content below. This time of 59 minutes will allow JADE to
+cleanly shutdown the cluster if there is a 1-hour wall-time timeout.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+sleep<span class="w"> </span>59m
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Set the JADE command in <code class="docutils literal notranslate"><span class="pre">commands.txt</span></code>/<code class="docutils literal notranslate"><span class="pre">config.json</span></code> to be <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">sleep.sh</span></code>.</p></li>
+<li><p>ssh to the first compute node in your allocation.</p></li>
+</ol>
+<p>4. If you want to use the custom Spark environment created by Jade, set the <code class="docutils literal notranslate"><span class="pre">SPARK_CONF_DIR</span></code> environment
+variable so that your SparkSession gets initialized with the correct parameters.</p>
+<p>This example assumes that your JADE output directory is <code class="docutils literal notranslate"><span class="pre">./output</span></code> and there is one job named <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>ssh<span class="w"> </span>&lt;first-compute-node-name&gt;
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>&lt;wherever-you-started-the-jade-jobs&gt;
+$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">SPARK_CONF_DIR</span><span class="o">=</span>./output/job-outputs/1/spark/conf
+</pre></div>
+</div>
+<ol class="arabic simple" start="5">
+<li><p>Run your code through <code class="docutils literal notranslate"><span class="pre">pyspark</span></code> or <code class="docutils literal notranslate"><span class="pre">spark-submit</span></code>.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pyspark<span class="w"> </span>--master<span class="o">=</span>spark://<span class="sb">`</span>hostname<span class="sb">`</span>:7077
+</pre></div>
+</div>
+</section>
+<section id="run-a-jupyter-server">
+<h2>Run a Jupyter server<a class="headerlink" href="#run-a-jupyter-server" title="Link to this heading">¶</a></h2>
+<p>This example shows how to make JADE start a Jupyter server with the environment ready to use the Spark
+cluster.</p>
+<ol class="arabic simple">
+<li><p>Create a bash script with the content below. Save the script as <code class="docutils literal notranslate"><span class="pre">start_notebook.sh</span></code>.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="nb">unset</span><span class="w"> </span>XDG_RUNTIME_DIR
+<span class="nb">export</span><span class="w"> </span><span class="nv">SPARK_CLUSTER</span><span class="o">=</span><span class="nv">$1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span>jupyter
+<span class="nb">export</span><span class="w"> </span><span class="nv">PYSPARK_DRIVER_PYTHON_OPTS</span><span class="o">=</span><span class="s2">&quot;notebook --no-browser --ip=0.0.0.0 --port 8889&quot;</span>
+pyspark<span class="w"> </span>--master<span class="o">=</span><span class="si">${</span><span class="nv">SPARK_CLUSTER</span><span class="si">}</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Spark cluster is running at </span><span class="si">${</span><span class="nv">SPARK_CLUSTER</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;JADE output directory is </span><span class="si">${</span><span class="nv">2</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span>
+sleep<span class="w"> </span><span class="m">10</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Create an ssh tunnel with this command: ssh -L 8889:</span><span class="si">${</span><span class="nv">HOSTNAME</span><span class="si">}</span><span class="s2">:8889 -L 8080:</span><span class="si">${</span><span class="nv">HOSTNAME</span><span class="si">}</span><span class="s2">:8080 -L 4040:</span><span class="si">${</span><span class="nv">HOSTNAME</span><span class="si">}</span><span class="s2">:4040 </span><span class="si">${</span><span class="nv">USER</span><span class="si">}</span><span class="s2">@el1.hpc.nrel.gov&quot;</span><span class="w"> </span>&gt;<span class="p">&amp;</span><span class="m">2</span>
+<span class="nb">wait</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Set the JADE command in <code class="docutils literal notranslate"><span class="pre">commands.txt</span></code>/<code class="docutils literal notranslate"><span class="pre">config.json</span></code> to be <code class="docutils literal notranslate"><span class="pre">bash</span> <span class="pre">start_notebook.sh</span></code>.</p></li>
+<li><p>Submit the jobs with <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span> <span class="pre">config.json</span> <span class="pre">-o</span> <span class="pre">output</span></code></p></li>
+<li><p>Once the job is allocated run <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">output/job-stdio/*.e</span></code>. After 15-20 seconds you will see console
+output from the script above telling you how to create the ssh tunnel required to connect to the
+Jupyter server. You will also see console output from Jupyter that contains a URL.</p></li>
+<li><p>Open the ssh tunnel.</p></li>
+<li><p>Connect to the Jupyter server from your browser.</p></li>
+<li><p>Create a SparkSession and start running your code. An example is below. You probably will want
+to split these into two cells. <strong>Note</strong> that this reads the Spark cluster name from the
+environment.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">IPython.core.display</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+<span class="n">display</span><span class="p">(</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&lt;style&gt;.container { width:100% !important; }&lt;/style&gt;&quot;</span><span class="p">))</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">&quot;my_app&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="8">
+<li><p>Connect to the Spark UI from your browser, if desired, to monitor your jobs.</p></li>
+</ol>
+<p><a class="reference external" href="http://localhost:4040">http://localhost:4040</a> and/or <a class="reference external" href="http://localhost:8080">http://localhost:8080</a></p>
+<ol class="arabic simple" start="9">
+<li><p>If you want to ensure that JADE shuts down the Spark cluster cleanly (preserving history)
+then you should shutdown the notebook. ssh to the first compute-node and run
+<code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span> <span class="pre">stop</span> <span class="pre">8889</span></code>.</p></li>
+</ol>
+</section>
+<section id="run-a-jupyter-notebook-on-an-existing-cluster">
+<h2>Run a Jupyter notebook on an existing cluster<a class="headerlink" href="#run-a-jupyter-notebook-on-an-existing-cluster" title="Link to this heading">¶</a></h2>
+<p>Unlike the previous section, this example assumes that there is an existing cluster and you have
+ssh’d into the master node.</p>
+<ol class="arabic simple">
+<li><p>Configure <code class="docutils literal notranslate"><span class="pre">pyspark</span></code> to create a Jupyter Notebook instead of a regular interactive session.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYSPARK_DRIVER_PYTHON</span><span class="o">=</span>jupyter
+$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYSPARK_DRIVER_PYTHON_OPTS</span><span class="o">=</span><span class="s2">&quot;notebook --no-browser --ip=0.0.0.0 --port 8889&quot;</span>
+<span class="c1"># If you have configured SPARK_HOME differently, don&#39;t run this command.</span>
+$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">SPARK_HOME</span><span class="o">=</span><span class="sb">`</span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import pyspark;print(pyspark.__path__[0])&quot;</span><span class="sb">`</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p>Start <code class="docutils literal notranslate"><span class="pre">pyspark</span></code>, optionally with custom Spark parameters. It will create a Juypter
+notebook and print the connection information.</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pyspark
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p>Create an ssh tunnel as described in the previous section.</p></li>
+<li><p>Connect to the notebook from your computer’s browser.</p></li>
+<li><p>Connect to the <code class="docutils literal notranslate"><span class="pre">SparkSession</span></code> by pasting this code block into a cell.</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyspark.sql</span> <span class="kn">import</span> <span class="n">SparkSession</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">&quot;my_app&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="use-nodes-with-nvidia-gpus">
+<h2>Use nodes with Nvidia GPUs<a class="headerlink" href="#use-nodes-with-nvidia-gpus" title="Link to this heading">¶</a></h2>
+<p>If your compute nodes have Nvidia GPUs then you can leverage Nvidia’s
+<a class="reference external" href="https://nvidia.github.io/spark-rapids/">RAPIDS Accelerator for Apache Spark</a>
+to get substantially faster performance in some cases. Ensure that your compute nodes have all
+required Nvidia software installed. This section assumes the presence of these files:</p>
+<ul class="simple">
+<li><p>/opt/sparkRapidsPlugin/cudf-22.04.0-cuda11.jar</p></li>
+<li><p>/opt/sparkRapidsPlugin/rapids-4-spark_2.12-22.04.0.jar</p></li>
+</ul>
+<p>and these environment variables:</p>
+<ul class="simple">
+<li><p>export SPARK_RAPIDS_PLUGIN_JAR=/opt/sparkRapidsPlugin/rapids-4-spark_2.12-22.04.0.jar</p></li>
+<li><p>export SPARK_CUDF_JAR=/opt/sparkRapidsPlugin/cudf-22.04.0-cuda11.jar</p></li>
+</ul>
+<section id="run-a-spark-job">
+<h3>Run a Spark job<a class="headerlink" href="#run-a-spark-job" title="Link to this heading">¶</a></h3>
+<p>This example works on NREL’s Eagle HPC. It also assumes that you have ssh’d to the Spark master node.</p>
+<p>If you want to run the job in your own environment outside of the container, copy the three files
+mentioned above to your workspace and set the environment variables accordingly.</p>
+<p>Refer to <a class="reference external" href="https://nvidia.github.io/spark-rapids/docs/tuning-guide.html">Nvidia’s tuning guide</a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>module<span class="w"> </span>load<span class="w"> </span>singularity-container
+$<span class="w"> </span>singularity<span class="w"> </span>shell<span class="w"> </span>-B<span class="w"> </span>/scratch:/scratch<span class="w"> </span>-B<span class="w"> </span>/projects:/projects<span class="w"> </span>&lt;path-to-continer&gt;/nvidia_spark.sif
+$<span class="w"> </span>pyspark<span class="w"> </span>--master<span class="w"> </span>spark://<span class="sb">`</span>hostname<span class="sb">`</span>:7077<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="w"> </span>mysparkshell<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--deploy-mode<span class="w"> </span>client<span class="w">  </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.executor.cores<span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.executor.instances<span class="o">=</span><span class="m">2</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.executor.memory<span class="o">=</span>25G<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.executor.memoryOverhead<span class="o">=</span>3G<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.executor.resource.gpu.amount<span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.executor.resource.gpu.vendor<span class="o">=</span>nvidia.com<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.locality.wait<span class="o">=</span>0s<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.rapids.memory.pinnedPool.size<span class="o">=</span>2G<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.rapids.sql.hasNans<span class="o">=</span><span class="nb">false</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.rapids.sql.castFloatToString.enabled<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.rapids.sql.castStringToFloat.enabled<span class="o">=</span><span class="nb">true</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.sql.files.maxPartitionBytes<span class="o">=</span>512m<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.sql.shuffle.partitions<span class="o">=</span><span class="m">10</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.task.cpus<span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.task.resource.gpu.amount<span class="o">=</span><span class="m">0</span>.25<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--jars<span class="w"> </span><span class="si">${</span><span class="nv">SPARK_CUDF_JAR</span><span class="si">}</span>,<span class="si">${</span><span class="nv">SPARK_RAPIDS_PLUGIN_JAR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--conf<span class="w"> </span>spark.plugins<span class="o">=</span>com.nvidia.spark.SQLPlugin<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--driver-memory<span class="w"> </span>25G
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This example assumes that the dataframes do not contain NaN values.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Add –conf spark.rapids.sql.explain=ALL to see whether jobs are running on the CPUs or GPUs.</p>
+</div>
+</section>
+</section>
+<section id="debugging-problems">
+<h2>Debugging Problems<a class="headerlink" href="#debugging-problems" title="Link to this heading">¶</a></h2>
+<p>Jade stores Spark logs, events, and metrics in <code class="docutils literal notranslate"><span class="pre">&lt;output-dir&gt;/job-outputs/&lt;job-id&gt;/spark</span></code>.</p>
+<p>You can browse the job details in the Spark UI by starting a Spark history server pointed to one
+of the job output directories. You can do this on your local computer or on the HPC. If you do it
+on the HPC then you’ll need to create an ssh tunnel to the compute node and forward the port 18080.</p>
+<p>Here is an example where the files are on your local system:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ SPARK_HISTORY_OPTS=&quot;-Dspark.history.fs.logDirectory=output/job-outputs/1/spark/events&quot; $SPARK_HOME/sbin/start-history-server.sh
+</pre></div>
+</div>
+<p>Load the Spark UI by opening your browser to <a class="reference external" href="http://localhost:18080">http://localhost:18080</a></p>
+</section>
+<section id="compute-node-resource-monitoring">
+<h2>Compute Node Resource Monitoring<a class="headerlink" href="#compute-node-resource-monitoring" title="Link to this heading">¶</a></h2>
+<p>It can be very helpful to collect CPU, memory, disk, and network resource utilization statistics
+for all compute nodes. Refer to <a class="reference internal" href="tutorial.html#resource-monitoring"><span class="std std-ref">Resource Monitoring</span></a> for how to configure Jade to do this for
+you.</p>
+</section>
+<section id="start-a-spark-cluster-on-arbitrary-compute-nodes">
+<h2>Start a Spark Cluster on Arbitrary Compute Nodes<a class="headerlink" href="#start-a-spark-cluster-on-arbitrary-compute-nodes" title="Link to this heading">¶</a></h2>
+<p>In some cases you may want to allocate compute nodes apart from Jade and then start a cluster. Similarly, you
+may want to restart the cluster with different configuration settings and not have to relinquish compute
+nodes. In the examples below Jade will stop all Spark processes on the nodes and then start a new cluster.</p>
+<p>In this example Jade will start the cluster and then sleep indefinitely.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>start-spark-cluster<span class="w"> </span>--container<span class="w"> </span>&lt;path-to-container&gt;<span class="w"> </span>--spark-conf<span class="w"> </span>./spark<span class="w"> </span>node1<span class="w"> </span>node2<span class="w"> </span>nodeN
+</pre></div>
+</div>
+<p>The value passed to <code class="docutils literal notranslate"><span class="pre">--spark-conf</span></code> should be equal in format to the directory created above in <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">spark</span> <span class="pre">config</span></code>.</p>
+<p>In this example Jade will start the cluster and then run a user script to start a notebook. The script
+must be executable.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>spark<span class="w"> </span>start-cluster<span class="w"> </span>--container<span class="w"> </span>&lt;path-to-container&gt;<span class="w"> </span>--spark-conf<span class="w"> </span>./spark<span class="w"> </span>--script<span class="w"> </span>start_notebook.sh
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pipeline.html" class="btn btn-neutral float-left" title="Batch Pipeline" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="singularity_containers.html" class="btn btn-neutral float-right" title="Singularity Containers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

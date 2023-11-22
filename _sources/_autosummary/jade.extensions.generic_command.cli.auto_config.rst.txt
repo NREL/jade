@@ -1,0 +1,6 @@
+jade.extensions.generic\_command.cli.auto\_config
+=================================================
+
+.. currentmodule:: jade.extensions.generic_command.cli
+
+.. autofunction:: auto_config

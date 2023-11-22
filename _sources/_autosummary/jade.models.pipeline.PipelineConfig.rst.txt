@@ -1,0 +1,45 @@
+jade.models.pipeline.PipelineConfig
+===================================
+
+.. currentmodule:: jade.models.pipeline
+
+.. autoclass:: PipelineConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PipelineConfig.construct
+      ~PipelineConfig.copy
+      ~PipelineConfig.dict
+      ~PipelineConfig.from_orm
+      ~PipelineConfig.json
+      ~PipelineConfig.load
+      ~PipelineConfig.parse_file
+      ~PipelineConfig.parse_obj
+      ~PipelineConfig.parse_raw
+      ~PipelineConfig.schema
+      ~PipelineConfig.schema_json
+      ~PipelineConfig.update_forward_refs
+      ~PipelineConfig.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PipelineConfig.path
+      ~PipelineConfig.stage_num
+      ~PipelineConfig.stages
+      ~PipelineConfig.is_complete
+   
+   

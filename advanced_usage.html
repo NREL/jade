@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced Usage &mdash; jade 0.10.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/documentation_options.js?v=82662543"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="jade" href="jade.html" />
+    <link rel="prev" title="Distributed Submission Workflow" href="distributed_submission.html" />
+    <link href="_static/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            jade
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home page</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/jade.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.cli.html">jade.cli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.common.html">jade.common</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.enums.html">jade.enums</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.events.html">jade.events</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.exceptions.html">jade.exceptions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.extensions.html">jade.extensions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.hpc.html">jade.hpc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.jobs.html">jade.jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.loggers.html">jade.loggers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.models.html">jade.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.resource_monitor.html">jade.resource_monitor</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.result.html">jade.result</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.spark.html">jade.spark</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.utils.html">jade.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/jade.version.html">jade.version</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-or-hpc-with-conda">Computer or HPC with conda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#computer-with-docker">Computer with docker</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#submit-jobs">Submit Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quickstart.html#job-results">Job Results</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-commands">CLI Commands</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-configuration">HPC Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#configure-jobs">Configure Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#cli-execution">CLI Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-execution">Job Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-status">Job Status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#canceling-jobs">Canceling Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#job-results">Job Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#failed-or-missing-jobs">Failed or Missing Jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#hpc-job-information">HPC Job information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#debugging">Debugging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#resource-monitoring">Resource Monitoring</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="results_queries.html">Results Queries</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#show-available-tables">Show available tables</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-job-results">View job results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-all-cpu-and-memory-usage-by-each-job">View all CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-maximum-cpu-and-memory-usage-by-each-job">View maximum CPU and memory usage by each job</a></li>
+<li class="toctree-l2"><a class="reference internal" href="results_queries.html#view-successful-job-runtimes-in-hours-along-with-per-job-resource-utilization">View successful job runtimes in hours along with per-job resource utilization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="job_configuration.html">JADE Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#main-level">Main Level</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#per-job-definition">Per-Job Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="job_configuration.html#submission-group-behaviors">Submission Group Behaviors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submission_strategies.html">Job Submission Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-multi-core-jobs">Independent, short, multi-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-short-single-core-jobs">Independent, short, single-core jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#independent-single-core-jobs-with-variable-runtimes">Independent, single-core jobs with variable runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-different-submission-parameters">Jobs that require different submission parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="submission_strategies.html#jobs-that-require-multiple-nodes">Jobs that require multiple nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">Batch Pipeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#create-the-pipeline">Create the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#customize-the-config">Customize the config</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#submit-the-pipeline">Submit the pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#check-status">Check status</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pipeline.html#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spark_jobs.html">Spark Jobs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#setup">Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-scripts-manually">Run scripts manually</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-server">Run a Jupyter server</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#run-a-jupyter-notebook-on-an-existing-cluster">Run a Jupyter notebook on an existing cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#use-nodes-with-nvidia-gpus">Use nodes with Nvidia GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#debugging-problems">Debugging Problems</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#compute-node-resource-monitoring">Compute Node Resource Monitoring</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spark_jobs.html#start-a-spark-cluster-on-arbitrary-compute-nodes">Start a Spark Cluster on Arbitrary Compute Nodes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="singularity_containers.html">Singularity Containers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#building-a-container-that-can-be-used-for-hpc-submissions">Building a container that can be used for HPC submissions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="singularity_containers.html#running-a-container-that-includes-jade">Running a container that includes JADE</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributed_submission.html">Distributed Submission Workflow</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Advanced Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#extending-jade">Extending JADE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generic-command-extension">Generic Command Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#demo-extension">Demo Extension</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#post-process">Post-process</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Dev &amp; Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="jade.html">jade</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="design.html">JADE Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="design/classes.html">JADE Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_docs.html">Building the Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#build-locally">Build locally</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html#push-to-github">Push to GitHub</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">jade</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Advanced Usage</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/advanced_usage.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="advanced-usage">
+<span id="advanced-guide-label"></span><h1>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h1>
+<p>This section will show how to create customized JADE extensions.</p>
+<p>JADE is a framework for running executable computer programs in parallel.
+Generically, any type of scientific simulation, analysis, or computing jobs, like Python, R, C++,
+Java, Bash, etc., can be automated and deployed on both personal computer and HPC. When talking about
+parallelization in Python, normally three modules make the commitments.</p>
+<ul class="simple">
+<li><p>threading - <a class="reference external" href="https://docs.python.org/3/library/threading.html">https://docs.python.org/3/library/threading.html</a></p></li>
+<li><p>multiprocessing - <a class="reference external" href="https://docs.python.org/3.7/library/multiprocessing.html">https://docs.python.org/3.7/library/multiprocessing.html</a></p></li>
+<li><p>subprocess - <a class="reference external" href="https://docs.python.org/3.7/library/subprocess.html">https://docs.python.org/3.7/library/subprocess.html</a></p></li>
+</ul>
+<p>Here, JADE manages parallelization by using <cite>subprocess</cite> - a Python module. It basically is a wrapper
+around <code class="docutils literal notranslate"><span class="pre">os.fork()</span></code> and <code class="docutils literal notranslate"><span class="pre">os.execve()</span></code> supporting other executables.</p>
+<p><strong>How does JADE work?</strong></p>
+<figure class="align-center">
+<a class="reference internal image-reference" href="_images/jade-workflow.png"><img alt="_images/jade-workflow.png" src="_images/jade-workflow.png" style="width: 1134.6px; height: 442.2px;" /></a>
+</figure>
+<section id="extending-jade">
+<h2>Extending JADE<a class="headerlink" href="#extending-jade" title="Link to this heading">¶</a></h2>
+<p>JADE could be extended to support any type of jobs. In JADE, four abstract base classes (ABCs)
+are defined for extending, as below:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_parameters_interface.JobParametersInterface.html#jade.jobs.job_parameters_interface.JobParametersInterface" title="jade.jobs.job_parameters_interface.JobParametersInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobParametersInterface</span></code></a>:
+Defines the attributes of a job.</p></li>
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_inputs_interface.JobInputsInterface.html#jade.jobs.job_inputs_interface.JobInputsInterface" title="jade.jobs.job_inputs_interface.JobInputsInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobInputsInterface</span></code></a>:
+Defines the available input parameters for all jobs.</p></li>
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_configuration.JobConfiguration.html#jade.jobs.job_configuration.JobConfiguration" title="jade.jobs.job_configuration.JobConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobConfiguration</span></code></a>:
+Defines a batch of jobs to be executed.</p></li>
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_execution_interface.JobExecutionInterface.html#jade.jobs.job_execution_interface.JobExecutionInterface" title="jade.jobs.job_execution_interface.JobExecutionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobExecutionInterface</span></code></a>:
+Code to run a job.</p></li>
+</ul>
+<p>ABCs behaves same as interface - a term used often in other languages, like Java. In each interface,
+there are one or more abstract methods declared, but without implementation. These classes could not
+be instantiated, and need subclasses to provide implementations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span> <span class="n">In</span> <span class="p">[</span><span class="mi">1</span><span class="p">]:</span> <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">2</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">A</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="o">...</span><span class="p">:</span>     <span class="nd">@abstractmethod</span>
+<span class="o">...</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="o">...</span><span class="p">:</span>         <span class="k">pass</span>
+<span class="o">...</span><span class="p">:</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">3</span><span class="p">]:</span> <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+ <span class="o">---------------------------------------------------------------------------</span>
+ <span class="ne">TypeError</span>                                 <span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">)</span>
+ <span class="o">&lt;</span><span class="n">ipython</span><span class="o">-</span><span class="nb">input</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">7</span><span class="n">f181d8f00b8</span><span class="o">&gt;</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+ <span class="o">----&gt;</span> <span class="mi">1</span> <span class="n">a</span> <span class="o">=</span> <span class="n">A</span><span class="p">()</span>
+ <span class="ne">TypeError</span><span class="p">:</span> <span class="n">Cannot</span> <span class="n">instantiate</span> <span class="n">abstract</span> <span class="k">class</span> <span class="nc">A</span> <span class="k">with</span> <span class="n">abstract</span> <span class="n">methods</span> <span class="n">run</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">4</span><span class="p">]:</span> <span class="k">class</span> <span class="nc">B</span><span class="p">(</span><span class="n">A</span><span class="p">):</span>
+    <span class="o">...</span><span class="p">:</span>     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="o">...</span><span class="p">:</span>         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello World&quot;</span><span class="p">)</span>
+    <span class="o">...</span><span class="p">:</span>
+ <span class="n">In</span> <span class="p">[</span><span class="mi">5</span><span class="p">]:</span> <span class="n">b</span> <span class="o">=</span> <span class="n">B</span><span class="p">()</span>
+
+ <span class="n">In</span> <span class="p">[</span><span class="mi">6</span><span class="p">]:</span> <span class="n">b</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+ <span class="n">Hello</span> <span class="n">World</span>
+</pre></div>
+</div>
+<p>For more details about ABCs, please refer to <a class="reference external" href="https://docs.python.org/3/library/abc.html">https://docs.python.org/3/library/abc.html</a></p>
+</section>
+<section id="generic-command-extension">
+<h2>Generic Command Extension<a class="headerlink" href="#generic-command-extension" title="Link to this heading">¶</a></h2>
+<p>JADE implements an extension called <code class="docutils literal notranslate"><span class="pre">generic_command</span></code>. You can simply pass a
+text file with a list of commands to execute and JADE will run them in parallel.</p>
+<p>Example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>config<span class="w"> </span>create<span class="w"> </span>commands.txt<span class="w"> </span>-c<span class="w"> </span>config.json
+$<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json
+</pre></div>
+</div>
+<section id="job-ordering">
+<h3>Job Ordering<a class="headerlink" href="#job-ordering" title="Link to this heading">¶</a></h3>
+<p>Each job defines a blocked_by field. If you want to guarantee that job ID 6
+doesn’t run until job ID 5 completes then add that ID to the field.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;job_cli_command&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+    <span class="s2">&quot;blocked_by&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="demo-extension">
+<h2>Demo Extension<a class="headerlink" href="#demo-extension" title="Link to this heading">¶</a></h2>
+<p>This section will show you how to create an extension of JADE through implementing abstract
+methods defined in JADE interfaces, and run a Python data analysis program in parallel.</p>
+<section id="an-auto-regression-analysis-program">
+<h3>1. An Auto-regression Analysis Program<a class="headerlink" href="#an-auto-regression-analysis-program" title="Link to this heading">¶</a></h3>
+<p>Suppose we have a series of United States’s GDP data, 1960-2018, named <code class="docutils literal notranslate"><span class="pre">united_states.csv</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">year</span><span class="p">,</span><span class="n">gdp</span>
+<span class="mi">1960</span><span class="p">,</span><span class="mi">543300000000</span>
+<span class="mi">1961</span><span class="p">,</span><span class="mi">563300000000</span>
+<span class="mi">1962</span><span class="p">,</span><span class="mi">605100000000</span>
+<span class="o">...</span>
+<span class="mi">2000</span><span class="p">,</span><span class="mi">10252345464000</span>
+<span class="mi">2001</span><span class="p">,</span><span class="mi">10581821399000</span>
+<span class="o">...</span>
+<span class="mi">2016</span><span class="p">,</span><span class="mi">18707188235000</span>
+<span class="mi">2017</span><span class="p">,</span><span class="mi">19485393853000</span>
+<span class="mi">2018</span><span class="p">,</span><span class="mi">20494100000000</span>
+</pre></div>
+</div>
+<p>Base on this dataset, we have developed an auto-regression model with validation and plot.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.ar_model</span> <span class="kn">import</span> <span class="n">AR</span>
+
+<span class="k">def</span> <span class="nf">autoregression_analysis</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">output</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Country based GDP auto-regression analysis</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    country: str</span>
+<span class="sd">        the name of a country</span>
+<span class="sd">    data: str</span>
+<span class="sd">        path to the csv file containing the GDP data.</span>
+<span class="sd">    output: str</span>
+<span class="sd">        The path to the output directory</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple, The path of csv result file, and the path of png plot file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Read csv</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="s2">&quot;year&quot;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+    <span class="c1"># Train model</span>
+    <span class="n">train</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s2">&quot;gdp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">AR</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+    <span class="n">model_fit</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+    <span class="c1"># Validate model</span>
+    <span class="n">lag</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">k_ar</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">model_fit</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">lag</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">train</span><span class="p">),</span> <span class="n">dynamic</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Save result</span>
+    <span class="n">df</span><span class="p">[</span><span class="s2">&quot;pred_gdp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lag</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+    <span class="n">result_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">result_file</span><span class="p">)</span>
+
+    <span class="c1"># Save plot</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">country</span> <span class="o">+</span> <span class="s2">&quot;(current $)&quot;</span><span class="p">)</span>
+    <span class="n">plot_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">,</span> <span class="s2">&quot;png&quot;</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">plot_file</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result_file</span><span class="p">,</span> <span class="n">plot_file</span>
+</pre></div>
+</div>
+<p>The data columns in result file look like below,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">year</span><span class="p">,</span><span class="n">gdp</span><span class="p">,</span><span class="n">pred_gdp</span>
+<span class="mi">1960</span><span class="p">,</span><span class="mi">543300000000</span><span class="p">,</span>
+<span class="mi">1961</span><span class="p">,</span><span class="mi">563300000000</span><span class="p">,</span>
+<span class="mi">1962</span><span class="p">,</span><span class="mi">605100000000</span><span class="p">,</span>
+<span class="o">...</span>
+<span class="mi">2000</span><span class="p">,</span><span class="mi">10252345464000</span><span class="p">,</span><span class="mf">10638026901321.785</span>
+<span class="mi">2001</span><span class="p">,</span><span class="mi">10581821399000</span><span class="p">,</span><span class="mf">10932063383291.346</span>
+<span class="o">...</span>
+<span class="mi">2016</span><span class="p">,</span><span class="mi">18707188235000</span><span class="p">,</span><span class="mf">19406250376876.492</span>
+<span class="mi">2017</span><span class="p">,</span><span class="mi">19485393853000</span><span class="p">,</span><span class="mf">20519007253667.656</span>
+<span class="mi">2018</span><span class="p">,</span><span class="mi">20494100000000</span><span class="p">,</span><span class="mf">20672861935684.523</span>
+</pre></div>
+</div>
+<p>The result data plots are shown as below,</p>
+<figure class="align-center">
+<img alt="_images/united_states.png" src="_images/united_states.png" />
+</figure>
+</section>
+<section id="auto-regression-analysis-for-many-countries">
+<h3>2. Auto-regression Analysis for Many Countries<a class="headerlink" href="#auto-regression-analysis-for-many-countries" title="Link to this heading">¶</a></h3>
+<p>The auto-regression analysis works good for United States, and we want to apply it
+many more countries, including Australia, Brazil, Canada, China, France, Germany,
+India, Italy, Japan, Russia, United Kingdom.</p>
+<p>The first solution comes in mind may be a Python <code class="docutils literal notranslate"><span class="pre">for</span></code> loop, like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">countries</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Australia&quot;</span><span class="p">,</span> <span class="s2">&quot;Brazil&quot;</span><span class="p">,</span> <span class="s2">&quot;Canada&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;China&quot;</span><span class="p">,</span> <span class="s2">&quot;France&quot;</span><span class="p">,</span> <span class="s2">&quot;Germany&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;India&quot;</span><span class="p">,</span> <span class="s2">&quot;Italy&quot;</span><span class="p">,</span> <span class="s2">&quot;Japan&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Russia&quot;</span><span class="p">,</span> <span class="s2">&quot;United Kingdom&quot;</span><span class="p">,</span> <span class="s2">&quot;United States&quot;</span>
+<span class="p">]</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;data/gdp/countries/austrilia.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/brazil.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/canada.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/china.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/france.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/germany.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/india.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/italy.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/japan.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/russia.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/united_kingdom.csv&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;data/gdp/countries/united_states.csv&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">country</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">countries</span><span class="p">):</span>
+    <span class="n">autoregression_analysis</span><span class="p">(</span><span class="n">country</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There is no problem with just a few countries, and each analysis runs a short time. However, how about
+if these are countries of our world? how about if a
+program runs one hour or longer? <code class="docutils literal notranslate"><span class="pre">for</span></code> loop might not be a good solution.
+Alternatively, we need to figure out how to run <code class="docutils literal notranslate"><span class="pre">autoregression_analysis</span></code> in parallel.</p>
+</section>
+<section id="create-extension-by-extending-jade">
+<h3>3. Create Extension by Extending JADE<a class="headerlink" href="#create-extension-by-extending-jade" title="Link to this heading">¶</a></h3>
+<p>To extend JADE is to implement its abstract methods defined in JADE interface
+classes based on your scenario. All abstract methods should be overwritten by concrete methods. If
+you don’t think the method is necessary for you, then just <code class="docutils literal notranslate"><span class="pre">pass</span></code> in the implementation.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_parameters_interface.JobParametersInterface.html#jade.jobs.job_parameters_interface.JobParametersInterface" title="jade.jobs.job_parameters_interface.JobParametersInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobParametersInterface</span></code></a>: Defines the attributes of an auto-regression job.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AutoRegressionParameters</span><span class="p">(</span><span class="n">JobParametersInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used for creating auto-regression job.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Please check the source code
+<a class="reference external" href="https://github.com/NREL/jade/blob/main/jade/extensions/demo/autoregression_parameters.py">jade.extensions.demo.autoregression_paramters</a>.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_inputs_interface.JobInputsInterface.html#jade.jobs.job_inputs_interface.JobInputsInterface" title="jade.jobs.job_inputs_interface.JobInputsInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobInputsInterface</span></code></a>: Defines the available input parameters for all aut-regression jobs.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AutoRegressionInputs</span><span class="p">(</span><span class="n">JobInputsInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used for configuring auto-regression analysis jobs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">INPUTS_FILE</span> <span class="o">=</span> <span class="s2">&quot;inputs.json&quot;</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Please check the source code
+<a class="reference external" href="https://github.com/NREL/jade/blob/main/jade/extensions/demo/autoregression_inputs.py">jade.extensions.demo.autoregression_inputs</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It’s the user’s responsibility to generate the <code class="docutils literal notranslate"><span class="pre">inputs.json</span></code> file that would be
+consumed by this class. For this <code class="docutils literal notranslate"><span class="pre">demo</span></code> extension, there’s a script file used for creating
+the <cite>json</cite> file. In this demo, the <code class="docutils literal notranslate"><span class="pre">inputs.json</span></code> was created using this Python
+<a class="reference external" href="https://github.com/NREL/jade/blob/main/jade/extensions/demo/data/inputs.py">script</a>.</p>
+</div>
+<ul class="simple">
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_configuration.JobConfiguration.html#jade.jobs.job_configuration.JobConfiguration" title="jade.jobs.job_configuration.JobConfiguration"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobConfiguration</span></code></a>: Defines a batch of auto-regression jobs to be executed.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AutoRegressionConfiguration</span><span class="p">(</span><span class="n">JobConfiguration</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used to configure auto-regression jobs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="o">...</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><a class="reference internal" href="_autosummary/jade.jobs.job_execution_interface.JobExecutionInterface.html#jade.jobs.job_execution_interface.JobExecutionInterface" title="jade.jobs.job_execution_interface.JobExecutionInterface"><code class="xref py py-class docutils literal notranslate"><span class="pre">JobExecutionInterface</span></code></a>: Code to run a auto-regression job.</p></li>
+</ul>
+<p>Please checkout the source code <a class="reference external" href="https://github.com/NREL/jade/blob/main/jade/extensions/demo/autoregression_configuration.py">jade.extensions.demo.autoregression_configuration</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AutoRegressionExecution</span><span class="p">(</span><span class="n">JobExecutionInterface</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class used for auto-regression job execution on computer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Please checkout the source code <a class="reference external" href="https://github.com/NREL/jade/blob/main/jade/extensions/demo/autoregression_execution.py">jade.extensions.demo.autoregression_execution</a></p>
+</section>
+<section id="register-your-extension-in-jade">
+<h3>4. Register Your Extension in JADE<a class="headerlink" href="#register-your-extension-in-jade" title="Link to this heading">¶</a></h3>
+<p>All extensions created by users have to be registered so that JADE can recognize it. In JADE, it uses
+<code class="docutils literal notranslate"><span class="pre">jade.extensions.registry.py</span></code> file to register the extensions.</p>
+<p>To register <code class="docutils literal notranslate"><span class="pre">demo</span></code> extension, add the followings to <code class="docutils literal notranslate"><span class="pre">EXTENSION_REGISTRY</span></code> dictionary.</p>
+<ul class="simple">
+<li><p>Extension name <code class="docutils literal notranslate"><span class="pre">demo</span></code> as the key.</p></li>
+<li><p>Job execution class, that is, <code class="docutils literal notranslate"><span class="pre">demo.autoregression_execution.AutoRegressionExecution</span></code>.</p></li>
+<li><p>Job configuration class, that is, <code class="docutils literal notranslate"><span class="pre">demo.autoregression_configuration.AutoRegressionConfiguration</span></code>.</p></li>
+</ul>
+</section>
+<section id="create-functions-consumed-by-cli">
+<h3>5. Create Functions Consumed by CLI<a class="headerlink" href="#create-functions-consumed-by-cli" title="Link to this heading">¶</a></h3>
+<p>JADE provides consistent CLI commands for all extensions, to enable your extension
+to run using JADE CLI. Two functions <code class="docutils literal notranslate"><span class="pre">auto-config</span></code>,
+<code class="docutils literal notranslate"><span class="pre">run</span></code> in <code class="docutils literal notranslate"><span class="pre">cli.py</span></code> module should be implemented with exact names defined here.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">demo</span></code> extension, the <code class="docutils literal notranslate"><span class="pre">auto_config</span></code> and <code class="docutils literal notranslate"><span class="pre">run</span></code> functions looks like this,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">auto_config</span><span class="p">(</span><span class="n">inputs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a configuration file for demo</span>
+
+<span class="sd">    :param inputs: str, the path to directory containing autoregression data.</span>
+
+<span class="sd">    :return: None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="o">...</span>
+
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">config_file</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">output_format</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run auto regression analysis through command line&quot;&quot;&quot;</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p>Please check the source code <a class="reference external" href="https://github.com/NREL/jade/blob/main/jade/extensions/demo/cli.py">jade.extensions.demo.cli</a>.
+Those two functions are consumed by JADE’s CLI commands <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">auto-config</span></code> and
+<code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">submit-jobs</span></code> separately in command line.</p>
+</section>
+<section id="make-a-robust-extension-via-test">
+<h3>6. Make a Robust Extension via Test<a class="headerlink" href="#make-a-robust-extension-via-test" title="Link to this heading">¶</a></h3>
+<p>Good unit tests and integration tests can make your JADE extension to be robust. Here, JADE uses
+Pytest framework - <a class="reference external" href="https://docs.pytest.org/en/latest/">https://docs.pytest.org/en/latest/</a> to perform unit tests and integration tests.</p>
+<p>Here are some examples for <code class="docutils literal notranslate"><span class="pre">demo</span></code> extensions.</p>
+<p>The following is an unit test from <a class="reference external" href="https://github.com/NREL/jade/blob/main/tests/unit/extensions/demo/test_autogression_execution.py">tests.unit.extensions.demo.test_autregression_execution.py</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@patch</span><span class="p">(</span><span class="s2">&quot;jade.extensions.demo.autoregression_execution.autoregression_analysis&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">test_run</span><span class="p">(</span><span class="n">mock_autoregression_analysis</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Should call the autoregerssion_analysis method defined outside of class&quot;&quot;&quot;</span>
+    <span class="n">job</span> <span class="o">=</span> <span class="n">MagicMock</span><span class="p">()</span>
+    <span class="n">job</span><span class="o">.</span><span class="n">country</span> <span class="o">=</span> <span class="s2">&quot;united_states&quot;</span>
+    <span class="n">job</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="s2">&quot;data.csv&quot;</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s2">&quot;jade-unit-test-output&quot;</span><span class="p">)</span>
+
+    <span class="n">mock_autoregression_analysis</span><span class="o">.</span><span class="n">side_effect</span> <span class="o">=</span> <span class="n">run_autoregression_analysis</span>
+
+    <span class="n">are</span> <span class="o">=</span> <span class="n">AutoRegressionExecution</span><span class="p">(</span><span class="n">job</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+    <span class="n">are</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="n">mock_autoregression_analysis</span><span class="o">.</span><span class="n">assert_called_once</span><span class="p">()</span>
+    <span class="n">mock_autoregression_analysis</span><span class="o">.</span><span class="n">assert_called_with</span><span class="p">(</span>
+        <span class="n">country</span><span class="o">=</span><span class="s2">&quot;united_states&quot;</span><span class="p">,</span>
+        <span class="n">data</span><span class="o">=</span><span class="s2">&quot;data.csv&quot;</span><span class="p">,</span>
+        <span class="n">output</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tempfile</span><span class="o">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s2">&quot;jade-unit-test-output&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following is an integration test from <a class="reference external" href="https://github.com/NREL/jade/blob/main/tests/integration/extensions/demo/test_auto_config.py">tests.integration.extensions.demo.test_auto_config.py</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pytest</span>
+<span class="kn">from</span> <span class="nn">jade.utils.subprocess_manager</span> <span class="kn">import</span> <span class="n">run_command</span>
+
+
+<span class="nd">@pytest</span><span class="o">.</span><span class="n">fixture</span>
+<span class="k">def</span> <span class="nf">test_data_dir</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The path to the directory that contains the fixture data&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_auto_config</span><span class="p">(</span><span class="n">test_data_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Should create a config.json file&quot;&quot;&quot;</span>
+    <span class="n">inputs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">test_data_dir</span><span class="p">,</span> <span class="s2">&quot;demo&quot;</span><span class="p">)</span>
+    <span class="n">config_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="s2">&quot;config.json&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config_file</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="c1"># run command</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;jade auto-config demo </span><span class="si">{}</span><span class="s2"> -c </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">config_file</span><span class="p">)</span>
+    <span class="n">returncode</span> <span class="o">=</span> <span class="n">run_command</span><span class="p">(</span><span class="n">cmd</span><span class="o">=</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">returncode</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="c1"># check result</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">config_file</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="s2">&quot;jobs&quot;</span> <span class="ow">in</span> <span class="n">data</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;jobs&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+</div>
+<p>Check the coverage of the unit tests. Normally, the unit test cases should
+cover more than 90% of the code.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>pytest<span class="w"> </span>--cov<span class="o">=</span>jade/extensions/demo/<span class="w"> </span>tests/unit/extensions/demo
+<span class="o">=====================================================================================</span><span class="w"> </span><span class="nb">test</span><span class="w"> </span>session<span class="w"> </span><span class="nv">starts</span><span class="w"> </span><span class="o">=====================================================================================</span>
+platform<span class="w"> </span>darwin<span class="w"> </span>--<span class="w"> </span>Python<span class="w"> </span><span class="m">3</span>.7.4,<span class="w"> </span>pytest-5.1.2,<span class="w"> </span>py-1.8.0,<span class="w"> </span>pluggy-0.12.0
+rootdir:<span class="w"> </span>/Users/jgu2/Workspace/jade
+plugins:<span class="w"> </span>cov-2.7.1
+collected<span class="w"> </span><span class="m">35</span><span class="w"> </span>items
+
+tests/unit/extensions/demo/test_autogression_execution.py<span class="w"> </span>......<span class="w">                                                                                                                        </span><span class="o">[</span><span class="w"> </span><span class="m">17</span>%<span class="o">]</span>
+tests/unit/extensions/demo/test_autoregression_configuration.py<span class="w"> </span>...................<span class="w">                                                                                                     </span><span class="o">[</span><span class="w"> </span><span class="m">71</span>%<span class="o">]</span>
+tests/unit/extensions/demo/test_autoregression_inputs.py<span class="w"> </span>...<span class="w">                                                                                                                            </span><span class="o">[</span><span class="w"> </span><span class="m">80</span>%<span class="o">]</span>
+tests/unit/extensions/demo/test_autoregression_parameters.py<span class="w"> </span>.....<span class="w">                                                                                                                      </span><span class="o">[</span><span class="w"> </span><span class="m">94</span>%<span class="o">]</span>
+tests/unit/extensions/demo/test_cli.py<span class="w"> </span>..<span class="w">                                                                                                                                               </span><span class="o">[</span><span class="m">100</span>%<span class="o">]</span>
+
+----------<span class="w"> </span>coverage:<span class="w"> </span>platform<span class="w"> </span>darwin,<span class="w"> </span>python<span class="w"> </span><span class="m">3</span>.7.4-final-0<span class="w"> </span>-----------
+Name<span class="w">                                                    </span>Stmts<span class="w">   </span>Miss<span class="w">  </span>Cover
+---------------------------------------------------------------------------
+jade/extensions/demo/__init__.py<span class="w">                           </span><span class="m">0</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+jade/extensions/demo/autoregression_configuration.py<span class="w">      </span><span class="m">17</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+jade/extensions/demo/autoregression_execution.py<span class="w">          </span><span class="m">53</span><span class="w">      </span><span class="m">2</span><span class="w">    </span><span class="m">96</span>%
+jade/extensions/demo/autoregression_inputs.py<span class="w">             </span><span class="m">21</span><span class="w">      </span><span class="m">0</span><span class="w">   </span><span class="m">100</span>%
+jade/extensions/demo/autoregression_parameters.py<span class="w">         </span><span class="m">23</span><span class="w">      </span><span class="m">1</span><span class="w">    </span><span class="m">96</span>%
+jade/extensions/demo/cli.py<span class="w">                               </span><span class="m">19</span><span class="w">      </span><span class="m">1</span><span class="w">    </span><span class="m">95</span>%
+---------------------------------------------------------------------------
+TOTAL<span class="w">                                                     </span><span class="m">133</span><span class="w">      </span><span class="m">4</span><span class="w">    </span><span class="m">97</span>%
+</pre></div>
+</div>
+<p>Please refer to Pytest <a class="reference external" href="https://docs.pytest.org/en/latest/example/index.html">https://docs.pytest.org/en/latest/example/index.html</a> to learn
+more about testing.</p>
+</section>
+<section id="try-auto-regression-analysis-in-parallel">
+<h3>7. Try Auto-regression Analysis in Parallel<a class="headerlink" href="#try-auto-regression-analysis-in-parallel" title="Link to this heading">¶</a></h3>
+<p>Run the JADE CLI commands at your localhost.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>auto-config<span class="w"> </span>demo<span class="w"> </span>data
+Created<span class="w"> </span>configuration<span class="w"> </span>with<span class="w"> </span><span class="m">12</span><span class="w"> </span>jobs.
+Dumped<span class="w"> </span>configuration<span class="w"> </span>to<span class="w"> </span>config.json.
+</pre></div>
+</div>
+<p>This command line generate the global <code class="docutils literal notranslate"><span class="pre">config.json</span></code> file with all auto-regression jobs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json<span class="w"> </span>-h<span class="w"> </span>hpc_config.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:21,921<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.cli.submit_jobs<span class="w"> </span>submit_jobs.py:92<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json<span class="w"> </span>-h<span class="w"> </span>/Users/jgu2/Workspace/jade/hpc_config.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:22,160<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:166<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Submit<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="nb">jobs</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>execution.
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:22,160<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:167<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>JADE<span class="w"> </span>version<span class="w"> </span><span class="m">0</span>.1.0
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:22,177<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.utils.repository_info<span class="w"> </span>repository_info.py:95<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Wrote<span class="w"> </span>diff<span class="w"> </span>to<span class="w"> </span>output/diff.patch
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:22,228<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_runner<span class="w"> </span>job_runner.py:56<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Run<span class="w"> </span>jobs.
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:22,228<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_runner<span class="w"> </span>job_runner.py:106<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Created<span class="w"> </span>jade<span class="w"> </span><span class="nv">scratch_dir</span><span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:22,231<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_runner<span class="w"> </span>job_runner.py:147<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Generated<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>to<span class="w"> </span>execute<span class="w"> </span>on<span class="w"> </span><span class="m">12</span><span class="w"> </span>workers<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">12</span>.
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,059<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>australia<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,060<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>brazil<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,091<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>china<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,093<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>canada<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,110<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>france<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,146<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>germany<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,162<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>india<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,181<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>japan<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,187<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>italy<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,234<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>russia<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,237<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>united_kingdom<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:24,265<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>demo<span class="w"> </span>run.py:66<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>run<span class="w"> </span>demo<span class="w"> </span>--name<span class="o">=</span>united_states<span class="w"> </span>--output<span class="o">=</span>output/job-outputs<span class="w"> </span>--config-file<span class="o">=</span>./jade-a021254e-4620-4b29-a21a-bbd3448c2f5a/config.json
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:25,395<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>australia<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">3</span>.161540985107422<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/australia_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:25,396<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>brazil<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">3</span>.153259038925171<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/brazil_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:25,398<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>canada<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">3</span>.1425909996032715<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/canada_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,399<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>china<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.13318395614624<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/china_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,400<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>france<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.124361991882324<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/france_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,401<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>germany<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.114736080169678<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/germany_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,401<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>india<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.1038658618927<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/india_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,402<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>italy<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.092925786972046<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/italy_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,402<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>japan<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.082369089126587<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/japan_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,403<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>russia<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.070515871047974<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/russia_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,403<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>united_kingdom<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.047858953475952<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/united_kingdom_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:26,404<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.dispatchable_job<span class="w"> </span>dispatchable_job.py:57<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Job<span class="w"> </span>united_states<span class="w"> </span>completed<span class="w"> </span><span class="nv">return_code</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">exec_time_s</span><span class="o">=</span><span class="m">4</span>.033797025680542<span class="w"> </span><span class="nv">filename</span><span class="o">=</span>output/results/united_states_20191014_143522_batch_0.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:27,404<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_runner<span class="w"> </span>job_runner.py:156<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Jobs<span class="w"> </span>are<span class="w"> </span>complete.<span class="w"> </span><span class="nv">count</span><span class="o">=</span><span class="m">12</span>
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:27,423<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_runner<span class="w"> </span>job_runner.py:95<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Wrote<span class="w"> </span>summary<span class="w"> </span>of<span class="w"> </span>job<span class="w"> </span>batch<span class="w"> </span>to<span class="w"> </span>output/results/results_20191014_143522_batch_0_summary.toml
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:27,424<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_runner<span class="w"> </span>job_runner.py:70<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Completed<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="nb">jobs</span>
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:27,426<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.utils.timing_utils<span class="w"> </span>timing_utils.py:34<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>execution-time<span class="o">=</span><span class="m">5</span>.198<span class="w"> </span>s<span class="w"> </span><span class="nv">func</span><span class="o">=</span>run_jobs
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:27,480<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:214<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Wrote<span class="w"> </span>results<span class="w"> </span>to<span class="w"> </span>output/results.json.
+<span class="m">2019</span>-10-14<span class="w"> </span><span class="m">14</span>:35:27,481<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:220<span class="o">]</span><span class="w"> </span>:<span class="w"> </span><span class="nv">Successful</span><span class="o">=</span><span class="m">12</span><span class="w"> </span><span class="nv">Failed</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">Total</span><span class="o">=</span><span class="m">12</span>
+</pre></div>
+</div>
+<p>All job results are saved into <code class="docutils literal notranslate"><span class="pre">output</span></code> directory. To check the results,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>show-results
+Results<span class="w"> </span>from<span class="w"> </span>directory:<span class="w"> </span>output
+JADE<span class="w"> </span>Version:<span class="w"> </span><span class="m">0</span>.1.0
+<span class="m">10</span>/14/2019<span class="w"> </span><span class="m">14</span>:35:27
+
++----------------+-------------+----------+--------------------+
+<span class="p">|</span><span class="w">    </span>Job<span class="w"> </span>Name<span class="w">    </span><span class="p">|</span><span class="w"> </span>Return<span class="w"> </span>Code<span class="w"> </span><span class="p">|</span><span class="w">  </span>Status<span class="w">  </span><span class="p">|</span><span class="w"> </span>Execution<span class="w"> </span>Time<span class="w"> </span><span class="o">(</span>s<span class="o">)</span><span class="w"> </span><span class="p">|</span>
++----------------+-------------+----------+--------------------+
+<span class="p">|</span><span class="w">     </span>japan<span class="w">      </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.082369089126587<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>china<span class="w">      </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w">  </span><span class="m">4</span>.13318395614624<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>united_states<span class="w">  </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.033797025680542<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>india<span class="w">      </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w">  </span><span class="m">4</span>.1038658618927<span class="w">   </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>russia<span class="w">     </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.070515871047974<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>france<span class="w">     </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.124361991882324<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">    </span>germany<span class="w">     </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.114736080169678<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>italy<span class="w">      </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.092925786972046<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">   </span>australia<span class="w">    </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.161540985107422<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>brazil<span class="w">     </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.153259038925171<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>canada<span class="w">     </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.142590999603271<span class="w">  </span><span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>united_kingdom<span class="w"> </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">4</span>.047858953475952<span class="w">  </span><span class="p">|</span>
++----------------+-------------+----------+--------------------+
+
+Num<span class="w"> </span>successful:<span class="w"> </span><span class="m">12</span>
+Num<span class="w"> </span>failed:<span class="w"> </span><span class="m">0</span>
+Total:<span class="w"> </span><span class="m">12</span>
+
+Avg<span class="w"> </span>execution<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="o">(</span>s<span class="o">)</span>:<span class="w"> </span><span class="m">3</span>.86
+Min<span class="w"> </span>execution<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="o">(</span>s<span class="o">)</span>:<span class="w"> </span><span class="m">3</span>.14
+Max<span class="w"> </span>execution<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="o">(</span>s<span class="o">)</span>:<span class="w"> </span><span class="m">4</span>.13
+</pre></div>
+</div>
+</section>
+<section id="run-your-extension-on-hpc">
+<h3>8. Run Your Extension on HPC<a class="headerlink" href="#run-your-extension-on-hpc" title="Link to this heading">¶</a></h3>
+<p>Pull the JADE source code, and setup the <code class="docutils literal notranslate"><span class="pre">jade</span></code> conda environment on HPC, then
+run the CLI commands to parallelize the auto-regression analysis.</p>
+<p>Auto-config auto-regression jobs and create a <code class="docutils literal notranslate"><span class="pre">config.json</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>auto-config<span class="w"> </span>demo<span class="w"> </span>data
+Created<span class="w"> </span>configuration<span class="w"> </span>with<span class="w"> </span><span class="m">12</span><span class="w"> </span>jobs.
+Dumped<span class="w"> </span>configuration<span class="w"> </span>to<span class="w"> </span>config.json.
+</pre></div>
+</div>
+<p>Submit auto-regression jobs, and wait for program to finish.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json<span class="w"> </span>-h<span class="w"> </span>hpc_config.toml
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,212<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.cli.submit_jobs<span class="w"> </span>submit_jobs.py:92<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json<span class="w"> </span>-h<span class="w"> </span>/home/jgu2/Workspace/jade/hpc_config.toml
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,843<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:166<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Submit<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="nb">jobs</span><span class="w"> </span><span class="k">for</span><span class="w"> </span>execution.
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,843<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:167<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>JADE<span class="w"> </span>version<span class="w"> </span><span class="m">0</span>.1.0
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,903<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.utils.repository_info<span class="w"> </span>repository_info.py:98<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>No<span class="w"> </span>diff<span class="w"> </span>detected<span class="w"> </span><span class="k">in</span><span class="w"> </span>repository.
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,978<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:285<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Created<span class="w"> </span>split<span class="w"> </span>config<span class="w"> </span>file<span class="w"> </span>output/config_batch_1.json<span class="w"> </span>with<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="nb">jobs</span>
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,980<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.utils.utils<span class="w"> </span>utils.py:58<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Writing<span class="w"> </span>output/run_batch_1.sh
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,995<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.hpc.slurm_manager<span class="w"> </span>slurm_manager.py:83<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>stripe_count<span class="w"> </span>is<span class="w"> </span><span class="nb">set</span><span class="w"> </span>to<span class="w"> </span><span class="m">16</span>
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,997<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.utils.utils<span class="w"> </span>utils.py:58<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Writing<span class="w"> </span>output/job_batch_1.sh
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:03,998<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.hpc.hpc_manager<span class="w"> </span>hpc_manager.py:135<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Created<span class="w"> </span>submission<span class="w"> </span>script<span class="w"> </span>output/job_batch_1.sh
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:04,033<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.hpc.hpc_manager<span class="w"> </span>hpc_manager.py:140<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>job<span class="w"> </span><span class="s1">&#39;job_batch_1&#39;</span><span class="w"> </span>with<span class="w"> </span><span class="nv">ID</span><span class="o">=</span><span class="m">1536598</span><span class="w"> </span>submitted<span class="w"> </span>successfully
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:04,033<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.hpc.hpc_manager<span class="w"> </span>hpc_manager.py:262<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Assigned<span class="w"> </span><span class="nv">job_ID</span><span class="o">=</span><span class="m">1536598</span><span class="w"> </span><span class="nv">name</span><span class="o">=</span>job_batch_1
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:04,057<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.hpc.hpc_manager<span class="w"> </span>hpc_manager.py:242<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Submission<span class="w"> </span>job_batch_1<span class="w"> </span><span class="m">1536598</span><span class="w"> </span>changed<span class="w"> </span>status<span class="w"> </span>from<span class="w"> </span>HpcJobStatus.NONE<span class="w"> </span>to<span class="w"> </span>HpcJobStatus.QUEUED
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:50:36,121<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.hpc.hpc_manager<span class="w"> </span>hpc_manager.py:242<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Submission<span class="w"> </span>job_batch_1<span class="w"> </span><span class="m">1536598</span><span class="w"> </span>changed<span class="w"> </span>status<span class="w"> </span>from<span class="w"> </span>HpcJobStatus.QUEUED<span class="w"> </span>to<span class="w"> </span>HpcJobStatus.NONE
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:51:06,151<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:314<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>All<span class="w"> </span>submitters<span class="w"> </span>have<span class="w"> </span>completed.
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:51:06,330<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:214<span class="o">]</span><span class="w"> </span>:<span class="w"> </span>Wrote<span class="w"> </span>results<span class="w"> </span>to<span class="w"> </span>output/results.json.
+<span class="m">2019</span>-10-16<span class="w"> </span><span class="m">13</span>:51:06,330<span class="w"> </span>-<span class="w"> </span>INFO<span class="w"> </span><span class="o">[</span>jade.jobs.job_submitter<span class="w"> </span>job_submitter.py:220<span class="o">]</span><span class="w"> </span>:<span class="w"> </span><span class="nv">Successful</span><span class="o">=</span><span class="m">12</span><span class="w"> </span><span class="nv">Failed</span><span class="o">=</span><span class="m">0</span><span class="w"> </span><span class="nv">Total</span><span class="o">=</span><span class="m">12</span>
+</pre></div>
+</div>
+<p>Check the job results, all desired results are generated.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>ls<span class="w"> </span>-lh<span class="w"> </span>output/job-outputs/
+total<span class="w"> </span>580K
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>australia.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>31K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>australia.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">157</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>australia_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>brazil.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>35K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>brazil.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">145</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>brazil_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>canada.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>37K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>canada.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">145</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>canada_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>china.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>31K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>china.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">141</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>china_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">192</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96440.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">189</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96441.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">189</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96442.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">188</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96443.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">189</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96444.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">190</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96445.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">188</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96446.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">188</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96447.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">188</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96448.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">189</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96449.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">197</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96450.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">196</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>demo_run_96451.log
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>france.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>36K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>france.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">145</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>france_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">1</span>.9K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>germany.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>38K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>germany.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">149</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>germany_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>india.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>30K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>india.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">141</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>india_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>italy.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>35K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>italy.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">141</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>italy_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>japan.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>35K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>japan.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">141</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>japan_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">1</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>russia.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>35K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>russia.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">145</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>russia_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.2K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>united_kingdom.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>38K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>united_kingdom.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">177</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>united_kingdom_summary.toml
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w"> </span><span class="m">2</span>.1K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>united_states.csv
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span>37K<span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>united_states.png
+-rw-rw----.<span class="w"> </span><span class="m">1</span><span class="w"> </span>user<span class="w"> </span>user<span class="w">  </span><span class="m">173</span><span class="w"> </span>Oct<span class="w"> </span><span class="m">16</span><span class="w"> </span><span class="m">13</span>:50<span class="w"> </span>united_states_summary.toml
+</pre></div>
+</div>
+</section>
+<section id="structured-log-events">
+<h3>9. Structured Log Events<a class="headerlink" href="#structured-log-events" title="Link to this heading">¶</a></h3>
+<p>JADE provides structured log events so that specific conditions or errors can
+be machine-parsed and summarized after running jobs. Extensions can implement
+their own structured events by passing custom fields to the StructuredLogEvent
+or StructuredErrorLogEvent classes and then call <code class="docutils literal notranslate"><span class="pre">log_event</span></code>.</p>
+<p>The CLI command <code class="docutils literal notranslate"><span class="pre">jade</span> <span class="pre">show-events</span></code> can be used to view events after
+execution.</p>
+<p>The following example shows how to use <code class="docutils literal notranslate"><span class="pre">StructuredLogEvent</span></code>,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">jade.events</span> <span class="kn">import</span> <span class="n">StructuredErrorLogEvent</span>
+
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs the autoregression, and return status code&quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result_file</span><span class="p">,</span> <span class="n">plot_file</span> <span class="o">=</span> <span class="n">autoregression_analysis</span><span class="p">(</span>
+            <span class="n">country</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">output</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_dir</span>
+        <span class="p">)</span>
+        <span class="n">summary_data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;country&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">country</span><span class="p">,</span>
+            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output</span><span class="p">,</span>
+            <span class="s2">&quot;result&quot;</span><span class="p">:</span> <span class="n">result_file</span><span class="p">,</span>
+            <span class="s2">&quot;plot&quot;</span><span class="p">:</span> <span class="n">plot_file</span>
+        <span class="p">}</span>
+        <span class="n">summary_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_job_dir</span><span class="p">,</span> <span class="s2">&quot;summary.toml&quot;</span><span class="p">)</span>
+        <span class="n">dump_data</span><span class="p">(</span><span class="n">summary_data</span><span class="p">,</span> <span class="n">summary_file</span><span class="p">)</span>
+
+    <span class="c1"># Log event into file</span>
+    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+        <span class="c1"># Create event instance</span>
+        <span class="n">event</span> <span class="o">=</span> <span class="n">StructuredErrorLogEvent</span><span class="p">(</span>
+            <span class="n">source</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_job</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">category</span><span class="o">=</span><span class="n">EVENT_CATEGORY_ERROR</span><span class="p">,</span>
+            <span class="n">name</span><span class="o">=</span><span class="n">EVENT_NAME_UNHANDLED_ERROR</span><span class="p">,</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Analysis failed!&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Log event into file with structured message.</span>
+        <span class="n">log_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+
+        <span class="c1"># Must raise the exception here, or job returncode is 0 even it fails.</span>
+        <span class="k">raise</span>
+
+    <span class="k">return</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>The following console output shows <code class="docutils literal notranslate"><span class="pre">demo</span></code> extension with a job failure.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>show-results
+
+Results<span class="w"> </span>from<span class="w"> </span>directory:<span class="w"> </span>output
+JADE<span class="w"> </span>Version:<span class="w"> </span><span class="m">0</span>.1.0
+<span class="m">04</span>/29/2020<span class="w"> </span><span class="m">17</span>:18:23
+
++---------------+-------------+----------+--------------------+----------------------------+
+<span class="p">|</span><span class="w">    </span>Job<span class="w"> </span>Name<span class="w">   </span><span class="p">|</span><span class="w"> </span>Return<span class="w"> </span>Code<span class="w"> </span><span class="p">|</span><span class="w">  </span>Status<span class="w">  </span><span class="p">|</span><span class="w"> </span>Execution<span class="w"> </span>Time<span class="w"> </span><span class="o">(</span>s<span class="o">)</span><span class="w"> </span><span class="p">|</span><span class="w">      </span>Completion<span class="w"> </span>Time<span class="w">       </span><span class="p">|</span>
++---------------+-------------+----------+--------------------+----------------------------+
+<span class="p">|</span><span class="w">   </span>australia<span class="w">   </span><span class="p">|</span><span class="w">      </span><span class="m">1</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.0269670486450195<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">2020</span>-04-29<span class="w"> </span><span class="m">17</span>:18:22.772346<span class="w"> </span><span class="p">|</span>
+<span class="p">|</span><span class="w">     </span>brazil<span class="w">    </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.019500732421875<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2020</span>-04-29<span class="w"> </span><span class="m">17</span>:18:22.772818<span class="w"> </span><span class="p">|</span>
+<span class="p">|</span><span class="w"> </span>united_states<span class="w"> </span><span class="p">|</span><span class="w">      </span><span class="m">0</span><span class="w">      </span><span class="p">|</span><span class="w"> </span>finished<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">3</span>.014056921005249<span class="w">  </span><span class="p">|</span><span class="w"> </span><span class="m">2020</span>-04-29<span class="w"> </span><span class="m">17</span>:18:22.773059<span class="w"> </span><span class="p">|</span>
++---------------+-------------+----------+--------------------+----------------------------+
+
+Num<span class="w"> </span>successful:<span class="w"> </span><span class="m">2</span>
+Num<span class="w"> </span>failed:<span class="w"> </span><span class="m">1</span>
+Total:<span class="w"> </span><span class="m">3</span>
+
+Avg<span class="w"> </span>execution<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="o">(</span>s<span class="o">)</span>:<span class="w"> </span><span class="m">3</span>.02
+Min<span class="w"> </span>execution<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="o">(</span>s<span class="o">)</span>:<span class="w"> </span><span class="m">3</span>.01
+Max<span class="w"> </span>execution<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="o">(</span>s<span class="o">)</span>:<span class="w"> </span><span class="m">3</span>.03
+</pre></div>
+</div>
+<p>Now, show events using JADE CLI <code class="docutils literal notranslate"><span class="pre">show-events</span></code>,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>show-events<span class="w"> </span>unhandled_error
+
+Events<span class="w"> </span>of<span class="w"> </span><span class="nb">type</span><span class="w"> </span>unhandled_error<span class="w"> </span>from<span class="w"> </span>directory:<span class="w"> </span>output
++----------------------------+-----------+---------------------------------------------------------+-------+---------------------+-----------------------------+--------+
+<span class="p">|</span><span class="w">         </span>timestamp<span class="w">          </span><span class="p">|</span><span class="w">   </span><span class="nb">source</span><span class="w">  </span><span class="p">|</span><span class="w">                         </span>message<span class="w">                         </span><span class="p">|</span><span class="w"> </span>error<span class="w"> </span><span class="p">|</span><span class="w">      </span>exception<span class="w">      </span><span class="p">|</span><span class="w">           </span>filename<span class="w">          </span><span class="p">|</span><span class="w"> </span>lineno<span class="w"> </span><span class="p">|</span>
++----------------------------+-----------+---------------------------------------------------------+-------+---------------------+-----------------------------+--------+
+<span class="p">|</span><span class="w"> </span><span class="m">2020</span>-04-29<span class="w"> </span><span class="m">17</span>:18:21.708168<span class="w"> </span><span class="p">|</span><span class="w"> </span>australia<span class="w"> </span><span class="p">|</span><span class="w">                     </span>Analysis<span class="w"> </span>failed!<span class="w">                    </span><span class="p">|</span><span class="w">  </span><span class="nb">test</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>&lt;class<span class="w"> </span><span class="s1">&#39;Exception&#39;</span>&gt;<span class="w"> </span><span class="p">|</span><span class="w"> </span>autoregression_execution.py<span class="w"> </span><span class="p">|</span><span class="w">  </span><span class="m">161</span><span class="w">   </span><span class="p">|</span>
+<span class="p">|</span><span class="w"> </span><span class="m">2020</span>-04-29<span class="w"> </span><span class="m">17</span>:18:21.709596<span class="w"> </span><span class="p">|</span><span class="w"> </span>australia<span class="w"> </span><span class="p">|</span><span class="w"> </span>unexpected<span class="w"> </span>exception<span class="w"> </span><span class="k">in</span><span class="w"> </span>run<span class="w"> </span><span class="s1">&#39;demo&#39;</span><span class="w"> </span><span class="nv">job</span><span class="o">=</span>australia<span class="w"> </span>-<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="p">|</span><span class="w">  </span><span class="nb">test</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>&lt;class<span class="w"> </span><span class="s1">&#39;Exception&#39;</span>&gt;<span class="w"> </span><span class="p">|</span><span class="w">            </span>run.py<span class="w">           </span><span class="p">|</span><span class="w">   </span><span class="m">82</span><span class="w">   </span><span class="p">|</span>
++----------------------------+-----------+---------------------------------------------------------+-------+---------------------+-----------------------------+--------+
+</pre></div>
+</div>
+<p>Based on the structured event logs, the user can track the job execution issue easily.</p>
+<p>That’s what we all need to create a JADE extension. Now, you can create your own extension based on JADE, and parallelize your programs. Happy coding!</p>
+</section>
+</section>
+<section id="post-process">
+<h2>Post-process<a class="headerlink" href="#post-process" title="Link to this heading">¶</a></h2>
+<p>A post-process can be attached to an individual job, after the job run finishes,
+then the post-process startes to run. For example, the post-process can be an
+analysis program which could be used to run on top of a job outputs.</p>
+<p>There are two options to acheive</p>
+<section id="use-post-process-class">
+<h3>Use Post-process Class<a class="headerlink" href="#use-post-process-class" title="Link to this heading">¶</a></h3>
+<p><strong>Define Post-process</strong></p>
+<p>Suppose you have a package/module in script <code class="docutils literal notranslate"><span class="pre">job.analysis.post_analysis.py</span></code>,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PostAnalysis</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class for your post-process&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># TODO: implement your post-analysis logic</span>
+</pre></div>
+</div>
+<p>Where a <code class="docutils literal notranslate"><span class="pre">run</span></code> method is defined in the class.</p>
+<p><strong>Auto Config</strong></p>
+<p>Define the post-process config file in <code class="docutils literal notranslate"><span class="pre">.toml</span></code> or <code class="docutils literal notranslate"><span class="pre">.json</span></code>. For example,
+the file <code class="docutils literal notranslate"><span class="pre">~/my-post-analysis-config.toml</span></code> is defined below,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">class</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;PostAnalysis&quot;</span>
+<span class="nv">module</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;job.analysis.post_analysis&quot;</span>
+
+<span class="o">[</span>data<span class="o">]</span>
+<span class="nv">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;example&quot;</span>
+<span class="nv">year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2000</span>
+<span class="nv">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5</span>
+<span class="c1"># whatever the data needed to pass to the `run` method</span>
+</pre></div>
+</div>
+<p>To config the post-process with jobs, use the command below,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>auto-config<span class="w"> </span>--job-post-process-config-file<span class="w"> </span>~/my-post-analysis-config.toml
+</pre></div>
+</div>
+<p><strong>Sumbit Jobs</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$<span class="w"> </span>jade<span class="w"> </span>submit-jobs<span class="w"> </span>config.json
+</pre></div>
+</div>
+</section>
+<section id="use-job-ordering">
+<h3>Use Job Ordering<a class="headerlink" href="#use-job-ordering" title="Link to this heading">¶</a></h3>
+<p>Another option is to use job ordering to perform post-processing. You can set
+the <code class="docutils literal notranslate"><span class="pre">blocked_by</span></code> attribute of the post-processing job with the ID of the
+main job.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+  <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;main-job-cli-cmd&gt;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;blocked_by&quot;</span><span class="p">:</span> <span class="p">[]</span>
+<span class="p">},</span>
+<span class="p">{</span>
+  <span class="s2">&quot;command&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;post-process-cli-cmd&gt;&quot;</span><span class="p">,</span>
+  <span class="s2">&quot;job_id&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="s2">&quot;blocked_by&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="distributed_submission.html" class="btn btn-neutral float-left" title="Distributed Submission Workflow" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="jade.html" class="btn btn-neutral float-right" title="jade" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2021, NREL.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

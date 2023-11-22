@@ -1,0 +1,6 @@
+jade.extensions.demo.autoregression\_execution.autoregression\_analysis
+=======================================================================
+
+.. currentmodule:: jade.extensions.demo.autoregression_execution
+
+.. autofunction:: autoregression_analysis

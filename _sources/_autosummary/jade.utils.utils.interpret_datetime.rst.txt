@@ -1,0 +1,6 @@
+jade.utils.utils.interpret\_datetime
+====================================
+
+.. currentmodule:: jade.utils.utils
+
+.. autofunction:: interpret_datetime

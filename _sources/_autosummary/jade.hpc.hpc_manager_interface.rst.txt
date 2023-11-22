@@ -1,0 +1,31 @@
+jade.hpc.hpc\_manager\_interface
+================================
+
+.. automodule:: jade.hpc.hpc_manager_interface
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      HpcManagerInterface
+   
+   
+
+   
+   
+   
+
+
+

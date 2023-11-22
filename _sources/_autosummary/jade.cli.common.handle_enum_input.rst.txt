@@ -1,0 +1,6 @@
+jade.cli.common.handle\_enum\_input
+===================================
+
+.. currentmodule:: jade.cli.common
+
+.. autofunction:: handle_enum_input

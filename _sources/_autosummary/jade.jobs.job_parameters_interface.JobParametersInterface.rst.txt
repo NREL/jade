@@ -1,0 +1,40 @@
+jade.jobs.job\_parameters\_interface.JobParametersInterface
+===========================================================
+
+.. currentmodule:: jade.jobs.job_parameters_interface
+
+.. autoclass:: JobParametersInterface
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobParametersInterface.deserialize
+      ~JobParametersInterface.get_blocking_jobs
+      ~JobParametersInterface.is_spark_job
+      ~JobParametersInterface.remove_blocking_job
+      ~JobParametersInterface.serialize
+      ~JobParametersInterface.set_blocking_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobParametersInterface.DELIMITER
+      ~JobParametersInterface.cancel_on_blocking_job_failure
+      ~JobParametersInterface.estimated_run_minutes
+      ~JobParametersInterface.extension
+      ~JobParametersInterface.name
+      ~JobParametersInterface.submission_group
+   
+   

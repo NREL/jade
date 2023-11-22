@@ -1,0 +1,6 @@
+jade.utils.timing\_utils.timed\_debug
+=====================================
+
+.. currentmodule:: jade.utils.timing_utils
+
+.. autofunction:: timed_debug

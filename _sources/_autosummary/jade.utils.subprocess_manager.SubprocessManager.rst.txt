@@ -1,0 +1,33 @@
+jade.utils.subprocess\_manager.SubprocessManager
+================================================
+
+.. currentmodule:: jade.utils.subprocess_manager
+
+.. autoclass:: SubprocessManager
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SubprocessManager.in_progress
+      ~SubprocessManager.run
+      ~SubprocessManager.terminate
+      ~SubprocessManager.wait_for_completion
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SubprocessManager.return_code
+   
+   

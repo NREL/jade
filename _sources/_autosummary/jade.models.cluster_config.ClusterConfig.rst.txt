@@ -1,0 +1,51 @@
+jade.models.cluster\_config.ClusterConfig
+=========================================
+
+.. currentmodule:: jade.models.cluster_config
+
+.. autoclass:: ClusterConfig
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ClusterConfig.construct
+      ~ClusterConfig.copy
+      ~ClusterConfig.dict
+      ~ClusterConfig.from_orm
+      ~ClusterConfig.json
+      ~ClusterConfig.load
+      ~ClusterConfig.parse_file
+      ~ClusterConfig.parse_obj
+      ~ClusterConfig.parse_raw
+      ~ClusterConfig.schema
+      ~ClusterConfig.schema_json
+      ~ClusterConfig.update_forward_refs
+      ~ClusterConfig.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ClusterConfig.submitter
+      ~ClusterConfig.submission_groups
+      ~ClusterConfig.path
+      ~ClusterConfig.pipeline_stage_num
+      ~ClusterConfig.num_jobs
+      ~ClusterConfig.submitted_jobs
+      ~ClusterConfig.completed_jobs
+      ~ClusterConfig.is_complete
+      ~ClusterConfig.is_canceled
+      ~ClusterConfig.version
+   
+   

@@ -1,0 +1,6 @@
+jade.utils.sql.insert\_rows
+===========================
+
+.. currentmodule:: jade.utils.sql
+
+.. autofunction:: insert_rows

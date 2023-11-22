@@ -1,0 +1,23 @@
+jade.cli.pipeline
+=================
+
+.. automodule:: jade.cli.pipeline
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

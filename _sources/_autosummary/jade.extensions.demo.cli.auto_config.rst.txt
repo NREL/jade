@@ -1,0 +1,6 @@
+jade.extensions.demo.cli.auto\_config
+=====================================
+
+.. currentmodule:: jade.extensions.demo.cli
+
+.. autofunction:: auto_config

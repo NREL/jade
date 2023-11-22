@@ -1,0 +1,37 @@
+jade.jobs.job\_runner.JobRunner
+===============================
+
+.. currentmodule:: jade.jobs.job_runner
+
+.. autoclass:: JobRunner
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobRunner.get_batch_post_process_config
+      ~JobRunner.get_completed_results
+      ~JobRunner.get_num_jobs
+      ~JobRunner.get_results_summmary
+      ~JobRunner.get_results_summmary_report
+      ~JobRunner.run_jobs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobRunner.config
+      ~JobRunner.event_filename
+      ~JobRunner.node_id
+   
+   

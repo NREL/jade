@@ -1,0 +1,33 @@
+jade.models.jobs
+================
+
+.. automodule:: jade.models.jobs
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      Job
+      JobState
+      JobStatus
+   
+   
+
+   
+   
+   
+
+
+

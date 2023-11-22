@@ -1,0 +1,6 @@
+jade.utils.timing\_utils.track\_timing
+======================================
+
+.. currentmodule:: jade.utils.timing_utils
+
+.. autofunction:: track_timing

@@ -1,0 +1,35 @@
+jade.extensions.demo.autoregression\_execution.AutoRegressionExecution
+======================================================================
+
+.. currentmodule:: jade.extensions.demo.autoregression_execution
+
+.. autoclass:: AutoRegressionExecution
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AutoRegressionExecution.collect_results
+      ~AutoRegressionExecution.create
+      ~AutoRegressionExecution.generate_command
+      ~AutoRegressionExecution.list_results_files
+      ~AutoRegressionExecution.post_process
+      ~AutoRegressionExecution.run
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~AutoRegressionExecution.results_directory
+   
+   

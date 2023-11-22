@@ -1,0 +1,31 @@
+jade.jobs.job\_submitter
+========================
+
+.. automodule:: jade.jobs.job_submitter
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+      :template: custom-class-template.rst
+   
+      JobSubmitter
+   
+   
+
+   
+   
+   
+
+
+

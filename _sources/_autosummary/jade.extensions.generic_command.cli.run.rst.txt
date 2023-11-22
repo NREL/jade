@@ -1,0 +1,6 @@
+jade.extensions.generic\_command.cli.run
+========================================
+
+.. currentmodule:: jade.extensions.generic_command.cli
+
+.. autofunction:: run

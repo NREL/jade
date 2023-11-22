@@ -1,0 +1,30 @@
+jade.extensions.demo.create\_merge\_pred\_gdp
+=============================================
+
+.. automodule:: jade.extensions.demo.create_merge_pred_gdp
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      main
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

@@ -1,0 +1,6 @@
+jade.utils.timing\_utils.timed\_info
+====================================
+
+.. currentmodule:: jade.utils.timing_utils
+
+.. autofunction:: timed_info

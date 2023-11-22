@@ -1,0 +1,34 @@
+jade.jobs.job\_analysis.JobAnalysis
+===================================
+
+.. currentmodule:: jade.jobs.job_analysis
+
+.. autoclass:: JobAnalysis
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobAnalysis.get_job
+      ~JobAnalysis.get_simulation
+      ~JobAnalysis.get_successful_result
+      ~JobAnalysis.list_results
+      ~JobAnalysis.show_results
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobAnalysis.output_dir
+   
+   

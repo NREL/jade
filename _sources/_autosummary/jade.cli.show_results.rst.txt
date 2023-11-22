@@ -1,0 +1,23 @@
+jade.cli.show\_results
+======================
+
+.. automodule:: jade.cli.show_results
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+
+

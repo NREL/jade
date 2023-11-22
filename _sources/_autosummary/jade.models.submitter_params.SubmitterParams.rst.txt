@@ -1,0 +1,59 @@
+jade.models.submitter\_params.SubmitterParams
+=============================================
+
+.. currentmodule:: jade.models.submitter_params
+
+.. autoclass:: SubmitterParams
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SubmitterParams.construct
+      ~SubmitterParams.copy
+      ~SubmitterParams.dict
+      ~SubmitterParams.from_orm
+      ~SubmitterParams.get_wall_time
+      ~SubmitterParams.json
+      ~SubmitterParams.load
+      ~SubmitterParams.parse_file
+      ~SubmitterParams.parse_obj
+      ~SubmitterParams.parse_raw
+      ~SubmitterParams.schema
+      ~SubmitterParams.schema_json
+      ~SubmitterParams.update_forward_refs
+      ~SubmitterParams.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SubmitterParams.generate_reports
+      ~SubmitterParams.hpc_config
+      ~SubmitterParams.max_nodes
+      ~SubmitterParams.num_parallel_processes_per_node
+      ~SubmitterParams.per_node_batch_size
+      ~SubmitterParams.node_setup_script
+      ~SubmitterParams.node_shutdown_script
+      ~SubmitterParams.poll_interval
+      ~SubmitterParams.resource_monitor_interval
+      ~SubmitterParams.resource_monitor_type
+      ~SubmitterParams.resource_monitor_stats
+      ~SubmitterParams.try_add_blocked_jobs
+      ~SubmitterParams.time_based_batching
+      ~SubmitterParams.dry_run
+      ~SubmitterParams.verbose
+      ~SubmitterParams.singularity_params
+      ~SubmitterParams.distributed_submitter
+   
+   

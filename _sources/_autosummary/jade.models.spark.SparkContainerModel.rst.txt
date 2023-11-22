@@ -1,0 +1,42 @@
+jade.models.spark.SparkContainerModel
+=====================================
+
+.. currentmodule:: jade.models.spark
+
+.. autoclass:: SparkContainerModel
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SparkContainerModel.construct
+      ~SparkContainerModel.copy
+      ~SparkContainerModel.dict
+      ~SparkContainerModel.from_orm
+      ~SparkContainerModel.json
+      ~SparkContainerModel.load
+      ~SparkContainerModel.parse_file
+      ~SparkContainerModel.parse_obj
+      ~SparkContainerModel.parse_raw
+      ~SparkContainerModel.schema
+      ~SparkContainerModel.schema_json
+      ~SparkContainerModel.update_forward_refs
+      ~SparkContainerModel.validate
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SparkContainerModel.path
+   
+   

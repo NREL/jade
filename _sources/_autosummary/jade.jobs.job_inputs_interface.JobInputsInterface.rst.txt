@@ -1,0 +1,30 @@
+jade.jobs.job\_inputs\_interface.JobInputsInterface
+===================================================
+
+.. currentmodule:: jade.jobs.job_inputs_interface
+
+.. autoclass:: JobInputsInterface
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~JobInputsInterface.get_available_parameters
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~JobInputsInterface.base_directory
+   
+   

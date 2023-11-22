@@ -1,0 +1,47 @@
+jade.utils.custom\_click\_options.CustomOptions
+===============================================
+
+.. currentmodule:: jade.utils.custom_click_options
+
+.. autoclass:: CustomOptions
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CustomOptions.add_to_parser
+      ~CustomOptions.consume_value
+      ~CustomOptions.get_default
+      ~CustomOptions.get_error_hint
+      ~CustomOptions.get_help_record
+      ~CustomOptions.get_usage_pieces
+      ~CustomOptions.handle_custom_options
+      ~CustomOptions.handle_parse_result
+      ~CustomOptions.make_metavar
+      ~CustomOptions.process_value
+      ~CustomOptions.prompt_for_value
+      ~CustomOptions.resolve_envvar_value
+      ~CustomOptions.shell_complete
+      ~CustomOptions.to_info_dict
+      ~CustomOptions.type_cast_value
+      ~CustomOptions.value_from_envvar
+      ~CustomOptions.value_is_missing
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CustomOptions.human_readable_name
+      ~CustomOptions.param_type_name
+   
+   

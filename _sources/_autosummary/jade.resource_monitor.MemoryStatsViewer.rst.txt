@@ -1,0 +1,31 @@
+jade.resource\_monitor.MemoryStatsViewer
+========================================
+
+.. currentmodule:: jade.resource_monitor
+
+.. autoclass:: MemoryStatsViewer
+   :members:
+   :show-inheritance:
+   :inherited-members:
+   :special-members: __call__, __add__, __mul__
+
+   
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MemoryStatsViewer.get_dataframe
+      ~MemoryStatsViewer.get_printable_value
+      ~MemoryStatsViewer.get_stats_summary
+      ~MemoryStatsViewer.iter_batch_names
+      ~MemoryStatsViewer.metric
+      ~MemoryStatsViewer.plot_to_file
+      ~MemoryStatsViewer.show_stat_totals
+      ~MemoryStatsViewer.show_stats
+   
+   
+
+   
+   
+   
