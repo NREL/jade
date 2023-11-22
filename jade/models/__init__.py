@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic.v1 import BaseModel
 
 from jade.models.base import JadeBaseModel
 from jade.models.hpc import HpcConfig, SlurmConfig, FakeHpcConfig, LocalHpcConfig

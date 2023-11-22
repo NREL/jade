@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Optional
 
-from pydantic import Field, validator
+from pydantic.v1 import Field, validator
 
 from jade.models import JadeBaseModel
 

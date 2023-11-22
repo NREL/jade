@@ -1,6 +1,6 @@
 """Defines parameters for submitting jobs to an HPC."""
 
-from pydantic import Field
+from pydantic.v1 import Field
 
 from jade.models import JadeBaseModel, SubmitterParams
 
